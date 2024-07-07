@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <link href="{{ url_for('static', path='css/homepage_style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-content">
+            <h1>Projects</h1>
+            <ul>
+                <li class="clickable"><a href="/">Projects</a></li>
+                <li class="clickable"><a href="#">Settings</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="kanban">
+            <div class="kanban-card kanban-new">
+                <button onclick="openModal('CreateProjectModal')">
+                    {% include 'base/kanban/kanban_new.html' %}
+                </button>
+            </div>
+            {% for card in projects %}
+                <div class="kanban-card">
+                    <form method="post" action="/open_project/">
+                        <input type="hidden" name="project_directory" value="{{ card.directory }}">
+                        <button type="submit">
+                            {% include 'base/kanban/kanban_card.html' %}
+                        </button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div id="CreateProjectModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('CreateProjectModal')">&times;</span>
+            <form method="post" action="/create_project/" enctype="multipart/form-data">
+                <input type="hidden" name="project_dir" value="{{ project_dir }}">
+                <div class="modal-section">
+                    <label for="project_name">Name:</label>
+                    <input id="project_name" name="project_name" required>
+                </div>
+                <div class="modal-section">
+                    <label for="project_description">Description:</label>
+                    <textarea id="project_description" name="project_description"></textarea>
+                </div>
+                <button type="submit">Confirm</button>
+                <button type="button" onclick="closeModal('CreateProjectModal')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- JS scripts -->
+    <script src="{{ url_for('static', path='js/style_script.js') }}"></script>
+</body>
+</html>

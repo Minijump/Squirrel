@@ -1,0 +1,9 @@
+*.csv
+*.ipynb
+projects/**
+!projects/demo_project/**
+*.xml
+*.idea
+.vscode/*
+*.pyc
+*.pytest_cache
