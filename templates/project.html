@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Table</title>
+    <link href="{{ url_for('static', path='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='css/project_style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='DataTables/datatables.min.css') }}" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="navigation-btn">
+            <a href="/">Home</a>
+        </div>
+        <ul>
+            <li><a href="#">Table</a></li>
+            <li><a href="/pipeline/?project_dir={{ project_dir }}">Pipeline</a></li>
+            <li><a href="#">Settings</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <button onclick="openForm('AddColForm')">Add Column</button>
+        <div id="AddColForm" class="right-sidebar-form">
+            <a href="javascript:void(0)" class="close-btn" onclick="closeForm('AddColForm')">&times;</a>
+            <form action="/add_column/" method="post">
+                <input type="hidden" name="project_dir" value="{{ project_dir }}">
+                <label for="add_col_name">Col. Name:</label>
+                <input id="add_col_name" name="col_name" required>
+                <label for="add_col_value">Col. Value:</label>
+                <input id="add_col_value" name="col_value" required>
+                <button type="submit">Add Column</button>
+            </form>
+        </div>
+        <button onclick="openForm('DelColForm')">Delete Column</button>
+        <div id="DelColForm" class="right-sidebar-form">
+            <a href="javascript:void(0)" class="close-btn" onclick="closeForm('DelColForm')">&times;</a>
+            <form action="/del_column/" method="post">
+                <input type="hidden" name="project_dir" value="{{ project_dir }}">
+                <label for="del_col_name">Col. Name:</label>
+                <input id="del_col_name" name="col_name" required>
+                <button type="submit">Delete Column</button>
+            </form>
+        </div>
+        <div class="table-container">
+            {{ table|safe }}
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script type="text/javascript" src="{{ url_for('static', path='DataTables/datatables.min.js') }}"></script>
+        <script>
+            $(document).ready(function() {
+                $('.df-table').DataTable();
+            });
+        </script>
+
+        <script src="{{ url_for('static', path='js/style_script.js') }}"></script>
+    </div>
+</body>
+</html>

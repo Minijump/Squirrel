@@ -1,0 +1,8 @@
+*.csv
+*.ipynb
+projects/*
+!projects/project_test/**
+*.xml
+*.idea
+.vscode/*
+*.pyc

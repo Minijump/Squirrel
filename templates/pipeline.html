@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Pipeline</title>
+    <link href="{{ url_for('static', path='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='css/pipeline_style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="navigation-btn">
+            <a href="/">Home</a>
+        </div>
+        <ul>
+            <li><a href="/project/?project_dir={{ project_dir }}">Table</a></li>
+            <li><a href="#">Pipeline</a></li>
+            <li><a href="#">Settings</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <h2>Pipeline: (Beta)</h2>
+        <div class="pipeline-container">
+            {{ pipeline|safe }}
+        </div>
+    </div>
+</body>
+</html>

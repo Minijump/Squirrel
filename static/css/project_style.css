@@ -1,0 +1,7 @@
+@import url('../css/style.css');
+
+.table-container {
+    width: 60%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
