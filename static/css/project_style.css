@@ -1,0 +1,11 @@
+@import url('../css/style.css');
+
+.sidebar h1 {
+    padding-top: 5px;
+}
+
+.table-container {
+    border: 1px solid var(--secondary-color);
+    border-radius: 20px;
+    padding: 5px;
+}

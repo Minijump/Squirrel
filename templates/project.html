@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Table</title>
+    <link href="{{ url_for('static', path='css/project_style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-content">
+            <div class="navigation-btn">
+                <a href="/">Home</a>
+            </div>
+            <h1>Table</h1>
+            <ul>
+                <li class="clickable"><a href="#">Table</a></li>
+                <li class="clickable"><a href="/pipeline/?project_dir={{ project_dir }}">Pipeline</a></li>
+                <li class="clickable"><a href="/data_sources/?project_dir={{ project_dir }}">Data sources</a></li>
+                <li class="clickable"><a href="#">Settings</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="main-content">
+        <div id="CreateTable" class="right-sidebar-form">
+            <a href="javascript:void(0)" class="close-btn" onclick="closeForm('CreateTable')">&times;</a>
+            <form action="/project/create_table/" method="post">
+                <input type="hidden" name="project_dir" value="{{ project_dir }}">
+
+                <div class="form-section">
+                    <label for="table_name">Table Name:</label>
+                    <input id="table_name" name="table_name" required>
+                </div>
+
+                <div class="form-section">
+                    <label for="data_source">Data Source:</label>
+                    <select name="data_source_dir" id="data_source" class="right-sidebar-select">
+                        {% for source in sources %}
+                            <option value="{{ source.directory }}">{{ source.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="right-sidebar-btn">Create Table</button>
+            </form>
+        </div>
+        <div id="AddColForm" class="right-sidebar-form">
+            <a href="javascript:void(0)" class="close-btn" onclick="closeForm('AddColForm')">&times;</a>
+            <form action="/project/add_column/" method="post">
+                <input type="hidden" name="project_dir" value="{{ project_dir }}">
+                <input id="table_name" name="table_name" type="hidden" required>
+
+                <div class="form-section">
+                    <label for="add_col_name">Col. Name:</label>
+                    <input id="add_col_name" name="col_name" required>
+                </div>
+                
+                <div class="form-section">
+                    <label for="add_col_value">Col. Value:</label>
+                    <textarea id="add_col_value" name="col_value" required></textarea>
+                </div>
+                
+                <button type="submit" class="right-sidebar-btn">Add Column</button>
+            </form>
+        </div>
+        <div id="DelColForm" class="right-sidebar-form">
+            <a href="javascript:void(0)" class="close-btn" onclick="closeForm('DelColForm')">&times;</a>
+            <form action="/project/del_column/" method="post">
+                <input type="hidden" name="project_dir" value="{{ project_dir }}">
+                <input id="table_name" name="table_name" type="hidden" required>
+
+                <div class="form-section">
+                    <label for="del_col_name">Col. Name:</label>
+                    <input id="del_col_name" name="col_name" required>
+                </div>
+                
+                <button type="submit" class="right-sidebar-btn">Delete Column</button>
+            </form>
+        </div>
+        
+        <br>
+        {% if table and not exception %}
+            <div style="display: flex; justify-content: center;">
+                {% for name, html_table in table.items() %}
+                    {% if loop.first %}
+                        <button class="action-btn table-btn active" onclick="showTable('{{ name }}')">{{ name }}</button>
+                    {% else %}
+                        <button class="action-btn table-btn" onclick="showTable('{{ name }}')">{{ name }}</button>
+                    {% endif %}
+                {% endfor %}
+                <button onclick="openForm('CreateTable')" class="action-btn table-btn">
+                    <img
+                        src="{{ url_for('static', path='img/plus_icon.png') }}"
+                        alt="Plus Icon"
+                        style="width: 12px; height: 12px;"/>
+                </button>
+            </div>
+            {% for name, html_table in table.items() %}
+                <!-- First Table displayed by default (Change this; in case of reload table should not change) -->
+                {% if loop.first %}
+                    <div id="table-{{ name }}" class="table-container">
+                {% else %}
+                    <div id="table-{{ name }}" class="table-container" style="display: none;">
+                {% endif %}
+                        <div style="display: flex; justify-content: flex-start;">
+                            <button onclick="openActionForm('AddColForm', '{{ name }}')" class="action-btn">Add Column</button>
+                            <button onclick="openActionForm('DelColForm', '{{ name }}')" class="action-btn">Delete Column</button>
+                        </div>
+                        {{ html_table|safe }}
+                    </div>
+            {% endfor %}
+        {% else %}
+            {% if exception %}
+                <p style="color: red;">Error occured in Pipeline: {{ exception }}</p>
+            {% else %}
+                <div class="table-container">
+                    NO table yet
+                </div>
+            {% endif %}
+        {% endif %}
+
+        
+
+        <!-- JS scripts -->
+        <script src="{{ url_for('static', path='js/style_script.js') }}"></script>
+        <script>
+            function showTable(tableName) {
+                // Display only selected table
+                document.querySelectorAll('.table-container').forEach(function(table) {
+                    table.style.display = 'none';
+                });
+                document.getElementById('table-' + tableName).style.display = 'block';
+
+                document.querySelectorAll('.table-btn').forEach(function(button) {
+                    button.classList.remove('active');
+                });
+                document.querySelectorAll('.table-btn').forEach(function(button) {
+                    if (button.textContent.trim() === tableName) {
+                        button.classList.add('active');
+                    }
+                });
+            }
+        </script>
+    </div>
+</body>
+</html>
