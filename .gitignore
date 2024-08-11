@@ -1,8 +1,9 @@
 *.csv
 *.ipynb
-projects/*
-!projects/project_test/**
+projects/**
+!projects/demo_project/**
 *.xml
 *.idea
 .vscode/*
 *.pyc
+*.pytest_cache

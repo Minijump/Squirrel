@@ -16,12 +16,6 @@ def run_pipeline():
 
     # Squirrel Pipeline start
     df['test'] = 3
-
-    df['test 2'] = 6
-    
-    df = df.drop(columns=['test 2'])
-    
-    df['ttt'] = 9
     # Add new code here (keep this comment line)
     # Squirrel Pipeline end
 

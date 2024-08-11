@@ -4,25 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Pipeline</title>
-    <link href="{{ url_for('static', path='css/style.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', path='css/pipeline_style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="sidebar">
         <div class="navigation-btn">
             <a href="/">Home</a>
         </div>
+        <h1>Pipeline (BETA)</h1>
         <ul>
-            <li><a href="/project/?project_dir={{ project_dir }}">Table</a></li>
-            <li><a href="#">Pipeline</a></li>
-            <li><a href="#">Settings</a></li>
+            <li class="clickable"><a href="/project/?project_dir={{ project_dir }}">Table</a></li>
+            <li class="clickable"><a href="#">Pipeline</a></li>
+            <li class="clickable"><a href="#">Settings</a></li>
         </ul>
     </div>
     <div class="main-content">
         <h2>Pipeline: (Beta)</h2>
-        <div class="pipeline-container">
-            {{ pipeline|safe }}
+        <div class="list">
+            {% for action in actions %}
+                <div class="list-item">
+                    {{ action[1] }}
+                    <button class="delete-button" onclick="deletePipelineAction('{{ action[0] }}', '{{ project_dir}}')">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            {% endfor %}
         </div>
     </div>
+    <script src="{{ url_for('static', path='js/style_script.js') }}"></script>
 </body>
 </html>
