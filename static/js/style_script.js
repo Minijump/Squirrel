@@ -14,6 +14,14 @@ function closeForm(id) {
     document.getElementById(id).style.width = "0";
 }
 
+function openModal(formId) {
+    document.getElementById(formId).style.display = "block";
+}
+
+function closeModal(formId) {
+    document.getElementById(formId).style.display = "none";
+}
+
 function deletePipelineAction(action_id, project_dir) {
     const url = new URL('/pipeline/delete_action', window.location.origin);
     url.searchParams.append('project_dir', project_dir);

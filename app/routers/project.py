@@ -2,6 +2,8 @@ from fastapi import Request
 
 import os
 import importlib.util
+import pandas as pd
+import json
 
 from app.utils import action
 from app.routers import router, templates
@@ -21,6 +23,23 @@ def load_pipeline_module(project_dir):
     spec.loader.exec_module(pipeline)
     return pipeline
 
+def get_sources(project_dir):
+    """
+    Returns the list of data sources in the project
+
+    * project_dir(str): The project directory name
+    
+    => Returns the list of available data sources
+    """
+    sources = []
+    projects_dir = os.path.join('projects', project_dir, 'data_sources')
+    for source in os.listdir(projects_dir):
+        manifest_path = os.path.join(projects_dir, source, "__manifest__.json")
+        with open(manifest_path, 'r') as file:
+            manifest_data = json.load(file)
+            sources.append(manifest_data)
+    return sources
+
 @router.post("/project/")
 @router.get("/project/")
 async def project(request: Request, project_dir: str):
@@ -34,11 +53,16 @@ async def project(request: Request, project_dir: str):
     """
     pipeline = load_pipeline_module(project_dir)
     df = pipeline.run_pipeline()
-    table_html = df.to_html(classes='df-table', index=False)# Do not convert all df to html? pass it as an argument?
+    table_html = df.to_html(classes='df-table', index=False) if isinstance(df, pd.DataFrame) else False
+    # Do not convert all df to html? pass it as an argument?
+    # Enable multi tables
+
+    sources = get_sources(project_dir)
+
     return templates.TemplateResponse(
         request,
         "project.html",
-        {"table": table_html, "project_dir": project_dir}
+        {"table": table_html, "project_dir": project_dir, "sources": sources}
     )
 
 
@@ -68,4 +92,33 @@ async def del_column(request: Request):
     """
     form_data = await request.form()
     new_code = f"""df = df.drop(columns=['{form_data.get('col_name')}'])"""
+    return new_code
+
+@router.post("/project/create_table/")
+@action.add
+async def create_table(request: Request):
+    """
+    Create a new dataframe
+
+    * form_data contains: data_source_dir, project_dir
+    
+    =>
+    """
+    form_data = await request.form()
+    project_dir = form_data.get("project_dir")
+    data_source_dir = form_data.get("data_source_dir")
+    data_source_dir = os.path.join(os.getcwd(), "projects", project_dir, "data_sources", data_source_dir)
+
+    manifest_path = os.path.join(data_source_dir, "__manifest__.json")
+    with open(manifest_path, 'r') as file:
+        manifest_data = json.load(file)
+
+    if manifest_data["type"] == "csv":
+        csv_path = os.path.join(data_source_dir, "data.csv")
+        new_code = f"""df = pd.read_csv(r'{csv_path}')"""
+
+    if manifest_data["type"] == "xlsx":
+        xlsx_path = os.path.join(data_source_dir, "data.xlsx")
+        new_code = f"""df = pd.read_excel(r'{xlsx_path}')"""
+    
     return new_code

@@ -5,16 +5,9 @@ import random
 
 
 def run_pipeline():
-    data = []
-    for _ in range(100):
-        name = ''.join(random.choices('abcdefghijklmnopqrstuvwxyz', k=5))
-        reference = random.randint(1000, 9999)
-        list_price = round(random.uniform(10, 100), 2)
-        data.append([name, reference, list_price])
-
-    df = pd.DataFrame(data, columns=['name', 'reference', 'price'])
-
+    df = False
     # Squirrel Pipeline start
+    df = pd.read_csv(r'C:\Users\sacha\Documents\projects\Squirrel\projects\demo_project\data_sources\demo_data_source\data.csv')
     df['test'] = 3
     # Add new code here (keep this comment line)
     # Squirrel Pipeline end

@@ -17,9 +17,9 @@
     <div class="main-content">
         <div class="kanban">
             <div class="kanban-card kanban-new">
-                <form method="post" action="/create_project/">
+                <button>
                     {% include 'base/kanban/kanban_new.html' %}
-                </form>
+                </button>
             </div>
             {% for card in projects %}
                 <div class="kanban-card">

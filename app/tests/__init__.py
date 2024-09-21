@@ -11,6 +11,7 @@ def mock_project(tmpdir):
     project_dir = tmpdir.mkdir("mock_project")
     
     # Create necessary files and directories within the mock project
+    # Manifest file
     manifest_file = project_dir.join("__manifest__.json")
     manifest_content = {
         "name": "Mock project",
@@ -19,6 +20,10 @@ def mock_project(tmpdir):
     }
     manifest_file.write(json.dumps(manifest_content, indent=4))
 
+    # Data sources directory
+    project_dir.mkdir("data_sources")
+
+    # Pipeline file
     pipeline_file = project_dir.join("pipeline.py")
     pipeline_file.write("""
 import pandas as pd
