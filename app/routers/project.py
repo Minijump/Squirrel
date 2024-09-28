@@ -77,7 +77,8 @@ async def add_column(request: Request):
     => Returns a string representing the code to add the column
     """
     form_data = await request.form()
-    new_code = f"""df['{form_data.get('col_name')}'] = {form_data.get('col_value')}"""
+    col_name = form_data.get("col_name")
+    new_code = f"""df['{col_name}'] = {form_data.get('col_value')}  #sq_action:Add column {col_name}"""
     return new_code
 
 @router.post("/project/del_column/")
@@ -91,7 +92,8 @@ async def del_column(request: Request):
     => Returns a string representing the code to drop the column
     """
     form_data = await request.form()
-    new_code = f"""df = df.drop(columns=['{form_data.get('col_name')}'])"""
+    col_name = form_data.get("col_name")
+    new_code = f"""df = df.drop(columns=['{col_name}'])  #sq_action:Delete column {col_name}"""
     return new_code
 
 @router.post("/project/create_table/")
@@ -115,10 +117,12 @@ async def create_table(request: Request):
 
     if manifest_data["type"] == "csv":
         csv_path = os.path.join(data_source_dir, "data.csv")
-        new_code = f"""df = pd.read_csv(r'{csv_path}')"""
+        source_name = manifest_data["name"]
+        new_code = f"""df = pd.read_csv(r'{csv_path}')  #sq_action:Create table from {source_name}"""
 
     if manifest_data["type"] == "xlsx":
         xlsx_path = os.path.join(data_source_dir, "data.xlsx")
-        new_code = f"""df = pd.read_excel(r'{xlsx_path}')"""
+        source_name = manifest_data["name"]
+        new_code = f"""df = pd.read_excel(r'{xlsx_path}')  #sq_action:Create table from '{source_name}'"""
     
     return new_code
