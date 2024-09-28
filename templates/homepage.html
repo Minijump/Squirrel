@@ -17,7 +17,7 @@
     <div class="main-content">
         <div class="kanban">
             <div class="kanban-card kanban-new">
-                <button>
+                <button onclick="openModal('CreateProjectModal')">
                     {% include 'base/kanban/kanban_new.html' %}
                 </button>
             </div>
@@ -29,6 +29,21 @@
                     </form>
                 </div>
             {% endfor %}
+        </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div id="CreateProjectModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('CreateProjectModal')">&times;</span>
+            <form method="post" action="/create_project/" enctype="multipart/form-data">
+                <input type="hidden" name="project_dir" value="{{ project_dir }}">
+                <label for="project_name">Name:</label>
+                <input id="project_name" name="project_name" required>
+                <label for="project_description">Description:</label>
+                <input id="project_description" name="project_description">
+                <button type="submit">Confirm</button>
+                <button type="button" onclick="closeModal('CreateProjectModal')">Cancel</button>
         </div>
     </div>
 

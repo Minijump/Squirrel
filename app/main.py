@@ -32,11 +32,53 @@ async def read_root(request: Request):
 
 
 @app.post("/create_project/")
-async def create_project():
+async def create_project(request: Request):
     """
-    TODO: Implement the creation of a project
+    Create a new project
+
+    * request contains: - project_name and project_description
+
+    => Returns a RedirectResponse to the new project page
     """
-    return {"message": "project created, just joking, not implemented yet"}
+    form_data = await request.form()
+    project_name = form_data.get("project_name")
+    project_description = form_data.get("project_description")
+    project_dir = project_name.lower().replace(" ", "_")
+    project_path = os.path.join(os.getcwd(), "projects", project_dir)
+
+    # Create project's folder
+    os.makedirs(project_path, exist_ok=True)
+
+    # Create project's manifest
+    with open(os.path.join(project_path , "__manifest__.json"), 'w') as file:
+        json.dump({
+            "name": project_name,
+            "description": project_description,
+            "directory": project_dir # can use a path from root
+        }, file)
+
+    # Create project's data_sources folder
+    os.makedirs(os.path.join(project_path , "data_sources"), exist_ok=True)
+
+    # Create the pipeline file
+    with open(os.path.join(project_path , "pipeline.py"), 'w') as file:
+        base_pipeline = """
+import pandas as pd
+
+
+def run_pipeline():
+    df = False
+    
+    # Squirrel Pipeline start
+    # Add new code here (keep this comment line)
+    # Squirrel Pipeline end
+
+    # No edit under
+    return df
+ """
+        file.write(base_pipeline)
+
+    return RedirectResponse(url=f"/project/?project_dir={project_dir}", status_code=303)
 
 
 @app.post("/open_project/")
