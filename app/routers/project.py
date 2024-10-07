@@ -32,7 +32,7 @@ def get_sources(project_dir):
     => Returns the list of available data sources
     """
     sources = []
-    projects_dir = os.path.join('projects', project_dir, 'data_sources')
+    projects_dir = os.path.join(os.getcwd(), "projects", project_dir, "data_sources")
     for source in os.listdir(projects_dir):
         manifest_path = os.path.join(projects_dir, source, "__manifest__.json")
         with open(manifest_path, 'r') as file:

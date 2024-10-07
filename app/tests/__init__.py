@@ -22,6 +22,16 @@ def mock_project(tmpdir):
 
     # Data sources directory
     project_dir.mkdir("data_sources")
+    # Create mock data source
+    # csv
+    csv_source_dir = project_dir.join("data_sources").mkdir("mock_source_csv")
+    csv_source_dir.join("__manifest__.json").write(json.dumps({
+        "name": "Mock source csv",
+        "type": "csv",
+        "description": "a mock csv source",
+        "directory": "mock_source_csv"
+    }, indent=4))
+    csv_source_dir.join("data.csv").write("mock_name,mock_price"+"".join([f"\nmock{i},{i}" for i in range(100)]))
 
     # Pipeline file
     pipeline_file = project_dir.join("pipeline.py")
