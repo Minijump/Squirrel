@@ -2,14 +2,10 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 
 import os
-import nbformat as nbf
-from nbconvert import HTMLExporter
 
 from app.routers import router, templates
 from app.utils import PIPELINE_START_TAG, PIPELINE_END_TAG, NEW_CODE_TAG
 
-#TODO: add edit functionality
-#TODO: list of actions (notebook cell), name, deal with multiple lines action, ...
 
 def get_file_lines(file_path):
     """

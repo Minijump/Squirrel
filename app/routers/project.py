@@ -54,8 +54,6 @@ async def project(request: Request, project_dir: str):
     pipeline = load_pipeline_module(project_dir)
     df = pipeline.run_pipeline()
     table_html = df.to_html(classes='df-table', index=False) if isinstance(df, pd.DataFrame) else False
-    # Do not convert all df to html? pass it as an argument?
-    # Enable multi tables
 
     sources = get_sources(project_dir)
 
