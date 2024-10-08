@@ -91,7 +91,7 @@ Create data analysis pipeline by generating python with a low-code interface.
 5. **Create a new Pull Request**
 
 ### To do MVP
-* Editable pipeline + pipeline of (multiline) actions and not only file's line
+* Editable pipeline
 * Solve perf issues (do not convert all df to html, start editing 'datatable', ...)
 * Try some more modular architecture
 * Enable to do wathever you want with python (Give column info (nulls, zeros, unique, ...), delete lines where -, replace col values, ...)
