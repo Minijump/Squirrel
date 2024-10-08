@@ -1,5 +1,5 @@
 from fastapi import Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 
 import os
 
@@ -59,7 +59,7 @@ async def pipeline(request: Request, project_dir: str):
     for line in lines:
         if isinstance(line, tuple):
             if "#sq_action:" in line[1]:
-                actions.append((line[0], line[1].split("#sq_action:")[1].strip()))
+                actions.append((line[0], line[1].split("#sq_action:")[1].strip(), line[1]))
             else:
                 actions.append(line)
        
@@ -128,3 +128,39 @@ async def confirm_new_order(request: Request, project_dir: str, order: str):
         file.writelines(new_lines)
 
     return JSONResponse(content={"message": "Order changed successfully"}, status_code=200)
+
+@router.post("/pipeline/edit_action")
+@router.get("pipeline/edit_action")
+async def edit_action(request: Request):
+    """
+    Edit the code of an action in the pipeline
+
+    * request contains:
+       -action_id(str): The id of the action to edit
+       -action_code(str): The new code of the action
+       -project_dir(str): The project directory
+
+    => Returns a redirect response to /pipeline
+    """
+    form_data = await request.form()
+    action_id = int(form_data["action_id"])
+    action_code = form_data["action_code"]
+    project_dir = form_data["project_dir"]
+
+    pipeline_path = os.path.join("projects", project_dir, "pipeline.py")
+    lines = get_file_lines(pipeline_path)
+
+    new_lines = []
+    for line in lines:
+        if isinstance(line, tuple):
+            if line[0] == action_id:
+                new_lines.append(action_code)
+            else:
+                new_lines.append(line[1])
+        else:
+            new_lines.append(line)
+    
+    with open(pipeline_path, 'w') as file:
+        file.writelines(new_lines)
+
+    return RedirectResponse(url=f"/pipeline?project_dir={project_dir}")

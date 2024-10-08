@@ -44,3 +44,12 @@ function deletePipelineAction(action_id, project_dir) {
         console.error('Error', error);
     });
 }
+
+function editPipelineActionOpenModal(action_id, action_name, action_code, project_dir) {
+    const modal = document.getElementById('EditActionModal');
+    modal.style.display = "block";
+    document.getElementById('modal-action-name').textContent = action_name;
+    modal.querySelector('input[name="action_id"]').value = action_id;
+    modal.querySelector('textarea[name="action_code"]').value = action_code;
+    modal.querySelector('input[name="project_dir"]').value = project_dir;
+}
