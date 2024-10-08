@@ -5,5 +5,7 @@
 }
 
 .table-container {
-    margin-top: 20px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 20px;
+    padding: 5px;
 }

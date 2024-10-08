@@ -44,15 +44,15 @@ def run_pipeline():
         name = 'test'
         list_price = 10
         data.append([name, list_price])
-
-    df = pd.DataFrame(data, columns=['name', 'price'])
+    dfs = {}
+    dfs['df'] = pd.DataFrame(data, columns=['name', 'price'])
 
     # Squirrel Pipeline start
     # Add new code here (keep this comment line)
     # Squirrel Pipeline end
 
     # No edit under
-    return df""")
+    return dfs""")
 
     # Return the path to the mock project directory
     return str(project_dir)

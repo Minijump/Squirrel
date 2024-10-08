@@ -21,11 +21,12 @@
         </ul>
     </div>
     <div class="main-content">
-        <button onclick="openForm('CreateTable')">Create Table</button>
         <div id="CreateTable" class="right-sidebar-form">
             <a href="javascript:void(0)" class="close-btn" onclick="closeForm('CreateTable')">&times;</a>
             <form action="/project/create_table/" method="post">
                 <input type="hidden" name="project_dir" value="{{ project_dir }}">
+                <label for="table_name">Table Name:</label>
+                <input id="table_name" name="table_name" required>
                 <label for="add_col_name">Data source:</label>
                 <select name="data_source_dir" id="data_source">
                     {% for source in sources %}
@@ -35,12 +36,11 @@
                 <button type="submit">Create Table</button>
             </form>
         </div>
-        <br>
-        <button onclick="openForm('AddColForm')">Add Column</button>
         <div id="AddColForm" class="right-sidebar-form">
             <a href="javascript:void(0)" class="close-btn" onclick="closeForm('AddColForm')">&times;</a>
             <form action="/project/add_column/" method="post">
                 <input type="hidden" name="project_dir" value="{{ project_dir }}">
+                <input id="table_name" name="table_name" type="hidden" required>
                 <label for="add_col_name">Col. Name:</label>
                 <input id="add_col_name" name="col_name" required>
                 <label for="add_col_value">Col. Value:</label>
@@ -48,32 +48,78 @@
                 <button type="submit">Add Column</button>
             </form>
         </div>
-        <button onclick="openForm('DelColForm')">Delete Column</button>
         <div id="DelColForm" class="right-sidebar-form">
             <a href="javascript:void(0)" class="close-btn" onclick="closeForm('DelColForm')">&times;</a>
             <form action="/project/del_column/" method="post">
                 <input type="hidden" name="project_dir" value="{{ project_dir }}">
+                <input id="table_name" name="table_name" type="hidden" required>
                 <label for="del_col_name">Col. Name:</label>
                 <input id="del_col_name" name="col_name" required>
                 <button type="submit">Delete Column</button>
             </form>
         </div>
         
+        <button onclick="openForm('CreateTable')" class="action-btn">Create Table</button>
+        <br>
         {% if table %}
-            <div class="table-container">
-                {{ table|safe }}
+            <div style="display: flex; justify-content: center;">
+                {% for name, html_table in table.items() %}
+                    {% if loop.first %}
+                        <button class="action-btn table-btn active" onclick="showTable('{{ name }}')">{{ name }}</button>
+                    {% else %}
+                        <button class="action-btn table-btn" onclick="showTable('{{ name }}')">{{ name }}</button>
+                    {% endif %}
+                {% endfor %}
             </div>
+            {% for name, html_table in table.items() %}
+                <!-- First Table displayed by default (Change this; in case of reload table should not change) -->
+                {% if loop.first %}
+                    <div id="table-{{ name }}" class="table-container">
+                {% else %}
+                    <div id="table-{{ name }}" class="table-container" style="display: none;">
+                {% endif %}
+                        <div style="display: flex; justify-content: flex-start;">
+                            <button onclick="openActionForm('AddColForm', '{{ name }}')" class="action-btn">Add Column</button>
+                            <button onclick="openActionForm('DelColForm', '{{ name }}')" class="action-btn">Delete Column</button>
+                        </div>
+                        {{ html_table|safe }}
+                    </div>
+            {% endfor %}
         {% else %}
-            <div class="table-container">
-                NO table yet
-            </div>
+            {% if exception %}
+                <p style="color: red;">Error occured in Pipeline: {{ exception }}</p>
+            {% else %}
+                <div class="table-container">
+                    NO table yet
+                </div>
+            {% endif %}
         {% endif %}
+
+        
 
         <!-- JS scripts -->
         <script src="{{ url_for('static', path='js/style_script.js') }}"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', path='DataTables/datatables.min.js') }}"></script>
         <script src="{{ url_for('static', path='js/table_script.js') }}"></script>
+        <script>
+            function showTable(tableName) {
+                // Display only selected table
+                document.querySelectorAll('.table-container').forEach(function(table) {
+                    table.style.display = 'none';
+                });
+                document.getElementById('table-' + tableName).style.display = 'block';
+
+                document.querySelectorAll('.table-btn').forEach(function(button) {
+                    button.classList.remove('active');
+                });
+                document.querySelectorAll('.table-btn').forEach(function(button) {
+                    if (button.textContent.trim() === tableName) {
+                        button.classList.add('active');
+                    }
+                });
+            }
+        </script>
     </div>
 </body>
 </html>

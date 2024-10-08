@@ -51,17 +51,25 @@ async def project(request: Request, project_dir: str):
 
     => Returns a TemplateResponse to display project
     """
+    exception = False
     pipeline = load_pipeline_module(project_dir)
-    df = pipeline.run_pipeline()
-    table_html = df.to_html(classes='df-table', index=False) if isinstance(df, pd.DataFrame) else False
+    try:
+        dfs = pipeline.run_pipeline()
+    except Exception as e:
+        exception = e
+    finally:
+        table_html = {}
+        for name, df in dfs.items():
+            if not exception and isinstance(df, pd.DataFrame):
+                table_html[name] = df.to_html(classes='df-table', index=False)
 
-    sources = get_sources(project_dir)
+        sources = get_sources(project_dir)
 
-    return templates.TemplateResponse(
-        request,
-        "project.html",
-        {"table": table_html, "project_dir": project_dir, "sources": sources}
-    )
+        return templates.TemplateResponse(
+            request,
+            "project.html",
+            {"table": table_html, "project_dir": project_dir, "sources": sources, "exception": exception}
+        )
 
 
 @router.post("/project/add_column/")
@@ -75,8 +83,9 @@ async def add_column(request: Request):
     => Returns a string representing the code to add the column
     """
     form_data = await request.form()
+    table_name = form_data.get("table_name")
     col_name = form_data.get("col_name")
-    new_code = f"""df['{col_name}'] = {form_data.get('col_value')}  #sq_action:Add column {col_name}"""
+    new_code = f"""dfs['{table_name}']['{col_name}'] = {form_data.get('col_value')}  #sq_action:Add column {col_name} on table {table_name}"""
     return new_code
 
 @router.post("/project/del_column/")
@@ -90,8 +99,9 @@ async def del_column(request: Request):
     => Returns a string representing the code to drop the column
     """
     form_data = await request.form()
+    table_name = form_data.get("table_name")
     col_name = form_data.get("col_name")
-    new_code = f"""df = df.drop(columns=['{col_name}'])  #sq_action:Delete column {col_name}"""
+    new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].drop(columns=['{col_name}'])  #sq_action:Delete column {col_name} on table {table_name}"""
     return new_code
 
 @router.post("/project/create_table/")
@@ -106,6 +116,7 @@ async def create_table(request: Request):
     """
     form_data = await request.form()
     project_dir = form_data.get("project_dir")
+    table_name = form_data.get("table_name")
     data_source_dir = form_data.get("data_source_dir")
     data_source_dir = os.path.join(os.getcwd(), "projects", project_dir, "data_sources", data_source_dir)
 
@@ -116,11 +127,11 @@ async def create_table(request: Request):
     if manifest_data["type"] == "csv":
         csv_path = os.path.join(data_source_dir, "data.csv")
         source_name = manifest_data["name"]
-        new_code = f"""df = pd.read_csv(r'{csv_path}')  #sq_action:Create table from {source_name}"""
+        new_code = f"""dfs['{table_name}'] = pd.read_csv(r'{csv_path}')  #sq_action:Create table {table_name} from {source_name}"""
 
     if manifest_data["type"] == "xlsx":
         xlsx_path = os.path.join(data_source_dir, "data.xlsx")
         source_name = manifest_data["name"]
-        new_code = f"""df = pd.read_excel(r'{xlsx_path}')  #sq_action:Create table from '{source_name}'"""
+        new_code = f"""dfs['{table_name}'] = pd.read_excel(r'{xlsx_path}')  #sq_action:Create table {table_name} from '{source_name}'"""
     
     return new_code

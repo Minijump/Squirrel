@@ -67,14 +67,14 @@ import pandas as pd
 
 
 def run_pipeline():
-    df = False
+    dfs = {}
     
     # Squirrel Pipeline start
     # Add new code here (keep this comment line)
     # Squirrel Pipeline end
 
     # No edit under
-    return df
+    return dfs
  """
         file.write(base_pipeline)
 

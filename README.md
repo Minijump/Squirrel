@@ -91,7 +91,6 @@ Create data analysis pipeline by generating python with a low-code interface.
 5. **Create a new Pull Request**
 
 ### To do MVP
-* Enable multitable
 * Editable pipeline + pipeline of (multiline) actions and not only file's line
 * Solve perf issues (do not convert all df to html, start editing 'datatable', ...)
 * Try some more modular architecture

@@ -9,7 +9,11 @@ document.addEventListener('DOMContentLoaded', function() {
 function openForm(id) {
     document.getElementById(id).style.width = "250px";
 }
-
+function openActionForm(id, name) {
+    var form = document.getElementById(id);
+    form.style.width = "250px";
+    form.querySelector('input[name="table_name"]').value = name;
+}
 function closeForm(id) {
     document.getElementById(id).style.width = "0";
 }
