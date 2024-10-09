@@ -8,11 +8,13 @@
 </head>
 <body>
     <div class="sidebar">
-        <h1>Projects</h1>
-        <ul>
-            <li class="clickable"><a href="/">Projects</a></li>
-            <li class="clickable"><a href="#">Settings</a></li>
-        </ul>
+        <div class="sidebar-content">
+            <h1>Projects</h1>
+            <ul>
+                <li class="clickable"><a href="/">Projects</a></li>
+                <li class="clickable"><a href="#">Settings</a></li>
+            </ul>
+        </div>
     </div>
     <div class="main-content">
         <div class="kanban">
@@ -40,10 +42,14 @@
             <span class="close-btn" onclick="closeModal('CreateProjectModal')">&times;</span>
             <form method="post" action="/create_project/" enctype="multipart/form-data">
                 <input type="hidden" name="project_dir" value="{{ project_dir }}">
-                <label for="project_name">Name:</label>
-                <input id="project_name" name="project_name" required>
-                <label for="project_description">Description:</label>
-                <input id="project_description" name="project_description">
+                <div class="modal-section">
+                    <label for="project_name">Name:</label>
+                    <input id="project_name" name="project_name" required>
+                </div>
+                <div class="modal-section">
+                    <label for="project_description">Description:</label>
+                    <textarea id="project_description" name="project_description"></textarea>
+                </div>
                 <button type="submit">Confirm</button>
                 <button type="button" onclick="closeModal('CreateProjectModal')">Cancel</button>
         </div>

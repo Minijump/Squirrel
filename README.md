@@ -97,5 +97,5 @@ Create data analysis pipeline by generating python with a low-code interface.
 
 ### To do
 * Features ideas: great-expectations unit test, API connection to diff services, Excel functions copy, ...
-* Many others (Do not run all pipeline at each actions, ...)
+* Many others (Do not run all pipeline at each actions, git/github integrations, ...)
 * Buy Microsoft Excel to make sure nobody use that shit anymore

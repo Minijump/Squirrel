@@ -8,16 +8,18 @@
 </head>
 <body>
     <div class="sidebar">
-        <div class="navigation-btn">
-            <a href="/">Home</a>
+        <div class="sidebar-content">
+            <div class="navigation-btn">
+                <a href="/">Home</a>
+            </div>
+            <h1>Data</h1>
+            <ul>
+                <li class="clickable"><a href="/project/?project_dir={{ project_dir }}">Table</a></li>
+                <li class="clickable"><a href="/pipeline/?project_dir={{ project_dir }}">Pipeline</a></li>
+                <li class="clickable"><a href="#">Data sources</a></li>
+                <li class="clickable"><a href="#">Settings</a></li>
+            </ul>
         </div>
-        <h1>Data</h1>
-        <ul>
-            <li class="clickable"><a href="/project/?project_dir={{ project_dir }}">Table</a></li>
-            <li class="clickable"><a href="/pipeline/?project_dir={{ project_dir }}">Pipeline</a></li>
-            <li class="clickable"><a href="#">Data sources</a></li>
-            <li class="clickable"><a href="#">Settings</a></li>
-        </ul>
     </div>
     <div class="main-content">
         <div class="kanban">
@@ -42,17 +44,22 @@
             <span class="close-btn" onclick="closeModal('CreateSourceModal')">&times;</span>
             <form method="post" action="/create_source/" enctype="multipart/form-data">
                 <input type="hidden" name="project_dir" value="{{ project_dir }}">
-                <label for="source_name">Name:</label>
-                <input id="source_name" name="source_name" required>
-                <label for="source_description">Description:</label>
-                <input id="source_description" name="source_description">
-                <label for="source_type">Type:</label>
-                <select id="source_type" name="source_type" required>
-                    <option value="csv">CSV</option>
-                    <option value="xlsx">XLSX</option>
-                </select>
-                <label for="source_file">Upload File:</label>
-                <input id="source_file" name="source_file" type="file" required>
+                <div class="modal-section">
+                    <label for="source_name">Name:</label>
+                    <input id="source_name" name="source_name" required>
+                </div>
+                <div class="modal-section">
+                    <label for="source_description">Description:</label>
+                    <textarea id="source_description" name="source_description"></textarea>
+                </div>
+                <div class="modal-section">
+                    <label for="source_type">Type:</label>
+                    <select id="source_type" name="source_type" class="modal-content-select" required>
+                        <option value="csv">CSV</option>
+                        <option value="xlsx">XLSX</option>
+                    </select>
+                    <input id="source_file" name="source_file" type="file" style="margin-left: 5px;" required>
+                </div>
                 <button type="submit">Confirm</button>
                 <button type="button" onclick="closeModal('CreateSourceModal')">Cancel</button>
         </div>

@@ -9,16 +9,18 @@
 </head>
 <body>
     <div class="sidebar">
-        <div class="navigation-btn">
-            <a href="/">Home</a>
+        <div class="sidebar-content">
+            <div class="navigation-btn">
+                <a href="/">Home</a>
+            </div>
+            <h1>Pipeline</h1>
+            <ul>
+                <li class="clickable"><a href="/project/?project_dir={{ project_dir }}">Table</a></li>
+                <li class="clickable"><a href="#">Pipeline</a></li>
+                <li class="clickable"><a href="/data_sources/?project_dir={{ project_dir }}">Data sources</a></li>
+                <li class="clickable"><a href="#">Settings</a></li>
+            </ul>
         </div>
-        <h1>Pipeline</h1>
-        <ul>
-            <li class="clickable"><a href="/project/?project_dir={{ project_dir }}">Table</a></li>
-            <li class="clickable"><a href="#">Pipeline</a></li>
-            <li class="clickable"><a href="/data_sources/?project_dir={{ project_dir }}">Data sources</a></li>
-            <li class="clickable"><a href="#">Settings</a></li>
-        </ul>
     </div>
     <div class="main-content">
         <h2>Pipeline</h2>
@@ -33,19 +35,23 @@
                 <div data-swapy-slot="{{ action[0] }}-slot">
                     <!-- overflow hidden not working due to data-swapy-->
                     <div class="list-item action" style="overflow: hidden;" data-swapy-item="{{ action[0] }}-item">
-                        {{ action[1] }}
-                        <button class="delete-button" 
-                                onclick="if (confirm('Are you sure you want to delete this action?')) 
-                                        { deletePipelineAction('{{ action[0] }}', '{{ project_dir}}'); }">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                        <form style="display: inline-block;" onsubmit="editPipelineActionOpenModal('{{ action[0] }}', '{{ action[1] }}', this.elements['action'].value, '{{ project_dir }}'); return false;">
-                            <!-- Form is required to escape action[2] (= python code) -->
-                            <input type="hidden" name="action" value="{{ action[2]|escape }}">
-                            <button class="edit-button" type="submit">
-                                <i class="fas fa-edit"></i>
+                        <div>
+                            {{ action[1] }}
+                        </div>
+                        <div>
+                            <form style="display: inline-block;" onsubmit="editPipelineActionOpenModal('{{ action[0] }}', '{{ action[1] }}', this.elements['action'].value, '{{ project_dir }}'); return false;">
+                                <!-- Form is required to escape action[2] (= python code) -->
+                                <input type="hidden" name="action" value="{{ action[2]|escape }}">
+                                <button class="list-edit-btn" type="submit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </form>
+                            <button class="list-delete-btn" 
+                                    onclick="if (confirm('Are you sure you want to delete this action?')) 
+                                            { deletePipelineAction('{{ action[0] }}', '{{ project_dir}}'); }">
+                                <i class="fas fa-trash-alt"></i>
                             </button>
-                        </form>
+                        </div> 
                     </div>
                 </div>
             {% endfor %}
@@ -56,8 +62,9 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('EditActionModal')">&times;</span>
             <form method="post" action="/pipeline/edit_action/" enctype="multipart/form-data">
-                <strong id="modal-action-name"></strong>
-                <br/>
+                <div class="modal-section">
+                    <strong id="modal-action-name"></strong>
+                </div>
                 <input id="project_dir" name="project_dir" type="hidden">
                 <input id="action_id" name="action_id" type="hidden">
                 <label for="action_code">Python Code:</label>

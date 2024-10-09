@@ -5,20 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Table</title>
     <link href="{{ url_for('static', path='css/project_style.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', path='DataTables/datatables.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', path='DataTables/datatables.css') }}" rel="stylesheet" type="text/css">
 </head>
 <body>
     <div class="sidebar">
-        <div class="navigation-btn">
-            <a href="/">Home</a>
+        <div class="sidebar-content">
+            <div class="navigation-btn">
+                <a href="/">Home</a>
+            </div>
+            <h1>Table</h1>
+            <ul>
+                <li class="clickable"><a href="#">Table</a></li>
+                <li class="clickable"><a href="/pipeline/?project_dir={{ project_dir }}">Pipeline</a></li>
+                <li class="clickable"><a href="/data_sources/?project_dir={{ project_dir }}">Data sources</a></li>
+                <li class="clickable"><a href="#">Settings</a></li>
+            </ul>
         </div>
-        <h1>Table</h1>
-        <ul>
-            <li class="clickable"><a href="#">Table</a></li>
-            <li class="clickable"><a href="/pipeline/?project_dir={{ project_dir }}">Pipeline</a></li>
-            <li class="clickable"><a href="/data_sources/?project_dir={{ project_dir }}">Data sources</a></li>
-            <li class="clickable"><a href="#">Settings</a></li>
-        </ul>
     </div>
     <div class="main-content">
         <div id="CreateTable" class="right-sidebar-form">
@@ -28,7 +30,7 @@
 
                 <div class="form-section">
                     <label for="table_name">Table Name:</label>
-                    <textarea id="table_name" name="table_name" required></textarea>
+                    <input id="table_name" name="table_name" required>
                 </div>
 
                 <div class="form-section">
@@ -51,7 +53,7 @@
 
                 <div class="form-section">
                     <label for="add_col_name">Col. Name:</label>
-                    <textarea id="add_col_name" name="col_name" required></textarea>
+                    <input id="add_col_name" name="col_name" required>
                 </div>
                 
                 <div class="form-section">
@@ -70,14 +72,13 @@
 
                 <div class="form-section">
                     <label for="del_col_name">Col. Name:</label>
-                    <textarea id="del_col_name" name="col_name" required></textarea>
+                    <input id="del_col_name" name="col_name" required>
                 </div>
                 
                 <button type="submit" class="right-sidebar-btn">Delete Column</button>
             </form>
         </div>
         
-        <!-- <button onclick="openForm('CreateTable')" class="action-btn">Create Table</button> -->
         <br>
         {% if table %}
             <div style="display: flex; justify-content: center;">
@@ -124,7 +125,7 @@
         <!-- JS scripts -->
         <script src="{{ url_for('static', path='js/style_script.js') }}"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script type="text/javascript" src="{{ url_for('static', path='DataTables/datatables.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', path='DataTables/datatables.js') }}"></script>
         <script src="{{ url_for('static', path='js/table_script.js') }}"></script>
         <script>
             function showTable(tableName) {
