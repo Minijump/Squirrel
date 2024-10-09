@@ -122,6 +122,56 @@ body {
     margin-left: 50px;
 }
 
+.right-sidebar-form .form-section {
+    margin-bottom: 10px;
+}
+.right-sidebar-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 2px;
+    margin-left: 5px;
+}
+.right-sidebar-form textarea {
+    width: 80%;
+    height: 30px; 
+    background-color: var(--structured-color);
+    color: var(--main-text-color);
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    padding: 10px;
+    resize: vertical;
+    margin-left: 10px;
+}
+.right-sidebar-btn {
+    border: 1px solid var(--structure-text-color);
+    background-color: var(--structure-color);
+    color: var(--structure-text-color);
+    padding: 5px;
+    margin: 3px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+.right-sidebar-btn:hover {
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+}
+
+.right-sidebar-select {
+    width: 80%;
+    padding: 5px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    background-color: var(--structure-color);
+    margin-left: 10px;
+    color: var(--structure-text-color);
+}
+.right-sidebar-select option {
+    padding: 5px;
+    background-color: var(--structure-color);
+    color: var(--structure-text-color);
+}
+
 /* --------------------------     KANBAN     -------------------------- */
 .kanban {
     display: flex;

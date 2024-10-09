@@ -25,15 +25,22 @@
             <a href="javascript:void(0)" class="close-btn" onclick="closeForm('CreateTable')">&times;</a>
             <form action="/project/create_table/" method="post">
                 <input type="hidden" name="project_dir" value="{{ project_dir }}">
-                <label for="table_name">Table Name:</label>
-                <input id="table_name" name="table_name" required>
-                <label for="add_col_name">Data source:</label>
-                <select name="data_source_dir" id="data_source">
-                    {% for source in sources %}
-                        <option value="{{ source.directory }}">{{ source.name }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit">Create Table</button>
+
+                <div class="form-section">
+                    <label for="table_name">Table Name:</label>
+                    <textarea id="table_name" name="table_name" required></textarea>
+                </div>
+
+                <div class="form-section">
+                    <label for="data_source">Data Source:</label>
+                    <select name="data_source_dir" id="data_source" class="right-sidebar-select">
+                        {% for source in sources %}
+                            <option value="{{ source.directory }}">{{ source.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="right-sidebar-btn">Create Table</button>
             </form>
         </div>
         <div id="AddColForm" class="right-sidebar-form">
@@ -41,11 +48,18 @@
             <form action="/project/add_column/" method="post">
                 <input type="hidden" name="project_dir" value="{{ project_dir }}">
                 <input id="table_name" name="table_name" type="hidden" required>
-                <label for="add_col_name">Col. Name:</label>
-                <input id="add_col_name" name="col_name" required>
-                <label for="add_col_value">Col. Value:</label>
-                <input id="add_col_value" name="col_value" required>
-                <button type="submit">Add Column</button>
+
+                <div class="form-section">
+                    <label for="add_col_name">Col. Name:</label>
+                    <textarea id="add_col_name" name="col_name" required></textarea>
+                </div>
+                
+                <div class="form-section">
+                    <label for="add_col_value">Col. Value:</label>
+                    <textarea id="add_col_value" name="col_value" required></textarea>
+                </div>
+                
+                <button type="submit" class="right-sidebar-btn">Add Column</button>
             </form>
         </div>
         <div id="DelColForm" class="right-sidebar-form">
@@ -53,13 +67,17 @@
             <form action="/project/del_column/" method="post">
                 <input type="hidden" name="project_dir" value="{{ project_dir }}">
                 <input id="table_name" name="table_name" type="hidden" required>
-                <label for="del_col_name">Col. Name:</label>
-                <input id="del_col_name" name="col_name" required>
-                <button type="submit">Delete Column</button>
+
+                <div class="form-section">
+                    <label for="del_col_name">Col. Name:</label>
+                    <textarea id="del_col_name" name="col_name" required></textarea>
+                </div>
+                
+                <button type="submit" class="right-sidebar-btn">Delete Column</button>
             </form>
         </div>
         
-        <button onclick="openForm('CreateTable')" class="action-btn">Create Table</button>
+        <!-- <button onclick="openForm('CreateTable')" class="action-btn">Create Table</button> -->
         <br>
         {% if table %}
             <div style="display: flex; justify-content: center;">
@@ -70,6 +88,12 @@
                         <button class="action-btn table-btn" onclick="showTable('{{ name }}')">{{ name }}</button>
                     {% endif %}
                 {% endfor %}
+                <button onclick="openForm('CreateTable')" class="action-btn table-btn">
+                    <img
+                        src="{{ url_for('static', path='img/plus_icon.png') }}"
+                        alt="Plus Icon"
+                        style="width: 12px; height: 12px;"/>
+                </button>
             </div>
             {% for name, html_table in table.items() %}
                 <!-- First Table displayed by default (Change this; in case of reload table should not change) -->
