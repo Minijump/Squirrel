@@ -106,7 +106,20 @@
                             <button onclick="openActionForm('AddColForm', '{{ name }}')" class="action-btn">Add Column</button>
                             <button onclick="openActionForm('DelColForm', '{{ name }}')" class="action-btn">Delete Column</button>
                         </div>
-                        {{ html_table|safe }}
+                        <div id="table-html-{{ name }}">
+                            {{ html_table|safe }}
+                        </div>
+                        <div class="pager" data-table="{{ name }}" data-len="{{ table_len.get(name, 0) }}" style="display: flex; justify-content: center;">
+                            <div>
+                                <button class="prev">Previous</button>
+                            </div>
+                            <div id="pager-info-{{ name }}" class="pager-info">
+                                0-10 / {{ table_len.get(name, 0) }}
+                            </div>
+                            <div>
+                                <button class="next">Next</button>
+                            </div>
+                        </div>
                     </div>
             {% endfor %}
         {% else %}
@@ -140,6 +153,42 @@
                     }
                 });
             }
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.pager').forEach(function(pager) {
+                    const tableName = pager.dataset.table;
+                    let currentPage = 0;
+                    const n = 10;
+                    const tableNumLines = pager.dataset.len
+                    
+                    // TODO: Do not recompute everything everytime
+                    function loadPage(page) {
+                        fetch(`/project/page/?project_dir={{ project_dir }}&table_name=${tableName}&page=${page}&n=${n}`)
+                            .then(response => response.text())
+                            .then(data => {
+                                let cleanData = data.replace(/\\n/g, '').replace(/\\/g, '').slice(1, -1);;
+                                document.getElementById(`table-html-${tableName}`).innerHTML = cleanData;
+                                currentPage = page;
+
+                                const startElement = page * n + 1;
+                                const endElement = startElement + n - 1;
+                                document.getElementById(`pager-info-${tableName}`).innerText = `${startElement}-${endElement} / ${tableNumLines}`;
+                            })
+                            .catch(error => console.error('Error:', error));
+                    }
+        
+                    pager.querySelector('.prev').addEventListener('click', function() {
+                        if (currentPage > 0) {
+                            loadPage(currentPage - 1);
+                        }
+                    });
+        
+                    pager.querySelector('.next').addEventListener('click', function() {
+                        loadPage(currentPage + 1);
+                    });
+                });
+            });
         </script>
     </div>
 </body>
