@@ -52,8 +52,9 @@ async def project(request: Request, project_dir: str):
     => Returns a TemplateResponse to display project
     """
     exception = False
-    pipeline = load_pipeline_module(project_dir)
+    dfs = {}
     try:
+        pipeline = load_pipeline_module(project_dir)
         dfs = pipeline.run_pipeline()
     except Exception as e:
         exception = e

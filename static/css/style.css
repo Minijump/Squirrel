@@ -356,3 +356,32 @@ body {
     text-decoration: none;
     cursor: pointer;
 }
+
+/* --------------------------     Table     -------------------------- */
+.df-table{
+    border-collapse: collapse; /*Reduce space between cells*/
+    margin: 25px 0;
+    font-size: 0.9em;
+    min-width: 800px;
+    border-radius: 5px 5px 0 0;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.df-table thead tr {
+    background-color: var(--structure-color);
+    color: var(--structure-text-color);
+    font-weight: bold;
+}
+
+.df-table th, .df-table td {
+    padding: 12px 15px;
+    text-align: left
+}
+
+.df-table tbody tr:nth-of-type(even) {
+    background-color: color-mix(in oklab, var(--main-color) 95%, var(--secondary-color) 5%);
+}
+.df-table tbody tr:last-of-type {
+    border-bottom: 2px solid var(--structure-color); /*Last row border bottom*/
+}
