@@ -91,7 +91,6 @@ Create data analysis pipeline by generating python with a low-code interface.
 5. **Create a new Pull Request**
 
 ### To do MVP
-* Solve perf issues (do not convert all df to html, create table visu(pages), ...)
 * More modular/structured architecture + tests and 'defensive' programming
 * Enable to do wathever you want with python (Give column info (nulls, zeros, unique, ...), delete lines where -, replace col values, ...)
 

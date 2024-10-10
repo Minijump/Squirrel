@@ -153,6 +153,11 @@
                     }
                 });
             }
+
+            function openDelColForm(colName) {
+                openForm('DelColForm');
+                document.getElementById('del_col_name').value = colName;
+            }
         </script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -188,6 +193,18 @@
                         loadPage(currentPage + 1);
                     });
                 });
+
+                // Add delete buttons to column headers
+                document.querySelectorAll('.df-table th').forEach(function(th) {
+                    const colName = th.textContent.trim();
+                    const delButton = document.createElement('button');
+                    delButton.textContent = 'Del';
+                    delButton.onclick = function() {
+                        openDelColForm(colName)
+                    };
+                    th.appendChild(delButton);
+                });
+
             });
         </script>
     </div>
