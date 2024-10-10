@@ -60,18 +60,42 @@ async def project(request: Request, project_dir: str):
         exception = e
     finally:
         table_html = {}
+        table_len = {}
         for name, df in dfs.items():
             if not exception and isinstance(df, pd.DataFrame):
-                table_html[name] = df.to_html(classes='df-table', index=False)
+                table_html[name] = df.head(10).to_html(classes='df-table', index=False)
+                table_len[name] = len(df.index)
 
         sources = get_sources(project_dir)
 
         return templates.TemplateResponse(
             request,
             "project.html",
-            {"table": table_html, "project_dir": project_dir, "sources": sources, "exception": exception}
+            {"table": table_html, "table_len": table_len, "project_dir": project_dir, "sources": sources, "exception": exception}
         )
 
+@router.get("/project/page/")
+async def project_page(request: Request, project_dir: str, table_name: str, page: int, n: int):
+    """
+    Fetch a specific page of the dataframe
+
+    * project_dir(str): The project directory name
+    * table_name(str): The name of the dataframe
+    * page(int): The page number
+    * n(int): Number of rows per page
+
+    => Returns HTML for the specified page of the dataframe
+    """
+    try:
+        pipeline = load_pipeline_module(project_dir)
+        dfs = pipeline.run_pipeline()
+        df = dfs[table_name]
+        start = page * n
+        end = start + n
+        table_html = df.iloc[start:end].to_html(classes='df-table', index=False)
+        return table_html
+    except Exception as e:
+        return str(e)
 
 @router.post("/project/add_column/")
 @action.add
