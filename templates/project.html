@@ -83,16 +83,28 @@
             <div style="display: flex; justify-content: center;">
                 {% for name, html_table in table.items() %}
                     {% if loop.first %}
-                        <button class="action-btn table-btn active" onclick="showTable('{{ name }}')">{{ name }}</button>
+                        <button 
+                            onclick="showTable('{{ name }}')"
+                            class="action-btn table-btn active"  
+                            style="border-top-left-radius: 10px;">
+                                {{ name }}
+                        </button>
                     {% else %}
-                        <button class="action-btn table-btn" onclick="showTable('{{ name }}')">{{ name }}</button>
+                        <button 
+                            onclick="showTable('{{ name }}')" 
+                            class="action-btn table-btn">
+                                {{ name }}
+                        </button>
                     {% endif %}
                 {% endfor %}
-                <button onclick="openForm('CreateTable')" class="action-btn table-btn">
-                    <img
-                        src="{{ url_for('static', path='img/plus_icon.png') }}"
-                        alt="Plus Icon"
-                        style="width: 12px; height: 12px;"/>
+                <button 
+                    onclick="openForm('CreateTable')" 
+                    class="action-btn table-btn" 
+                    style="border-top-right-radius: 10px;">
+                        <img
+                            src="{{ url_for('static', path='img/plus_icon.png') }}"
+                            alt="Plus Icon"
+                            style="width: 12px; height: 12px;"/>
                 </button>
             </div>
             {% for name, html_table in table.items() %}
@@ -111,13 +123,13 @@
                         </div>
                         <div class="pager" data-table="{{ name }}" data-len="{{ table_len.get(name, 0) }}" style="display: flex; justify-content: center;">
                             <div>
-                                <button class="prev">Previous</button>
+                                <button class="prev action-btn">&lt;</button>
                             </div>
-                            <div id="pager-info-{{ name }}" class="pager-info">
+                            <div id="pager-info-{{ name }}" class="pager-info" style="display:flex; align-items: center;">
                                 0-10 / {{ table_len.get(name, 0) }}
                             </div>
                             <div>
-                                <button class="next">Next</button>
+                                <button class="next action-btn">&gt;</button>
                             </div>
                         </div>
                     </div>
@@ -194,7 +206,7 @@
                     });
                 });
 
-                // Add delete buttons to column headers
+                // Add delete buttons to column headers TODO: Call when we use pager
                 document.querySelectorAll('.df-table th').forEach(function(th) {
                     const colName = th.textContent.trim();
                     const delButton = document.createElement('button');

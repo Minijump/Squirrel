@@ -49,10 +49,20 @@ body {
 
 .table-btn {
     margin: 0;
+    border-radius: 0;
+    border-bottom: 0;
+    border-color: var(--secondary-color);
+    /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); */
+}
+.table-btn:hover {
+    border-bottom: 0;
+    transform: scaleY(1.1);
 }
 .active {
     border: 1px solid var(--secondary-color);
+    border-bottom: 0;
     color: var(--secondary-color);
+    transform: scaleY(1.1);
 }
 
 /* --------------------------     MAIN-CONTENT     -------------------------- */
@@ -255,6 +265,11 @@ body {
     margin-left: 5px;
     display: flex;
     justify-content: space-between;
+}
+.list-item:hover {
+    background-color: var(--structure-color);
+    color: var(--structure-text-color);
+    transform: scale(1.001);
 }
 
 .list-delete-btn {
