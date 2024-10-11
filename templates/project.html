@@ -140,6 +140,9 @@
             {% else %}
                 <div class="table-container">
                     NO table yet
+                    <button onclick="openForm('CreateTable')" class="action-btn" >
+                        Create Table
+                    </button>
                 </div>
             {% endif %}
         {% endif %}
@@ -166,9 +169,11 @@
                 });
             }
 
-            function openDelColForm(colName) {
+            function openDelColForm(colName, tableName) {
+                console.log(tableName)
                 openForm('DelColForm');
                 document.getElementById('del_col_name').value = colName;
+                document.querySelector('#DelColForm input[name="table_name"]').value = tableName;
             }
         </script>
         <script>
@@ -211,8 +216,9 @@
                     const colName = th.textContent.trim();
                     const delButton = document.createElement('button');
                     delButton.textContent = 'Del';
+                    const tableName = th.closest('.table-container').id.split('-')[1];
                     delButton.onclick = function() {
-                        openDelColForm(colName)
+                        openDelColForm(colName, tableName);
                     };
                     th.appendChild(delButton);
                 });
