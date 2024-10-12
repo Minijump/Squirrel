@@ -88,8 +88,7 @@ def test_create_table_from_csv(mock_project):
     Test if response contains a Table, with the correct columns
     """ 
     with patch('os.getcwd', return_value=mock_project):     
-        csv_dir = os.path.join("data_sources", "mock_source_csv")
-        response = client.post("/project/create_table", data={"data_source_dir": csv_dir, 'project_dir': mock_project, "table_name": "df"})
+        response = client.post("/project/create_table", data={"data_source_dir": "mock_source_csv", 'project_dir': mock_project, "table_name": "df"})
         assert response.status_code == 200, "Failed to access the create_table endpoint"
         assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
 
