@@ -178,13 +178,27 @@
         </script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                function addDeleteButtons() {
+                    // Add delete buttons to each column
+                    document.querySelectorAll('.df-table th').forEach(function(th) {
+                        const colName = th.textContent.trim();
+                        const delButton = document.createElement('button');
+                        delButton.textContent = 'Del';
+                        const tableName = th.closest('.table-container').id.split('-')[1];
+                        delButton.onclick = function() {
+                            openDelColForm(colName, tableName);
+                        };
+                        th.appendChild(delButton);
+                    });
+                }
+                addDeleteButtons(); // Initial call
+
                 document.querySelectorAll('.pager').forEach(function(pager) {
                     const tableName = pager.dataset.table;
                     let currentPage = 0;
                     const n = 10;
                     const tableNumLines = pager.dataset.len
-                    
-                    // TODO: Do not recompute everything everytime
+
                     function loadPage(page) {
                         fetch(`/project/page/?project_dir={{ project_dir }}&table_name=${tableName}&page=${page}&n=${n}`)
                             .then(response => response.text())
@@ -196,6 +210,7 @@
                                 const startElement = page * n + 1;
                                 const endElement = startElement + n - 1;
                                 document.getElementById(`pager-info-${tableName}`).innerText = `${startElement}-${endElement} / ${tableNumLines}`;
+                                addDeleteButtons();
                             })
                             .catch(error => console.error('Error:', error));
                     }
@@ -209,18 +224,6 @@
                     pager.querySelector('.next').addEventListener('click', function() {
                         loadPage(currentPage + 1);
                     });
-                });
-
-                // Add delete buttons to column headers TODO: Call when we use pager
-                document.querySelectorAll('.df-table th').forEach(function(th) {
-                    const colName = th.textContent.trim();
-                    const delButton = document.createElement('button');
-                    delButton.textContent = 'Del';
-                    const tableName = th.closest('.table-container').id.split('-')[1];
-                    delButton.onclick = function() {
-                        openDelColForm(colName, tableName);
-                    };
-                    th.appendChild(delButton);
                 });
 
             });
