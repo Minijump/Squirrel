@@ -52,17 +52,29 @@ body {
     border-radius: 0;
     border-bottom: 0;
     border-color: var(--secondary-color);
-    /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    min-width: 50px;
 }
 .table-btn:hover {
     border-bottom: 0;
     transform: scaleY(1.1);
 }
 .active {
-    border: 1px solid var(--secondary-color);
     border-bottom: 0;
     color: var(--secondary-color);
     transform: scaleY(1.1);
+}
+
+.table-header-btn {
+    border: 0;
+    background-color: var(--structure-color);
+    color: var(--structure-text-color);
+    cursor: pointer;
+    float: right;
+    font-size: 15px;
+}
+.table-header-btn:hover {
+    color: var(--secondary-color);
 }
 
 /* --------------------------     MAIN-CONTENT     -------------------------- */
@@ -391,7 +403,7 @@ body {
 
 .df-table th, .df-table td {
     padding: 12px 15px;
-    text-align: left
+    text-align: left;
 }
 
 .df-table tbody tr:nth-of-type(even) {
