@@ -100,7 +100,7 @@
                 <button 
                     onclick="openForm('CreateTable')" 
                     class="action-btn table-btn" 
-                    style="border-top-right-radius: 10px;">
+                    style="border-top-right-radius: 10px; min-width: 0;">
                         <img
                             src="{{ url_for('static', path='img/plus_icon.png') }}"
                             alt="Plus Icon"
@@ -183,7 +183,8 @@
                     document.querySelectorAll('.df-table th').forEach(function(th) {
                         const colName = th.textContent.trim();
                         const delButton = document.createElement('button');
-                        delButton.textContent = 'Del';
+                        delButton.className = 'table-header-btn';
+                        delButton.innerHTML = '&middot;&middot;&middot;';
                         const tableName = th.closest('.table-container').id.split('-')[1];
                         delButton.onclick = function() {
                             openDelColForm(colName, tableName);
