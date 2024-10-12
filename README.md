@@ -95,6 +95,6 @@ Create data analysis pipeline by generating python with a low-code interface.
 * Enable to do wathever you want with python (Give column info (nulls, zeros, unique, ...), delete lines where -, replace col values, ...)
 
 ### To do
-* Features ideas: great-expectations unit test, API connection to diff services, Excel functions copy, ...
-* Many others (Do not run all pipeline at each actions, git/github integrations, ...)
-* Buy Microsoft Excel to make sure nobody use that shit anymore
+* Do not run all pipeline at each actions (and for pager, infos, ...)
+* Features ideas: great-expectations unit test, API connection to diff services, Excel functions copy, see what would change if you do an action, git/github integrations ...
+* ...
