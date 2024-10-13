@@ -223,7 +223,10 @@
                     });
         
                     pager.querySelector('.next').addEventListener('click', function() {
-                        loadPage(currentPage + 1);
+                        const lastElement = currentPage * n + n;
+                        if (lastElement < tableNumLines) {
+                            loadPage(currentPage + 1);
+                        }
                     });
                 });
 
