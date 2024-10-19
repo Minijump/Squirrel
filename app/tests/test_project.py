@@ -87,16 +87,15 @@ def test_create_table_from_csv(mock_project):
     Test that the new line was added in python file
     Test if response contains a Table, with the correct columns
     """ 
-    with patch('os.getcwd', return_value=mock_project):     
-        response = client.post("/project/create_table", data={"data_source_dir": "mock_source_csv", 'project_dir': mock_project, "table_name": "df"})
-        assert response.status_code == 200, "Failed to access the create_table endpoint"
-        assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
+    response = client.post("/project/create_table", data={"data_source_dir": "mock_source_csv", 'project_dir': mock_project, "table_name": "df"})
+    assert response.status_code == 200, "Failed to access the create_table endpoint"
+    assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
 
-        pipeline_path = os.path.join(mock_project, "pipeline.py")
-        with open(pipeline_path, 'r') as file:
-            lines = file.readlines()
-            assert any("dfs['df'] = pd.read_csv(" in line for line in lines), "Table not created in pipeline"
+    pipeline_path = os.path.join(mock_project, "pipeline.py")
+    with open(pipeline_path, 'r') as file:
+        lines = file.readlines()
+        assert any("dfs['df'] = pd.read_csv(" in line for line in lines), "Table not created in pipeline"
 
-        assert response.context.get("table"), "Response does not contain a table"
-        assert "mock_name" in response.context.get("table")['df'], "Table 'df' should contain a 'mock_name' column"
-        assert "mock_price" in response.context.get("table")['df'], "Table 'df' should contain a 'mock_price' column"
+    assert response.context.get("table"), "Response does not contain a table"
+    assert "mock_name" in response.context.get("table")['df'], "Table 'df' should contain a 'mock_name' column"
+    assert "mock_price" in response.context.get("table")['df'], "Table 'df' should contain a 'mock_price' column"
