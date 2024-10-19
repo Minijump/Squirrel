@@ -143,7 +143,8 @@ async def create_table(request: Request):
     project_dir = form_data.get("project_dir")
     table_name = form_data.get("table_name")
     data_source_dir = form_data.get("data_source_dir")
-    data_source_dir = os.path.join(os.getcwd(), 'projects', project_dir, 'data_sources', data_source_dir)
+    data_source_dir = os.path.join('projects', project_dir, 'data_sources', data_source_dir)
+    data_source_dir = os.path.relpath(data_source_dir, os.getcwd())
 
     manifest_path = os.path.join(data_source_dir, "__manifest__.json")
     with open(manifest_path, 'r') as file:
