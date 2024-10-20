@@ -72,26 +72,29 @@ async def create_source(request: Request):
 
     => Returns a RedirectResponse to the data source page
     """
-    form_data = await request.form()
-    project_dir = form_data.get("project_dir")
-    source_name = form_data.get("source_name")
-    source_description = form_data.get("source_description")
-    source_type = form_data.get("source_type")
-    source_dir = source_name.replace(" ", "_")
-    source_path = os.path.join(os.getcwd(), "projects", project_dir, "data_sources", source_dir)
+    try:
+        form_data = await request.form()
+        project_dir = form_data.get("project_dir")
+        source_name = form_data.get("source_name")
+        source_description = form_data.get("source_description")
+        source_type = form_data.get("source_type")
+        source_dir = source_name.replace(" ", "_")
+        source_path = os.path.join(os.getcwd(), "projects", project_dir, "data_sources", source_dir)
 
-    if source_type == "csv":
-        if not form_data.get("source_file").filename.endswith('.csv'):
-            return {"message": "File must be a csv file"}
-        await _create_source_base(source_path, source_name, source_description, source_type, source_dir)
-        source_file = form_data.get("source_file")
-        await _create_data_file(source_path, source_file, source_type)
-      
-    if source_type == "xlsx":
-        if not form_data.get("source_file").filename.endswith('.xlsx'):
-            return {"message": "File must be a xlsx file"}
-        await _create_source_base(source_path, source_name, source_description, source_type, source_dir)
-        source_file = form_data.get("source_file")
-        await _create_data_file(source_path, source_file, source_type)
+        if source_type == "csv":
+            if not form_data.get("source_file").filename.endswith('.csv'):
+                return {"message": "File must be a csv file"}
+            await _create_source_base(source_path, source_name, source_description, source_type, source_dir)
+            source_file = form_data.get("source_file")
+            await _create_data_file(source_path, source_file, source_type)
+        
+        if source_type == "xlsx":
+            if not form_data.get("source_file").filename.endswith('.xlsx'):
+                return {"message": "File must be a xlsx file"}
+            await _create_source_base(source_path, source_name, source_description, source_type, source_dir)
+            source_file = form_data.get("source_file")
+            await _create_data_file(source_path, source_file, source_type)
+    except Exception as e:
+        return templates.TemplateResponse(request, "project_error.html", {"exception": str(e), "project_dir": project_dir})
     
     return RedirectResponse(url=f"/data_sources/?project_dir={project_dir}", status_code=303)

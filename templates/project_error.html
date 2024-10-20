@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <link href="{{ url_for('static', path='css/homepage_style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-content">
+            <h1>Error</h1>
+            <ul>
+                <li class="clickable"><a href="/project/?project_dir={{ project_dir }}">Table</a></li>
+                <li class="clickable"><a href="/pipeline/?project_dir={{ project_dir }}">Pipeline</a></li>
+                <li class="clickable"><a href="/data_sources/?project_dir={{ project_dir }}">Data sources</a></li>
+                <li class="clickable"><a href="#">Settings</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="main-content">
+        <p style="color: red;">Error occured: {{ exception }}</p>
+    </div>
+
+    <!-- JS scripts -->
+    <script src="{{ url_for('static', path='js/style_script.js') }}"></script>
+</body>
+</html>
