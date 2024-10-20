@@ -47,4 +47,17 @@ def test_create_project():
             assert os.path.exists(os.path.join(project_dir, "pipeline.py")), "Failed to create project pipeline"
 
             assert str(response.url).endswith(f"/project/?project_dir={project_name_dir}"), "Failed to redirect to project's page"
-    
+
+def test_fail_create_project():
+    """
+    Test if the error page is displayed when the project creation fails due to invalid project name
+    """
+    form_data = {
+        "project_name": "''./\"''", 
+        "project_description": "This is a test for project creation",
+        }
+    with tempfile.TemporaryDirectory() as temp_dir:
+        with patch('os.getcwd', return_value=temp_dir):
+            response = client.post("/create_project/", data=form_data)
+            assert response.status_code == 200, "Unexpected error while failing to create project"
+            assert response.context.get("exception"), "Response does not contain an exception"

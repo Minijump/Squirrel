@@ -48,6 +48,17 @@ def test_project(mock_project):
     assert response.context.get("table"), "Response does not contain a table"
     assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
 
+def test_fail_pipeline(mock_project):
+    """
+    Test if the project endpoint is accessible
+    Test if in case of failing pipeline, page is displayed correctly
+    """
+    with patch("app.routers.project.load_pipeline_module") as mock_load_pipeline_module:
+        mock_load_pipeline_module.side_effect = Exception("Mock exception")
+        response = client.post("/project/?project_dir=" + mock_project)
+        assert response.status_code == 200, "Failed to access the project endpoint"
+        assert response.context.get("exception"), "Response does not contain an exception"
+
 def test_add_del_column(mock_project):
     """
     Test if the add_column endpoint is accessible
