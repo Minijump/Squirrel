@@ -25,7 +25,7 @@ async def data_sources(request: Request, project_dir: str):
         "data_sources.html", 
         {"project_dir": project_dir, "sources": sources})
 
-async def _create_source_base(source_path, source_name, source_description, source_type, directory):
+async def _create_source_base(source_path, source_name, source_description, source_type, source_dir):
     """
     Creates the base structure of a data source
 
@@ -33,7 +33,7 @@ async def _create_source_base(source_path, source_name, source_description, sour
     * source_name(str): The name of the source
     * source_description(str): The description of the source
     * source_type(str): The type of the source
-    * directory(str): The data source directory
+    * source_dir(str): The data source directory
 
     =>
     """
@@ -43,7 +43,7 @@ async def _create_source_base(source_path, source_name, source_description, sour
             "type": source_type,
             "name": source_name,
             "description": source_description,
-            "directory": directory # can use a path from root
+            "directory": source_dir
         }, file)
 
 async def _create_data_file(source_path, source_file, source_type):
@@ -56,7 +56,8 @@ async def _create_data_file(source_path, source_file, source_type):
 
     =>
     """
-    source_file_path = os.path.join(source_path, 'data.' + source_type)
+    data_file_name = 'data.' + source_type
+    source_file_path = os.path.join(source_path, data_file_name)
     with open(source_file_path, 'wb') as file:
         file.write(await source_file.read())
 
@@ -76,20 +77,20 @@ async def create_source(request: Request):
     source_name = form_data.get("source_name")
     source_description = form_data.get("source_description")
     source_type = form_data.get("source_type")
-    directory = source_name.replace(" ", "_")
-    source_path = os.path.join(os.getcwd(), "projects", project_dir, "data_sources", directory)
+    source_dir = source_name.replace(" ", "_")
+    source_path = os.path.join(os.getcwd(), "projects", project_dir, "data_sources", source_dir)
 
     if source_type == "csv":
         if not form_data.get("source_file").filename.endswith('.csv'):
             return {"message": "File must be a csv file"}
-        await _create_source_base(source_path, source_name, source_description, source_type, directory)
+        await _create_source_base(source_path, source_name, source_description, source_type, source_dir)
         source_file = form_data.get("source_file")
         await _create_data_file(source_path, source_file, source_type)
       
     if source_type == "xlsx":
         if not form_data.get("source_file").filename.endswith('.xlsx'):
             return {"message": "File must be a xlsx file"}
-        await _create_source_base(source_path, source_name, source_description, source_type, directory)
+        await _create_source_base(source_path, source_name, source_description, source_type, source_dir)
         source_file = form_data.get("source_file")
         await _create_data_file(source_path, source_file, source_type)
     
