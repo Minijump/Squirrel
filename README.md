@@ -91,7 +91,9 @@ Create data analysis pipeline by generating python with a low-code interface.
 5. **Create a new Pull Request**
 
 ### To do MVP
-* More modular/structured architecture + tests and 'defensive' programming (bad inputs, deal with paths handling,...)
+* tests and 'defensive' programming (bad inputs, deal with paths (relpath),...)
+* More modular/structured architecture 
+* Migration to NextJs for frontend
 * Enable to do wathever you want with python (Give column info (nulls, zeros, unique, ...), delete lines where -, replace col values, ...)
 
 ### To do
