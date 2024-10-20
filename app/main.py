@@ -60,25 +60,28 @@ async def create_project(request: Request):
     project_dir = project_name.lower().replace(" ", "_")
     project_path = os.path.join(os.getcwd(), "projects", project_dir)
 
-    # Create project's folder
-    os.makedirs(project_path, exist_ok=True)
+    try:
+        # Create project's folder
+        os.makedirs(project_path, exist_ok=True)
 
-    # Create project's manifest
-    manifest_path = os.path.join(project_path , "__manifest__.json")
-    manifest_content = { 
-            "name": project_name,
-            "description": project_description,
-            "directory": project_dir
-        }  
-    with open(manifest_path, 'w') as file:
-        json.dump(manifest_content, file, indent=4) 
+        # Create project's manifest
+        manifest_path = os.path.join(project_path , "__manifest__.json")
+        manifest_content = { 
+                "name": project_name,
+                "description": project_description,
+                "directory": project_dir
+            }  
+        with open(manifest_path, 'w') as file:
+            json.dump(manifest_content, file, indent=4) 
 
-    # Create project's data_sources folder
-    os.makedirs(os.path.join(project_path , "data_sources"), exist_ok=True)
+        # Create project's data_sources folder
+        os.makedirs(os.path.join(project_path , "data_sources"), exist_ok=True)
 
-    # Create the pipeline file
-    with open(os.path.join(project_path , "pipeline.py"), 'w') as file:
-        file.write(BASIC_PIPELINE)
+        # Create the pipeline file
+        with open(os.path.join(project_path , "pipeline.py"), 'w') as file:
+            file.write(BASIC_PIPELINE)
+    except Exception as e:
+        return templates.TemplateResponse(request, "homepage_error.html", {"exception": str(e)})
 
     return RedirectResponse(url=f"/project/?project_dir={project_dir}", status_code=303)
 
