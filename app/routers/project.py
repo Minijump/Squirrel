@@ -32,9 +32,9 @@ def get_sources(project_dir):
     => Returns the list of available data sources
     """
     sources = []
-    projects_dir = os.path.join(os.getcwd(), "projects", project_dir, "data_sources")
-    for source in os.listdir(projects_dir):
-        manifest_path = os.path.join(projects_dir, source, "__manifest__.json")
+    project_data_sources_path = os.path.join(os.getcwd(), "projects", project_dir, "data_sources")
+    for source in os.listdir(project_data_sources_path):
+        manifest_path = os.path.join(project_data_sources_path, source, "__manifest__.json")
         with open(manifest_path, 'r') as file:
             manifest_data = json.load(file)
             sources.append(manifest_data)
@@ -143,20 +143,20 @@ async def create_table(request: Request):
     project_dir = form_data.get("project_dir")
     table_name = form_data.get("table_name")
     data_source_dir = form_data.get("data_source_dir")
-    data_source_dir = os.path.join('projects', project_dir, 'data_sources', data_source_dir)
-    data_source_dir = os.path.relpath(data_source_dir, os.getcwd())
+    data_source_path = os.path.join(os.getcwd(), 'projects', project_dir, 'data_sources', data_source_dir)
+    data_source_path = os.path.relpath(data_source_path, os.getcwd()) # Use relative path to enable collaboration
 
-    manifest_path = os.path.join(data_source_dir, "__manifest__.json")
+    manifest_path = os.path.join(data_source_path, "__manifest__.json")
     with open(manifest_path, 'r') as file:
         manifest_data = json.load(file)
 
     if manifest_data["type"] == "csv":
-        csv_path = os.path.join(data_source_dir, "data.csv")
+        csv_path = os.path.join(data_source_path, "data.csv")
         source_name = manifest_data["name"]
         new_code = f"""dfs['{table_name}'] = pd.read_csv(r'{csv_path}')  #sq_action:Create table {table_name} from {source_name}"""
 
     if manifest_data["type"] == "xlsx":
-        xlsx_path = os.path.join(data_source_dir, "data.xlsx")
+        xlsx_path = os.path.join(data_source_path, "data.xlsx")
         source_name = manifest_data["name"]
         new_code = f"""dfs['{table_name}'] = pd.read_excel(r'{xlsx_path}')  #sq_action:Create table {table_name} from '{source_name}'"""
     

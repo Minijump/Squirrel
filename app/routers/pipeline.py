@@ -52,7 +52,7 @@ async def pipeline(request: Request, project_dir: str):
     => Returns a TemplateResponse that displays the pipeline; 
     the actions are displayed with their squirrel name if they have one
     """
-    pipeline_path = os.path.join("projects", project_dir, "pipeline.py")
+    pipeline_path = os.path.join(os.getcwd(), "projects", project_dir, "pipeline.py")
     lines = get_file_lines(pipeline_path)
 
     actions = []
@@ -81,7 +81,7 @@ async def delete_action(request: Request, project_dir: str, delete_action_id: in
 
     => Returns a JSONResponse if OK
     """
-    pipeline_path = os.path.join("projects", project_dir, "pipeline.py")
+    pipeline_path = os.path.join(os.getcwd(), "projects", project_dir, "pipeline.py")
     lines = get_file_lines(pipeline_path)
 
     new_lines = []
@@ -108,7 +108,7 @@ async def confirm_new_order(request: Request, project_dir: str, order: str):
 
     => Returns a JSONResponse if OK
     """
-    pipeline_path = os.path.join("projects", project_dir, "pipeline.py")
+    pipeline_path = os.path.join(os.getcwd(), "projects", project_dir, "pipeline.py")
     lines = get_file_lines(pipeline_path)
 
     new_order = [int(action_str[0]) for action_str in order.split(",")] # the old ids in the new order
@@ -147,7 +147,7 @@ async def edit_action(request: Request):
     action_code = form_data["action_code"]
     project_dir = form_data["project_dir"]
 
-    pipeline_path = os.path.join("projects", project_dir, "pipeline.py")
+    pipeline_path = os.path.join(os.getcwd(), "projects", project_dir, "pipeline.py")
     lines = get_file_lines(pipeline_path)
 
     new_lines = []

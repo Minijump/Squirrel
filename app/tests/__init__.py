@@ -60,4 +60,5 @@ def run_pipeline():
     return dfs""")
 
     # Return the path to the mock project directory
+    # Path to the project, not the directory as it should be: to change
     return str(project_dir)
