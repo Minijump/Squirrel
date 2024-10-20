@@ -6,6 +6,21 @@ import json
 
 from app import app, templates
 
+from app.utils import PIPELINE_START_TAG, PIPELINE_END_TAG, NEW_CODE_TAG
+BASIC_PIPELINE = """
+import pandas as pd
+
+
+def run_pipeline():
+    dfs = {}
+    
+    %s
+    %s
+    %s
+
+    return dfs
+ """ % (PIPELINE_START_TAG, NEW_CODE_TAG, PIPELINE_END_TAG)
+
 
 @app.get("/")
 async def read_root(request: Request):
@@ -19,11 +34,10 @@ async def read_root(request: Request):
     => Returns a TemplateResponse to display homepage
     """
     projects = []
-    base_dir = os.getcwd()
-    projects_dir = os.path.join(base_dir, "projects")
+    projects_path = os.path.join(os.getcwd(), "projects")
 
-    for project in os.listdir(projects_dir):
-        manifest_path = os.path.join(projects_dir, project, "__manifest__.json")
+    for project in os.listdir(projects_path):
+        manifest_path = os.path.join(projects_path, project, "__manifest__.json")
         with open(manifest_path, 'r') as file:
             manifest_data = json.load(file)
             projects.append(manifest_data)
@@ -50,33 +64,21 @@ async def create_project(request: Request):
     os.makedirs(project_path, exist_ok=True)
 
     # Create project's manifest
-    with open(os.path.join(project_path , "__manifest__.json"), 'w') as file:
-        json.dump({
+    manifest_path = os.path.join(project_path , "__manifest__.json")
+    manifest_content = { 
             "name": project_name,
             "description": project_description,
-            "directory": project_dir # can use a path from root
-        }, file)
+            "directory": project_dir
+        }  
+    with open(manifest_path, 'w') as file:
+        json.dump(manifest_content, file, indent=4) 
 
     # Create project's data_sources folder
     os.makedirs(os.path.join(project_path , "data_sources"), exist_ok=True)
 
     # Create the pipeline file
     with open(os.path.join(project_path , "pipeline.py"), 'w') as file:
-        base_pipeline = """
-import pandas as pd
-
-
-def run_pipeline():
-    dfs = {}
-    
-    # Squirrel Pipeline start
-    # Add new code here (keep this comment line)
-    # Squirrel Pipeline end
-
-    # No edit under
-    return dfs
- """
-        file.write(base_pipeline)
+        file.write(BASIC_PIPELINE)
 
     return RedirectResponse(url=f"/project/?project_dir={project_dir}", status_code=303)
 
