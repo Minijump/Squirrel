@@ -12,7 +12,7 @@ def test_get_file_lines(mock_project):
     Test if the get_file_lines function returns the correct number of actions
     Test if their format is ok
     """
-    from app.routers.pipeline import get_file_lines
+    from app.pipelines.routers.pipelines import get_file_lines
     pipeline_path = os.path.join(mock_project, "pipeline.py")
     lines = get_file_lines(pipeline_path)
     actions = [line for line in lines if isinstance(line, tuple)]

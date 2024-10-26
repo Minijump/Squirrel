@@ -15,7 +15,7 @@ def test_load_pipeline_module(mock_project):
     Test if pipeline is loaded correctly 
     Test wether the pipeline is 'runable'
     """
-    from app.routers.project import load_pipeline_module
+    from app.tables.routers.tables import load_pipeline_module
     pipeline = load_pipeline_module(mock_project)
     try:
         dfs = pipeline.run_pipeline()
@@ -28,7 +28,7 @@ def test_get_sources(mock_project):
     """
     Test if the get_sources function returns the correct sources
     """
-    from app.routers.project import get_sources
+    from app.tables.routers.tables import get_sources
     sources = get_sources(mock_project)
     expected_source = {
         "name": "Mock source csv",
@@ -53,7 +53,7 @@ def test_fail_pipeline(mock_project):
     Test if the project endpoint is accessible
     Test if in case of failing pipeline, page is displayed correctly
     """
-    with patch("app.routers.project.load_pipeline_module") as mock_load_pipeline_module:
+    with patch("app.tables.load_pipeline_module") as mock_load_pipeline_module:
         mock_load_pipeline_module.side_effect = Exception("Mock exception")
         response = client.post("/project/?project_dir=" + mock_project)
         assert response.status_code == 200, "Failed to access the project endpoint"
