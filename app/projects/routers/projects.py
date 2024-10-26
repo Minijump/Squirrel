@@ -6,7 +6,7 @@ import json
 
 from app import router, templates
 
-from app.utils import PIPELINE_START_TAG, PIPELINE_END_TAG, NEW_CODE_TAG
+from utils import PIPELINE_START_TAG, PIPELINE_END_TAG, NEW_CODE_TAG
 BASIC_PIPELINE = """
 import pandas as pd
 
@@ -25,7 +25,7 @@ def run_pipeline():
 async def read_root(request: Request):
     """
     This returns the homepage of the application
-    The homepage displays all the 'project' in the ./projects directory, 
+    The homepage displays all the 'project' in the ./_projects directory, 
     informations about a project are read from its manifest
 
     * request
@@ -33,7 +33,7 @@ async def read_root(request: Request):
     => Returns a TemplateResponse to display homepage
     """
     projects = []
-    projects_path = os.path.join(os.getcwd(), "projects")
+    projects_path = os.path.join(os.getcwd(), "_projects")
 
     for project in os.listdir(projects_path):
         manifest_path = os.path.join(projects_path, project, "__manifest__.json")
@@ -41,7 +41,7 @@ async def read_root(request: Request):
             manifest_data = json.load(file)
             projects.append(manifest_data)
 
-    return templates.TemplateResponse(request, "homepage.html", {"projects": projects})
+    return templates.TemplateResponse(request, "projects.html", {"projects": projects})
 
 
 @router.post("/projects/create/")
@@ -57,7 +57,7 @@ async def create_project(request: Request):
     project_name = form_data.get("project_name")
     project_description = form_data.get("project_description")
     project_dir = project_name.lower().replace(" ", "_")
-    project_path = os.path.join(os.getcwd(), "projects", project_dir)
+    project_path = os.path.join(os.getcwd(), "_projects", project_dir)
 
     try:
         # Create project's folder
@@ -80,7 +80,7 @@ async def create_project(request: Request):
         with open(os.path.join(project_path , "pipeline.py"), 'w') as file:
             file.write(BASIC_PIPELINE)
     except Exception as e:
-        return templates.TemplateResponse(request, "homepage_error.html", {"exception": str(e)})
+        return templates.TemplateResponse(request, "projects_error.html", {"exception": str(e)})
 
     return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)
 

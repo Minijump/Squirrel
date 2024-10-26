@@ -80,7 +80,7 @@ async def create_source(request: Request):
         source_description = form_data.get("source_description")
         source_type = form_data.get("source_type")
         source_dir = source_name.replace(" ", "_")
-        source_path = os.path.join(os.getcwd(), "projects", project_dir, "data_sources", source_dir)
+        source_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir)
 
         if source_type == "csv":
             if not form_data.get("source_file").filename.endswith('.csv'):
@@ -96,6 +96,6 @@ async def create_source(request: Request):
             source_file = form_data.get("source_file")
             await _create_data_file(source_path, source_file, source_type)
     except Exception as e:
-        return templates.TemplateResponse(request, "project_error.html", {"exception": str(e), "project_dir": project_dir})
+        return templates.TemplateResponse(request, "tables_error.html", {"exception": str(e), "project_dir": project_dir})
     
     return RedirectResponse(url=f"/data_sources/?project_dir={project_dir}", status_code=303)
