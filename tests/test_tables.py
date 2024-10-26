@@ -5,7 +5,7 @@ import os
 from unittest.mock import patch
 
 from app.main import app
-from app.tests import mock_project
+from tests import mock_project
 
 client = TestClient(app)
 

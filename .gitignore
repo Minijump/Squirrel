@@ -1,7 +1,7 @@
 *.csv
 *.ipynb
-projects/**
-!projects/demo_project/**
+_projects/**
+!_projects/demo_project/**
 *.xml
 *.idea
 .vscode/*

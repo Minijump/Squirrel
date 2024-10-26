@@ -5,7 +5,7 @@ import tempfile
 from unittest.mock import patch
 
 from app.main import app
-from app.tests import mock_project
+from tests import mock_project
 
 client = TestClient(app)
 
@@ -33,7 +33,7 @@ def test_create_project():
     with tempfile.TemporaryDirectory() as temp_dir:
         with patch('os.getcwd', return_value=temp_dir):
             response = client.post("/projects/create/", data=form_data)
-            project_dir = os.path.join(temp_dir, "projects", project_name_dir)
+            project_dir = os.path.join(temp_dir, "_projects", project_name_dir)
 
             assert os.path.exists(project_dir), "Failed to create project directory"
             assert os.path.exists(os.path.join(project_dir, "__manifest__.json")), "Failed to create project manifest"

@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 import os
 
 from app.main import app
-from app.tests import mock_project
+from tests import mock_project
 
 client = TestClient(app)
 
@@ -49,7 +49,7 @@ def test_confirm_new_order(mock_project):
     Test if the confirm_new_order endpoint is accessible
     Test if the actions were reordered in python file
     """
-    pipeline_path = os.path.join("projects", mock_project, "pipeline.py")
+    pipeline_path = os.path.join("_projects", mock_project, "pipeline.py")
     with open(pipeline_path, 'r') as file:
         lines = file.readlines()
         action2_line_id = [i for i, line in enumerate(lines) if 'sq_action: action2' in line][0]
@@ -71,7 +71,7 @@ def test_edit_action(mock_project):
     Test if the edit_action endpoint is accessible
     Test if the action was edited in python file
     """
-    pipeline_path = os.path.join("projects", mock_project, "pipeline.py")
+    pipeline_path = os.path.join("_projects", mock_project, "pipeline.py")
     with open(pipeline_path, 'r') as file:
         lines = file.readlines()
         action1_line = [line for line in lines if 'sq_action: action1' in line][0]

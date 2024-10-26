@@ -8,7 +8,7 @@ def mock_project(tmpdir):
 
     => Returns the path to the mock project directory
     """
-    working_dir = tmpdir.mkdir("projects")
+    working_dir = tmpdir.mkdir("_projects")
     project_dir = working_dir.mkdir("mock_project")
     
     # Create necessary files and directories within the mock project

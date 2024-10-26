@@ -25,7 +25,7 @@ def add(func):
         """        
         form_data = await request.form()
         project_dir = form_data.get("project_dir")
-        pipeline_path = os.path.join(os.getcwd(), "projects", project_dir, "pipeline.py")
+        pipeline_path = os.path.join(os.getcwd(), "_projects", project_dir, "pipeline.py")
 
         # Find the line with the NEW_CODE_TAG, and get the indentation
         with open(pipeline_path, 'r') as file:

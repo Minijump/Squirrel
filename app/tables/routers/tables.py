@@ -5,7 +5,7 @@ import importlib.util
 import pandas as pd
 import json
 
-from app.utils import action
+from utils import action
 from app import router, templates
 
 
@@ -17,7 +17,7 @@ def load_pipeline_module(project_dir):
     
     => Returns the pipeline module
     """
-    pipeline_path = os.path.join( os.getcwd(), "projects", project_dir, "pipeline.py")
+    pipeline_path = os.path.join( os.getcwd(), "_projects", project_dir, "pipeline.py")
     spec = importlib.util.spec_from_file_location("pipeline", pipeline_path)
     pipeline = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(pipeline)
@@ -32,7 +32,7 @@ def get_sources(project_dir):
     => Returns the list of available data sources
     """
     sources = []
-    project_data_sources_path = os.path.join(os.getcwd(), "projects", project_dir, "data_sources")
+    project_data_sources_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources")
     for source in os.listdir(project_data_sources_path):
         manifest_path = os.path.join(project_data_sources_path, source, "__manifest__.json")
         with open(manifest_path, 'r') as file:
@@ -70,7 +70,7 @@ async def tables(request: Request, project_dir: str):
 
         return templates.TemplateResponse(
             request,
-            "project.html",
+            "tables.html",
             {"table": table_html, "table_len": table_len, "project_dir": project_dir, "sources": sources, "exception": exception}
         )
 
@@ -143,7 +143,7 @@ async def create_table(request: Request):
     project_dir = form_data.get("project_dir")
     table_name = form_data.get("table_name")
     data_source_dir = form_data.get("data_source_dir")
-    data_source_path = os.path.join(os.getcwd(), 'projects', project_dir, 'data_sources', data_source_dir)
+    data_source_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', data_source_dir)
     data_source_path = os.path.relpath(data_source_path, os.getcwd()) # Use relative path to enable collaboration
 
     manifest_path = os.path.join(data_source_path, "__manifest__.json")

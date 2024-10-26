@@ -69,7 +69,7 @@ Create data analysis pipeline by generating python with a low-code interface.
 
 1. **Run the unit tests:**
     ```sh
-    pytest ./app/tests
+    pytest ./tests
     ```
 ### Contributing
 
@@ -93,6 +93,8 @@ Create data analysis pipeline by generating python with a low-code interface.
 ### To do MVP
 * More modular/structured architecture
 * Migration to NextJs for frontend
+* Data export (csv)
+* Deal with async
 * Improve unit tests and defensive programming
 * Complete README
 * Enable to do wathever you want with python (Give column info (nulls, zeros, unique, ...), delete lines where -, replace col values, ...)
@@ -100,5 +102,5 @@ Create data analysis pipeline by generating python with a low-code interface.
 ### To do
 * Odoo module: ease import process
 * Do not run all pipeline at each actions (and for pager, infos, ...)
-* Features ideas: great-expectations unit test, API connection to diff services, Excel functions copy, see what would change if you do an action, git/github integrations ...
+* Features ideas: great-expectations unit test, API connection to diff services, Excel functions copy, see what would change if you do an action, see what changed at each action (run a script on pipeline + see diffs), git/github integrations, multiple pipelines, export as jupyter ...
 * ...
