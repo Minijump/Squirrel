@@ -94,9 +94,11 @@ Create data analysis pipeline by generating python with a low-code interface.
 * More modular/structured architecture
 * Migration to NextJs for frontend
 * Improve unit tests and defensive programming
+* Complete README
 * Enable to do wathever you want with python (Give column info (nulls, zeros, unique, ...), delete lines where -, replace col values, ...)
 
 ### To do
+* Odoo module: ease import process
 * Do not run all pipeline at each actions (and for pager, infos, ...)
 * Features ideas: great-expectations unit test, API connection to diff services, Excel functions copy, see what would change if you do an action, git/github integrations ...
 * ...
