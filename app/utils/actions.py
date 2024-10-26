@@ -48,7 +48,7 @@ def add(func):
         with open(pipeline_path, 'w') as file:
             file.write(new_pipeline_code)
         
-        return RedirectResponse(url=f"/project/?project_dir={project_dir}", status_code=303)                                                    
+        return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)                                                    
     return wrapper
 
 action = type('action', (object,), {'add': add})

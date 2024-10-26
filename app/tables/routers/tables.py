@@ -40,9 +40,9 @@ def get_sources(project_dir):
             sources.append(manifest_data)
     return sources
 
-@router.post("/project/")
-@router.get("/project/")
-async def project(request: Request, project_dir: str):
+@router.post("/tables/")
+@router.get("/tables/")
+async def tables(request: Request, project_dir: str):
     """
     Run the pipeline contained in the project directory and display the result
 
@@ -74,8 +74,8 @@ async def project(request: Request, project_dir: str):
             {"table": table_html, "table_len": table_len, "project_dir": project_dir, "sources": sources, "exception": exception}
         )
 
-@router.get("/project/page/")
-async def project_page(request: Request, project_dir: str, table_name: str, page: int, n: int):
+@router.get("/tables/pager/")
+async def tables_pager(request: Request, project_dir: str, table_name: str, page: int, n: int):
     """
     Fetch a specific page of the dataframe
 
@@ -97,7 +97,7 @@ async def project_page(request: Request, project_dir: str, table_name: str, page
     except Exception as e:
         return str(e)
 
-@router.post("/project/add_column/")
+@router.post("/tables/add_column/")
 @action.add
 async def add_column(request: Request):
     """
@@ -113,7 +113,7 @@ async def add_column(request: Request):
     new_code = f"""dfs['{table_name}']['{col_name}'] = {form_data.get('col_value')}  #sq_action:Add column {col_name} on table {table_name}"""
     return new_code
 
-@router.post("/project/del_column/")
+@router.post("/tables/del_column/")
 @action.add
 async def del_column(request: Request):
     """
@@ -129,7 +129,7 @@ async def del_column(request: Request):
     new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].drop(columns=['{col_name}'])  #sq_action:Delete column {col_name} on table {table_name}"""
     return new_code
 
-@router.post("/project/create_table/")
+@router.post("/tables/create_table/")
 @action.add
 async def create_table(request: Request):
     """
