@@ -24,7 +24,7 @@
     <div class="main-content">
         <div id="CreateTable" class="right-sidebar-form">
             <a href="javascript:void(0)" class="close-btn" onclick="closeForm('CreateTable')">&times;</a>
-            <form action="/project/create_table/" method="post">
+            <form action="/tables/create_table/" method="post">
                 <input type="hidden" name="project_dir" value="{{ project_dir }}">
 
                 <div class="form-section">
@@ -46,7 +46,7 @@
         </div>
         <div id="AddColForm" class="right-sidebar-form">
             <a href="javascript:void(0)" class="close-btn" onclick="closeForm('AddColForm')">&times;</a>
-            <form action="/project/add_column/" method="post">
+            <form action="/tables/add_column/" method="post">
                 <input type="hidden" name="project_dir" value="{{ project_dir }}">
                 <input id="table_name" name="table_name" type="hidden" required>
 
@@ -65,7 +65,7 @@
         </div>
         <div id="DelColForm" class="right-sidebar-form">
             <a href="javascript:void(0)" class="close-btn" onclick="closeForm('DelColForm')">&times;</a>
-            <form action="/project/del_column/" method="post">
+            <form action="/tables/del_column/" method="post">
                 <input type="hidden" name="project_dir" value="{{ project_dir }}">
                 <input id="table_name" name="table_name" type="hidden" required>
 
@@ -201,7 +201,7 @@
                     const tableNumLines = pager.dataset.len
 
                     function loadPage(page) {
-                        fetch(`/project/page/?project_dir={{ project_dir }}&table_name=${tableName}&page=${page}&n=${n}`)
+                        fetch(`/tables/pager/?project_dir={{ project_dir }}&table_name=${tableName}&page=${page}&n=${n}`)
                             .then(response => response.text())
                             .then(data => {
                                 let cleanData = data.replace(/\\n/g, '').replace(/\\/g, '').slice(1, -1);;

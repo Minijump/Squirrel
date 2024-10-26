@@ -38,25 +38,25 @@ def test_get_sources(mock_project):
     }
     assert expected_source in sources, "Expected one mock source csv"
 
-def test_project(mock_project):
+def test_tables(mock_project):
     """
-    Test if the project endpoint is accessible
+    Test if the table endpoint is accessible
     Test if the response contains a table and the correct project_dir
     """
-    response = client.post("/project/?project_dir=" + mock_project)
-    assert response.status_code == 200, "Failed to access the project endpoint"
+    response = client.post("/tables/?project_dir=" + mock_project)
+    assert response.status_code == 200, "Failed to access the table endpoint"
     assert response.context.get("table"), "Response does not contain a table"
     assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
 
 def test_fail_pipeline(mock_project):
     """
-    Test if the project endpoint is accessible
+    Test if the table endpoint is accessible
     Test if in case of failing pipeline, page is displayed correctly
     """
     with patch("app.tables.load_pipeline_module") as mock_load_pipeline_module:
         mock_load_pipeline_module.side_effect = Exception("Mock exception")
-        response = client.post("/project/?project_dir=" + mock_project)
-        assert response.status_code == 200, "Failed to access the project endpoint"
+        response = client.post("/tables/?project_dir=" + mock_project)
+        assert response.status_code == 200, "Failed to access the table endpoint"
         assert response.context.get("exception"), "Response does not contain an exception"
 
 def test_add_del_column(mock_project):
@@ -70,7 +70,7 @@ def test_add_del_column(mock_project):
     Test that the new line was added in python file
     """
     # Test add_column
-    response = client.post("/project/add_column", data={"col_name": "test_add_del_column", "col_value": "1", 'project_dir': mock_project, "table_name": "df"})
+    response = client.post("/tables/add_column", data={"col_name": "test_add_del_column", "col_value": "1", 'project_dir': mock_project, "table_name": "df"})
     assert response.status_code == 200, "Failed to access the add_column endpoint"
     assert response.context.get("table"), "Response does not contain a table"
     assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
@@ -81,7 +81,7 @@ def test_add_del_column(mock_project):
         assert any("dfs['df']['test_add_del_column'] = 1" in line for line in lines), "Column not added to pipeline"
 
     # Test del_column
-    response = client.post("/project/del_column", data={"col_name": "test_add_del_column", 'project_dir': mock_project, "table_name": "df"})
+    response = client.post("/tables/del_column", data={"col_name": "test_add_del_column", 'project_dir': mock_project, "table_name": "df"})
     assert response.status_code == 200, "Failed to access the del_column endpoint"
     assert response.context.get("table"), "Response does not contain a table"
     assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
@@ -98,7 +98,7 @@ def test_create_table_from_csv(mock_project):
     Test that the new line was added in python file
     Test if response contains a Table, with the correct columns
     """ 
-    response = client.post("/project/create_table", data={"data_source_dir": "mock_source_csv", 'project_dir': mock_project, "table_name": "df"})
+    response = client.post("/tables/create_table", data={"data_source_dir": "mock_source_csv", 'project_dir': mock_project, "table_name": "df"})
     assert response.status_code == 200, "Failed to access the create_table endpoint"
     assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
 

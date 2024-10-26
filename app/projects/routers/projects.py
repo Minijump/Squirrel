@@ -21,8 +21,30 @@ def run_pipeline():
     return dfs
  """ % (PIPELINE_START_TAG, NEW_CODE_TAG, PIPELINE_END_TAG)
 
+@router.get("/projects/")
+async def read_root(request: Request):
+    """
+    This returns the homepage of the application
+    The homepage displays all the 'project' in the ./projects directory, 
+    informations about a project are read from its manifest
 
-@router.post("/create_project/")
+    * request
+
+    => Returns a TemplateResponse to display homepage
+    """
+    projects = []
+    projects_path = os.path.join(os.getcwd(), "projects")
+
+    for project in os.listdir(projects_path):
+        manifest_path = os.path.join(projects_path, project, "__manifest__.json")
+        with open(manifest_path, 'r') as file:
+            manifest_data = json.load(file)
+            projects.append(manifest_data)
+
+    return templates.TemplateResponse(request, "homepage.html", {"projects": projects})
+
+
+@router.post("/projects/create/")
 async def create_project(request: Request):
     """
     Create a new project
@@ -60,10 +82,10 @@ async def create_project(request: Request):
     except Exception as e:
         return templates.TemplateResponse(request, "homepage_error.html", {"exception": str(e)})
 
-    return RedirectResponse(url=f"/project/?project_dir={project_dir}", status_code=303)
+    return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)
 
 
-@router.post("/open_project/")
+@router.post("/projects/open/")
 async def open_project(request: Request):
     """ 
     This function is called when a user clicks on a project in the homepage, it redirects the correct project page
@@ -73,5 +95,5 @@ async def open_project(request: Request):
     => Returns a RedirectResponse to the project page
     """
     form_data = await request.form()
-    project_dir = form_data.get("project_directory")
-    return RedirectResponse(url=f"/project/?project_dir={project_dir}", status_code=303)
+    project_dir = form_data.get("project_dir")
+    return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)
