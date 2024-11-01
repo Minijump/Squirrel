@@ -8,6 +8,8 @@ import json
 from utils import action
 from app import router, templates
 
+from app.data_sources.routers.data_sources import get_sources
+
 
 def load_pipeline_module(project_dir):
     """
@@ -22,23 +24,6 @@ def load_pipeline_module(project_dir):
     pipeline = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(pipeline)
     return pipeline
-
-def get_sources(project_dir):
-    """
-    Returns the list of data sources in the project
-
-    * project_dir(str): The project directory name
-    
-    => Returns the list of available data sources
-    """
-    sources = []
-    project_data_sources_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources")
-    for source in os.listdir(project_data_sources_path):
-        manifest_path = os.path.join(project_data_sources_path, source, "__manifest__.json")
-        with open(manifest_path, 'r') as file:
-            manifest_data = json.load(file)
-            sources.append(manifest_data)
-    return sources
 
 @router.post("/tables/")
 @router.get("/tables/")
@@ -66,7 +51,7 @@ async def tables(request: Request, project_dir: str):
                 table_html[name] = df.head(10).to_html(classes='df-table', index=False)
                 table_len[name] = len(df.index)
 
-        sources = get_sources(project_dir)
+        sources = await get_sources(project_dir)
 
         return templates.TemplateResponse(
             request,

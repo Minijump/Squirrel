@@ -3,11 +3,28 @@ from fastapi.responses import RedirectResponse
 
 import os
 import json
+import traceback
 
 from app import router, templates
-from app.tables.routers.tables import get_sources
+from app.data_sources.models import DATA_SOURCE_REGISTRY
 
 
+async def get_sources(project_dir):
+    """
+    Returns the list of data sources in the project
+
+    * project_dir(str): The project directory name
+    
+    => Returns the list of available data sources
+    """
+    sources = []
+    project_data_sources_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources")
+    for source in os.listdir(project_data_sources_path):
+        manifest_path = os.path.join(project_data_sources_path, source, "__manifest__.json")
+        with open(manifest_path, 'r') as file:
+            manifest_data = json.load(file)
+            sources.append(manifest_data)
+    return sources
 
 @router.get("/data_sources")
 async def data_sources(request: Request, project_dir: str):
@@ -20,82 +37,41 @@ async def data_sources(request: Request, project_dir: str):
 
     => Returns a TemplateResponse to display data_sources page
     """
-    sources = get_sources(project_dir)
-    return templates.TemplateResponse(
-        request, 
-        "data_sources.html", 
-        {"project_dir": project_dir, "sources": sources})
+    try:
+        sources = await get_sources(project_dir)
+        return templates.TemplateResponse(
+            request, 
+            "data_sources.html", 
+            {
+                "project_dir": project_dir, 
+                "sources": sources,
+                "DATA_SOURCE_REGISTRY": DATA_SOURCE_REGISTRY})
 
-async def _create_source_base(source_path, source_name, source_description, source_type, source_dir):
-    """
-    Creates the base structure of a data source
-
-    * source_path(str): The path to the source
-    * source_name(str): The name of the source
-    * source_description(str): The description of the source
-    * source_type(str): The type of the source
-    * source_dir(str): The data source directory
-
-    =>
-    """
-    os.makedirs(source_path, exist_ok=True)
-    with open(os.path.join(source_path, "__manifest__.json"), 'w') as file:
-        json.dump({
-            "type": source_type,
-            "name": source_name,
-            "description": source_description,
-            "directory": source_dir
-        }, file)
-
-async def _create_data_file(source_path, source_file, source_type):
-    """
-    Creates (copy) the data file for the source
-
-    * source_path(str): The path to the source
-    * source_file: The file object
-    * source_type(str): The type of the source
-
-    =>
-    """
-    data_file_name = 'data.' + source_type
-    source_file_path = os.path.join(source_path, data_file_name)
-    with open(source_file_path, 'wb') as file:
-        file.write(await source_file.read())
+    except Exception as e:
+        traceback.print_exc()
+        return templates.TemplateResponse(request, "tables_error.html", {"exception": str(e), "project_dir": project_dir})
 
 @router.post("/create_source/")
 async def create_source(request: Request):
     """
     Create of a new data source
 
-    * request contains: - project_dir, source_type, source_description and source_name
-                        - it also contains other infos specific to the type of source
-                           ie: source_file for csv and xlsx
+    * request: contains the form data, required to create the source
 
     => Returns a RedirectResponse to the data source page
     """
     try:
         form_data = await request.form()
         project_dir = form_data.get("project_dir")
-        source_name = form_data.get("source_name")
-        source_description = form_data.get("source_description")
         source_type = form_data.get("source_type")
-        source_dir = source_name.replace(" ", "_")
-        source_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir)
 
-        if source_type == "csv":
-            if not form_data.get("source_file").filename.endswith('.csv'):
-                return {"message": "File must be a csv file"}
-            await _create_source_base(source_path, source_name, source_description, source_type, source_dir)
-            source_file = form_data.get("source_file")
-            await _create_data_file(source_path, source_file, source_type)
-        
-        if source_type == "xlsx":
-            if not form_data.get("source_file").filename.endswith('.xlsx'):
-                return {"message": "File must be a xlsx file"}
-            await _create_source_base(source_path, source_name, source_description, source_type, source_dir)
-            source_file = form_data.get("source_file")
-            await _create_data_file(source_path, source_file, source_type)
+        SourceClass = DATA_SOURCE_REGISTRY[source_type]
+        SourceClass.check_available_infos(form_data)
+        source = await SourceClass._create_source(form_data)
+        await source._create_data_file(form_data)
+
+        return RedirectResponse(url=f"/data_sources/?project_dir={project_dir}", status_code=303)
+
     except Exception as e:
+        traceback.print_exc()
         return templates.TemplateResponse(request, "tables_error.html", {"exception": str(e), "project_dir": project_dir})
-    
-    return RedirectResponse(url=f"/data_sources/?project_dir={project_dir}", status_code=303)

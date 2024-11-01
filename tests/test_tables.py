@@ -24,20 +24,6 @@ def test_load_pipeline_module(mock_project):
     # check that dfs is a dictionarry of dataframes
     assert isinstance(dfs, dict) and isinstance(dfs['df'], pd.DataFrame), "'run_pipeline' response should be a dictionary"
 
-def test_get_sources(mock_project):
-    """
-    Test if the get_sources function returns the correct sources
-    """
-    from app.tables.routers.tables import get_sources
-    sources = get_sources(mock_project)
-    expected_source = {
-        "name": "Mock source csv",
-        "type": "csv",
-        "description": "a mock csv source",
-        "directory": "mock_source_csv"
-    }
-    assert expected_source in sources, "Expected one mock source csv"
-
 def test_tables(mock_project):
     """
     Test if the table endpoint is accessible

@@ -4,11 +4,27 @@ import pandas as pd
 import os
 import tempfile
 from unittest.mock import patch
+import pytest
 
 from app.main import app
 from tests import mock_project
 
 client = TestClient(app)
+
+@pytest.mark.asyncio
+async def test_get_sources(mock_project):
+    """
+    Test if the get_sources function returns the correct sources
+    """
+    from app.data_sources.routers.data_sources import get_sources
+    sources = await get_sources(mock_project)
+    expected_source = {
+        "name": "Mock source csv",
+        "type": "csv",
+        "description": "a mock csv source",
+        "directory": "mock_source_csv"
+    }
+    assert expected_source in sources, "Expected one mock source csv"
 
 def test_data_sources(mock_project):
     """
