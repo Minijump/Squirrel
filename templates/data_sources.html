@@ -55,8 +55,9 @@
                 <div class="modal-section">
                     <label for="source_type">Type:</label>
                     <select id="source_type" name="source_type" class="modal-content-select" required>
-                        <option value="csv">CSV</option>
-                        <option value="xlsx">XLSX</option>
+                        {% for short_name, cls in DATA_SOURCE_REGISTRY.items() %}
+                            <option value="{{ short_name }}">{{ cls.display_name }}</option>
+                        {% endfor %}
                     </select>
                     <input id="source_file" name="source_file" type="file" style="margin-left: 5px;" required>
                 </div>
