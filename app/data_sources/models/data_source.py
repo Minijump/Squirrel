@@ -60,7 +60,7 @@ class DataSource:
         source_dir = form_data.get("source_name").replace(" ", "_")
         source_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir)
 
-        os.makedirs(source_path, exist_ok=True)
+        os.makedirs(source_path)
         with open(os.path.join(source_path, "__manifest__.json"), 'w') as file:
             json.dump(manifest, file, indent=4)
 
