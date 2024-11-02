@@ -15,7 +15,7 @@ def run_pipeline():
     return dfs
 """ % (PIPELINE_START_TAG, NEW_CODE_TAG, PIPELINE_END_TAG)
 
-# TODO: add decorator; project type (here it would be "standard"?)
+# TODO: add decorator; project_type (+ project type in manifest; here = standard?)
 class Project:
     def __init__(self, name, description, form_data=False):
         self.name = name

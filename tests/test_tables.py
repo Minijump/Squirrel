@@ -29,7 +29,7 @@ def test_tables(mock_project):
     Test if the table endpoint is accessible
     Test if the response contains a table and the correct project_dir
     """
-    response = client.post("/tables/?project_dir=" + mock_project)
+    response = client.get("/tables/?project_dir=" + mock_project)
     assert response.status_code == 200, "Failed to access the table endpoint"
     assert response.context.get("table"), "Response does not contain a table"
     assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
@@ -41,7 +41,7 @@ def test_fail_pipeline(mock_project):
     """
     with patch("app.tables.load_pipeline_module") as mock_load_pipeline_module:
         mock_load_pipeline_module.side_effect = Exception("Mock exception")
-        response = client.post("/tables/?project_dir=" + mock_project)
+        response = client.get("/tables/?project_dir=" + mock_project)
         assert response.status_code == 200, "Failed to access the table endpoint"
         assert response.context.get("exception"), "Response does not contain an exception"
 

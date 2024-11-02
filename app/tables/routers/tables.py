@@ -4,12 +4,13 @@ import os
 import importlib.util
 import pandas as pd
 import json
+import traceback
 
 from utils import action
 from app import router, templates
 
 from app.data_sources.routers.data_sources import get_sources
-
+from app.data_sources.models.data_source import DATA_SOURCE_REGISTRY
 
 def load_pipeline_module(project_dir):
     """
@@ -25,7 +26,6 @@ def load_pipeline_module(project_dir):
     spec.loader.exec_module(pipeline)
     return pipeline
 
-@router.post("/tables/")
 @router.get("/tables/")
 async def tables(request: Request, project_dir: str):
     """
@@ -80,7 +80,8 @@ async def tables_pager(request: Request, project_dir: str, table_name: str, page
         table_html = df.iloc[start:end].to_html(classes='df-table', index=False)
         return table_html
     except Exception as e:
-        return str(e)
+        traceback.print_exc()
+        return templates.TemplateResponse(request, "tables_error.html", {"exception": str(e), "project_dir": project_dir})
 
 @router.post("/tables/add_column/")
 @action.add
@@ -120,29 +121,21 @@ async def create_table(request: Request):
     """
     Create a new dataframe
 
-    * form_data contains: data_source_dir, project_dir
+    * form_data
     
-    =>
+    => Returns a string representing the code to create the dataframe
     """
     form_data = await request.form()
-    project_dir = form_data.get("project_dir")
-    table_name = form_data.get("table_name")
-    data_source_dir = form_data.get("data_source_dir")
-    data_source_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', data_source_dir)
-    data_source_path = os.path.relpath(data_source_path, os.getcwd()) # Use relative path to enable collaboration
+    data_source_path = os.path.relpath(
+        os.path.join(os.getcwd(), '_projects', form_data.get("project_dir"), 'data_sources', form_data.get("data_source_dir")), 
+        os.getcwd()) # Use relative path to enable collaboration
 
     manifest_path = os.path.join(data_source_path, "__manifest__.json")
     with open(manifest_path, 'r') as file:
         manifest_data = json.load(file)
 
-    if manifest_data["type"] == "csv":
-        csv_path = os.path.join(data_source_path, "data.csv")
-        source_name = manifest_data["name"]
-        new_code = f"""dfs['{table_name}'] = pd.read_csv(r'{csv_path}')  #sq_action:Create table {table_name} from {source_name}"""
-
-    if manifest_data["type"] == "xlsx":
-        xlsx_path = os.path.join(data_source_path, "data.xlsx")
-        source_name = manifest_data["name"]
-        new_code = f"""dfs['{table_name}'] = pd.read_excel(r'{xlsx_path}')  #sq_action:Create table {table_name} from '{source_name}'"""
+    SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
+    source = SourceClass(manifest_data, form_data)
+    new_code = source.create_table(form_data)
     
     return new_code
