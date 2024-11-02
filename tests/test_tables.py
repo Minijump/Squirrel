@@ -96,3 +96,13 @@ def test_create_table_from_csv(mock_project):
     assert response.context.get("table"), "Response does not contain a table"
     assert "mock_name" in response.context.get("table")['df'], "Table 'df' should contain a 'mock_name' column"
     assert "mock_price" in response.context.get("table")['df'], "Table 'df' should contain a 'mock_price' column"
+
+def test_tables_pager(mock_project):
+    """
+    Test if the table pager is working correctly
+    """
+    response = client.get("/tables/?project_dir="+mock_project+"&table_name=df&page=1")
+    assert response.status_code == 200, "Failed to access the table endpoint"
+    assert response.context.get("table"), "Response does not contain a table"
+    assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
+    assert "table" in response.context, "Table pager does not return an html table"
