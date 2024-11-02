@@ -14,8 +14,7 @@ def test_open_project(mock_project):
     Test if the open_project endpoint is accessible
     Test if the response contains a table
     """
-    form_data = {"project_dir": mock_project}
-    response = client.post("/projects/open/", data=form_data)
+    response = client.get(f"/projects/open/?project_dir={mock_project}")
     assert response.status_code == 200, "Failed to access the open_project endpoint"
     assert response.context.get("table"), "Response does not contain a table"
     assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
