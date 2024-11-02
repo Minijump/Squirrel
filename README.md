@@ -91,13 +91,10 @@ Create data analysis pipeline by generating python with a low-code interface.
 5. **Create a new Pull Request**
 
 ### To do MVP
-* More modular/structured architecture
 * Migration to NextJs for frontend
-* Data export (csv)
-* Deal with async
 * Improve unit tests and defensive programming
+* Enable to do wathever you want with python (Give column info (nulls, zeros, unique, ...), delete lines where -, replace col values, Data export (csv), ...)
 * Complete README
-* Enable to do wathever you want with python (Give column info (nulls, zeros, unique, ...), delete lines where -, replace col values, ...)
 
 ### To do
 * Odoo module: ease import process

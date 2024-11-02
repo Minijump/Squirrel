@@ -7,8 +7,6 @@ import traceback
 from app import router, templates
 from utils import PIPELINE_START_TAG, PIPELINE_END_TAG, NEW_CODE_TAG
 
-# TODO : Create models (wait for concrete usecases)
-
 async def get_file_lines(file_path):
     """
     Returns the lines contained in the file at file_path

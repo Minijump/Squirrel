@@ -65,7 +65,6 @@ async def open_project(request: Request):
     """
     try:
         project_dir = request.query_params.get("project_dir")
-        # TODO: investigate passing all project objext instead of just the directory (less dynamic????)
         return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)
     except Exception as e:
         traceback.print_exc()

@@ -9,7 +9,7 @@ class DataSourceXLSX(DataSource):
 
     def __init__(self, manifest, form_data):
         super().__init__(manifest)
-        self.source_file = form_data['source_file']
+        self.source_file = form_data.get('source_file')
 
     @staticmethod
     def check_available_infos(form_data):
@@ -39,3 +39,13 @@ class DataSourceXLSX(DataSource):
         source_file_path = os.path.join(source_path, data_file_name)
         with open(source_file_path, 'wb') as file:
             file.write(await self.source_file.read())
+
+    def create_table(self, form_data):
+        """
+        Return the code to read data file
+        """
+        project_dir = form_data.get("project_dir")
+        data_file_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', self.directory, 'data.xlsx')
+        data_file_path = os.path.relpath(data_file_path, os.getcwd())
+        table_name = form_data.get("table_name")
+        return f"dfs['{table_name}'] = pd.read_excel(r'{data_file_path}')  #sq_action:Create table {table_name} from {self.name}"

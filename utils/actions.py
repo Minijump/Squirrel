@@ -8,7 +8,6 @@ NEW_CODE_TAG = "# Add new code here (keep this comment line)"
 PIPELINE_START_TAG = "# Squirrel Pipeline start"
 PIPELINE_END_TAG = "# Squirrel Pipeline end"
 
-# TODO: decorators loaded at the begining=> save all available actions in a list??
 def add(func):
     @wraps(func)
     async def wrapper(request: Request, *args, **kwargs):
