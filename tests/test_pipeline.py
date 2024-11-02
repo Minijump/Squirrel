@@ -4,17 +4,19 @@ import os
 
 from app.main import app
 from tests import mock_project
+import pytest
 
 client = TestClient(app)
 
-def test_get_file_lines(mock_project):
+@pytest.mark.asyncio
+async def test_get_file_lines(mock_project):
     """
     Test if the get_file_lines function returns the correct number of actions
     Test if their format is ok
     """
     from app.pipelines.routers.pipelines import get_file_lines
     pipeline_path = os.path.join(mock_project, "pipeline.py")
-    lines = get_file_lines(pipeline_path)
+    lines = await get_file_lines(pipeline_path)
     actions = [line for line in lines if isinstance(line, tuple)]
     assert len(actions) == 2, "File should contain 2 actions"
     assert len(actions[0]) == 2, "Actions should be a tuple with following structure: (action_id, action_line(s)))"
@@ -24,7 +26,7 @@ def test_pipeline(mock_project):
     Test if the pipeline endpoint is accessible
     Test if the response contains 2 actions
     """
-    response = client.post("/pipeline/?project_dir="+ mock_project)
+    response = client.get("/pipeline/?project_dir="+ mock_project)
     assert response.status_code == 200, "Failed to access the pipeline endpoint"
     assert len(response.context.get("actions")) == 2, "Response does not contain 2 actions"
 
@@ -34,13 +36,13 @@ def test_delete_action(mock_project):
     Test if the delete_action endpoint is accessible
     Test if the action was deleted in python file
     """
-    before_delete_response = client.post("/pipeline/?project_dir="+ mock_project)
+    before_delete_response = client.get("/pipeline/?project_dir="+ mock_project)
     assert len(before_delete_response.context.get("actions")) == 2, "Response should contains 2 actions before deletion"
 
     response = client.post("/pipeline/delete_action/?project_dir="+ mock_project + "&delete_action_id=0")
     assert response.status_code == 200, "Failed to access the delete_action endpoint"
 
-    after_delete_response = client.post("/pipeline/?project_dir="+ mock_project)
+    after_delete_response = client.get("/pipeline/?project_dir="+ mock_project)
     assert len(after_delete_response.context.get("actions")) == 1, "Response should contains only 1 action after deletion"
 
 def test_confirm_new_order(mock_project):
