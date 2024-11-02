@@ -8,7 +8,7 @@ import pytest
 
 client = TestClient(app)
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="function")
 async def test_get_file_lines(mock_project):
     """
     Test if the get_file_lines function returns the correct number of actions
