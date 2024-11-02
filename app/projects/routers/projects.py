@@ -3,97 +3,70 @@ from fastapi.responses import RedirectResponse
 
 import os
 import json
+import traceback
 
 from app import router, templates
-
-from utils import PIPELINE_START_TAG, PIPELINE_END_TAG, NEW_CODE_TAG
-BASIC_PIPELINE = """
-import pandas as pd
-
-
-def run_pipeline():
-    dfs = {}
-    
-    %s
-    %s
-    %s
-
-    return dfs
- """ % (PIPELINE_START_TAG, NEW_CODE_TAG, PIPELINE_END_TAG)
+from app.projects.models import Project
 
 @router.get("/projects/")
 async def read_root(request: Request):
     """
-    This returns the homepage of the application
-    The homepage displays all the 'project' in the ./_projects directory, 
-    informations about a project are read from its manifest
+    The homepage of the application, displays all the 'project' in the ./_projects directory, 
+    Informations about a project are read from their manifests
 
     * request
 
     => Returns a TemplateResponse to display homepage
     """
-    projects = []
-    projects_path = os.path.join(os.getcwd(), "_projects")
+    try:
+        projects = []
+        projects_path = os.path.join(os.getcwd(), "_projects")
 
-    for project in os.listdir(projects_path):
-        manifest_path = os.path.join(projects_path, project, "__manifest__.json")
-        with open(manifest_path, 'r') as file:
-            manifest_data = json.load(file)
-            projects.append(manifest_data)
+        for project in os.listdir(projects_path):
+            manifest_path = os.path.join(projects_path, project, "__manifest__.json")
+            with open(manifest_path, 'r') as file:
+                manifest_data = json.load(file)
+                projects.append(manifest_data)
 
-    return templates.TemplateResponse(request, "projects.html", {"projects": projects})
-
+        return templates.TemplateResponse(request, "projects.html", {"projects": projects})
+    except Exception as e:
+        traceback.print_exc()
+        return templates.TemplateResponse(request, "projects_error.html", {"exception": str(e)})
 
 @router.post("/projects/create/")
 async def create_project(request: Request):
     """
-    Create a new project
+    Creates a new project directory in the ./_projects directory, with the necessary files
 
-    * request contains: - project_name and project_description
+    * request contains form data
 
-    => Returns a RedirectResponse to the new project page
+    => Returns a RedirectResponse to the project page
     """
-    form_data = await request.form()
-    project_name = form_data.get("project_name")
-    project_description = form_data.get("project_description")
-    project_dir = project_name.lower().replace(" ", "_")
-    project_path = os.path.join(os.getcwd(), "_projects", project_dir)
-
     try:
-        # Create project's folder
-        os.makedirs(project_path, exist_ok=True)
-
-        # Create project's manifest
-        manifest_path = os.path.join(project_path , "__manifest__.json")
-        manifest_content = { 
-                "name": project_name,
-                "description": project_description,
-                "directory": project_dir
-            }  
-        with open(manifest_path, 'w') as file:
-            json.dump(manifest_content, file, indent=4) 
-
-        # Create project's data_sources folder
-        os.makedirs(os.path.join(project_path , "data_sources"), exist_ok=True)
-
-        # Create the pipeline file
-        with open(os.path.join(project_path , "pipeline.py"), 'w') as file:
-            file.write(BASIC_PIPELINE)
+        form_data = await request.form()
+        project_name = form_data.get("project_name")
+        project_description = form_data.get("project_description")
+        
+        project = Project(project_name, project_description)
+        await project.create()
+        return RedirectResponse(url=f"/projects/open/?project_dir={project.directory}", status_code=303)
     except Exception as e:
+        traceback.print_exc()
         return templates.TemplateResponse(request, "projects_error.html", {"exception": str(e)})
 
-    return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)
-
-
-@router.post("/projects/open/")
+@router.get("/projects/open/")
 async def open_project(request: Request):
     """ 
-    This function is called when a user clicks on a project in the homepage, it redirects the correct project page
+    Function called when a user clicks on a project in the homepage, it redirects the correct project page
 
     * request contains project diretory
 
     => Returns a RedirectResponse to the project page
     """
-    form_data = await request.form()
-    project_dir = form_data.get("project_dir")
-    return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)
+    try:
+        project_dir = request.query_params.get("project_dir")
+        # TODO: investigate passing all project objext instead of just the directory (less dynamic????)
+        return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)
+    except Exception as e:
+        traceback.print_exc()
+        return templates.TemplateResponse(request, "projects_error.html", {"exception": str(e)})

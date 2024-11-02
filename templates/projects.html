@@ -25,7 +25,7 @@
             </div>
             {% for card in projects %}
                 <div class="kanban-card">
-                    <form method="post" action="/projects/open/">
+                    <form method="get" action="/projects/open/">
                         <input type="hidden" name="project_dir" value="{{ card.directory }}">
                         <button type="submit">
                             {% include 'base/kanban/kanban_card.html' %}
