@@ -83,3 +83,9 @@ class DataSource:
         To be implemented by subclasses
         """
         pass
+
+    def create_table(self, form_data=False):
+        """
+        To be implemented by subclasses
+        """
+        pass
