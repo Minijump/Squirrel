@@ -1,30 +1,16 @@
 from fastapi.testclient import TestClient
 
-import pandas as pd
-import os
 import tempfile
 from unittest.mock import patch
 import pytest
+import os
 
 from app.main import app
 from tests import mock_project
 
-client = TestClient(app)
+from app.data_sources.models import DATA_SOURCE_REGISTRY, DataSource, DataSourceCSV, DataSourceXLSX
 
-@pytest.mark.asyncio
-async def test_get_sources(mock_project):
-    """
-    Test if the get_sources function returns the correct sources
-    """
-    from app.data_sources.routers.data_sources import get_sources
-    sources = await get_sources(mock_project)
-    expected_source = {
-        "name": "Mock source csv",
-        "type": "csv",
-        "description": "a mock csv source",
-        "directory": "mock_source_csv"
-    }
-    assert expected_source in sources, "Expected one mock source csv"
+client = TestClient(app)
 
 def test_data_sources(mock_project):
     """
@@ -54,3 +40,41 @@ def test_fail_data_source_creation(mock_project):
             response = client.post("/create_source/", data=form_data)
             assert response.status_code == 200, "Unexpected error while failing to create data source"
             assert response.context.get("exception"), "Response does not contain an exception"
+
+def test_data_source_registry():
+    """
+    Test if the data source registry is correctly defined
+    """
+    assert "csv" in DATA_SOURCE_REGISTRY, "Expected csv in DATA_SOURCE_REGISTRY"
+    assert DATA_SOURCE_REGISTRY["csv"].__name__ == "DataSourceCSV", "Expected DataSourceCSV class"
+    assert "xlsx" in DATA_SOURCE_REGISTRY, "Expected xlsx in DATA_SOURCE_REGISTRY"
+    assert DATA_SOURCE_REGISTRY["xlsx"].__name__ == "DataSourceXLSX", "Expected DataSourceXLSX class"
+
+def test_init_data_source_from_manifest():
+    """
+    Test if a data source can be initialized from a manifest
+    """
+    for source_type in DATA_SOURCE_REGISTRY:
+        manifest = {
+            "name": "Mock source",
+            "type": source_type,
+            "description": "a mock source",
+            "directory": "mock_source"
+        }
+        try:
+            source = DataSource(manifest)
+        except Exception as e:
+            pytest.fail(f"Failed to initialize source from manifest: {e}")
+        assert source.name == "Mock source", "Expected name to be Mock source"
+        assert source.type == source_type, f"Expected type to be {source_type}"
+        assert source.description == "a mock source", "Expected description to be a mock source"
+        assert source.directory == "mock_source", "Expected directory to be mock_source"
+
+def test_data_sources_specific_methods_implemented():
+    """
+    Test if the specific methods of a data source are implemented
+    """
+    for source_type in DATA_SOURCE_REGISTRY:
+        source = DATA_SOURCE_REGISTRY[source_type]
+        assert source._create_data_file != DataSource._create_data_file, f"_create_data_file not implemented for {source_type}"
+        assert source.create_table != DataSource.create_table, f"create_table not implemented for {source_type}"

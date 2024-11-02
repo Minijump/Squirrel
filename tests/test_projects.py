@@ -9,6 +9,15 @@ from tests import mock_project
 
 client = TestClient(app)
 
+def test_read_root():
+    """
+    Test if the read_root endpoint is accessible
+    Test if the response contains projects
+    """
+    response = client.get("/projects/")
+    assert response.status_code == 200, "Failed to access the read_root endpoint"
+    assert response.context.get("projects"), "Response does not contain projects"
+
 def test_open_project(mock_project):
     """
     Test if the open_project endpoint is accessible
@@ -39,6 +48,10 @@ def test_create_project():
             assert os.path.exists(os.path.join(project_dir, "pipeline.py")), "Failed to create project pipeline"
 
             assert str(response.url).endswith(f"/tables/?project_dir={project_name_dir}"), "Failed to redirect to project's page"
+
+            response = client.get("/projects/")
+            assert response.context.get("projects"), "Response does not contain projects"
+            assert any(project['directory'] == project_name_dir for project in response.context.get("projects")), "New project does not appear in root page"
 
 def test_fail_create_project():
     """
