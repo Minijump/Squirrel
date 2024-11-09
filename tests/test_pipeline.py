@@ -8,7 +8,7 @@ import pytest
 
 client = TestClient(app)
 
-@pytest.mark.asyncio(loop_scope="function")
+@pytest.mark.asyncio()
 async def test_get_file_lines(mock_project):
     """
     Test if the get_file_lines function returns the correct number of actions
@@ -24,11 +24,20 @@ async def test_get_file_lines(mock_project):
 def test_pipeline(mock_project):
     """
     Test if the pipeline endpoint is accessible
-    Test if the response contains 2 actions
+    Test if the response contains 2 actions (mock_project contains 2 actions)
     """
     response = client.get("/pipeline/?project_dir="+ mock_project)
     assert response.status_code == 200, "Failed to access the pipeline endpoint"
     assert len(response.context.get("actions")) == 2, "Response does not contain 2 actions"
+
+def test_fail_access_pipeline():
+    """
+    Test if error in pipeline enpoint is correctly managed
+    """
+    incorrect_project_dir = "incorrect_project_dir"
+    response = client.get("/pipeline/?project_dir="+ incorrect_project_dir)  
+    assert response.status_code == 200, "Failed to redirect to correct page in case of failing to access pipeline"
+    assert response.context.get("exception"), "Missing exception"
 
 def test_delete_action(mock_project):
     """

@@ -91,7 +91,6 @@ Create data analysis pipeline by generating python with a low-code interface.
 5. **Create a new Pull Request**
 
 ### To do MVP
-* Imp unit tests
 * Migration to NextJs for frontend
 * Enable to do wathever you want with python (Give column info (nulls, zeros, unique, ...), delete lines where -, replace col values, Data export (csv), ...)
 * Complete README
