@@ -9,7 +9,7 @@ from app import router, templates
 from app.projects.models import Project
 
 @router.get("/projects/")
-async def read_root(request: Request):
+async def projects(request: Request):
     """
     The homepage of the application, displays all the 'project' in the ./_projects directory, 
     Informations about a project are read from their manifests
