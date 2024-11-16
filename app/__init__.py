@@ -11,6 +11,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/templates/base/static", StaticFiles(directory="templates/base/static"), name="base_static")
 app.mount("/templates/projects/static", StaticFiles(directory="templates/projects/static"), name="projects_static")
 app.mount("/templates/data_sources/static", StaticFiles(directory="templates/data_sources/static"), name="data_sources_static")
+app.mount("/templates/tables/static", StaticFiles(directory="templates/tables/static"), name="tables_static")
 templates = Jinja2Templates(directory="templates")
 
 from fastapi import APIRouter

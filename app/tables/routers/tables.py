@@ -55,7 +55,7 @@ async def tables(request: Request, project_dir: str):
 
         return templates.TemplateResponse(
             request,
-            "tables.html",
+            "tables/tables.html",
             {"table": table_html, "table_len": table_len, "project_dir": project_dir, "sources": sources, "exception": exception}
         )
 
