@@ -70,7 +70,7 @@ async def pipeline(request: Request, project_dir: str):
         )
     except Exception as e:
         traceback.print_exc()
-        return templates.TemplateResponse(request, "tables_error.html", {"exception": str(e), "project_dir": project_dir})
+        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
 
 
 @router.post("/pipeline/delete_action")
@@ -101,7 +101,7 @@ async def delete_action(request: Request, project_dir: str, delete_action_id: in
         return JSONResponse(content={"message": "Action deleted successfully"}, status_code=200)
     except Exception as e:
         traceback.print_exc()
-        return templates.TemplateResponse(request, "tables_error.html", {"exception": str(e), "project_dir": project_dir})
+        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
 
 @router.post("/pipeline/confirm_new_order")
 async def confirm_new_order(request: Request, project_dir: str, order: str):
@@ -137,7 +137,7 @@ async def confirm_new_order(request: Request, project_dir: str, order: str):
         return JSONResponse(content={"message": "Order changed successfully"}, status_code=200)
     except Exception as e:
         traceback.print_exc()
-        return templates.TemplateResponse(request, "tables_error.html", {"exception": str(e), "project_dir": project_dir})
+        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
 
 @router.post("/pipeline/edit_action")
 async def edit_action(request: Request):
@@ -176,4 +176,4 @@ async def edit_action(request: Request):
         return RedirectResponse(url=f"/pipeline?project_dir={project_dir}", status_code=303)
     except Exception as e:
         traceback.print_exc()
-        return templates.TemplateResponse(request, "tables_error.html", {"exception": str(e), "project_dir": project_dir})
+        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})

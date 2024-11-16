@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tables: Error</title>
+        <link href="{{ url_for('projects_static', path='css/style.css') }}" rel="stylesheet">
+    </head>
+    <div class="container">
+        <aside>
+            <div class="navigation-btn">
+                <a href="/"><i class="fas fa-home" style="color: white;"></i></a>
+            </div>
+            <h1>Data Sources</h1>
+            <nav>
+                <ul>
+                    <li class="clickable"><a href="/tables/?project_dir={{ project_dir }}"><i class="fas fa-table"></i>Table</a></li>
+                    <li class="clickable"><a href="/pipeline/?project_dir={{ project_dir }}"><i class="fas fa-project-diagram"></i>Pipeline</a></li>
+                    <li class="clickable"><a href="/data_sources/?project_dir={{ project_dir }}"><i class="fas fa-database"></i>Data sources</a></li>
+                    <li class="clickable"><a href="#"><i class="fas fa-cog"></i>Settings</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main>
+            <p style="color: red;">Error occured: {{ exception }}</p>
+        </main>
+    </body>
+</html>
