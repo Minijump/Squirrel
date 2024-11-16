@@ -1,0 +1,40 @@
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+.modal-content {
+    background: var(--light-structure-color);
+    padding: 25px;
+    border-radius: 12px;
+    width: 400px;
+}
+.modal-content h3 {
+    margin-top: 0;
+    color: var(--primary-text-color);
+}
+.modal-content label {
+    color: var(--secondary-text-color);
+    display: block;
+    margin-bottom: 4px;
+}
+.modal-content input, .modal-content textarea {
+    width: 97%;
+    padding: 8px;
+    border-radius: 8px;
+    background: #4b5563;
+    color: var(--primary-text-color);;
+    border: none;
+    margin-bottom: 12px;
+}
+/* .modal-content button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+} */

@@ -6,12 +6,18 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()
+# TODO: group all static into one /projects, directory="projects" name='static) Need to import them in router too?????
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/templates/base/static", StaticFiles(directory="templates/base/static"), name="base_static")
+app.mount("/templates/projects/static", StaticFiles(directory="templates/projects/static"), name="projects_static")
 templates = Jinja2Templates(directory="templates")
 
 from fastapi import APIRouter
 router = APIRouter()
 router.mount("/../static", StaticFiles(directory="static"), name="static")
+app.mount("/templates/base/static", StaticFiles(directory="templates/base/static"), name="base_static")
+router.mount("/templates/projects/static", StaticFiles(directory="templates/projects/static"), name="projects_static")
+
 templates = Jinja2Templates(directory="templates")
 
 
