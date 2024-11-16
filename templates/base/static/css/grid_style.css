@@ -1,0 +1,30 @@
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+.card {
+    background: var(--light-structure-color);
+    padding: 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    transform-origin: center;
+}
+.card:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+.card-new p{
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    color: var(--secondary-text-color);
+    font-size: 18px;
+}
+.card-new:hover p{
+    background: var(--secondary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}

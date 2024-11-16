@@ -1,0 +1,61 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  font-family: Arial, sans-serif;
+  color: var(--primary-text-color);
+  background: var(--primary-gradient);
+  }
+.container {
+  display: flex;
+  width: 100%;
+}
+aside {
+  width: 250px;
+  background: var(--structure-color);
+  padding: 20px;
+  box-sizing: border-box;
+  position: fixed;
+  height: 100vh;
+}
+aside h1 {
+  font-size: 24px;
+  /* Color background because impossible to give gradient to a text */
+  background: var(--secondary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: bold;
+}
+aside nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+aside nav ul li {
+  margin-bottom: 10px;
+}
+aside nav ul li a {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  text-decoration: none;
+  color: var(--primary-text-color);
+  border-radius: 8px;
+  transition: 0.2s;
+}
+aside nav ul li a:hover {
+  background: var(--light-structure-color);
+}
+main {
+  margin-left: 250px;
+  padding: 40px;
+  flex: 1;
+}
+main h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}

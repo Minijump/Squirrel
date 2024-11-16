@@ -28,10 +28,10 @@ async def projects(request: Request):
                 manifest_data = json.load(file)
                 projects.append(manifest_data)
 
-        return templates.TemplateResponse(request, "projects.html", {"projects": projects})
+        return templates.TemplateResponse(request, "projects/projects.html", {"projects": projects})
     except Exception as e:
         traceback.print_exc()
-        return templates.TemplateResponse(request, "projects_error.html", {"exception": str(e)})
+        return templates.TemplateResponse(request, "base/html/projects_error.html", {"exception": str(e)})
 
 @router.post("/projects/create/")
 async def create_project(request: Request):
@@ -52,7 +52,7 @@ async def create_project(request: Request):
         return RedirectResponse(url=f"/projects/open/?project_dir={project.directory}", status_code=303)
     except Exception as e:
         traceback.print_exc()
-        return templates.TemplateResponse(request, "projects_error.html", {"exception": str(e)})
+        return templates.TemplateResponse(request, "base/html/projects_error.html", {"exception": str(e)})
 
 @router.get("/projects/open/")
 async def open_project(request: Request):
@@ -68,4 +68,4 @@ async def open_project(request: Request):
         return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)
     except Exception as e:
         traceback.print_exc()
-        return templates.TemplateResponse(request, "projects_error.html", {"exception": str(e)})
+        return templates.TemplateResponse(request, "base/html/projects_error.html", {"exception": str(e)})

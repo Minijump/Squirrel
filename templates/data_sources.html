@@ -25,13 +25,18 @@
         <div class="kanban">
             <div class="kanban-card kanban-new">
                 <button onclick="openModal('CreateSourceModal')">
-                    {% include 'base/kanban/kanban_new.html' %}
+                    Create New
+                    <img
+                        src="{{ url_for('static', path='img/plus_icon.png') }}"
+                        alt="Plus Icon"
+                        style="padding: 5px; width: 40px; height: 40px;"/>
                 </button>
             </div>
             {% for card in sources %}
                 <div class="kanban-card">
                     <button>
-                        {% include 'base/kanban/kanban_card.html' %}
+                        <strong>{{ card.name }}</strong><br>
+                        {{ card.description }}
                     </button>
                 </div>
             {% endfor %}
