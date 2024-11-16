@@ -1,0 +1,28 @@
+<!-- Create Source Modal -->
+<div class="modal" id="createSourceModal">
+    <div class="modal-content">
+        <h3>Create New Source</h3>
+        <form method="post" action="/create_source/" enctype="multipart/form-data" id="createSourceModal">
+            <input type="hidden" name="project_dir" value="{{ project_dir }}">
+
+            <label for="source_name">Name</label>
+            <input type="text" id="sourceName" name="source_name" required>
+
+            <label for="source_description">Description</label>
+            <textarea id="sourceDescription" name="source_description"></textarea>
+
+            <label for="source_type">Type:</label>
+            <select id="sourceType" name="source_type" required>
+                {% for short_name, cls in DATA_SOURCE_REGISTRY.items() %}
+                    <option value="{{ short_name }}">{{ cls.display_name }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="source_file">Source File</label>
+            <input id="sourceFile" name="source_file" type="file" required>
+            
+            <button type="submit" class="btn-primary">Create</button>
+            <button type="button" class="btn-secondary" id="cancelButton">Cancel</button>
+        </form>
+    </div>
+</div>

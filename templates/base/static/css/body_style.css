@@ -49,6 +49,9 @@ aside nav ul li a {
 aside nav ul li a:hover {
   background: var(--light-structure-color);
 }
+aside nav ul li a i {
+  margin-right: 5px;
+}
 main {
   margin-left: 250px;
   padding: 40px;

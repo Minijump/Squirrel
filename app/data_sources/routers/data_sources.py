@@ -41,7 +41,7 @@ async def data_sources(request: Request, project_dir: str):
         sources = await get_sources(project_dir)
         return templates.TemplateResponse(
             request, 
-            "data_sources.html", 
+            "data_sources/data_sources.html", 
             {
                 "project_dir": project_dir, 
                 "sources": sources,
@@ -49,7 +49,7 @@ async def data_sources(request: Request, project_dir: str):
 
     except Exception as e:
         traceback.print_exc()
-        return templates.TemplateResponse(request, "tables_error.html", {"exception": str(e), "project_dir": project_dir})
+        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
 
 @router.post("/create_source/")
 async def create_source(request: Request):
@@ -74,4 +74,4 @@ async def create_source(request: Request):
 
     except Exception as e:
         traceback.print_exc()
-        return templates.TemplateResponse(request, "tables_error.html", {"exception": str(e), "project_dir": project_dir})
+        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
