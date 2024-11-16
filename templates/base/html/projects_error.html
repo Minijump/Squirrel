@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Squirrel Home: Error</title>
+    <link href="{{ url_for('projects_static', path='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <aside>
+          <h1>ProjectHub</h1>
+          <nav>
+            <ul>
+              <li><a href="/">Projects</a></li>
+              <li><a href="#">Settings</a></li>
+            </ul>
+          </nav>
+        </aside>
+        <main>
+            <p style="color: red;">Error occured: {{ exception }}</p>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+.btn-primary {
+    background: #3b82f6;
+    color: var(--primary-text-color);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.btn-primary:hover {
+    background: #2563eb;
+}
+.btn-secondary {
+    background: var(--primary-text-color);
+    color: black;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.btn-secondary:hover {
+    background: #929bad;
+}

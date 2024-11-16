@@ -1,0 +1,8 @@
+:root {
+    --structure-color: #1a202c;
+    --light-structure-color: #2d3748;
+    --primary-gradient: linear-gradient(to bottom right, var(--structure-color), var(--light-structure-color));
+    --secondary-gradient: linear-gradient(to bottom right, #60a5fa, #a78bfa);
+    --primary-text-color: #f0f0f0;
+    --secondary-text-color: #9ca3af;
+}
