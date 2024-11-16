@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tables</title>
+    <link href="{{ url_for('tables_static', path='css/style.css') }}" rel="stylesheet">
+</head>
+<div class="container">
+    <aside>
+        <div class="navigation-btn">
+            <a href="/"><i class="fas fa-home" style="color: white;"></i></a>
+        </div>
+        <h1>Tables</h1>
+        <nav>
+            <ul>
+                <li class="clickable"><a href="/tables/?project_dir={{ project_dir }}"><i class="fas fa-table"></i>Table</a></li>
+                <li class="clickable"><a href="/pipeline/?project_dir={{ project_dir }}"><i class="fas fa-project-diagram"></i>Pipeline</a></li>
+                <li class="clickable"><a href="/data_sources/?project_dir={{ project_dir }}"><i class="fas fa-database"></i>Data sources</a></li>
+                <li class="clickable"><a href="#"><i class="fas fa-cog"></i>Settings</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main> 
+        {% if table and not exception %}
+            <div style="display: flex; justify-content: center;">
+                {% for name, html_table in table.items() %}
+                    {% if loop.first %}
+                        <button 
+                            onclick="showTable('{{ name }}')"
+                            class="select-table-btn table-active"  
+                            style="border-top-left-radius: 10px;">
+                                {{ name }}
+                        </button>
+                    {% else %}
+                        <button 
+                            onclick="showTable('{{ name }}')" 
+                            class="select-table-btn">
+                                {{ name }}
+                        </button>
+                    {% endif %}
+                {% endfor %}
+                <button 
+                    onclick="openForm('CreateTable')" 
+                    class="select-table-btn" 
+                    style="border-top-right-radius: 10px; min-width: 0;">
+                        <img
+                            src="{{ url_for('tables_static', path='img/plus_icon.png') }}"
+                            alt="Plus Icon"
+                            style="width: 12px; height: 12px;"/>
+                </button>
+            </div>
+            {% for name, html_table in table.items() %}
+                <!-- First Table displayed by default (Change this; in case of reload table should not change) -->
+                {% if loop.first %}
+                    <div id="table-{{ name }}" class="table-container">
+                {% else %}
+                    <div id="table-{{ name }}" class="table-container" style="display: none;">
+                {% endif %}
+                        <div style="display: flex; justify-content: flex-start;">
+                            <button onclick="openActionForm('AddColForm', '{{ name }}')" class="action-btn">Add Column</button>
+                            <button onclick="openActionForm('DelColForm', '{{ name }}')" class="action-btn">Delete Column</button>
+                        </div>
+                        <div id="table-html-{{ name }}">
+                            {{ html_table|safe }}
+                        </div>
+                        <div class="pager" data-table="{{ name }}" data-len="{{ table_len.get(name, 0) }}" style="display: flex; justify-content: center;">
+                            <div>
+                                <button class="prev action-btn">&lt;</button>
+                            </div>
+                            <div id="pager-info-{{ name }}" class="pager-info" style="display:flex; align-items: center;">
+                                0-10 / {{ table_len.get(name, 0) }}
+                            </div>
+                            <div>
+                                <button class="next action-btn">&gt;</button>
+                            </div>
+                        </div>
+                    </div>
+            {% endfor %}
+        {% else %}
+            {% if exception %}
+                <p style="color: red;">Error occured in Pipeline: {{ exception }}</p>
+            {% else %}
+                <div class="table-container">
+                    NO table yet
+                    <button onclick="openForm('CreateTable')" class="action-btn" >
+                        Create Table
+                    </button>
+                </div>
+            {% endif %}
+        {% endif %}
+
+        <!-- Modals-->
+        {% include 'tables/modals.html' %}
+
+        <!-- JS scripts -->
+        <script src="{{ url_for('tables_static', path='js/scripts.js') }}"></script>         
+    </main>
+</div>
+</html>

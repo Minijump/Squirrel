@@ -1,0 +1,55 @@
+<div id="CreateTable" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeForm('CreateTable')">&times;</a>
+    <form action="/tables/create_table/" method="post">
+        <input type="hidden" name="project_dir" value="{{ project_dir }}">
+
+        <div class="form-section">
+            <label for="table_name">Table Name:</label>
+            <input id="table_name" name="table_name" required>
+        </div>
+
+        <div class="form-section">
+            <label for="data_source">Data Source:</label>
+            <select name="data_source_dir" id="data_source" class="right-sidebar-select">
+                {% for source in sources %}
+                    <option value="{{ source.directory }}">{{ source.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="right-sidebar-btn">Create Table</button>
+    </form>
+</div>
+<div id="AddColForm" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeForm('AddColForm')">&times;</a>
+    <form action="/tables/add_column/" method="post">
+        <input type="hidden" name="project_dir" value="{{ project_dir }}">
+        <input id="table_name" name="table_name" type="hidden" required>
+
+        <div class="form-section">
+            <label for="add_col_name">Col. Name:</label>
+            <input id="add_col_name" name="col_name" required>
+        </div>
+        
+        <div class="form-section">
+            <label for="add_col_value">Col. Value:</label>
+            <textarea id="add_col_value" name="col_value" required></textarea>
+        </div>
+        
+        <button type="submit" class="right-sidebar-btn">Add Column</button>
+    </form>
+</div>
+<div id="DelColForm" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeForm('DelColForm')">&times;</a>
+    <form action="/tables/del_column/" method="post">
+        <input type="hidden" name="project_dir" value="{{ project_dir }}">
+        <input id="table_name" name="table_name" type="hidden" required>
+
+        <div class="form-section">
+            <label for="del_col_name">Col. Name:</label>
+            <input id="del_col_name" name="col_name" required>
+        </div>
+        
+        <button type="submit" class="right-sidebar-btn">Delete Column</button>
+    </form>
+</div>
