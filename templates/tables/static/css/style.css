@@ -1,11 +1,38 @@
 @import url('/templates/base/static/css/style.css');
 
 .table-container {
-    border: 1px solid var(--structure-color);
-    border-radius: 20px;
     padding-left: 25px;
     padding-right: 25px;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+}
+
+.select-table-btn {
+    border-radius: 0;
+    background-color: var(--structure-color);
+    color: var(--primary-text-color);
+    margin-bottom: 10px;
+    padding: 5px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    min-width: 50px;
+}
+.select-table-btn:hover {
+    background-color: var(--ligth-structure-color);
+}
+.active {
+    color: var(--primary-text-color);
+    background: var(--secondary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.table-header-btn {
+    border: 0;
+    background-color: var(--structure-color);
+    color: var(--primary-text-color);
+    cursor: pointer;
+    float: right;
+    font-size: 15px;
 }
 
 .df-table{
@@ -17,45 +44,89 @@
     overflow: hidden;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
-
 .df-table thead tr {
     background-color: var(--structure-color);
-    color: var(--structure-text-color);
+    color: var(--primary-text-color);
     font-weight: bold;
 }
-
 .df-table th, .df-table td {
     padding: 12px 15px;
     text-align: left;
 }
-
 .df-table tbody tr:nth-of-type(even) {
-    background-color: color-mix(in oklab, var(--main-color) 95%, var(--secondary-color) 5%);
+    background-color: var(--light-structure-color);
 }
 .df-table tbody tr:last-of-type {
     border-bottom: 2px solid var(--structure-color); /*Last row border bottom*/
 }
 
-.select-table-btn {
-    border: 1px solid var(--structure-text-color);
-    border-radius: 0;
-    border-bottom: 0;
-    background-color: var(--structure-color);
+.pager {
+    display: flex;
+    justify-content: left;
+}
+.pager-btn {
+    border: 1px solid var(--primary-text-color);
+    border-radius: 5px;
+    background-color: transparent;
     color: var(--primary-text-color);
-    margin: 0;
-    padding: 5px;
+    margin: 5px;
+    padding: 3px;
     cursor: pointer;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    min-width: 50px;
 }
-.select-table-btn:hover {
-    border-bottom: 0;
-    transform: scaleY(1.1);
-    background-color: var(--ligth-structure-color);
+.pager-info {
+    display:flex; 
+    align-items: center;
 }
-.active {
-    border-bottom: 0;
-    color: var(--secondary-color);
-    transform: scaleY(1.1);
-    background-color: var(--ligth-structure-color);
+
+/* --------------------------     RIGHT-SIDEBAR     -------------------------- */
+.right-sidebar-form {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: var(--structure-color);
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+.right-sidebar-form a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+.right-sidebar-form a:hover {
+    color: #f1f1f1;
+}
+.right-sidebar-form .close-btn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+.right-sidebar-form .form-section {
+    margin-bottom: 10px;
+}
+.right-sidebar-form label {
+    color: var(--secondary-text-color);
+    display: block;
+    margin-left: 5px;
+}
+.right-sidebar-form input, .right-sidebar-form textarea, .right-sidebar-form select {
+    width: 80%;
+    padding: 8px;
+    border-radius: 8px;
+    background: #4b5563;
+    color: var(--primary-text-color);;
+    border: none;
+    margin: 12px;
+}
+.right-sidebar-form select option {
+    padding: 5px;
+    background-color: #4b5563;
+    color: var(--primary-text-color);
 }

@@ -18,7 +18,12 @@
           </nav>
         </aside>
         <main>
-            <p style="color: red;">Error occured: {{ exception }}</p>
+          <div class="error-box">
+              <h3>
+                  <i class="fas fa-exclamation-triangle"></i> Error
+              </h3>
+              <p>{{ exception }}</p>
+          </div>
         </main>
     </div>
 </body>
