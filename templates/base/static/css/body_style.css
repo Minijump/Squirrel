@@ -52,6 +52,10 @@ aside nav ul li a:hover {
 aside nav ul li a i {
   margin-right: 5px;
 }
+.aside-title {
+  display: flex; 
+  align-items: center;
+}
 main {
   margin-left: 250px;
   padding: 40px;
