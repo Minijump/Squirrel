@@ -1,3 +1,4 @@
+// Show table buttons
 function showTable(tableName) {
     document.querySelectorAll('.table-container').forEach(function(table) {
         table.style.display = 'none';
@@ -14,27 +15,32 @@ function showTable(tableName) {
     });
 }
 
-function closeForm(id) {
+// Sidebar
+function closeSidebarForm(id) {
     document.getElementById(id).style.width = "0";
 }
-function openForm(id) {
-    document.getElementById(id).style.width = "250px";
-}
-function openActionForm(id, name) {
+function openSidebarForm(id, data = {}) {
     const form = document.getElementById(id);
     form.style.width = "250px";
-    form.querySelector('input[name="table_name"]').value = name;
-}
-function openInfoColForm(colName, tableName) {
-    document.getElementById('InfoColForm').style.display = "flex";
-    document.getElementById('del_col_name').value = colName;
-    document.querySelector('#InfoColForm input[name="table_name"]').value = tableName;
-    document.getElementById('modalTitle').innerHTML = `Column "<i>${colName}</i>" Infos`;
-}
-function closeInfoColForm() {
-    document.getElementById('InfoColForm').style.display = "none";
+    for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+            form.querySelector(`input[name="${key}"]`).value = data[key];
+        }
+    }
 }
 
+// InfoColModal
+function openInfoColModal(colName, tableName) {
+    document.getElementById('InfoColModal').style.display = "flex";
+    document.getElementById('del_col_name').value = colName;
+    document.querySelector('#InfoColModal input[name="table_name"]').value = tableName;
+    document.getElementById('modalTitle').innerHTML = `Column "<i>${colName}</i>" Infos`;
+}
+function closeInfoColModal() {
+    document.getElementById('InfoColModal').style.display = "none";
+}
+
+// Add info buttons to the table headers
 function addInfoButtons() {
     document.querySelectorAll('.df-table th').forEach(function(th) {
         const colName = th.textContent.trim();
@@ -43,7 +49,7 @@ function addInfoButtons() {
         delButton.innerHTML = '&middot;&middot;&middot;';
         const tableName = th.closest('.table-container').id.split('-')[1];
         delButton.onclick = function() {
-            openInfoColForm(colName, tableName);
+            openInfoColModal(colName, tableName);
         };
         if (!th.querySelector('.table-header-btn')) {
             th.appendChild(delButton);
@@ -51,6 +57,8 @@ function addInfoButtons() {
     });
 }
 
+// Pager logic 
+// + Add the info buttons
 document.addEventListener('DOMContentLoaded', function() {
     addInfoButtons();
 

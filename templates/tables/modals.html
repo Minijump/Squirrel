@@ -1,5 +1,5 @@
 <div id="CreateTable" class="right-sidebar-form">
-    <a href="javascript:void(0)" class="close-btn" onclick="closeForm('CreateTable')">&times;</a>
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('CreateTable')">&times;</a>
     <form action="/tables/create_table/" method="post">
         <input type="hidden" name="project_dir" value="{{ project_dir }}">
 
@@ -17,8 +17,8 @@
     </form>
 </div>
 
-<div id="AddColForm" class="right-sidebar-form">
-    <a href="javascript:void(0)" class="close-btn" onclick="closeForm('AddColForm')">&times;</a>
+<div id="AddCol" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('AddCol')">&times;</a>
     <form action="/tables/add_column/" method="post">
         <input type="hidden" name="project_dir" value="{{ project_dir }}">
         <input id="table_name" name="table_name" type="hidden" required>
@@ -33,7 +33,7 @@
     </form>
 </div>
 
-<div class="modal" id="InfoColForm">
+<div id="InfoColModal" class="modal">
     <div class="modal-content">
         <h3 id="modalTitle">Column Infos</h3>
         <form action="/tables/del_column/" method="post">
@@ -42,7 +42,7 @@
             <input id="del_col_name" name="col_name" type="hidden" required>
             
             <button type="submit" class="btn-danger" style="margin-left: 15px; margin-top: 10px;">Delete Column</button>
-            <button type="button" onclick="closeInfoColForm()" class="btn-secondary" style="margin-left: 15px; margin-top: 10px;">Cancel</button>
+            <button type="button" onclick="closeInfoColModal()" class="btn-secondary" style="margin-left: 15px; margin-top: 10px;">Cancel</button>
         </form>
     </div>
 </div>

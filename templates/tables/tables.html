@@ -8,10 +8,10 @@
 </head>
 <div class="container">
     <aside>
-        <div class="navigation-btn">
+        <div class="aside-title">
             <a href="/"><i class="fas fa-home" style="color: white;"></i></a>
+            <h1 style="margin-left: 5px;">Tables</h1>
         </div>
-        <h1>Tables</h1>
         <nav>
             <ul>
                 <li class="clickable"><a href="/tables/?project_dir={{ project_dir }}"><i class="fas fa-table"></i>Table</a></li>
@@ -42,7 +42,7 @@
                     {% endif %}
                 {% endfor %}
                 <button 
-                    onclick="openForm('CreateTable')" 
+                    onclick="openSidebarForm('CreateTable')" 
                     class="select-table-btn" 
                     style="border-top-right-radius: 10px; border-bottom-right-radius: 10px; min-width: 0;">
                         <img
@@ -59,7 +59,7 @@
                     <div id="table-{{ name }}" class="table-container" style="display: none;">
                 {% endif %}
                         <div style="display: flex; justify-content: flex-start;">
-                            <button onclick="openActionForm('AddColForm', '{{ name }}')" class="btn-primary">Add Column</button>
+                            <button onclick="openSidebarForm('AddCol', { 'table_name': '{{ name }}' })" class="btn-primary">Add Column</button>
                         </div>
                         <div class="table-html" id="table-html-{{ name }}">
                             {{ html_table|safe }}
@@ -84,7 +84,7 @@
                 </div>
             {% else %}
                     NO table yet
-                    <button onclick="openForm('CreateTable')" class="btn-primary" >
+                    <button onclick="openSidebarForm('CreateTable')" class="btn-primary" >
                         Create
                     </button>
             {% endif %}
@@ -96,6 +96,7 @@
         {% include 'tables/modals.html' %}
 
         <!-- JS scripts -->
+        <!-- Sidebar, Modal, Pager, Info button-->
         <script src="{{ url_for('tables_static', path='js/scripts.js') }}"></script>         
     </main>
 </div>
