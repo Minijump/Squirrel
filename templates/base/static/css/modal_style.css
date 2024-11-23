@@ -13,7 +13,7 @@
     background: var(--light-structure-color);
     padding: 25px;
     border-radius: 12px;
-    width: 400px;
+    min-width: 400px;
 }
 .modal-content h3 {
     margin-top: 0;
