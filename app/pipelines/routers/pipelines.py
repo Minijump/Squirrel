@@ -65,7 +65,7 @@ async def pipeline(request: Request, project_dir: str):
         
         return templates.TemplateResponse(
             request,
-            "pipeline.html",
+            "pipeline/pipeline.html",
             {"actions": actions, "project_dir": project_dir}
         )
     except Exception as e:
@@ -100,6 +100,7 @@ async def delete_action(request: Request, project_dir: str, delete_action_id: in
 
         return JSONResponse(content={"message": "Action deleted successfully"}, status_code=200)
     except Exception as e:
+        # Not working
         traceback.print_exc()
         return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
 
@@ -117,7 +118,6 @@ async def confirm_new_order(request: Request, project_dir: str, order: str):
     try:
         pipeline_path = os.path.join(os.getcwd(), "_projects", project_dir, "pipeline.py")
         lines = await get_file_lines(pipeline_path)
-
         new_order = [int(action_str[0]) for action_str in order.split(",")] # the old ids in the new order
         old_actions = [line for line in lines if isinstance(line, tuple)]  # the actions in the old order
         new_lines = []

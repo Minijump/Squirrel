@@ -1,0 +1,25 @@
+<!-- Edit Action Modal -->
+<div class="modal" id="editActionModal">
+    <div class="modal-content" style="width: 600px;">
+        <h3>Edit Action</h3>
+        <form method="post" action="/pipeline/edit_action/" enctype="multipart/form-data" id="editActionModal">
+            <strong id="modal-action-name"></strong>
+
+            <input type="hidden" id="project_dir" name="project_dir">
+            <input id="action_id" name="action_id" type="hidden">
+
+            <label for="action_code">Python Code:</label>
+            <textarea id="action_code" name="action_code" required style="height: 80px;"></textarea>
+            
+            <button type="submit" class="btn-primary">Confirm</button>
+            <button type="button" class="btn-danger" id="deleteButton" style="height: 100%;"
+                    onclick="if (confirm('Are you sure you want to delete this action?')) 
+                                { deletePipelineAction(
+                                document.getElementById('action_id').value, 
+                                document.getElementById('project_dir').value); }">
+                     Delete
+            </button>
+            <button type="button" class="btn-secondary" id="cancelButton">Cancel</button>
+        </form>
+    </div>
+</div>

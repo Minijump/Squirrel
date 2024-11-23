@@ -6,6 +6,7 @@
     <title>Data sources</title>
     <link href="{{ url_for('data_sources_static', path='css/style.css') }}" rel="stylesheet">
 </head>
+<body>
 <div class="container">
     <aside>
         <div class="aside-title">
@@ -37,7 +38,7 @@
             </div>
           {% endfor %}
         </div>
-      </main>
+    </main>
 
     <!-- Modals -->
     <!-- Create Source Modal -->
@@ -47,5 +48,6 @@
     <!-- CReate Source Modal-->
     <!-- File Type Filter-->
     <script src="{{ url_for('data_sources_static', path='js/script.js') }}"></script>
+</div>
 </body>
 </html>

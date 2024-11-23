@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline</title>
+    <link href="{{ url_for('pipeline_static', path='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <aside>
+        <div class="aside-title">
+            <a href="/"><i class="fas fa-home" style="color: white;"></i></a>
+            <h1 style="margin-left: 5px;">Pipeline</h1>
+        </div>
+        <nav>
+            <ul>
+                <li class="clickable"><a href="/tables/?project_dir={{ project_dir }}"><i class="fas fa-table"></i>Table</a></li>
+                <li class="clickable"><a href="#"><i class="fas fa-project-diagram"></i>Pipeline</a></li>
+                <li class="clickable"><a href="/data_sources/?project_dir={{ project_dir }}"><i class="fas fa-database"></i>Data sources</a></li>
+                <li class="clickable"><a href="#"><i class="fas fa-cog"></i>Settings</a></li>
+            </ul>
+        </nav>
+    </aside>
+    <main>
+        <div style="margin-bottom: 10px;">
+            <button id="save-order" style="visibility: hidden;" onclick="{ confirmNewOrder('{{ project_dir}}'); }" class="btn-primary">
+                Save New Order
+            </button>
+        </div>
+        <div class="action-list dragndrop" id="pipeline">
+            {% for action in actions %}
+                <div data-swapy-slot="{{ action[0] }}-slot">
+                    <div class="action" data-swapy-item="{{ action[0] }}-item">
+                        {{ action[1] }}
+                        <div>
+                            <!-- Form is required to escape action[2] (= python code) -->
+                            <form style="display: inline-block;" 
+                                onsubmit="editPipelineActionOpenModal(
+                                    '{{ action[0] }}', 
+                                    '{{ action[1] }}', 
+                                    this.elements['action'].value, 
+                                    '{{ project_dir }}'); return false;">
+                            
+                                <input type="hidden" name="action" value="{{ action[2]|escape }}">
+                                <button class="list-edit-btn" type="submit" style="width: 30px;">
+                                    &middot;&middot;&middot;
+                                </button>
+                            </form>
+                        </div> 
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+    
+    <!-- Modals -->
+    <!-- Edit Action Modal -->
+    {% include 'pipeline/modals.html' %}
+
+    <!-- JS scripts -->
+    <script src="https://unpkg.com/swapy/dist/swapy.min.js"></script>
+    <script src="{{ url_for('pipeline_static', path='js/script.js') }}"></script>
+</div>
+</body>
+</html>
