@@ -1,26 +1,24 @@
 from fastapi import FastAPI
+from fastapi import APIRouter
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 import logging
 logging.basicConfig(level=logging.INFO)
 
-app = FastAPI()
-# TODO: group all static into one /projects, directory="projects" name='static) Need to import them in router too?????
-app.mount("/templates/base/static", StaticFiles(directory="templates/base/static"), name="base_static")
-app.mount("/templates/projects/static", StaticFiles(directory="templates/projects/static"), name="projects_static")
-app.mount("/templates/data_sources/static", StaticFiles(directory="templates/data_sources/static"), name="data_sources_static")
-app.mount("/templates/tables/static", StaticFiles(directory="templates/tables/static"), name="tables_static")
-app.mount("/templates/pipeline/static", StaticFiles(directory="templates/pipeline/static"), name="pipeline_static")
-templates = Jinja2Templates(directory="templates")
-
-from fastapi import APIRouter
+app = FastAPI(title="Squirrel", version="0.1.0")
 router = APIRouter()
-app.mount("/templates/base/static", StaticFiles(directory="templates/base/static"), name="base_static")
-router.mount("/templates/projects/static", StaticFiles(directory="templates/projects/static"), name="projects_static")
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return FileResponse("templates/base/static/img/favicon.ico")
 
+app.mount("/static/base", StaticFiles(directory="templates/base/static"), name="base_static")
+app.mount("/static/projects", StaticFiles(directory="templates/projects/static"), name="projects_static")
+app.mount("/static/data_sources", StaticFiles(directory="templates/data_sources/static"), name="data_sources_static")
+app.mount("/static/tables", StaticFiles(directory="templates/tables/static"), name="tables_static")
+app.mount("/static/pipeline", StaticFiles(directory="templates/pipeline/static"), name="pipeline_static")
 templates = Jinja2Templates(directory="templates")
-
 
 from app.projects import projects
 from app.tables import tables
