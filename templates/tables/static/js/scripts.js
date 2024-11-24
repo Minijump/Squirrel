@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch(`/tables/pager/?project_dir=${projectDir}&table_name=${tableName}&page=${page}&n=${n}`)
                 .then(response => response.text())
                 .then(data => {
-                    const cleanData = data.replace(/\\n/g, '').replace(/\\/g, '').slice(1, -1);;
+                    const cleanData = data.replace(/\\n/g, '').replace(/\\/g, '').slice(1, -1);
                     document.getElementById(`table-html-${tableName}`).innerHTML = cleanData;
                     currentPage = page;
 
