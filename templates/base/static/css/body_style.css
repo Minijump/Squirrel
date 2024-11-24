@@ -60,6 +60,7 @@ main {
   margin-left: 250px;
   padding: 40px;
   flex: 1;
+  overflow-y: auto;
 }
 main h2 {
   font-size: 24px;
