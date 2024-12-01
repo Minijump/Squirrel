@@ -18,7 +18,6 @@
     transition: transform 0.2s;
     cursor: grab;
     overflow: hidden; 
-    /* Overflow hidden not working due to swappy */
 }
 .action:hover {
     /* transform not working after drag/drop due to swappy */
