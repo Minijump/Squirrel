@@ -130,3 +130,16 @@
     background-color: #4b5563;
     color: var(--primary-text-color);
 }
+
+/* --------------------------     MODAL     -------------------------- */
+.infos-div {
+    color: var(--secondary-text-color);
+    margin-bottom: 8px;
+}
+.infos-div span {
+    font-weight: bold;
+}
+
+.info{
+    display: none
+}

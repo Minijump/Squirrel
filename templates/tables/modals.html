@@ -33,16 +33,81 @@
     </form>
 </div>
 
+<div id="MissingVal" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('MissingVal')">&times;</a>
+    <form action="/tables/missing_values/" method="post">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+        <input id="col_name" name="col_name" required type="hidden">
+
+        <label for="missing_val_action">Deal with missing values:</label>
+        {% set available_actions = ['delete', 'replace', 'interpolate'] %}
+        <select name="action" id="action" class="right-sidebar-select" onchange="toggleReplaceValueInput()">
+            {% for action in available_actions %}
+                <option value="{{ action }}">{{ action }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="replace_missing_val">Replace by:</label>
+        <input id="replace_value" name="replace_value" type="text" style="display: none">
+        
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
+    </form>
+    <script>
+        function toggleReplaceValueInput() {
+            let actionSelect = document.getElementById("action");
+            let replaceValueInput = document.getElementById("replace_value");
+            let replaceValueLabel = document.querySelector("label[for='replace_missing_val']");
+        
+            if (actionSelect.value === "replace") {
+                replaceValueInput.style.display = "block";
+                replaceValueLabel.style.display = "block";
+                replaceValueInput.required = true;
+            } else {
+                replaceValueInput.style.display = "none";
+                replaceValueLabel.style.display = "none";
+                replaceValueInput.required = false;
+            }
+        }
+        </script>
+</div>
+
 <div id="InfoColModal" class="modal">
     <div class="modal-content">
-        <h3 id="modalTitle">Column Infos</h3>
+        <div>
+            <h3 id="modalTitle" style="display: inline">Column Infos</h3>
+            <div id="col_dtype"  class="info" style="font-style: italic">(<span></span>)</div>
+        </div>
+
+        <h3 id="error_infos_computation" style="color: red"></h3>
+        <div class="infos-div">
+            <div id="col_count"  class="info"><span></span> lines</div> 
+            <div id="col_unique"  class="info"> with <span></span> unique values</div>
+            <div id="col_null"  class="info"> (<span></span> missing)</div>
+
+            <button class="btn-primary" style="display: block" onclick="
+                closeInfoColModal();
+                openSidebarForm('MissingVal', 
+                    { 
+                        'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
+                        'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
+                    })">
+                Missing values
+            </button>
+        </div>
+        <div class="infos-div">
+            <div id="col_mean"  class="info">Mean: <span></span></div>
+            <div id="col_std"  class="info">Std: <span></span></div>
+            <div id="col_min"  class="info">Min: <span></span></div>
+            <div id="col_max"  class="info">Max: <span></span></div>
+        </div>
+
         <form action="/tables/del_column/" method="post">
             <input type="hidden" name="project_dir" value="{{ project_dir }}">
             <input id="table_name" name="table_name" type="hidden" required>
-            <input id="del_col_name" name="col_name" type="hidden" required>
-            
+            <input id="col_name" name="col_name" type="hidden" required>
             <button type="submit" class="btn-danger" style="margin-left: 15px; margin-top: 10px;">Delete Column</button>
-            <button type="button" onclick="closeInfoColModal()" class="btn-secondary" style="margin-left: 15px; margin-top: 10px;">Cancel</button>
+            <button type="button" onclick="closeInfoColModal()" class="btn-secondary" style="margin-left: 5px; margin-top: 10px;">Cancel</button>
         </form>
     </div>
 </div>

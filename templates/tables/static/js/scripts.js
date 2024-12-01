@@ -30,11 +30,47 @@ function openSidebarForm(id, data = {}) {
 }
 
 // InfoColModal
-function openInfoColModal(colName, tableName) {
+function formatNumber(num) {
+    if (typeof num === 'string' && !isNaN(num)) {
+        num = parseFloat(num);
+    }
+    return (typeof num === 'number' && num % 1 !== 0) ? num.toFixed(2) : num;
+}
+async function openInfoColModal(colName, tableName) {
+    const projectDir = document.querySelector('input[name="project_dir"]').value;
     document.getElementById('InfoColModal').style.display = "flex";
-    document.getElementById('del_col_name').value = colName;
+    document.getElementById('modalTitle').innerHTML = `<b>${colName}</b>`;
     document.querySelector('#InfoColModal input[name="table_name"]').value = tableName;
-    document.getElementById('modalTitle').innerHTML = `Column "<i>${colName}</i>" Infos`;
+    // document.querySelectorAll('#InfoColModal input[name="table_name"]').forEach(input => {
+    //     input.value = tableName;
+    // });
+    document.querySelector('#InfoColModal input[name="col_name"]').value = colName;
+
+    try {
+        const response = await fetch(`/tables/column_infos/?project_dir=${projectDir}&table=${tableName}&column=${colName}`);
+        if (!response.ok) {
+            throw new Error(`Error in response${response.status}`);
+        }
+        const data = await response.json();
+
+        const fields = ['dtype', 'count', 'unique', 'null', 'mean', 'std', 'min', 'max'];
+        fields.forEach(field => {
+            const element = document.getElementById(`col_${field}`);
+            if (!element) {
+                return; // Continue to the next iteration if the element is not found
+            }
+            
+            if (data[field] !== undefined) {
+                element.style.display = 'inline';
+                element.querySelector('span').innerText = `${formatNumber(data[field])}`;
+            } else {
+                element.style.display = 'none';
+            }
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('error_infos_computattion').innerHTML = `Error computing informations: ${error.message}`;
+    }
 }
 function closeInfoColModal() {
     document.getElementById('InfoColModal').style.display = "none";
@@ -64,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelectorAll('.pager').forEach(function(pager) {
         const tableName = pager.dataset.table;
-        var currentPage = 0;
+        let currentPage = 0;
         const n = 10;
         const tableNumLines = pager.dataset.len
         const projectDir = pager.dataset.project_dir;
