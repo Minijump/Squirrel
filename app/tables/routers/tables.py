@@ -83,6 +83,42 @@ async def tables_pager(request: Request, project_dir: str, table_name: str, page
         traceback.print_exc()
         return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
 
+@router.get("/tables/column_infos/")
+async def get_col_infos(request: Request, project_dir: str, table: str, column: str):
+    """
+    Get the column 'column' from table 'tables' informations
+
+    * request: The request object
+    * project_dir(str): The project directory name
+    * tables(str): The name of the dataframe
+    * column(str): The name of the column
+    
+    => Returns the column informations (dict)
+    """
+    try:
+        pipeline = load_pipeline_module(project_dir)
+        dfs = pipeline.run_pipeline()
+        df = dfs[table]
+
+        dtype = str(df[column].dtype)
+        col_infos = {
+            "dtype": str(df[column].dtype),
+            "unique": str(df[column].nunique()),
+            "null": str(df[column].isna().sum()),
+            "count": str(len(df[column].index))
+        }
+
+        if dtype == "float64" or dtype == "int64":
+            col_infos["mean"] = str(df[column].mean())
+            col_infos["std"] = str(df[column].std())
+            col_infos["min"] = str(df[column].min())
+            col_infos["max"] = str(df[column].max())
+
+        return col_infos
+    except Exception as e:
+        traceback.print_exc()
+        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
+
 @router.post("/tables/add_column/")
 @action.add
 async def add_column(request: Request):
@@ -138,4 +174,31 @@ async def create_table(request: Request):
     source = SourceClass(manifest_data, form_data)
     new_code = source.create_table(form_data)
     
+    return new_code
+
+@router.post("/tables/missing_values/")
+@action.add
+async def handle_missing_values(request: Request):
+    """
+    Handle missing values in the dataframe
+
+    * request contains: action (delete, replace,...), table_name
+    
+    => Returns a string representing the code to handle missing values
+    """
+    form_data = await request.form()
+    table_name = form_data.get("table_name")
+    col_name = form_data.get("col_name")
+    action = form_data.get("action")
+    
+    if action == "delete":
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].dropna(subset=['{col_name}'])  #sq_action:Delete rows with missing values in column {col_name} of table {table_name}"""
+    elif action == "replace":
+        replace_value = form_data.get("replace_value")
+        new_code = f"""dfs['{table_name}']['{col_name}'] = dfs['{table_name}']['{col_name}'].fillna({replace_value})  #sq_action:Replace missing values with {replace_value} in column {col_name} of table {table_name}"""
+    elif action == "interpolate":
+        new_code = f"""dfs['{table_name}']['{col_name}'] = dfs['{table_name}']['{col_name}'].interpolate()  #sq_action:Interpolate missing values in column {col_name} of table {table_name}"""
+    else:
+        raise ValueError("Invalid action for handling missing values")
+
     return new_code
