@@ -72,8 +72,61 @@
         </script>
 </div>
 
+<div id="ReplaceVal" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ReplaceVal')">&times;</a>
+    <form action="/tables/replace_values/" method="post">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+        <input id="col_name" name="col_name" required type="hidden">
+
+        <label for="replace_vals">Replace Domain:</label>
+        <div class="info-note">
+            <i class="fas fa-info-circle"></i> The domain must have the format {'to_replace1': 'replacing1', 'to_replace2': 'replacing2', ...}.
+        </div>
+        <textarea id="replace_vals" name="replace_vals" required></textarea>
+        
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
+    </form>
+</div>
+
+<div id="NormalizeCol" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('NormalizeCol')">&times;</a>
+    <form action="/tables/normalize_column/" method="post">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+        <input id="col_name" name="col_name" required type="hidden">
+
+        <label for="normalize_method">Normalize method</label>
+        {% set methods = ['min_max', 'mean'] %}
+        <select name="methods" id="methods" class="right-sidebar-select">
+            {% for method in methods %}
+                <option value="{{ method }}">{{ method }}</option>
+            {% endfor %}
+        </select>
+        
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
+    </form>
+</div>
+
+<div id="RemoveUnderOver" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('RemoveUnderOver')">&times;</a>
+    <form action="/tables/remove_under_over/" method="post">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+        <input id="col_name" name="col_name" required type="hidden">
+
+        <label for="lower_bound">Lower Bound:</label>
+        <input id="lower_bound" name="lower_bound" type="number" step="any">
+
+        <label for="upper_bound">Upper Bound:</label>
+        <input id="upper_bound" name="upper_bound" type="number" step="any">
+        
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
+    </form>
+</div>
+
 <div id="InfoColModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="width: 600px;">
         <div>
             <h3 id="modalTitle" style="display: inline">Column Infos</h3>
             <div id="col_dtype"  class="info" style="font-style: italic">(<span></span>)</div>
@@ -84,29 +137,64 @@
             <div id="col_count"  class="info"><span></span> lines</div> 
             <div id="col_unique"  class="info"> with <span></span> unique values</div>
             <div id="col_null"  class="info"> (<span></span> missing)</div>
-
-            <button class="btn-primary" style="display: block" onclick="
+        </div>
+        <div class="btn-div">
+            <button class="btn-primary" onclick="
                 closeInfoColModal();
                 openSidebarForm('MissingVal', 
                     { 
                         'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
                         'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
                     })">
-                Missing values
+                Missing vals.
+            </button>
+            <button class="btn-primary" onclick="
+                closeInfoColModal();
+                openSidebarForm('ReplaceVal', 
+                    { 
+                        'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
+                        'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
+                    })">
+                Replace vals.
             </button>
         </div>
-        <div class="infos-div">
-            <div id="col_mean"  class="info">Mean: <span></span></div>
-            <div id="col_std"  class="info">Std: <span></span></div>
-            <div id="col_min"  class="info">Min: <span></span></div>
-            <div id="col_max"  class="info">Max: <span></span></div>
+        <div class="infos-div numeric-only">
+            <div id="col_min"  class="info" style="margin-right: 8px;">Min: <span></span></div>
+            <div id="col_25"  class="info" style="margin-right: 8px;">25%: <span></span></div>
+            <div id="col_50"  class="info" style="margin-right: 8px;">50%: <span></span></div>
+            <div id="col_75"  class="info" style="margin-right: 8px;">75%: <span></span></div>
+            <div id="col_max"  class="info" style="margin-right: 8px;">Max: <span></span></div>
+            <div id="col_mean"  class="info">(μ: <span></span>, </div>
+            <div id="col_std"  class="info">σ: <span></span>)</div>
+        </div>         
+        <div class="btn-div numeric-only">
+            <button class="btn-primary" onclick="
+                closeInfoColModal();
+                openSidebarForm('NormalizeCol', 
+                    { 
+                        'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
+                        'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
+                    })">
+                Normalize
+            </button>
+            <button class="btn-primary" onclick="
+                closeInfoColModal();
+                openSidebarForm('RemoveUnderOver', 
+                    { 
+                        'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
+                        'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
+                        'lower_bound': document.querySelector('#col_min span').innerText,
+                        'upper_bound': document.querySelector('#col_max span').innerText,
+                    })">
+                Remove under/over
+            </button>
         </div>
 
         <form action="/tables/del_column/" method="post">
             <input type="hidden" name="project_dir" value="{{ project_dir }}">
             <input id="table_name" name="table_name" type="hidden" required>
             <input id="col_name" name="col_name" type="hidden" required>
-            <button type="submit" class="btn-danger" style="margin-left: 15px; margin-top: 10px;">Delete Column</button>
+            <button type="submit" class="btn-danger" style="margin-top: 10px;">Delete Column</button>
             <button type="button" onclick="closeInfoColModal()" class="btn-secondary" style="margin-left: 5px; margin-top: 10px;">Cancel</button>
         </form>
     </div>
