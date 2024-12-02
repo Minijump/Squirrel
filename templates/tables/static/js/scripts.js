@@ -41,9 +41,6 @@ async function openInfoColModal(colName, tableName) {
     document.getElementById('InfoColModal').style.display = "flex";
     document.getElementById('modalTitle').innerHTML = `<b>${colName}</b>`;
     document.querySelector('#InfoColModal input[name="table_name"]').value = tableName;
-    // document.querySelectorAll('#InfoColModal input[name="table_name"]').forEach(input => {
-    //     input.value = tableName;
-    // });
     document.querySelector('#InfoColModal input[name="col_name"]').value = colName;
 
     try {
@@ -53,11 +50,20 @@ async function openInfoColModal(colName, tableName) {
         }
         const data = await response.json();
 
-        const fields = ['dtype', 'count', 'unique', 'null', 'mean', 'std', 'min', 'max'];
+        const fields = ['dtype', 'count', 'unique', 'null',
+                        'is_numeric', 'mean', 'std', 'min', '25', '50', '75', 'max'];
         fields.forEach(field => {
+            if (field === 'is_numeric') {
+                const numericDivs = document.querySelectorAll('.numeric-only');
+                numericDivs.forEach(div => {
+                    div.style.display = data[field] ? 'inline' : 'none';
+                });
+                return; // Continue to the next iteration
+            }
+
             const element = document.getElementById(`col_${field}`);
             if (!element) {
-                return; // Continue to the next iteration if the element is not found
+                return;
             }
             
             if (data[field] !== undefined) {

@@ -134,12 +134,21 @@
 /* --------------------------     MODAL     -------------------------- */
 .infos-div {
     color: var(--secondary-text-color);
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 .infos-div span {
     font-weight: bold;
 }
 
 .info{
-    display: none
+    display: none;
+}
+
+.btn-div {
+    display: flex;
+    margin-bottom: 20px;
+    margin-left: 10px;
+}
+.btn-div button {
+    margin-left: 5px;
 }

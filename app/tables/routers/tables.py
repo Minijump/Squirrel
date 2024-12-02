@@ -105,14 +105,19 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column: 
             "dtype": str(df[column].dtype),
             "unique": str(df[column].nunique()),
             "null": str(df[column].isna().sum()),
-            "count": str(len(df[column].index))
+            "count": str(len(df[column].index)),
+            "is_numeric": False,
         }
 
         if dtype == "float64" or dtype == "int64":
+            col_infos["is_numeric"] = True
             col_infos["mean"] = str(df[column].mean())
             col_infos["std"] = str(df[column].std())
             col_infos["min"] = str(df[column].min())
             col_infos["max"] = str(df[column].max())
+            col_infos["25"] = str(df[column].quantile(0.25))
+            col_infos["50"] = str(df[column].quantile(0.5))
+            col_infos["75"] = str(df[column].quantile(0.75))
 
         return col_infos
     except Exception as e:
@@ -201,4 +206,62 @@ async def handle_missing_values(request: Request):
     else:
         raise ValueError("Invalid action for handling missing values")
 
+    return new_code
+
+@router.post("/tables/replace_values/")
+@action.add
+async def replace_values(request: Request):
+    """
+    Replace values in the dataframe
+
+    * request contains: table_name, col_name, replace_vals, project_dir
+    
+    => Returns a string representing the code to replace the values
+    """
+    form_data = await request.form()
+    table_name = form_data.get("table_name")
+    col_name = form_data.get("col_name")
+    replace_vals = form_data.get("replace_vals")
+
+    new_code = f"""dfs['{table_name}']['{col_name}'] = dfs['{table_name}']['{col_name}'].replace({replace_vals})  #sq_action:Replace values in column {col_name} of table {table_name}"""
+    return new_code
+
+@router.post("/tables/normalize_column/")
+@action.add
+async def normalize_column(request: Request):
+    """
+    Normalize a column in the dataframe
+
+    * request contains: table_name, col_name, project_dir
+    
+    => Returns a string representing the code to normalize the column
+    """
+    form_data = await request.form()
+    table_name = form_data.get("table_name")
+    col_name = form_data.get("col_name")
+    method = form_data.get("methods")
+
+    if method == "min_max":
+        new_code = f"""dfs['{table_name}']['{col_name}'] = (dfs['{table_name}']['{col_name}'] - dfs['{table_name}']['{col_name}'].min()) / (dfs['{table_name}']['{col_name}'].max() - dfs['{table_name}']['{col_name}'].min())  #sq_action:Normalize (min-max) column {col_name} of table {table_name}"""
+    elif method == "mean":
+        new_code = f"""dfs['{table_name}']['{col_name}'] = (dfs['{table_name}']['{col_name}'] - dfs['{table_name}']['{col_name}'].mean()) / dfs['{table_name}']['{col_name}'].std()  #sq_action:Normalize (mean) column {col_name} of table {table_name}"""
+
+    return new_code
+
+@router.post("/tables/remove_under_over/")
+@action.add
+async def remove_under_over(request: Request):
+    """
+    Remove under/over values in the dataframe
+
+    * request contains: table_name, col_name, lower_bound, upper_bound, project_dir
+    
+    => Returns a string representing the code to remove under/over values
+    """
+    form_data = await request.form()
+    table_name = form_data.get("table_name")
+    col_name = form_data.get("col_name")
+    lower_bound = form_data.get("lower_bound")
+    upper_bound = form_data.get("upper_bound")
+    new_code = f"""dfs['{table_name}'] = dfs['{table_name}'][(dfs['{table_name}']['{col_name}'] >= {lower_bound}) & (dfs['{table_name}']['{col_name}'] <= {upper_bound})]  #sq_action:Remove vals out of [{lower_bound}, {upper_bound}] in column {col_name} of table {table_name}"""
     return new_code
