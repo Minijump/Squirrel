@@ -265,3 +265,37 @@ async def remove_under_over(request: Request):
     upper_bound = form_data.get("upper_bound")
     new_code = f"""dfs['{table_name}'] = dfs['{table_name}'][(dfs['{table_name}']['{col_name}'] >= {lower_bound}) & (dfs['{table_name}']['{col_name}'] <= {upper_bound})]  #sq_action:Remove vals out of [{lower_bound}, {upper_bound}] in column {col_name} of table {table_name}"""
     return new_code
+
+@router.post("/tables/rename_column/")
+@action.add
+async def rename_column(request: Request):
+    """
+    Rename a column in the dataframe
+
+    * request contains: table_name, col_name, new_col_name, project_dir
+    
+    => Returns a string representing the code to rename the column
+    """
+    form_data = await request.form()
+    table_name = form_data.get("table_name")
+    col_name = form_data.get("col_name")
+    new_col_name = form_data.get("new_col_name")
+    new_code = f"""dfs['{table_name}'].rename(columns={{'{col_name}': '{new_col_name}'}}, inplace=True)  #sq_action:Rename column {col_name} to {new_col_name} in table {table_name}"""
+    return new_code
+
+@router.post("/tables/edit_column_type/")
+@action.add
+async def edit_column_type(request: Request):
+    """
+    Edit the type of a column in the dataframe
+
+    * request contains: table_name, col_name, new_col_type, project_dir
+    
+    => Returns a string representing the code to edit the column type
+    """
+    form_data = await request.form()
+    table_name = form_data.get("table_name")
+    col_name = form_data.get("col_name")
+    new_col_type = form_data.get("new_col_type")
+    new_code = f"""dfs['{table_name}']['{col_name}'] = dfs['{table_name}']['{col_name}'].astype('{new_col_type}')  #sq_action:Change type of column {col_name} to {new_col_type} in table {table_name}"""
+    return new_code
