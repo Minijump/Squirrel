@@ -58,7 +58,7 @@ async function openInfoColModal(colName, tableName) {
                 numericDivs.forEach(div => {
                     div.style.display = data[field] ? 'inline' : 'none';
                 });
-                return; // Continue to the next iteration
+                return;
             }
 
             const element = document.getElementById(`col_${field}`);

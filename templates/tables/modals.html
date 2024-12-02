@@ -125,11 +125,56 @@
     </form>
 </div>
 
+<div id="RenameCol" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('RenameCol')">&times;</a>
+    <form action="/tables/rename_column/" method="post">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+        <input id="col_name" name="col_name" required type="hidden">
+
+        <label for="new_col_name">New Column Name:</label>
+        <input id="new_col_name" name="new_col_name" required>
+        
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Rename</button>
+    </form>
+</div>
+
+<div id="ChangeType" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ChangeType')">&times;</a>
+    <form action="/tables/edit_column_type/" method="post" style="margin-top: 20px;">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+        <input id="col_name" name="col_name" required type="hidden">
+
+        <label for="new_col_name">New Column Type:</label>
+        {% set dtypes = ['int', 'float', 'str', 'bool', 'category'] %}
+        <select name="new_col_type" id="new_col_type" class="right-sidebar-select">
+            {% for dtype in dtypes %}
+                <option value="{{ dtype }}">{{ dtype }}</option>
+            {% endfor %}    
+        </select>
+
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Edit Type</button>
+    </form>
+</div>
+
 <div id="InfoColModal" class="modal">
     <div class="modal-content" style="width: 600px;">
-        <div>
-            <h3 id="modalTitle" style="display: inline">Column Infos</h3>
-            <div id="col_dtype"  class="info" style="font-style: italic">(<span></span>)</div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 id="modalTitle" style="display: inline">Column Infos</h3>
+                <div id="col_dtype" class="info" style="font-style: italic">(<span></span>)</div>
+                <button class="edit-btn" onclick="
+                    closeInfoColModal();
+                    openSidebarForm('RenameCol', 
+                        { 
+                            'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
+                            'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
+                        })">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
+            <a href="javascript:void(0)" class="close-btn" onclick="closeInfoColModal()">&times;</a>
         </div>
 
         <h3 id="error_infos_computation" style="color: red"></h3>
@@ -157,45 +202,57 @@
                     })">
                 Replace vals.
             </button>
+            <button class="btn-primary" onclick="
+                closeInfoColModal();
+                openSidebarForm('ChangeType', 
+                    { 
+                        'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
+                        'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
+                    })">
+                Change type
+            </button>
         </div>
-        <div class="infos-div numeric-only">
-            <div id="col_min"  class="info" style="margin-right: 8px;">Min: <span></span></div>
-            <div id="col_25"  class="info" style="margin-right: 8px;">25%: <span></span></div>
-            <div id="col_50"  class="info" style="margin-right: 8px;">50%: <span></span></div>
-            <div id="col_75"  class="info" style="margin-right: 8px;">75%: <span></span></div>
-            <div id="col_max"  class="info" style="margin-right: 8px;">Max: <span></span></div>
-            <div id="col_mean"  class="info">(μ: <span></span>, </div>
-            <div id="col_std"  class="info">σ: <span></span>)</div>
-        </div>         
+        <div class="infos-div">
+            <div class="numeric-only">
+                <div id="col_min"  class="info" style="margin-right: 8px;">Min: <span></span></div>
+                <div id="col_25"  class="info" style="margin-right: 8px;">25%: <span></span></div>
+                <div id="col_50"  class="info" style="margin-right: 8px;">50%: <span></span></div>
+                <div id="col_75"  class="info" style="margin-right: 8px;">75%: <span></span></div>
+                <div id="col_max"  class="info" style="margin-right: 8px;">Max: <span></span></div>
+                <div id="col_mean"  class="info">(μ: <span></span>, </div>
+                <div id="col_std"  class="info">σ: <span></span>)</div>
+            </div>
+        </div> 
         <div class="btn-div numeric-only">
-            <button class="btn-primary" onclick="
-                closeInfoColModal();
-                openSidebarForm('NormalizeCol', 
-                    { 
-                        'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
-                        'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
-                    })">
-                Normalize
-            </button>
-            <button class="btn-primary" onclick="
-                closeInfoColModal();
-                openSidebarForm('RemoveUnderOver', 
-                    { 
-                        'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
-                        'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
-                        'lower_bound': document.querySelector('#col_min span').innerText,
-                        'upper_bound': document.querySelector('#col_max span').innerText,
-                    })">
-                Remove under/over
-            </button>
+            <div class="numeric-only">
+                <button class="btn-primary" onclick="
+                    closeInfoColModal();
+                    openSidebarForm('NormalizeCol', 
+                        { 
+                            'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
+                            'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
+                        })">
+                    Normalize
+                </button>
+                <button class="btn-primary" onclick="
+                    closeInfoColModal();
+                    openSidebarForm('RemoveUnderOver', 
+                        { 
+                            'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
+                            'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
+                            'lower_bound': document.querySelector('#col_min span').innerText,
+                            'upper_bound': document.querySelector('#col_max span').innerText,
+                        })">
+                    Remove under/over
+                </button>
+            </div>
         </div>
 
         <form action="/tables/del_column/" method="post">
             <input type="hidden" name="project_dir" value="{{ project_dir }}">
             <input id="table_name" name="table_name" type="hidden" required>
             <input id="col_name" name="col_name" type="hidden" required>
-            <button type="submit" class="btn-danger" style="margin-top: 10px;">Delete Column</button>
-            <button type="button" onclick="closeInfoColModal()" class="btn-secondary" style="margin-left: 5px; margin-top: 10px;">Cancel</button>
+            <button type="submit" class="btn-danger" style="margin-top: 20px;">Delete Column</button>
         </form>
     </div>
 </div>
