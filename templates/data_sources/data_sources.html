@@ -18,7 +18,7 @@
                 <li class="clickable"><a href="/tables/?project_dir={{ project_dir }}"><i class="fas fa-table"></i>Table</a></li>
                 <li class="clickable"><a href="/pipeline/?project_dir={{ project_dir }}"><i class="fas fa-project-diagram"></i>Pipeline</a></li>
                 <li class="clickable"><a href="#"><i class="fas fa-database"></i>Data sources</a></li>
-                <li class="clickable"><a href="#"><i class="fas fa-cog"></i>Settings</a></li>
+                <li class="clickable"><a href="/project/settings/?project_dir={{ project_dir }}"><i class="fas fa-cog"></i>Settings</a></li>
             </ul>
         </nav>
     </aside>
@@ -45,7 +45,7 @@
     {% include 'data_sources/modals.html' %}
 
     <!-- JS scripts -->
-    <!-- CReate Source Modal-->
+    <!-- Create Source Modal-->
     <!-- File Type Filter-->
     <script src="{{ url_for('data_sources_static', path='js/script.js') }}"></script>
 </div>

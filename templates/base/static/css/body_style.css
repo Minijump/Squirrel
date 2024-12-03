@@ -67,3 +67,26 @@ main h2 {
   margin-bottom: 20px;
   font-weight: bold;
 }
+
+.std-form label {
+  color: var(--secondary-text-color);
+  display: block;
+  margin-left: 5px;
+}
+.std-form input, .std-form textarea, .std-form select {
+  width: 80%;
+  padding: 8px;
+  border-radius: 8px;
+  background: #4b5563;
+  color: var(--primary-text-color);;
+  border: none;
+  margin: 12px;
+}
+.std-form select option {
+  padding: 5px;
+  background-color: #4b5563;
+  color: var(--primary-text-color);
+}
+.std-form button {
+  display: block;
+}
