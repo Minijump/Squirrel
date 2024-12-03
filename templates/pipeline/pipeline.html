@@ -13,14 +13,7 @@
             <a href="/"><i class="fas fa-home" style="color: white;"></i></a>
             <h1 style="margin-left: 5px;">Pipeline</h1>
         </div>
-        <nav>
-            <ul>
-                <li class="clickable"><a href="/tables/?project_dir={{ project_dir }}"><i class="fas fa-table"></i>Table</a></li>
-                <li class="clickable"><a href="#"><i class="fas fa-project-diagram"></i>Pipeline</a></li>
-                <li class="clickable"><a href="/data_sources/?project_dir={{ project_dir }}"><i class="fas fa-database"></i>Data sources</a></li>
-                <li class="clickable"><a href="/project/settings/?project_dir={{ project_dir }}"><i class="fas fa-cog"></i>Settings</a></li>
-            </ul>
-        </nav>
+        {% include 'base/html/project_nav_links.html' %}
     </aside>
     <main>
         <div style="margin-bottom: 10px;">
