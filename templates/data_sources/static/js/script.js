@@ -8,7 +8,9 @@ document.querySelectorAll('.card').forEach(card => {
             createSourceModal.style.display = 'flex';
             return;
         }
-        // TODO: setting of the source
+        const projectDir = this.getAttribute('data-project-dir');
+        const sourceDir = this.getAttribute('data-source-dir');
+        window.location.href = `/source/settings/?project_dir=${encodeURIComponent(projectDir)}&source_dir=${encodeURIComponent(sourceDir)}`;
     });
 });
 cancelButton.addEventListener('click', () => {
