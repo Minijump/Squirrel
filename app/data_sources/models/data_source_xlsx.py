@@ -6,6 +6,7 @@ from app.data_sources.models.data_source import DataSource, data_source_type
 class DataSourceXLSX(DataSource):
     short_name = "xlsx"
     display_name = "Excel"
+    icon = "xlsx_icon.png"
 
     def __init__(self, manifest, form_data):
         super().__init__(manifest)

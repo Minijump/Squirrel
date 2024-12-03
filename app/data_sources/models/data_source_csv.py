@@ -6,6 +6,7 @@ from app.data_sources.models.data_source import DataSource, data_source_type
 class DataSourceCSV(DataSource):
     short_name = "csv"
     display_name = "CSV"
+    icon = "csv_icon.png"
 
     def __init__(self, manifest, form_data):
         super().__init__(manifest)

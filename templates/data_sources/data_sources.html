@@ -25,7 +25,15 @@
           {% for source in sources %}
             <div class="card">
                 <div class="card-content">
-                  <h3>{{ source.name }}</h3>
+                  <div>
+                    <h3 style="display: inline;">{{ source.name }}</h3>
+                    {% if DATA_SOURCE_REGISTRY[source.type].icon %}
+                      <img 
+                        src="{{ url_for('data_sources_static', path='img/' + DATA_SOURCE_REGISTRY[source.type].icon) }}" 
+                        alt="{{ source.type }} icon"
+                        style="width: 20px; height: 20px; display: inline;">
+                    {% endif %}
+                  </div>
                   <p>{{ source.description }}</p>
                 </div>
             </div>
