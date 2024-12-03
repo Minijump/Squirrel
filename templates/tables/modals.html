@@ -42,7 +42,7 @@
 
         <label for="missing_val_action">Deal with missing values:</label>
         {% set available_actions = ['delete', 'replace', 'interpolate'] %}
-        <select name="action" id="action" class="right-sidebar-select" onchange="toggleReplaceValueInput()">
+        <select name="action" id="action" class="right-sidebar-select" onchange="toggleActionSelect()">
             {% for action in available_actions %}
                 <option value="{{ action }}">{{ action }}</option>
             {% endfor %}
@@ -54,7 +54,7 @@
         <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
     </form>
     <script>
-        function toggleReplaceValueInput() {
+        function toggleActionSelect() {
             let actionSelect = document.getElementById("action");
             let replaceValueInput = document.getElementById("replace_value");
             let replaceValueLabel = document.querySelector("label[for='replace_missing_val']");
@@ -69,7 +69,7 @@
                 replaceValueInput.required = false;
             }
         }
-        </script>
+    </script>
 </div>
 
 <div id="ReplaceVal" class="right-sidebar-form">
@@ -147,7 +147,7 @@
         <input id="col_name" name="col_name" required type="hidden">
 
         <label for="new_col_name">New Column Type:</label>
-        {% set dtypes = ['int', 'float', 'str', 'bool', 'category'] %}
+        {% set dtypes = ['int', 'float', 'string', 'bool', 'category'] %}
         <select name="new_col_type" id="new_col_type" class="right-sidebar-select">
             {% for dtype in dtypes %}
                 <option value="{{ dtype }}">{{ dtype }}</option>
@@ -155,6 +155,79 @@
         </select>
 
         <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Edit Type</button>
+    </form>
+</div>
+
+<div id="SortCol" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('SortCol')">&times;</a>
+    <form action="/tables/sort_column/" method="post">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+        <input id="col_name" name="col_name" required type="hidden">
+
+        <label for="sort_order">Sort Order:</label>
+        <select name="sort_order" id="sort_order" class="right-sidebar-select" onchange="toggleSortTypeSelect()">
+            <option value="ascending">Ascending</option>
+            <option value="descending">Descending</option>
+            <option value="custom">Custom</option>
+        </select>
+
+        <label for="sort_key" style="display: none">Sort Key (Python code):</label>
+        <div class="info-note" id="sort_key_info_note" style="display: none">
+            <i class="fas fa-info-circle"></i> 
+            Key must be python code with x as the col values. E.g. x.str.len(), x**2, ...
+            (in practice this will execute: key=lambda x: ...your_input...). 
+            Note that 'key' != 'apply' (see pandas doc.)
+        </div>
+        <textarea id="sort_key" name="sort_key" style="display: none"></textarea>
+        
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Sort</button>
+    </form>
+    <script>
+        function toggleSortTypeSelect() {
+            let sortTypeSelect = document.getElementById("sort_order");
+            let sortKey = document.getElementById("sort_key");
+            let sortKeyLabel = document.querySelector("label[for='sort_key']");
+            let sortKeyInfoNote = document.getElementById("sort_key_info_note");
+            console.log(sortTypeSelect.value);
+        
+            if (sortTypeSelect.value === "custom") {
+                sortKey.style.display = "block";
+                sortKeyLabel.style.display = "block";
+                sortKeyInfoNote.style.display = "block";
+                sortKey.required = true;
+            } else {
+                sortKey.style.display = "none";
+                sortKeyLabel.style.display = "none";
+                sortKeyInfoNote.style.display = "none";
+                sortKey.required = false;
+            }
+        }
+    </script>
+</div>
+
+<div id="CutValues" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('CutValues')">&times;</a>
+    <form action="/tables/cut_values/" method="post">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+        <input id="col_name" name="col_name" required type="hidden">
+
+        <label for="cut_values">Cut Values:</label>
+        <div class="info-note" id="sort_key_info_note">
+            <i class="fas fa-info-circle"></i> 
+            Comma separated. E.g. 0,10,20,30
+        </div>
+        <input id="cut_values" name="cut_values" required>
+
+        <label for="cut_labels">Cut Labels:</label>
+        <div class="info-note" id="sort_key_info_note">
+            <i class="fas fa-info-circle"></i> 
+            Comma separated. E.g. low,middle,high
+        </div>
+        <input id="cut_labels" name="cut_labels" required>
+        
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
     </form>
 </div>
 
@@ -211,6 +284,15 @@
                     })">
                 Change type
             </button>
+            <button class="btn-primary" onclick="
+                closeInfoColModal();
+                openSidebarForm('SortCol', 
+                    { 
+                        'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
+                        'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
+                    })">
+                Sort
+            </button>
         </div>
         <div class="infos-div">
             <div class="numeric-only">
@@ -244,6 +326,15 @@
                             'upper_bound': document.querySelector('#col_max span').innerText,
                         })">
                     Remove under/over
+                </button>
+                <button class="btn-primary" onclick="
+                    closeInfoColModal();
+                    openSidebarForm('CutValues', 
+                        { 
+                            'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
+                            'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
+                        })">
+                    Cut
                 </button>
             </div>
         </div>
