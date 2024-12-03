@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Source Settings</title>
+    <link href="{{ url_for('data_sources_static', path='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <aside>
+        <div class="aside-title">
+            <a href="/"><i class="fas fa-home" style="color: white;"></i></a>
+            <h1 style="margin-left: 5px;">Source Settings</h1>
+        </div>
+        {% include 'base/html/project_nav_links.html' %}
+    </aside>
+    <main>
+        <h2>Edit Source {{ source.name }}</h2>
+        <form id="sourceSettingsForm" method="post" action="/source/update_settings/" enctype="multipart/form-data" class="std-form">
+            <input type="hidden" name="project_dir" value="{{ project_dir }}">
+            <input type="hidden" name="source_dir" value="{{ source.directory }}">
+            <label for="sourceName">Name</label>
+            <input type="text" id="sourceName" name="name" value="{{ source.name }}" required>
+    
+            <label for="sourceDescription">Description</label>
+            <textarea id="sourceDescription" name="description">{{ source.description }}</textarea>
+    
+            <button type="submit" class="btn-primary">Save</button>
+        </form>
+    </main>
+</div>
+<script src="{{ url_for('data_sources_static', path='js/scripts.js') }}"></script>
+</body>
+</html>

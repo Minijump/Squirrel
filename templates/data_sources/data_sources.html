@@ -23,7 +23,7 @@
             </p>
           </div>
           {% for source in sources %}
-            <div class="card">
+            <div class="card" data-project-dir="{{ project_dir }}" data-source-dir="{{ source.directory }}">
                 <div class="card-content">
                   <div>
                     <h3 style="display: inline;">{{ source.name }}</h3>
