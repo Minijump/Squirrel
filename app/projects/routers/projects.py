@@ -69,3 +69,57 @@ async def open_project(request: Request):
     except Exception as e:
         traceback.print_exc()
         return templates.TemplateResponse(request, "base/html/projects_error.html", {"exception": str(e)})
+
+@router.get("/project/settings/")
+async def project_settings(request: Request, project_dir: str):
+    """
+    Display and edit the project settings
+
+    * request
+    * project_dir(str): The project directory
+
+    => Returns a TemplateResponse to display project settings
+    """
+    try:
+        manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "__manifest__.json")
+        with open(manifest_path, 'r') as file:
+            manifest_data = json.load(file)
+
+        return templates.TemplateResponse(
+            request, 
+            "projects/project_settings.html", 
+            {"project": manifest_data, "project_dir": project_dir}
+        )
+    except Exception as e:
+        traceback.print_exc()
+        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
+
+@router.post("/project/update_settings/")
+async def update_project_settings(request: Request):
+    """
+    Update the project settings
+
+    * request: contains the form data
+
+    => Returns a JSONResponse indicating success or failure
+    """
+    try:
+        form_data = await request.form()
+        project_dir = form_data.get("project_dir")
+        project_name = form_data.get("project_name")
+        project_description = form_data.get("project_description")
+
+        manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "__manifest__.json")
+        with open(manifest_path, 'r') as file:
+            manifest_data = json.load(file)
+
+        manifest_data['name'] = project_name
+        manifest_data['description'] = project_description
+
+        with open(manifest_path, 'w') as file:
+            json.dump(manifest_data, file, indent=4)
+
+        return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)                                                    
+    except Exception as e:
+        traceback.print_exc()
+        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
