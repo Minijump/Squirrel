@@ -299,3 +299,50 @@ async def edit_column_type(request: Request):
     new_col_type = form_data.get("new_col_type")
     new_code = f"""dfs['{table_name}']['{col_name}'] = dfs['{table_name}']['{col_name}'].astype('{new_col_type}')  #sq_action:Change type of column {col_name} to {new_col_type} in table {table_name}"""
     return new_code
+
+@router.post("/tables/sort_column/")
+@action.add
+async def sort_column(request: Request):
+    """
+    Sort a column in the dataframe
+
+    * request contains: table_name, col_name, sort_order, sort_key, project_dir
+    
+    => Returns a string representing the code to sort the column
+    """
+    form_data = await request.form()
+    table_name = form_data.get("table_name")
+    col_name = form_data.get("col_name")
+    sort_order = form_data.get("sort_order")
+    sort_key = form_data.get("sort_key")
+
+    if sort_order == "custom":
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=['{col_name}'], key=lambda x: {sort_key})  #sq_action:Sort {col_name} of table {table_name} with custom key"""
+    elif sort_order == "ascending":
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=['{col_name}'], ascending=True)  #sq_action:Sort(asc) {col_name} of table {table_name}"""
+    elif sort_order == "descending":
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=['{col_name}'], ascending=False)  #sq_action:Sort(desc) {col_name} of table {table_name}"""
+    else:
+        raise ValueError("Invalid sort order")
+    
+    return new_code
+
+@router.post("/tables/cut_values/")
+@action.add
+async def cut_values(request: Request):
+    """
+    Cut values in the dataframe
+
+    * request contains: table_name, col_name, cut_values, cut_labels, project_dir
+    
+    => Returns a string representing the code to cut the values
+    """
+    form_data = await request.form()
+    table_name = form_data.get("table_name")
+    col_name = form_data.get("col_name")
+    cut_values = form_data.get("cut_values").split(',')
+    cut_labels = form_data.get("cut_labels").split(',')
+
+    int_cut_values = [int(val) for val in cut_values]
+    new_code = f"""dfs['{table_name}']['{col_name}'] = pd.cut(dfs['{table_name}']['{col_name}'], bins={int_cut_values}, labels={cut_labels})  #sq_action:Cut values in column {col_name} of table {table_name}"""
+    return new_code
