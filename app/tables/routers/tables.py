@@ -51,7 +51,7 @@ async def tables(request: Request, project_dir: str):
                 table_html[name] = df.head(10).to_html(classes='df-table', index=False)
                 table_len[name] = len(df.index)
 
-        sources = await get_sources(project_dir)
+        sources = await get_sources(project_dir) # Necessary to be able to get the available sources for table creation
 
         return templates.TemplateResponse(
             request,
