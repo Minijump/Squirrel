@@ -20,10 +20,19 @@
         <form id="projectSettingsForm" method="post" action="/project/update_settings/" enctype="multipart/form-data" class="std-form">
             <input type="hidden" name="project_dir" value="{{ project.directory }}">
             <label for="projectName">Name</label>
-            <input type="text" id="projectName" name="project_name" value="{{ project.name }}" required>
+            <input type="text" id="projectName" name="name" value="{{ project.name }}" required>
     
             <label for="projectDescription">Description</label>
-            <textarea id="projectDescription" name="project_description">{{ project.description }}</textarea>
+            <textarea id="projectDescription" name="description">{{ project.description }}</textarea>
+
+            <label for="projectMisc">Misc</label>
+            <div class="info-note">
+                <i class="fas fa-info-circle"></i> 
+                With format: {"key": "value", "key2": value2, ...} Use double quotes. If invalid input, misc is reset to default.
+            </div>
+            <textarea id="projectMisc" name="misc">{{ project.misc | tojson }}</textarea>
+
+            <!-- Will call settings templates from other project_type here-->
     
             <button type="submit" class="btn-primary">Save</button>
         </form>

@@ -6,7 +6,7 @@ import json
 import traceback
 
 from app import router, templates
-from app.projects.models import Project
+from app.projects.models import PROJECT_TYPE_REGISTRY
 
 @router.get("/projects/")
 async def projects(request: Request):
@@ -28,7 +28,10 @@ async def projects(request: Request):
                 manifest_data = json.load(file)
                 projects.append(manifest_data)
 
-        return templates.TemplateResponse(request, "projects/projects.html", {"projects": projects})
+        return templates.TemplateResponse(
+            request, 
+            "projects/projects.html", 
+            {"projects": projects, "PROJECT_TYPE_REGISTRY": PROJECT_TYPE_REGISTRY})
     except Exception as e:
         traceback.print_exc()
         return templates.TemplateResponse(request, "base/html/projects_error.html", {"exception": str(e)})
@@ -44,11 +47,12 @@ async def create_project(request: Request):
     """
     try:
         form_data = await request.form()
-        project_name = form_data.get("project_name")
-        project_description = form_data.get("project_description")
+        project_type = form_data.get("project_type", "std")
         
-        project = Project(project_name, project_description)
+        ProjectClass = PROJECT_TYPE_REGISTRY[project_type]
+        project = ProjectClass(form_data)
         await project.create()
+
         return RedirectResponse(url=f"/projects/open/?project_dir={project.directory}", status_code=303)
     except Exception as e:
         traceback.print_exc()
@@ -106,18 +110,14 @@ async def update_project_settings(request: Request):
     try:
         form_data = await request.form()
         project_dir = form_data.get("project_dir")
-        project_name = form_data.get("project_name")
-        project_description = form_data.get("project_description")
 
         manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "__manifest__.json")
         with open(manifest_path, 'r') as file:
             manifest_data = json.load(file)
-
-        manifest_data['name'] = project_name
-        manifest_data['description'] = project_description
-
-        with open(manifest_path, 'w') as file:
-            json.dump(manifest_data, file, indent=4)
+        
+        ProjectClass = PROJECT_TYPE_REGISTRY[manifest_data['project_type']]
+        project = ProjectClass(manifest_data)
+        await project.update_settings(form_data)
 
         return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)                                                    
     except Exception as e:

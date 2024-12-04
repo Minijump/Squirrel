@@ -91,10 +91,9 @@ Create data analysis pipeline by generating python with a low-code interface.
 5. **Create a new Pull Request**
 
 ### To do MVP
-* Projects: imp structure, settings (table len,...), ...
-* Data sources: create API sources, change structure (to work with API + correct edit source), create multiple source types 
+* Data sources: create API sources, change structure (to work with API + correct edit source), at creation: standard pop up than custom one?, create multiple source types 
 * Table: change structure, enable to do wathever you want with python (delete lines where -, Data export (csv), ...)
-* Complete README
+* Complete README + Demo project
 
 ### To do
 * Odoo module: ease import process
