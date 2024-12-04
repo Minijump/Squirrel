@@ -8,9 +8,8 @@ class DataSourceXLSX(DataSource):
     display_name = "Excel"
     icon = "xlsx_icon.png"
 
-    def __init__(self, manifest, form_data):
+    def __init__(self, manifest):
         super().__init__(manifest)
-        self.source_file = form_data.get('source_file')
 
     @staticmethod
     def check_available_infos(form_data):
@@ -38,8 +37,9 @@ class DataSourceXLSX(DataSource):
         source_path = os.path.join(os.getcwd(), "_projects", form_data["project_dir"], "data_sources", self.directory) 
         data_file_name = 'data.' + 'xlsx'
         source_file_path = os.path.join(source_path, data_file_name)
+        source_file = form_data.get("source_file")
         with open(source_file_path, 'wb') as file:
-            file.write(await self.source_file.read())
+            file.write(await source_file.read())
 
     def create_table(self, form_data):
         """

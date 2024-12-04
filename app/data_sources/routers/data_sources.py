@@ -114,19 +114,18 @@ async def update_source_settings(request: Request):
         form_data = await request.form()
         project_dir = form_data.get("project_dir")
         source_dir = form_data.get("source_dir")
-        
+
         manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir, "__manifest__.json")
         with open(manifest_path, 'r') as file:
-            source = json.load(file)
-            for key in form_data.keys():
-                if key in source.keys():
-                    source[key] = form_data[key]
-        with open(manifest_path, 'w') as file:
-            json.dump(source, file, indent=4)
+            manifest_data = json.load(file)
+        
+        SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
+        source = SourceClass(manifest_data)
+        await source.update_source_settings(form_data)
 
         return RedirectResponse(url=f"/data_sources/?project_dir={project_dir}", status_code=303)
 
     except Exception as e:
         traceback.print_exc()
-        return templates.TemplateResponse("base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir, "source_dir": source_dir})
+        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir, "source_dir": source_dir})
     

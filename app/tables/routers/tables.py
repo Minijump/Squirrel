@@ -180,7 +180,7 @@ async def create_table(request: Request):
         manifest_data = json.load(file)
 
     SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
-    source = SourceClass(manifest_data, form_data)
+    source = SourceClass(manifest_data)
     new_code = source.create_table(form_data)
     
     return new_code
