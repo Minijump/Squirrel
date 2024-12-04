@@ -11,7 +11,7 @@ def data_source_type(cls):
     return cls
 
 class DataSource:
-    def __init__(self, manifest, form_data=False):
+    def __init__(self, manifest):
         self.type = manifest['type']
         self.name = manifest['name']
         self.description = manifest.get('description')
@@ -76,7 +76,7 @@ class DataSource:
         """
         manifest = cls._generate_manifest(form_data)
         await cls._create_source_base(manifest, form_data)
-        return cls(manifest, form_data)
+        return cls(manifest)
 
     async def _create_data_file(self):
         """
@@ -89,3 +89,20 @@ class DataSource:
         To be implemented by subclasses
         """
         pass
+
+    async def update_source_settings(self, updated_data):
+        """
+        Update the settings of a data source
+
+        * updated_data(dict): contains the new settings
+        """
+        manifest_path = os.path.join(os.getcwd(), "_projects", updated_data["project_dir"], "data_sources", self.directory, "__manifest__.json")
+        with open(manifest_path, 'r') as file:
+            source = json.load(file)
+
+        for key in updated_data.keys():
+            if key in source.keys():
+                source[key] = updated_data[key]
+
+        with open(manifest_path, 'w') as file:
+            json.dump(source, file, indent=4)
