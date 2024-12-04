@@ -45,18 +45,22 @@ async def tables(request: Request, project_dir: str):
         exception = e
     finally:
         table_html = {}
-        table_len = {}
+        table_len_infos = {}
         for name, df in dfs.items():
             if not exception and isinstance(df, pd.DataFrame):
-                table_html[name] = df.head(10).to_html(classes='df-table', index=False)
-                table_len[name] = len(df.index)
+                manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "__manifest__.json")
+                with open(manifest_path, 'r') as file:
+                    manifest_data = json.load(file)
+                display_len = manifest_data.get('misc', {}).get("table_len", 10) # TODO: correct (str/dict, '/", what if missing, ...)
+                table_html[name] = df.head(display_len).to_html(classes='df-table', index=False)
+                table_len_infos[name] = {'total_len': len(df.index), 'display_len': display_len}
 
         sources = await get_sources(project_dir) # Necessary to be able to get the available sources for table creation
 
         return templates.TemplateResponse(
             request,
             "tables/tables.html",
-            {"table": table_html, "table_len": table_len, "project_dir": project_dir, "sources": sources, "exception": exception}
+            {"table": table_html, "table_len_infos": table_len_infos, "project_dir": project_dir, "sources": sources, "exception": exception}
         )
 
 @router.get("/tables/pager/")

@@ -22,7 +22,11 @@ async def test_create_project_directory():
     """
     with tempfile.TemporaryDirectory() as temp_dir:
         with patch('os.getcwd', return_value=temp_dir):
-            project = Project("Test Create Project Directory", "This is a test for project directory creation")
+            project_infos = {
+                "name": "Test Create Project Directory",
+                "description": "This is a test for project directory creation"
+            }
+            project = Project(project_infos)
             await project._create_project_directory()
             assert os.path.exists(project.path), "Failed to create project directory"
 
@@ -33,7 +37,11 @@ async def test_create_pipeline_file():
     """
     with tempfile.TemporaryDirectory() as temp_dir:
         with patch('os.getcwd', return_value=temp_dir):
-            project = Project("Test Create Pipeline File", "This is a test for pipeline creation")
+            project_infos = {
+                "name": "Test Create Pipeline File",
+                "description": "This is a test for pipeline creation"
+            }
+            project = Project(project_infos)
             await project._create_project_directory()
             await project._create_pipeline_file()
             assert os.path.exists(os.path.join(project.path, "pipeline.py")), "Failed to create project pipeline"
@@ -46,7 +54,11 @@ async def test_create_data_sources_directory():
     """
     with tempfile.TemporaryDirectory() as temp_dir:
         with patch('os.getcwd', return_value=temp_dir):
-            project = Project("Test Create Data Sources Dir", "This is a test for data_sources creation")
+            project_infos = {
+                "name": "Test Create Data Sources Dir",
+                "description": "This is a test for data_sources creation"
+            }
+            project = Project(project_infos)
             await project._create_project_directory()
             await project._create_data_sources_directory()
             assert os.path.exists(os.path.join(project.path, "data_sources")), "Failed to create project data_sources directory"
@@ -58,16 +70,21 @@ async def test_create_manifest():
     """
     with tempfile.TemporaryDirectory() as temp_dir:
         with patch('os.getcwd', return_value=temp_dir):
-            project = Project("Test Create Manifest File", "This is a test for manifest creation")
+            project_infos = {
+                "name": "Test Create Manifest File",
+                "description": "This is a test for manifest creation"
+            }
+            project = Project(project_infos)
             await project._create_project_directory()
             await project._create_manifest()
             assert os.path.exists(os.path.join(project.path, "__manifest__.json")), "Failed to create project manifest"
             assert {
                 "name": project.name,
                 "description": project.description,
-                "directory": project.directory
+                "directory": project.directory,
+                "project_type": project.project_type[0],
+                "misc": project.misc
             } == json.load(open(os.path.join(project.path, "__manifest__.json"))), "Failed to create project manifest with the correct content"
-
 
 # Test routers
 #----------------------------------------------------------------------------------
@@ -109,10 +126,10 @@ def test_create_project():
     Test we are redirected to /tables/?project_dir={project_dir} enpoint
     """
     form_data = {
-        "project_name": "Test Create Project", 
-        "project_description": "This is a test for project creation",
+        "name": "Test Create Project", 
+        "description": "This is a test for project creation",
         }
-    project_name_dir = form_data['project_name'].lower().replace(" ", "_")
+    project_name_dir = form_data['name'].lower().replace(" ", "_")
     with tempfile.TemporaryDirectory() as temp_dir:
         with patch('os.getcwd', return_value=temp_dir):
             response = client.post("/projects/create/", data=form_data)
