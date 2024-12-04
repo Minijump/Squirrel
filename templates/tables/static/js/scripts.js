@@ -107,8 +107,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.pager').forEach(function(pager) {
         const tableName = pager.dataset.table;
         let currentPage = 0;
-        const n = 10;
-        const tableNumLines = pager.dataset.len
+        const n = parseInt(pager.dataset.displaylen);
+        const tableNumLines = parseInt(pager.dataset.totallen);
         const projectDir = pager.dataset.project_dir;
 
         function loadPage(page) {

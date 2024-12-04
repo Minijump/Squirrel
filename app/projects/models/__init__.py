@@ -1,1 +1,1 @@
-from .project import Project
+from .project import PROJECT_TYPE_REGISTRY
