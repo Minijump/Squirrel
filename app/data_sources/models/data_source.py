@@ -78,7 +78,20 @@ class DataSource:
         await cls._create_source_base(manifest, form_data)
         return cls(manifest)
 
-    async def _create_data_file(self):
+    async def _create_required_files(self, form_data=False):
+        """
+        Creates the required files for the source, can be directly a data file or a python file
+        """
+        await self._create_data_file(form_data)
+        await self._create_python_file(form_data)
+
+    async def _create_data_file(self, form_data=False):
+        """
+        To be implemented by subclasses
+        """
+        pass
+
+    async def _create_python_file(self, form_data=False):
         """
         To be implemented by subclasses
         """

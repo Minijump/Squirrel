@@ -91,7 +91,7 @@ Create data analysis pipeline by generating python with a low-code interface.
 5. **Create a new Pull Request**
 
 ### To do MVP
-* Data sources: create API sources, at creation: standard pop up than custom one?+custom settings+..., create multiple source types 
+* Data sources: IMP + create multiple source types 
 * Table: change structure, enable to do wathever you want with python (delete lines where -, Data export (csv), ...)
 * Complete README + Demo project
 
