@@ -12,17 +12,57 @@
             <textarea id="sourceDescription" name="source_description"></textarea>
 
             <label for="source_type">Type:</label>
-            <select id="sourceType" name="source_type" required>
+            <select id="sourceType" name="source_type" onchange="toggleSourceTypeSelect()">
                 {% for short_name, cls in DATA_SOURCE_REGISTRY.items() %}
                     <option value="{{ short_name }}">{{ cls.display_name }}</option>
                 {% endfor %}
             </select>
 
-            <label for="source_file">Source File</label>
-            <input id="sourceFile" name="source_file" type="file" required>
+            <!-- csv, xlsx -->
+            <div class="optional-arg csv xlsx">
+                <label for="source_file">Source File</label>
+                <input id="sourceFile" name="source_file" type="file">
+            </div>
+
+            <!-- odoo -->
+            <div class="optional-arg odoo" style="display: none">
+                <label for="url">URL</label>
+                <input id="odooUrl" name="url" type="text">
+
+                <label for="db">Database</label>
+                <input id="odooDb" name="db" type="text">
+
+                <label for="username">User</label>
+                <input id="odooUser" name="username" type="text">
+                
+                <label for="key">Key</label>
+                <input id="odooKey" name="key" type="password">
+            </div>
             
             <button type="submit" class="btn-primary">Create</button>
             <button type="button" class="btn-secondary" id="cancelButton">Cancel</button>
         </form>
+        <script>
+            function toggleSourceTypeSelect() {
+                let optionalArgs = document.getElementsByClassName("optional-arg");
+                for (let i = 0; i < optionalArgs.length; i++) {
+                    optionalArgs[i].style.display = "none";
+                    let optionalInputs = optionalArgs[i].getElementsByTagName("input");
+                    for (let j = 0; j < optionalInputs.length; j++) {
+                        optionalInputs[j].removeAttribute("required");
+                    }
+                }
+
+                let sourceTypeSelect = document.getElementById("sourceType");
+                let toDisplay = document.getElementsByClassName(sourceTypeSelect.value);
+                for (let i = 0; i < toDisplay.length; i++) {
+                    toDisplay[i].style.display = "block";
+                    let requiredInputs = toDisplay[i].getElementsByTagName("input");
+                    for (let j = 0; j < requiredInputs.length; j++) {
+                        requiredInputs[j].required = true;
+                    }
+                }
+            }
+        </script>
     </div>
 </div>
