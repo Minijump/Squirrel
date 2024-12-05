@@ -68,7 +68,7 @@ async def create_source(request: Request):
         SourceClass = DATA_SOURCE_REGISTRY[source_type]
         SourceClass.check_available_infos(form_data)
         source = await SourceClass._create_source(form_data)
-        await source._create_data_file(form_data)
+        await source._create_required_files(form_data)
 
         return RedirectResponse(url=f"/data_sources/?project_dir={project_dir}", status_code=303)
 
