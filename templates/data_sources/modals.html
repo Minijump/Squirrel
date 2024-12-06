@@ -37,6 +37,27 @@
                 
                 <label for="key">Key</label>
                 <input id="odooKey" name="key" type="password">
+
+                <label for="model">Model</label>
+                <div class="info-note">
+                    <i class="fas fa-info-circle"></i> 
+                    E.g. res.partner
+                </div>
+                <input id="odooModel" name="model" type="text">
+
+                <label for="fields">Fields</label>
+                <div class="info-note">
+                    <i class="fas fa-info-circle"></i> 
+                    With format: ['field_name1', 'field_name2', ...]
+                </div>
+                <input id="odooFields" name="fields" type="text">
+
+                <label for="domain">Domain</label>
+                <div class="info-note">
+                    <i class="fas fa-info-circle"></i> 
+                    With format: [('field1', '=', x), ('field2', !=, y), ...] No domain= []
+                </div>
+                <input id="odooDomain" name="domain" type="text">
             </div>
             
             <button type="submit" class="btn-primary">Create</button>

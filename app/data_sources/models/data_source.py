@@ -82,14 +82,8 @@ class DataSource:
         """
         Creates the required files for the source, can be directly a data file or a python file
         """
-        await self._create_data_file(form_data)
         await self._create_python_file(form_data)
-
-    async def _create_data_file(self, form_data=False):
-        """
-        To be implemented by subclasses
-        """
-        pass
+        await self._create_data_file(form_data)
 
     async def _create_python_file(self, form_data=False):
         """
@@ -97,7 +91,25 @@ class DataSource:
         """
         pass
 
+    async def _create_data_file(self, form_data=False):
+        """
+        To be implemented by subclasses
+        """
+        pass
+
     def create_table(self, form_data=False):
+        """
+        To be implemented by subclasses
+        """
+        pass
+
+    async def sync(self, project_dir):
+        """
+        To be implemented by subclasses
+        """
+        pass
+
+    async def update_last_sync(self, project_dir):
         """
         To be implemented by subclasses
         """

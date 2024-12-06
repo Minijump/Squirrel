@@ -35,6 +35,15 @@
                     {% endif %}
                   </div>
                   <p>{{ source.description }}</p>
+
+                  {% if 'last_sync' in source %}
+                    <div style="font-size: 10px;">
+                      <i class="fas fa-sync-alt" id="syncSource" onclick="syncSource('{{ source.directory }}', '{{ project_dir }}')"></i>
+                      <i>
+                        Last sync: {{ source.last_sync }}
+                      </i>
+                    </div>
+                  {% endif %}
                 </div>
             </div>
           {% endfor %}
