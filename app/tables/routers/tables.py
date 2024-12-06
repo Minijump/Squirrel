@@ -51,7 +51,7 @@ async def tables(request: Request, project_dir: str):
                 manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "__manifest__.json")
                 with open(manifest_path, 'r') as file:
                     manifest_data = json.load(file)
-                display_len = manifest_data.get('misc', {}).get("table_len", 10) # TODO: correct (str/dict, '/", what if missing, ...)
+                display_len = manifest_data.get('misc', {}).get("table_len", 10)
                 table_html[name] = df.head(display_len).to_html(classes='df-table', index=False)
                 table_len_infos[name] = {'total_len': len(df.index), 'display_len': display_len}
 

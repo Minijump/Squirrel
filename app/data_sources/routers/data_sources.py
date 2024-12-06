@@ -1,5 +1,6 @@
 from fastapi import Request
 from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse
 
 import os
 import json
@@ -129,3 +130,28 @@ async def update_source_settings(request: Request):
         traceback.print_exc()
         return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir, "source_dir": source_dir})
     
+@router.post("/source/sync")
+async def sync_source(request: Request):
+    """
+    Sync the data source
+
+    * request: contains the project_dir and source_dir
+
+    =>
+    """
+    try:
+        form_data = await request.form()
+        project_dir = form_data.get("project_dir")
+        source_dir = form_data.get("source_dir")
+
+        manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir, "__manifest__.json")
+        with open(manifest_path, 'r') as file:
+            manifest_data = json.load(file)
+
+        SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
+        source = SourceClass(manifest_data)
+        await source.sync(project_dir)
+
+    except Exception as e:
+        traceback.print_exc()
+        return JSONResponse(content={"message": str(e)}, status_code=500)
