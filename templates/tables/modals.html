@@ -7,54 +7,15 @@
         <input id="table_name" name="table_name" required>
 
         <label for="data_source">Data Source:</label>
-        <select name="data_source_dir" id="data_source" class="right-sidebar-select" onchange="toggleSourceSelect()" onload="toggleSourceSelect()">
+        <select name="data_source_dir" id="data_source" class="right-sidebar-select" onload="toggleSourceSelect()">
             {% for source in sources %}
                 <option value="{{ source.directory }}" data-type="{{ source.type }}">{{ source.name }}</option>
+                <!-- data-type will be usefull if we need to have conditional inputs (toggleSourceSelect) -->
             {% endfor %}
         </select>
 
-        <!-- odoo -->
-        <div class="optional-arg odoo" style="display: none">
-            <label for="model">Model</label>
-            <input id="odooModel" name="model" type="text">
-
-            <label for="fields">Fields</label>
-            <div class="info-note">
-                <i class="fas fa-info-circle"></i> 
-                With format: ['field_name1', 'field_name2', ...]
-            </div>
-            <input id="odooFields" name="fields" type="text">
-
-        </div>
-
         <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Create Table</button>
     </form>
-    <script>
-        function toggleSourceSelect() {
-            let optionalArgs = document.getElementsByClassName("optional-arg");
-            for (let i = 0; i < optionalArgs.length; i++) {
-                optionalArgs[i].style.display = "none";
-                let optionalInputs = optionalArgs[i].getElementsByTagName("input");
-                for (let j = 0; j < optionalInputs.length; j++) {
-                    optionalInputs[j].removeAttribute("required");
-                }
-            }
-
-            let sourceSelect = document.getElementById("data_source");
-            let selectedOption = sourceSelect.options[sourceSelect.selectedIndex];
-            let sourceType = selectedOption.getAttribute("data-type");
-            let toDisplay = document.getElementsByClassName(sourceType);            
-            for (let i = 0; i < toDisplay.length; i++) {
-                toDisplay[i].style.display = "block";
-                let requiredInputs = toDisplay[i].getElementsByTagName("input");
-                for (let j = 0; j < requiredInputs.length; j++) {
-                    requiredInputs[j].required = true;
-                }
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", toggleSourceSelect);
-    </script>
 </div>
 
 <div id="AddCol" class="right-sidebar-form">

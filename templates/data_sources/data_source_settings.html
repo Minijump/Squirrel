@@ -18,6 +18,8 @@
     <main>
         <h2>Edit Source {{ source.name }}</h2>
         <form id="sourceSettingsForm" method="post" action="/source/update_settings/" enctype="multipart/form-data" class="std-form">
+            <h3>General Settings</h3>
+            <input type="hidden" name="type" value="{{ source.type }}" id="sourceType">
             <input type="hidden" name="project_dir" value="{{ project_dir }}">
             <input type="hidden" name="source_dir" value="{{ source.directory }}">
             <label for="sourceName">Name</label>
@@ -25,9 +27,70 @@
     
             <label for="sourceDescription">Description</label>
             <textarea id="sourceDescription" name="description">{{ source.description }}</textarea>
+
+            <!-- odoo -->
+            <div class="optional-arg odoo" style="display: none">
+                <h3>Odoo Settings</h3>
+                <label for="url">URL</label>
+                <input id="odooUrl" name="url" type="text" value="{{ source.url }}">
+
+                <label for="db">Database</label>
+                <input id="odooDb" name="db" type="text" value="{{ source.db }}">
+
+                <label for="username">User</label>
+                <input id="odooUser" name="username" type="text" value="{{ source.username }}">
+                
+                <label for="key">Key</label>
+                <input id="odooKey" name="key" type="password" value="{{ source.key }}">
+
+                <label for="model">Model</label>
+                <div class="info-note">
+                    <i class="fas fa-info-circle"></i> 
+                    E.g. res.partner
+                </div>
+                <input id="odooModel" name="model" type="text" value="{{ source.model }}">
+
+                <label for="fields">Fields</label>
+                <div class="info-note">
+                    <i class="fas fa-info-circle"></i> 
+                    With format: ['field_name1', 'field_name2', ...]
+                </div>
+                <input id="odooFields" name="fields" type="text" value="{{ source.fields }}">
+
+                <label for="domain">Domain</label>
+                <div class="info-note">
+                    <i class="fas fa-info-circle"></i> 
+                    With format: [('field1', '=', x), ('field2', !=, y), ...]. No domain= []
+                </div>
+                <input id="odooDomain" name="domain" type="text" value="{{ source.domain }}">
+            </div>
     
             <button type="submit" class="btn-primary">Save</button>
         </form>
+        <script>
+            function toggleSourceType() {
+                let optionalArgs = document.getElementsByClassName("optional-arg");
+                for (let i = 0; i < optionalArgs.length; i++) {
+                    optionalArgs[i].style.display = "none";
+                    let optionalInputs = optionalArgs[i].getElementsByTagName("input");
+                    for (let j = 0; j < optionalInputs.length; j++) {
+                        optionalInputs[j].removeAttribute("required");
+                    }
+                }
+
+                let sourceType = document.getElementById("sourceType");
+                let toDisplay = document.getElementsByClassName(sourceType.value);
+                for (let i = 0; i < toDisplay.length; i++) {
+                    toDisplay[i].style.display = "block";
+                    let requiredInputs = toDisplay[i].getElementsByTagName("input");
+                    for (let j = 0; j < requiredInputs.length; j++) {
+                        requiredInputs[j].required = true;
+                    }
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", function() {toggleSourceType();});
+        </script>
     </main>
 </div>
 <script src="{{ url_for('data_sources_static', path='js/scripts.js') }}"></script>

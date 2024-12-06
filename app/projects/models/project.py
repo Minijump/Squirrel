@@ -5,17 +5,6 @@ from utils import PIPELINE_START_TAG, PIPELINE_END_TAG, NEW_CODE_TAG
 BASIC_PIPELINE = """
 import pandas as pd
 
-#================== UTILS ==================
-import importlib.util
-import json
-
-def load_python_file(file_path):
-    spec = importlib.util.spec_from_file_location("loaded_file", file_path)
-    file = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(file)
-    return file
-#================= END UTILS ==================
-
 def run_pipeline():
     dfs = {}
     

@@ -26,3 +26,27 @@ function updateFileAccept() {
 }
 document.addEventListener('DOMContentLoaded', updateFileAccept);
 document.getElementById('sourceType').addEventListener('change', updateFileAccept);
+
+function syncSource(sourceDir, projectDir) {
+    const url = new URL('/source/sync', window.location.origin);
+    const formData = new FormData();
+    formData.append('project_dir', projectDir);
+    formData.append('source_dir', sourceDir);
+
+    fetch(url, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Source synced successfully');
+            location.reload();
+        } else {
+            alert('Error syncing source');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error syncing source');
+    });
+}

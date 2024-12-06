@@ -96,6 +96,7 @@ Create data analysis pipeline by generating python with a low-code interface.
 * Complete README + Demo project
 
 ### To do
+* 'Dynamic' data source, syn all dynamics one before running the pipeline? Boolean in settigns...
 * Odoo module: ease import process
 * Do not run all pipeline at each actions (and for pager, infos, ...)
 * Features ideas: great-expectations unit test, API connection to diff services, Excel functions copy, see what would change if you do an action, see what changed at each action (run a script on pipeline + see diffs), git/github integrations, multiple pipelines, export as jupyter ...

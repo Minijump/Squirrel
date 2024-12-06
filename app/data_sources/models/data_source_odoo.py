@@ -1,5 +1,12 @@
 import os
-import requests
+import json
+import ast
+import datetime
+import pickle
+import xmlrpc.client
+
+import pandas as pd
+
 from app.data_sources.models.data_source import DataSource, data_source_type
 
 
@@ -15,6 +22,10 @@ class DataSourceOdoo(DataSource):
         self.url = manifest.get("url")
         self.db = manifest.get("db")
         self.key = manifest.get("key")
+        self.model = manifest.get("model")
+        self.fields = manifest.get("fields")
+        self.domain = manifest.get("domain")
+        self.last_sync = manifest.get("last_sync")
 
     @staticmethod
     def check_available_infos(form_data):
@@ -27,7 +38,7 @@ class DataSourceOdoo(DataSource):
           - password: The password to connect to Odoo
           - DataSource()'s ones
         """
-        required_fields = ["url", "db", "username", "key"]
+        required_fields = ["url", "db", "username", "key", "model", "fields"]
         for field in required_fields:
             if not form_data.get(field):
                 raise ValueError(f"{field} is required")
@@ -48,53 +59,56 @@ class DataSourceOdoo(DataSource):
         manifest["db"] = form_data.get("db")
         manifest["username"] = form_data.get("username")
         manifest["key"] = form_data.get("key")
+        manifest["model"] = form_data.get("model")
+        manifest["fields"] = ast.literal_eval(form_data.get("fields")) or ['id']
+        manifest["domain"] = ast.literal_eval(form_data.get("domain")) or []
+        manifest["last_sync"] = ""
+
         return manifest
-
-    async def _create_python_file(self, form_data):
-        """
-        Creates the python file to connect to Odoo
-        """
-        source_path = os.path.join(os.getcwd(), "_projects", form_data["project_dir"], "data_sources", self.directory) 
-
-        python_file_path = os.path.join(source_path, 'odoo_api_request.py')
-        request = f"""
-import xmlrpc.client
-import time
-
-def get_odoo_table(model, domain=[], fields=False, sleep_time=False, url="{self.url}", db="{self.db}", username="{self.username}", key="{self.key}"):
-    if not fields:
-        fields = ['id']
-    if sleep_time:
-        # Odoo can block the connection if too many requests are made in a short period of time
-        time.sleep(sleep_time)
     
-    common = xmlrpc.client.ServerProxy('{{}}/xmlrpc/2/common'.format(url))
-    common.version()
-    uid = common.authenticate(db, username, key, {{}})
+    async def _create_data_file(self, form_data):
+        common = xmlrpc.client.ServerProxy('{}/xmlrpc/2/common'.format(self.url))
+        uid = common.authenticate(self.db, self.username, self.key, {})
 
-    models = xmlrpc.client.ServerProxy('{{}}/xmlrpc/2/object'.format(url))
-    table = models.execute_kw(db, uid, key, model, 'search_read', [domain], {{'fields': fields}})
+        models = xmlrpc.client.ServerProxy('{}/xmlrpc/2/object'.format(self.url))
+        table = models.execute_kw(self.db, uid, self.key, self.model, 'search_read', [self.domain], {'fields': self.fields})
 
-    return table
-"""
-        with open(python_file_path, 'wb') as file:
-            file.write(request.encode())
+        table_df = pd.read_json(json.dumps(table))
+        data_file_path = os.path.join(os.getcwd(), "_projects", form_data["project_dir"], "data_sources", self.directory, 'data.pkl')
+        table_df.to_pickle(data_file_path)
+
+        await self.update_last_sync(form_data["project_dir"])
 
     def create_table(self, form_data):
         """
         Return the code to create the table from the odoo API
         """
         project_dir = form_data.get("project_dir")
+        data_file_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', self.directory, 'data.pkl')
+        data_file_path = os.path.relpath(data_file_path, os.getcwd())
         table_name = form_data.get("table_name")
+        return f"""dfs['{table_name}'] = pd.read_pickle(r'{data_file_path}')  #sq_action:Create table {table_name} from {self.name}"""
 
-        python_file_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', self.directory, 'odoo_api_request.py')
-        python_file_path = os.path.relpath(python_file_path, os.getcwd())
+    async def update_last_sync(self, project_dir):
+        """
+        Update the last sync date
+        """
+        last_sync = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.last_sync = last_sync
+        print(last_sync)
 
-        model = form_data.get("model")
-        fields = form_data.get("fields")
-        #domain = form_data.get("domain")
+        manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", self.directory, "__manifest__.json")
+        with open(manifest_path, 'r') as file:
+            manifest = json.load(file)
 
-        code = f"""list_json_table = load_python_file(r'{python_file_path}').get_odoo_table("{model}", fields={fields})"""
-        code += f"""\ndfs['{table_name}'] = pd.read_json(json.dumps(list_json_table))  #sq_action:Create table {table_name} from {model} of {self.name}"""
+        manifest["last_sync"] = last_sync
 
-        return code
+        with open(manifest_path, 'w') as file:
+            json.dump(manifest, file, indent=4)
+
+
+    async def sync(self, project_dir):
+        """
+        Sync the data from the Odoo instance
+        """
+        await self._create_data_file({"project_dir": project_dir})
