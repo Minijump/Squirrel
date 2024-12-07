@@ -2,6 +2,7 @@ from fastapi import Request
 from fastapi.responses import RedirectResponse
 from fastapi.responses import JSONResponse
 
+import asyncio
 import os
 import json
 import traceback
@@ -22,9 +23,10 @@ async def get_sources(project_dir):
     project_data_sources_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources")
     for source in os.listdir(project_data_sources_path):
         manifest_path = os.path.join(project_data_sources_path, source, "__manifest__.json")
-        with open(manifest_path, 'r') as file:
-            manifest_data = json.load(file)
-            sources.append(manifest_data)
+        if os.path.isfile(manifest_path):
+            with open(manifest_path, 'r') as file:
+                manifest_data = json.load(file)
+                sources.append(manifest_data)
     return sources
 
 @router.get("/data_sources")

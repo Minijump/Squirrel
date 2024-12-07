@@ -16,6 +16,9 @@
         {% include 'base/html/project_nav_links.html' %}
     </aside>
     <main>
+        <button id="syncAllSourcesButton" 
+                class="btn-primary" style="margin-bottom: 20px;" 
+                onclick="syncAllSources('{{ project_dir }}')">Sync All Sources</button>
         <div class="grid" id="dataSourceGrid">
           <div class="card card-new" id="addDataSourceButton">
             <p>
@@ -26,24 +29,25 @@
             <div class="card" data-project-dir="{{ project_dir }}" data-source-dir="{{ source.directory }}">
                 <div class="card-content">
                   <div>
-                    <h3 style="display: inline;">{{ source.name }}</h3>
+                    <h3 class="card-title">{{ source.name }}</h3>
                     {% if DATA_SOURCE_REGISTRY[source.type].icon %}
                       <img 
                         src="{{ url_for('data_sources_static', path='img/' + DATA_SOURCE_REGISTRY[source.type].icon) }}" 
                         alt="{{ source.type }} icon"
-                        style="width: 20px; height: 20px; display: inline;">
+                        class="card-icon">
                     {% endif %}
                   </div>
-                  <p>{{ source.description }}</p>
+                  <p class="card-description">{{ source.description }}</p>
 
-                  {% if 'last_sync' in source %}
-                    <div style="font-size: 10px;">
-                      <i class="fas fa-sync-alt" id="syncSource" onclick="syncSource('{{ source.directory }}', '{{ project_dir }}')"></i>
-                      <i>
-                        Last sync: {{ source.last_sync }}
-                      </i>
-                    </div>
-                  {% endif %}
+                  <div class="card-sync">
+                    {% if 'last_sync' in source %}
+                        <i class="fas fa-sync-alt card-sync-btn" id="syncSource-{{ source.directory }}" onclick="syncSource('{{ source.directory }}', '{{ project_dir }}', 'syncSource-{{ source.directory }}')"></i>
+                        <i>
+                          Last sync: {{ source.last_sync }}
+                        </i>
+                    {% endif %}
+                  </div>
+
                 </div>
             </div>
           {% endfor %}

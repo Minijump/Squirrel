@@ -24,7 +24,7 @@ class DataSourceOdoo(DataSource):
         self.key = manifest.get("key")
         self.model = manifest.get("model")
         self.fields = manifest.get("fields")
-        self.domain = manifest.get("domain")
+        self.domain = manifest.get("domain") or []
         self.last_sync = manifest.get("last_sync")
 
     @staticmethod
@@ -60,8 +60,8 @@ class DataSourceOdoo(DataSource):
         manifest["username"] = form_data.get("username")
         manifest["key"] = form_data.get("key")
         manifest["model"] = form_data.get("model")
-        manifest["fields"] = ast.literal_eval(form_data.get("fields")) or ['id']
-        manifest["domain"] = ast.literal_eval(form_data.get("domain")) or []
+        manifest["fields"] = ast.literal_eval(form_data.get("fields"))
+        manifest["domain"] = ast.literal_eval(form_data.get("domain")) if form_data.get("domain") else []
         manifest["last_sync"] = ""
 
         return manifest
@@ -106,9 +106,25 @@ class DataSourceOdoo(DataSource):
         with open(manifest_path, 'w') as file:
             json.dump(manifest, file, indent=4)
 
-
     async def sync(self, project_dir):
         """
         Sync the data from the Odoo instance
         """
         await self._create_data_file({"project_dir": project_dir})
+
+    @classmethod
+    async def _update_source_settings(cls, source, updated_data):
+        """
+        Update the source's values with the updated data, convert 'fields' and 'domain' to list
+
+        * source(dict): contains the current settings
+        * updated_data(dict): contains the new settings
+
+        => Returns the updated source
+        """
+        updated_source = await DataSource._update_source_settings(source, updated_data)
+
+        updated_source["fields"] = ast.literal_eval(updated_source["fields"])
+        updated_source["domain"] = ast.literal_eval(updated_source["domain"]) if updated_source["domain"] else ""
+
+        return updated_source
