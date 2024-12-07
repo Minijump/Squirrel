@@ -141,3 +141,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 });
+
+function exportTableCSV(projectDir, tableName) {
+    const url = new URL('/tables/export_csv', window.location.origin);
+    url.searchParams.append('project_dir', projectDir);
+    url.searchParams.append('table_name', tableName);
+    window.location.href = url;
+}
