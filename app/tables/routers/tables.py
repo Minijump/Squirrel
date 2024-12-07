@@ -1,4 +1,5 @@
 from fastapi import Request
+from fastapi.responses import FileResponse
 
 import os
 import importlib.util
@@ -350,3 +351,30 @@ async def cut_values(request: Request):
     int_cut_values = [int(val) for val in cut_values]
     new_code = f"""dfs['{table_name}']['{col_name}'] = pd.cut(dfs['{table_name}']['{col_name}'], bins={int_cut_values}, labels={cut_labels})  #sq_action:Cut values in column {col_name} of table {table_name}"""
     return new_code
+
+@router.get("/tables/export_csv/")
+async def export_csv(request: Request, project_dir: str, table_name: str):
+    """
+    Export the table as a CSV file
+
+    * project_dir(str): The project directory name
+    * table_name(str): The name of the dataframe
+    
+    => Returns a FileResponse to download the CSV file
+    """
+    try:
+        pipeline = load_pipeline_module(project_dir)
+        dfs = pipeline.run_pipeline()
+        df = dfs[table_name]
+
+        csv_dir = os.path.join(os.getcwd(), "_projects", project_dir, "exports")
+        os.makedirs(csv_dir, exist_ok=True)
+        csv_path = os.path.join(csv_dir, f"{table_name}.csv")
+        df.to_csv(csv_path, index=False)
+
+        return FileResponse(csv_path, filename=f"{table_name}.csv")
+
+    except Exception as e:
+        traceback.print_exc()
+        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
+    
