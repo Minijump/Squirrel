@@ -28,3 +28,25 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
+
+.card-title{
+    display: inline;
+}
+.card-description{
+    padding-left: 5px;
+    margin-top: 5px;
+    font-size: 13px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* N lines to show (only respect the given \n) */
+    line-clamp: 3; /* N lines to show (for compatibility) */
+    -webkit-box-orient: vertical;
+    min-height: 46px;
+}
+
+.card-icon{
+    width: 20px; 
+    height: 20px; 
+    display: inline;
+    float: right;
+}

@@ -16,7 +16,7 @@
         {% include 'base/html/project_nav_links.html' %}
     </aside>
     <main>
-        <h2>Edit Source {{ source.name }}</h2>
+        <h2>Source {{ source.name }}</h2>
         <form id="sourceSettingsForm" method="post" action="/source/update_settings/" enctype="multipart/form-data" class="std-form">
             <h3>General Settings</h3>
             <input type="hidden" name="type" value="{{ source.type }}" id="sourceType">
@@ -62,7 +62,7 @@
                     <i class="fas fa-info-circle"></i> 
                     With format: [('field1', '=', x), ('field2', !=, y), ...]. No domain= []
                 </div>
-                <input id="odooDomain" name="domain" type="text" value="{{ source.domain }}">
+                <input id="odooDomain" name="domain" type="text" value="{{ source.domain }}" class="never-mandatory">
             </div>
     
             <button type="submit" class="btn-primary">Save</button>
@@ -84,7 +84,9 @@
                     toDisplay[i].style.display = "block";
                     let requiredInputs = toDisplay[i].getElementsByTagName("input");
                     for (let j = 0; j < requiredInputs.length; j++) {
-                        requiredInputs[j].required = true;
+                        if (!requiredInputs[j].classList.contains("never-mandatory")){
+                            requiredInputs[j].required = true;
+                        }
                     }
                 }
             }

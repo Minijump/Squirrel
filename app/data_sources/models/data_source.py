@@ -117,7 +117,7 @@ class DataSource:
 
     async def update_source_settings(self, updated_data):
         """
-        Update the settings of a data source
+        Update the settings of a data source in the manifest
 
         * updated_data(dict): contains the new settings
         """
@@ -125,9 +125,23 @@ class DataSource:
         with open(manifest_path, 'r') as file:
             source = json.load(file)
 
+        updated_source = await self.__class__._update_source_settings(source, updated_data)
+
+        with open(manifest_path, 'w') as file:
+            json.dump(updated_source, file, indent=4)
+
+    @classmethod
+    async def _update_source_settings(cls, source, updated_data):
+        """
+        Update the source's values with the updated data
+
+        * source(dict): contains the current settings
+        * updated_data(dict): contains the new settings
+
+        => Returns the updated source
+        """
         for key in updated_data.keys():
             if key in source.keys():
                 source[key] = updated_data[key]
 
-        with open(manifest_path, 'w') as file:
-            json.dump(source, file, indent=4)
+        return source

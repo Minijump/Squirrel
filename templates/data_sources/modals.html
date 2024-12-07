@@ -18,8 +18,8 @@
                 {% endfor %}
             </select>
 
-            <!-- csv, xlsx -->
-            <div class="optional-arg csv xlsx">
+            <!-- csv, xlsx, pickle -->
+            <div class="optional-arg csv xlsx pkl">
                 <label for="source_file">Source File</label>
                 <input id="sourceFile" name="source_file" type="file">
             </div>
@@ -57,7 +57,7 @@
                     <i class="fas fa-info-circle"></i> 
                     With format: [('field1', '=', x), ('field2', !=, y), ...] No domain= []
                 </div>
-                <input id="odooDomain" name="domain" type="text">
+                <input id="odooDomain" name="domain" type="text" class="never-mandatory">
             </div>
             
             <button type="submit" class="btn-primary">Create</button>
@@ -80,7 +80,9 @@
                     toDisplay[i].style.display = "block";
                     let requiredInputs = toDisplay[i].getElementsByTagName("input");
                     for (let j = 0; j < requiredInputs.length; j++) {
-                        requiredInputs[j].required = true;
+                        if (!requiredInputs[j].classList.contains("never-mandatory")){
+                            requiredInputs[j].required = true;
+                        }
                     }
                 }
             }
