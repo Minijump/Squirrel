@@ -46,7 +46,6 @@
                 </button>
             </div>
             {% for name, html_table in table.items() %}
-                <!-- First Table displayed by default (TODO: Change this; in case of reload table should not change) -->
                 {% if loop.first %}
                     <div id="table-{{ name }}" class="table-container">
                 {% else %}

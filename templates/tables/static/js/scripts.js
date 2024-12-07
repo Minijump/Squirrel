@@ -1,4 +1,9 @@
-// Show table buttons
+function saveSelectedTable(tableName) {
+    localStorage.setItem('selectedTable', tableName);
+}
+function getSelectedTable() {
+    return localStorage.getItem('selectedTable');
+}
 function showTable(tableName) {
     document.querySelectorAll('.table-container').forEach(function(table) {
         table.style.display = 'none';
@@ -13,7 +18,19 @@ function showTable(tableName) {
             button.classList.add('active');
         }
     });
+    saveSelectedTable(tableName);
 }
+document.addEventListener('DOMContentLoaded', function() {
+    const selectedTable = getSelectedTable();
+    if (selectedTable && document.getElementById('table-' + selectedTable)) {
+        showTable(selectedTable);
+    } else {
+        const firstTableButton = document.querySelector('.select-table-btn');
+        if (firstTableButton) {
+            showTable(firstTableButton.textContent.trim());
+        }
+    }
+});
 
 // Sidebar
 function closeSidebarForm(id) {
@@ -142,6 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
+// Export table to CSV
 function exportTableCSV(projectDir, tableName) {
     const url = new URL('/tables/export_csv', window.location.origin);
     url.searchParams.append('project_dir', projectDir);
