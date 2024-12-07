@@ -1,1 +1,10 @@
 @import url('/static/base/css/style.css');
+
+.card-sync{
+    font-size: 10px;
+    min-height: 12px;
+}
+
+.card-sync-btn:hover {
+    transform: scale(1.05);
+}
