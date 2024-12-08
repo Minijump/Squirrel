@@ -91,12 +91,13 @@ Create data analysis pipeline by generating python with a low-code interface.
 5. **Create a new Pull Request**
 
 ### To do MVP
+* yahoo finance source
 * Table: change structure, enable to do wathever you want with python (delete lines where -, ...)
 * unit tests + refactor
 * Complete README + Demo project
 
 ### To do
-* 'Dynamic' data source: sync before running the pipeline. List of dynamics in project settings?
+* 'Dynamic' data source: sync before running the pipeline. List of dynamics in project settings? Subclasses DataSourceFile and DataSourceAPI. All available args + Save all in pickle (in csv datasource we would have original_source.csv; data.pkl. We woul use only data.pkl in code)
 * Odoo module: ease import process
 * Do not run all pipeline at each actions (and for pager, infos, ...)
 * Features ideas: great-expectations unit test, API connection to diff services, Excel functions copy, see what would change if you do an action, see what changed at each action (run a script on pipeline + see diffs), git/github integrations, multiple pipelines, export as jupyter ...

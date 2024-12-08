@@ -28,6 +28,12 @@
             <label for="sourceDescription">Description</label>
             <textarea id="sourceDescription" name="description">{{ source.description }}</textarea>
 
+            <div class="optional-arg csv xlsx pkl" style="display: none">
+                <h3>File Settings</h3>
+                <label for="file">File</label>
+                <input type="file" id="sourceFile" name="file" accept=".{{ source.type }}" required class="never-mandatory">
+            </div>
+
             <!-- odoo -->
             <div class="optional-arg odoo" style="display: none">
                 <h3>Odoo Settings</h3>
