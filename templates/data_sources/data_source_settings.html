@@ -70,6 +70,30 @@
                 </div>
                 <input id="odooDomain" name="domain" type="text" value="{{ source.domain }}" class="never-mandatory">
             </div>
+
+            <!-- yahoo finance -->
+            <div class="optional-arg yahoo_finance" style="display: none">
+                <h3>Yahoo Finance Settings</h3>
+                <div class="info-note">
+                    <i class="fas fa-info-circle"></i> 
+                    With format: ['ticker1', 'ticker2', ...]
+                </div>
+                <label for="tickers">Tickers</label>
+                <input id="tickers" name="tickers" type="text" value="{{ source.tickers }}">
+            
+                <label for="start_date">Start Date</label>
+                <input id="start_date" name="start_date" type="date" value="{{ source.start_date }}">
+            
+                <label for="end_date">End Date</label>
+                <input id="end_date" name="end_date" type="date" value="{{ source.end_date }}">
+            
+                <label for="interval">Interval</label>
+                <select id="interval" name="interval">
+                    <option value="1d" {% if source.interval == "1d" %}selected{% endif %}>1 Day</option>
+                    <option value="1wk" {% if source.interval == "1wk" %}selected{% endif %}>1 Week</option>
+                    <option value="1mo" {% if source.interval == "1mo" %}selected{% endif %}>1 Month</option>
+                </select>         
+            </div>
     
             <button type="submit" class="btn-primary">Save</button>
         </form>

@@ -91,8 +91,7 @@ Create data analysis pipeline by generating python with a low-code interface.
 5. **Create a new Pull Request**
 
 ### To do MVP
-* yahoo finance source
-* Table: change structure, enable to do wathever you want with python (delete lines where -, ...)
+* Table: change structure, enable to do wathever you want with python (delete lines where -, ...), multi-column-columns
 * unit tests + refactor
 * Complete README + Demo project
 
