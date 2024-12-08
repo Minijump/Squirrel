@@ -41,6 +41,19 @@ class DataSourceCSV(DataSource):
         with open(source_file_path, 'wb') as file:
             file.write(await source_file.read())
 
+    async def update_data_file(self, content, updated_data):
+        """
+        Update the data file for the source
+
+        * new_file: The new file
+        * updated_data: The updated data
+        """
+        source_path = os.path.join(os.getcwd(), "_projects", updated_data["project_dir"], "data_sources", self.directory) 
+        data_file_name = 'data.' + 'csv'
+        source_file_path = os.path.join(source_path, data_file_name)
+        with open(source_file_path, 'wb') as file:
+            file.write(content)
+
     def create_table(self, form_data):
         """
         Return the code to read data file
@@ -50,3 +63,22 @@ class DataSourceCSV(DataSource):
         data_file_path = os.path.relpath(data_file_path, os.getcwd())
         table_name = form_data.get("table_name")
         return f"dfs['{table_name}'] = pd.read_csv(r'{data_file_path}')  #sq_action:Create table {table_name} from {self.name}"
+    
+    @classmethod
+    async def _update_source_settings(cls, source, updated_data):
+        """
+        Update the source's values with the updated data, replace the file if it's not empty
+
+        * source(dict): contains the current settings
+        * updated_data(dict): contains the new settings
+
+        => Returns the updated source
+        """
+        new_file = dict(updated_data).get("file")
+        if new_file:
+            content = await new_file.read()
+            if content:
+                await cls(source).update_data_file(content, updated_data)
+        
+        updated_source = await DataSource._update_source_settings(source, updated_data)
+        return updated_source
