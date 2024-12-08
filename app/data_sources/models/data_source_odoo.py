@@ -95,7 +95,6 @@ class DataSourceOdoo(DataSource):
         """
         last_sync = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.last_sync = last_sync
-        print(last_sync)
 
         manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", self.directory, "__manifest__.json")
         with open(manifest_path, 'r') as file:

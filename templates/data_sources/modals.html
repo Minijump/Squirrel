@@ -59,6 +59,30 @@
                 </div>
                 <input id="odooDomain" name="domain" type="text" class="never-mandatory">
             </div>
+
+            <!-- yahoo finance -->
+            <div class="optional-arg yahoo_finance" style="display: none">
+                <h3>Yahoo Finance Settings</h3>
+                <label for="tickers">Tickers</label>
+                <div class="info-note">
+                    <i class="fas fa-info-circle"></i> 
+                    With format: ['ticker1', 'ticker2', ...]
+                </div>
+                <input id="tickers" name="tickers" type="text">
+            
+                <label for="start_date">Start Date</label>
+                <input id="start_date" name="start_date" type="date">
+            
+                <label for="end_date">End Date</label>
+                <input id="end_date" name="end_date" type="date">
+            
+                <label for="interval">Interval</label>
+                <select id="interval" name="interval">
+                    <option value="1d">1 Day</option>
+                    <option value="1wk">1 Week</option>
+                    <option value="1mo">1 Month</option>
+                </select>
+            </div>
             
             <button type="submit" class="btn-primary">Create</button>
             <button type="button" class="btn-secondary" id="cancelButton">Cancel</button>
