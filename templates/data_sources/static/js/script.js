@@ -65,6 +65,7 @@ function syncSource(sourceDir, projectDir, syncIconId) {
 }
 
 function syncAllSources(projectDir) {
+    // TODO make it parallel (here, not parallel in time, but work if error)
     const syncAllButton = document.getElementById('syncAllSourcesButton');
     syncAllButton.disabled = true;
     syncAllButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Syncing...';
