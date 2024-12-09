@@ -1,5 +1,6 @@
 from fastapi import Request
 from fastapi.responses import FileResponse
+from fastapi.responses import RedirectResponse
 
 import os
 import importlib.util
@@ -352,29 +353,58 @@ async def cut_values(request: Request):
     new_code = f"""dfs['{table_name}']['{col_name}'] = pd.cut(dfs['{table_name}']['{col_name}'], bins={int_cut_values}, labels={cut_labels})  #sq_action:Cut values in column {col_name} of table {table_name}"""
     return new_code
 
-@router.get("/tables/export_csv/")
-async def export_csv(request: Request, project_dir: str, table_name: str):
+@router.post("/tables/export_table/")
+async def export_table(request: Request):
     """
-    Export the table as a CSV file
+    Export the table in the specified format
 
-    * project_dir(str): The project directory name
-    * table_name(str): The name of the dataframe
+    * request contains: table_name, export_type, project_dir
     
-    => Returns a FileResponse to download the CSV file
+    => Returns a FileResponse to download the exported file
     """
+    form_data = await request.form()
+    table_name = form_data.get("table_name")
+    export_type = form_data.get("export_type")
+    project_dir = form_data.get("project_dir")
+
     try:
         pipeline = load_pipeline_module(project_dir)
         dfs = pipeline.run_pipeline()
         df = dfs[table_name]
 
-        csv_dir = os.path.join(os.getcwd(), "_projects", project_dir, "exports")
-        os.makedirs(csv_dir, exist_ok=True)
-        csv_path = os.path.join(csv_dir, f"{table_name}.csv")
-        df.to_csv(csv_path, index=False)
+        export_dir = os.path.join(os.getcwd(), "_projects", project_dir, "exports")
+        os.makedirs(export_dir, exist_ok=True)
+        export_path = os.path.join(export_dir, f"{table_name}.{export_type}")
 
-        return FileResponse(csv_path, filename=f"{table_name}.csv")
+        if export_type == "csv":
+            df.to_csv(export_path, index=False)
+        elif export_type == "xlsx":
+            df.to_excel(export_path, index=False)
+        elif export_type == "pkl":
+            df.to_pickle(export_path)
+        elif export_type == "json":
+            df.to_json(export_path, orient='records')
+
+        return FileResponse(export_path, filename=f"{table_name}.{export_type}")
 
     except Exception as e:
         traceback.print_exc()
         return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
     
+@router.post("/tables/delete_rows/")
+@action.add
+async def delete_rows(request: Request):
+    """
+    Delete rows in the dataframe based on a domain
+
+    * request contains: table_name, delete_domain, project_dir
+    
+    => Returns a string representing the code to delete the rows
+    """
+    # Should give the possibility to use something else than query? Python domain,...
+    form_data = await request.form()
+    table_name = form_data.get("table_name")
+    delete_domain = form_data.get("delete_domain")
+
+    new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].query("not ({delete_domain})")  #sq_action:Delete rows where {delete_domain} in table {table_name}"""
+    return new_code

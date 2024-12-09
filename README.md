@@ -91,13 +91,20 @@ Create data analysis pipeline by generating python with a low-code interface.
 5. **Create a new Pull Request**
 
 ### To do MVP
-* Table: change structure, enable to do wathever you want with python (delete lines where -, ...), multi-column-columns
+* Table: change structure, multi-column-columns
 * unit tests + refactor
 * Complete README + Demo project
 
 ### To do
-* 'Dynamic' data source: sync before running the pipeline. List of dynamics in project settings? Subclasses DataSourceFile and DataSourceAPI. All available args + Save all in pickle (in csv datasource we would have original_source.csv; data.pkl. We woul use only data.pkl in code)
-* Odoo module: ease import process
-* Do not run all pipeline at each actions (and for pager, infos, ...)
-* Features ideas: great-expectations unit test, API connection to diff services, Excel functions copy, see what would change if you do an action, see what changed at each action (run a script on pipeline + see diffs), git/github integrations, multiple pipelines, export as jupyter ...
+* 'Dynamic' data source: sync before running the pipeline. List of dynamics in project settings? Subclasses DataSourceFile and DataSourceAPI. All available args + Save all in pickle (in csv datasource we would have original_source.csv; data.pkl. We woul use only data.pkl in code) + give a way to secure credentials?
+* Supabase connection
+* Do not run all pipeline at each actions (especially for pager, infos, ... (use a pickle file to store df))
+* Export as jupyter notebook + Make folder runnable as-is outside the app (create a main.py file to run? That would sync all sources,...)???
+
+### Feature ideas
+* Odoo module; ease imports ?
+* Great-expectation unit tests
+* See diff before doing an action/ at each actions in pipeline
+* Git github integration
+* Multiple pipelines
 * ...

@@ -232,6 +232,38 @@
     </form>
 </div>
 
+<div id="DeleteRows" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('DeleteRows')">&times;</a>
+    <form action="/tables/delete_rows/" method="post">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+        <label for="delete_domain">Delete Domain:</label>
+        <div class="info-note">
+            <i class="fas fa-info-circle"></i> The domain must have the format Col1 &lt; Col2, Colx == 'Value',....
+        </div>
+        <textarea id="delete_domain" name="delete_domain" required></textarea>
+        <button type="submit" class="btn-danger" style="margin-left: 15px; margin-top: 10px;">Delete Rows</button>
+    </form>
+</div>
+
+<div id="ExportTable" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ExportTable')">&times;</a>
+    <form action="/tables/export_table/" method="post">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+
+        <label for="export_type">Export Type:</label>
+        <select name="export_type" id="export_type" class="right-sidebar-select">
+            <option value="csv">CSV</option>
+            <option value="xlsx">XLSX</option>
+            <option value="pkl">PKL</option>
+            <option value="json">JSON</option>
+        </select>
+        
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Export</button>
+    </form>
+</div>
+
 <div id="InfoColModal" class="modal">
     <div class="modal-content" style="width: 600px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
