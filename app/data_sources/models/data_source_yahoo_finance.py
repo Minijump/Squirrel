@@ -48,7 +48,8 @@ class DataSourceYahooFinance(DataSource):
         interval = self.interval
 
         data = yf.download(tickers, start=start_date, end=end_date, interval=interval)
-        data.reset_index(inplace=True) #keep the date
+        data.reset_index(inplace=True) # keep the date
+        data.columns = data.columns.set_names([None] * data.columns.nlevels) # remove the 'useless' lines name (created by multi-level, create an empty column)
 
         data_file_path = os.path.join(os.getcwd(), "_projects", form_data["project_dir"], "data_sources", self.directory, 'data.pkl')
         data.to_pickle(data_file_path)
