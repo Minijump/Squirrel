@@ -408,3 +408,34 @@ async def delete_rows(request: Request):
 
     new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].query("not ({delete_domain})")  #sq_action:Delete rows where {delete_domain} in table {table_name}"""
     return new_code
+
+
+
+# CODE to investigate !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# According to copilot, this should enable to pass infos into the html, would enable to pass the 'dimension'
+
+# import pandas as pd
+
+# def generate_column_identifier(df, col_name):
+#     if isinstance(df.columns, pd.MultiIndex):
+#         return f"[{']['.join(col_name)}]"  # For multi-dimensional columns
+#     return f"[{col_name}]"  # For single-dimensional columns
+
+# def add_custom_attributes(df, display_len):
+#     def format_column(col_name):
+#         identifier = generate_column_identifier(df, col_name)
+#         return f'<th data-columnIdentifier="{identifier}">{col_name}</th>'
+
+#     # Generate the HTML with custom column headers
+#     html = df.head(display_len).to_html(classes='df-table', index=False, formatters={col: format_column for col in df.columns})
+#     return html
+
+# # Example usage
+# df = pd.DataFrame({
+#     'A': [1, 2, 3],
+#     'B': [4, 5, 6]
+# })
+# display_len = 3
+# table_html = {}
+# name = 'example_table'
+# table_html[name] = add_custom_attributes(df, display_len)
