@@ -101,18 +101,21 @@ function closeInfoColModal() {
 
 // Add info buttons to the table headers
 function addInfoButtons() {
-    document.querySelectorAll('.df-table th').forEach(function(th) {
-        const colName = th.textContent.trim();
-        const delButton = document.createElement('button');
-        delButton.className = 'table-header-btn';
-        delButton.innerHTML = '&middot;&middot;&middot;';
-        const tableName = th.closest('.table-container').id.split('-')[1];
-        delButton.onclick = function() {
-            openInfoColModal(colName, tableName);
-        };
-        if (!th.querySelector('.table-header-btn')) {
-            th.appendChild(delButton);
-        }
+    document.querySelectorAll('.df-table thead').forEach(function(thead) {
+        const lastTr = thead.querySelector('tr:last-child');
+        lastTr.querySelectorAll('th').forEach(function(th) {
+            const colName = th.textContent.trim();
+            const delButton = document.createElement('button');
+            delButton.className = 'table-header-btn';
+            delButton.innerHTML = '&middot;&middot;&middot;';
+            const tableName = th.closest('.table-container').id.split('-')[1];
+            delButton.onclick = function() {
+                openInfoColModal(colName, tableName);
+            };
+            if (!th.querySelector('.table-header-btn')) {
+                th.appendChild(delButton);
+            }
+        });
     });
 }
 

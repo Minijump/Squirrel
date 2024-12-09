@@ -52,6 +52,7 @@
 .df-table th, .df-table td {
     padding: 12px 15px;
     text-align: left;
+    white-space: nowrap;
 }
 .df-table tbody tr:nth-of-type(even) {
     background-color: var(--light-structure-color);
