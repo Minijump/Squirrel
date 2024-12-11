@@ -68,7 +68,7 @@ def test_add_del_column(mock_project):
         assert any("dfs['df']['test_add_del_column'] = 1" in line for line in lines), "Column not added to pipeline"
 
     # Test del_column
-    response = client.post("/tables/del_column", data={"col_name": "test_add_del_column", 'project_dir': mock_project, "table_name": "df"})
+    response = client.post("/tables/del_column", data={"col_name": "test_add_del_column", "col_idx": "test_add_del_column", 'project_dir': mock_project, "table_name": "df"})
     assert response.status_code == 200, "Failed to access the del_column endpoint"
     assert response.context.get("table"), "Response does not contain a table"
     assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
