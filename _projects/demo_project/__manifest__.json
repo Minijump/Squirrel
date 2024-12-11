@@ -1,5 +1,9 @@
 {
-    "name": "Demo project",
-    "description": "A simple demo project",
-    "directory": "demo_project"
+    "name": "demo_project",
+    "description": "The only aim of this project is to do a demo",
+    "directory": "demo_project",
+    "project_type": "std",
+    "misc": {
+        "table_len": 10
+    }
 }
