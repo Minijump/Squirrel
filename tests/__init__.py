@@ -17,7 +17,9 @@ def mock_project(tmpdir):
     manifest_content = {
         "name": "Mock project",
         "description": "A mock project use in unit tests",
-        "directory": "mock_project"
+        "directory": "mock_project",
+        "project_type": "std",
+        "misc": {}
     }
     manifest_file.write(json.dumps(manifest_content, indent=4))
 

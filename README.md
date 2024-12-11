@@ -92,7 +92,6 @@ Create data analysis pipeline by generating python with a low-code interface.
 
 ### To do MVP
 * Table: change structure
-* unit tests
 * Complete README + Demo project
 
 ### To do
