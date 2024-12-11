@@ -56,14 +56,49 @@ Create data analysis pipeline by generating python with a low-code interface.
 
 ### Usage
 
-1. **TODO: pitcures, main concepts, ...**
+Squirrel enables you to create new projects or work on existing ones. These projects are stored in a simple folder, allowing you to share the folder with others for collaboration. You can even convert it into a Git repository for those of you with a more technical background.
 
+![Homepage](templates/base/static/img/squirrel_homepage.png)
+
+Once the project opened, you have acces to 4 pages
+
+__The project settings:__
+
+This page allows you to modify the settings of your project. In the current version of Squirrel, you can update the project's name, its description, and the number of lines displayed per table.
+
+![Project Settings](templates/base/static/img/project_settings.png)
+
+__The data sources:__
+
+The data source page allows you to add new data sources (logic). Without creating a data source, you won't be able to create a table. The available data source types include CSV, XLSX, and Pickle, as well as Odoo and Yahoo Finance. The last two are API connections, which require additional information during source creation (such as credentials for Odoo). Once set up, the API request will be executed automatically, generating a file that can be used in the tables. If you suspect that new data is available online, you can synchronize the source (or all sources), and the file will be updated automatically.
+
+![Data Sources](templates/base/static/img/data_sources.png)
+
+__The tables:__
+
+The tables page is where the action happens. On this page, you can create new tables (from existing data sources), add new columns, or delete rows from those tables. You can also "inspect" the columns and perform various actions on them.
+
+![Tables Page](templates/base/static/img/tables_page.png)
+
+__The pipeline:__
+
+Every time you perform an action on a table, it is stored in the pipeline. The pipeline page provides an overview of these actions, allowing you to reorder them, edit the Python code executed by the actions, or delete them.
+
+![Pipeline Page](templates/base/static/img/pipeline_page.png)
 
 ## Develoment
 
 ### Customize
 
-1. **TODO main structure(decorator,...), manifest,...**
+The project structure can be somewhat strange to those accustomed to well-structured projects. Here is a brief summary of its organization:
+
+There are 3 main folders:
+
+* app: this folder contains the endpoints and the class used by the project
+* templates: this folder contains the html templates and the statics (img, css, js) used by the project
+* _projects: this is the folder that stores the user's projects. Each projects must contains a manifest, a folder data_source and a pipeline.py file
+
+In addition to these folders, you will find a folder named tests that contains the unit tests, as well as a utils folder, which is somewhat unnecessary but included because large projects often have one.
 
 ### Running Tests
 
@@ -78,12 +113,10 @@ Create data analysis pipeline by generating python with a low-code interface.
     ```sh
     git checkout -b feature/your.feature.name
     ```
-    Words of your features must be separated by dots, feel free to add version number, github username, ... before or after the feature name (expl: 2.1.1-feature.name-github_username)
 3. **Make your changes and commit them:**
     ```sh
     git commit -m 'Add a meaningfull commit message'
     ```
-    Fixed commit messages conventions are for nazis, yet, beeing meanigfull and complete is a must. 
 4. **Push to the branch:**
     ```sh
     git push origin feature/your.feature.name
@@ -92,12 +125,11 @@ Create data analysis pipeline by generating python with a low-code interface.
 
 ### To do MVP
 * Table: change structure
-* Complete README + Demo project
 
 ### To do
 * Subclasses DataSourceFile and DataSourceAPI + Save all in pickle (in csv datasource we would have original_source.csv; data.pkl. We would use only data.pkl in code) + give a way to secure credentials? + All available args
 * Supabase connection
-* Do not run all pipeline at each actions (especially for pager, infos, ... (use a pickle file to store df))
+* Do not run all pipeline at each actions (especially for pager, infos, ... (use a pickle file to store df))?? (Save the whole dfs dict as pickle?)
 
 ### To Fix
 
