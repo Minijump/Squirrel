@@ -28,6 +28,30 @@ def load_pipeline_module(project_dir):
     spec.loader.exec_module(pipeline)
     return pipeline
 
+def generate_column_identifier(columns):
+    """Convert MultiIndex columns into a string identifier."""
+    if isinstance(columns, tuple):
+        return "[" + ", ".join(f"'{c}'" for c in columns) + "]"
+    return f"['{columns}']"
+
+def to_html_with_identifiers(df):
+    html = df.to_html(classes='df-table', index=False)
+    
+    column_identifiers = [generate_column_identifier(col) for col in df.columns]
+    header_html = ""
+    for idx, col_id in enumerate(column_identifiers):
+        if isinstance(df.columns, pd.MultiIndex):
+            header_html += f"""<th data-columnidentifier="{col_id}" data-columnidx="{df.columns[idx]}">{df.columns[idx][-1]}</th>\n"""
+        else:
+            header_html += f"""<th data-columnidentifier="{col_id}" data-columnidx="{df.columns[idx]}">{df.columns[idx]}</th>\n"""
+
+    header_start = html.find('<thead>')
+    header_end = html.find('</thead>')
+    header_rows = html[header_start:header_end]
+    modified_header = header_rows.rsplit('<tr', 1)
+    modified_header = f"{modified_header[0]}<tr>{header_html}</tr>"
+    return html[:header_start] + modified_header + html[header_end:]
+
 @router.get("/tables/")
 async def tables(request: Request, project_dir: str):
     """
@@ -54,7 +78,7 @@ async def tables(request: Request, project_dir: str):
                 with open(manifest_path, 'r') as file:
                     manifest_data = json.load(file)
                 display_len = manifest_data.get('misc', {}).get("table_len", 10)
-                table_html[name] = df.head(display_len).to_html(classes='df-table', index=False)
+                table_html[name] = to_html_with_identifiers(df.head(display_len))
                 table_len_infos[name] = {'total_len': len(df.index), 'display_len': display_len}
 
         sources = await get_sources(project_dir) # Necessary to be able to get the available sources for table creation
@@ -83,21 +107,22 @@ async def tables_pager(request: Request, project_dir: str, table_name: str, page
         df = dfs[table_name]
         start = page * n
         end = start + n
-        table_html = df.iloc[start:end].to_html(classes='df-table', index=False)
+        table_html = to_html_with_identifiers(df.iloc[start:end])
         return table_html
     except Exception as e:
         traceback.print_exc()
         return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
 
 @router.get("/tables/column_infos/")
-async def get_col_infos(request: Request, project_dir: str, table: str, column: str):
+async def get_col_infos(request: Request, project_dir: str, table: str, column_name: str, column_identifier: str):
     """
     Get the column 'column' from table 'tables' informations
 
     * request: The request object
     * project_dir(str): The project directory name
     * tables(str): The name of the dataframe
-    * column(str): The name of the column
+    * column_name(str): The name of the column
+    * column_identifier(str): The column identifier. i.e. "['col1']['col2']" or "['col1']
     
     => Returns the column informations (dict)
     """
@@ -105,25 +130,26 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column: 
         pipeline = load_pipeline_module(project_dir)
         dfs = pipeline.run_pipeline()
         df = dfs[table]
+        column = eval(f"df{column_identifier}")
 
-        dtype = str(df[column].dtype)
+        dtype = str(column.dtype)
         col_infos = {
-            "dtype": str(df[column].dtype),
-            "unique": str(df[column].nunique()),
-            "null": str(df[column].isna().sum()),
-            "count": str(len(df[column].index)),
+            "dtype": dtype,
+            "unique": str(column.nunique()),
+            "null": str(column.isna().sum()),
+            "count": str(len(column.index)),
             "is_numeric": False,
         }
 
         if dtype == "float64" or dtype == "int64":
             col_infos["is_numeric"] = True
-            col_infos["mean"] = str(df[column].mean())
-            col_infos["std"] = str(df[column].std())
-            col_infos["min"] = str(df[column].min())
-            col_infos["max"] = str(df[column].max())
-            col_infos["25"] = str(df[column].quantile(0.25))
-            col_infos["50"] = str(df[column].quantile(0.5))
-            col_infos["75"] = str(df[column].quantile(0.75))
+            col_infos["mean"] = str(column.mean())
+            col_infos["std"] = str(column.std())
+            col_infos["min"] = str(column.min())
+            col_infos["max"] = str(column.max())
+            col_infos["25"] = str(column.quantile(0.25))
+            col_infos["50"] = str(column.quantile(0.5))
+            col_infos["75"] = str(column.quantile(0.75))
 
         return col_infos
     except Exception as e:
@@ -159,7 +185,11 @@ async def del_column(request: Request):
     form_data = await request.form()
     table_name = form_data.get("table_name")
     col_name = form_data.get("col_name")
-    new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].drop(columns=['{col_name}'])  #sq_action:Delete column {col_name} on table {table_name}"""
+    col_idx = form_data.get("col_idx")
+    if col_idx[0] != '(':
+        col_idx = f"'{col_idx}'"
+
+    new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].drop(columns=[{col_idx}])  #sq_action:Delete column {col_name} on table {table_name}"""
     return new_code
 
 @router.post("/tables/create_table/")
@@ -201,14 +231,18 @@ async def handle_missing_values(request: Request):
     table_name = form_data.get("table_name")
     col_name = form_data.get("col_name")
     action = form_data.get("action")
+    col_identifier = form_data.get("col_identifier")
+    col_idx = form_data.get("col_idx")
+    if col_idx[0] != '(':
+        col_idx = f"'{col_idx}'"
     
     if action == "delete":
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].dropna(subset=['{col_name}'])  #sq_action:Delete rows with missing values in column {col_name} of table {table_name}"""
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].dropna(subset=[{col_idx}])  #sq_action:Delete rows with missing values in column {col_name} of table {table_name}"""
     elif action == "replace":
         replace_value = form_data.get("replace_value")
-        new_code = f"""dfs['{table_name}']['{col_name}'] = dfs['{table_name}']['{col_name}'].fillna({replace_value})  #sq_action:Replace missing values with {replace_value} in column {col_name} of table {table_name}"""
+        new_code = f"""dfs['{table_name}']{col_identifier} = dfs['{table_name}']{col_identifier}.fillna({replace_value})  #sq_action:Replace missing values with {replace_value} in column {col_name} of table {table_name}"""
     elif action == "interpolate":
-        new_code = f"""dfs['{table_name}']['{col_name}'] = dfs['{table_name}']['{col_name}'].interpolate()  #sq_action:Interpolate missing values in column {col_name} of table {table_name}"""
+        new_code = f"""dfs['{table_name}']{col_identifier} = dfs['{table_name}']{col_identifier}.interpolate()  #sq_action:Interpolate missing values in column {col_name} of table {table_name}"""
     else:
         raise ValueError("Invalid action for handling missing values")
 
@@ -228,8 +262,12 @@ async def replace_values(request: Request):
     table_name = form_data.get("table_name")
     col_name = form_data.get("col_name")
     replace_vals = form_data.get("replace_vals")
+    col_identifier = form_data.get("col_identifier")
+    col_idx = form_data.get("col_idx")
+    if col_idx[0] != '(':
+        col_idx = f"'{col_idx}'"
 
-    new_code = f"""dfs['{table_name}']['{col_name}'] = dfs['{table_name}']['{col_name}'].replace({replace_vals})  #sq_action:Replace values in column {col_name} of table {table_name}"""
+    new_code = f"""dfs['{table_name}']{col_identifier} = dfs['{table_name}']{col_identifier}.replace({replace_vals})  #sq_action:Replace values in column {col_name} of table {table_name}"""
     return new_code
 
 @router.post("/tables/normalize_column/")
@@ -246,11 +284,15 @@ async def normalize_column(request: Request):
     table_name = form_data.get("table_name")
     col_name = form_data.get("col_name")
     method = form_data.get("methods")
+    col_identifier = form_data.get("col_identifier")
+    col_idx = form_data.get("col_idx")
+    if col_idx[0] != '(':
+        col_idx = f"'{col_idx}'"
 
     if method == "min_max":
-        new_code = f"""dfs['{table_name}']['{col_name}'] = (dfs['{table_name}']['{col_name}'] - dfs['{table_name}']['{col_name}'].min()) / (dfs['{table_name}']['{col_name}'].max() - dfs['{table_name}']['{col_name}'].min())  #sq_action:Normalize (min-max) column {col_name} of table {table_name}"""
+        new_code = f"""dfs['{table_name}']{col_identifier} = (dfs['{table_name}']{col_identifier} - dfs['{table_name}']{col_identifier}.min()) / (dfs['{table_name}']{col_identifier}.max() - dfs['{table_name}']{col_identifier}.min())  #sq_action:Normalize (min-max) column {col_name} of table {table_name}"""
     elif method == "mean":
-        new_code = f"""dfs['{table_name}']['{col_name}'] = (dfs['{table_name}']['{col_name}'] - dfs['{table_name}']['{col_name}'].mean()) / dfs['{table_name}']['{col_name}'].std()  #sq_action:Normalize (mean) column {col_name} of table {table_name}"""
+        new_code = f"""dfs['{table_name}']{col_identifier} = (dfs['{table_name}']{col_identifier} - dfs['{table_name}']{col_identifier}.mean()) / dfs['{table_name}']{col_identifier}.std()  #sq_action:Normalize (mean) column {col_name} of table {table_name}"""
 
     return new_code
 
@@ -267,9 +309,13 @@ async def remove_under_over(request: Request):
     form_data = await request.form()
     table_name = form_data.get("table_name")
     col_name = form_data.get("col_name")
+    col_identifier = form_data.get("col_identifier")
+    col_idx = form_data.get("col_idx")
+    if col_idx[0] != '(':
+        col_idx = f"'{col_idx}'"
     lower_bound = form_data.get("lower_bound")
     upper_bound = form_data.get("upper_bound")
-    new_code = f"""dfs['{table_name}'] = dfs['{table_name}'][(dfs['{table_name}']['{col_name}'] >= {lower_bound}) & (dfs['{table_name}']['{col_name}'] <= {upper_bound})]  #sq_action:Remove vals out of [{lower_bound}, {upper_bound}] in column {col_name} of table {table_name}"""
+    new_code = f"""dfs['{table_name}'] = dfs['{table_name}'][(dfs['{table_name}']{col_identifier} >= {lower_bound}) & (dfs['{table_name}']{col_identifier} <= {upper_bound})]  #sq_action:Remove vals out of [{lower_bound}, {upper_bound}] in column {col_name} of table {table_name}"""
     return new_code
 
 @router.post("/tables/rename_column/")
@@ -285,8 +331,12 @@ async def rename_column(request: Request):
     form_data = await request.form()
     table_name = form_data.get("table_name")
     col_name = form_data.get("col_name")
+    col_identifier = form_data.get("col_identifier")
+    col_idx = form_data.get("col_idx")
+    if col_idx[0] != '(':
+        col_idx = f"'{col_idx}'"
     new_col_name = form_data.get("new_col_name")
-    new_code = f"""dfs['{table_name}'].rename(columns={{'{col_name}': '{new_col_name}'}}, inplace=True)  #sq_action:Rename column {col_name} to {new_col_name} in table {table_name}"""
+    new_code = f"""dfs['{table_name}'].rename(columns={{{col_idx}: '{new_col_name}'}}, inplace=True)  #sq_action:Rename column {col_name} to {new_col_name} in table {table_name}"""
     return new_code
 
 @router.post("/tables/edit_column_type/")
@@ -302,8 +352,12 @@ async def edit_column_type(request: Request):
     form_data = await request.form()
     table_name = form_data.get("table_name")
     col_name = form_data.get("col_name")
+    col_identifier = form_data.get("col_identifier")
+    col_idx = form_data.get("col_idx")
+    if col_idx[0] != '(':
+        col_idx = f"'{col_idx}'"
     new_col_type = form_data.get("new_col_type")
-    new_code = f"""dfs['{table_name}']['{col_name}'] = dfs['{table_name}']['{col_name}'].astype('{new_col_type}')  #sq_action:Change type of column {col_name} to {new_col_type} in table {table_name}"""
+    new_code = f"""dfs['{table_name}'][{col_idx}] = dfs['{table_name}'][{col_idx}].astype('{new_col_type}')  #sq_action:Change type of column {col_name} to {new_col_type} in table {table_name}"""
     return new_code
 
 @router.post("/tables/sort_column/")
@@ -319,15 +373,19 @@ async def sort_column(request: Request):
     form_data = await request.form()
     table_name = form_data.get("table_name")
     col_name = form_data.get("col_name")
+    col_identifier = form_data.get("col_identifier")
+    col_idx = form_data.get("col_idx")
+    if col_idx[0] != '(':
+        col_idx = f"'{col_idx}'"
     sort_order = form_data.get("sort_order")
     sort_key = form_data.get("sort_key")
 
     if sort_order == "custom":
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=['{col_name}'], key=lambda x: {sort_key})  #sq_action:Sort {col_name} of table {table_name} with custom key"""
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=[{col_idx}], key=lambda x: {sort_key})  #sq_action:Sort {col_name} of table {table_name} with custom key"""
     elif sort_order == "ascending":
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=['{col_name}'], ascending=True)  #sq_action:Sort(asc) {col_name} of table {table_name}"""
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=[{col_idx}], ascending=True)  #sq_action:Sort(asc) {col_name} of table {table_name}"""
     elif sort_order == "descending":
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=['{col_name}'], ascending=False)  #sq_action:Sort(desc) {col_name} of table {table_name}"""
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=[{col_idx}], ascending=False)  #sq_action:Sort(desc) {col_name} of table {table_name}"""
     else:
         raise ValueError("Invalid sort order")
     
@@ -346,11 +404,15 @@ async def cut_values(request: Request):
     form_data = await request.form()
     table_name = form_data.get("table_name")
     col_name = form_data.get("col_name")
+    col_identifier = form_data.get("col_identifier")
+    col_idx = form_data.get("col_idx")
+    if col_idx[0] != '(':
+        col_idx = f"'{col_idx}'"
     cut_values = form_data.get("cut_values").split(',')
     cut_labels = form_data.get("cut_labels").split(',')
 
     int_cut_values = [int(val) for val in cut_values]
-    new_code = f"""dfs['{table_name}']['{col_name}'] = pd.cut(dfs['{table_name}']['{col_name}'], bins={int_cut_values}, labels={cut_labels})  #sq_action:Cut values in column {col_name} of table {table_name}"""
+    new_code = f"""dfs['{table_name}']{col_identifier} = pd.cut(dfs['{table_name}']{col_identifier}, bins={int_cut_values}, labels={cut_labels})  #sq_action:Cut values in column {col_name} of table {table_name}"""
     return new_code
 
 @router.post("/tables/export_table/")
@@ -408,34 +470,3 @@ async def delete_rows(request: Request):
 
     new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].query("not ({delete_domain})")  #sq_action:Delete rows where {delete_domain} in table {table_name}"""
     return new_code
-
-
-
-# CODE to investigate !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# According to copilot, this should enable to pass infos into the html, would enable to pass the 'dimension'
-
-# import pandas as pd
-
-# def generate_column_identifier(df, col_name):
-#     if isinstance(df.columns, pd.MultiIndex):
-#         return f"[{']['.join(col_name)}]"  # For multi-dimensional columns
-#     return f"[{col_name}]"  # For single-dimensional columns
-
-# def add_custom_attributes(df, display_len):
-#     def format_column(col_name):
-#         identifier = generate_column_identifier(df, col_name)
-#         return f'<th data-columnIdentifier="{identifier}">{col_name}</th>'
-
-#     # Generate the HTML with custom column headers
-#     html = df.head(display_len).to_html(classes='df-table', index=False, formatters={col: format_column for col in df.columns})
-#     return html
-
-# # Example usage
-# df = pd.DataFrame({
-#     'A': [1, 2, 3],
-#     'B': [4, 5, 6]
-# })
-# display_len = 3
-# table_html = {}
-# name = 'example_table'
-# table_html[name] = add_custom_attributes(df, display_len)

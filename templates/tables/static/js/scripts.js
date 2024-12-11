@@ -53,15 +53,17 @@ function formatNumber(num) {
     }
     return (typeof num === 'number' && num % 1 !== 0) ? num.toFixed(2) : num;
 }
-async function openInfoColModal(colName, tableName) {
+async function openInfoColModal(colName, colIdentifier, colIdx, tableName) {
     const projectDir = document.querySelector('input[name="project_dir"]').value;
     document.getElementById('InfoColModal').style.display = "flex";
     document.getElementById('modalTitle').innerHTML = `<b>${colName}</b>`;
     document.querySelector('#InfoColModal input[name="table_name"]').value = tableName;
     document.querySelector('#InfoColModal input[name="col_name"]').value = colName;
+    document.querySelector('#InfoColModal input[name="col_identifier"]').value = colIdentifier;
+    document.querySelector('#InfoColModal input[name="col_idx"]').value = colIdx;
 
     try {
-        const response = await fetch(`/tables/column_infos/?project_dir=${projectDir}&table=${tableName}&column=${colName}`);
+        const response = await fetch(`/tables/column_infos/?project_dir=${projectDir}&table=${tableName}&column_name=${colName}&column_identifier=${colIdentifier}`);
         if (!response.ok) {
             throw new Error(`Error in response${response.status}`);
         }
@@ -92,7 +94,7 @@ async function openInfoColModal(colName, tableName) {
         });
     } catch (error) {
         console.error('Error:', error);
-        document.getElementById('error_infos_computattion').innerHTML = `Error computing informations: ${error.message}`;
+        document.getElementById('error_infos_computation').innerHTML = `Error computing informations: ${error.message}`;
     }
 }
 function closeInfoColModal() {
@@ -105,12 +107,14 @@ function addInfoButtons() {
         const lastTr = thead.querySelector('tr:last-child');
         lastTr.querySelectorAll('th').forEach(function(th) {
             const colName = th.textContent.trim();
+            const colIdentifier = th.dataset.columnidentifier;
+            const colIdx = th.dataset.columnidx;
             const infoColButton = document.createElement('button');
             infoColButton.className = 'table-header-btn';
             infoColButton.innerHTML = '&middot;&middot;&middot;';
             const tableName = th.closest('.table-container').id.split('-')[1];
             infoColButton.onclick = function() {
-                openInfoColModal(colName, tableName);
+                openInfoColModal(colName, colIdentifier, colIdx, tableName);
             };
             if (!th.querySelector('.table-header-btn')) {
                 th.appendChild(infoColButton);
