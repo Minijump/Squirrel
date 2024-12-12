@@ -35,6 +35,14 @@ def mock_project(tmpdir):
         "directory": "mock_source_csv"
     }, indent=4))
     csv_source_dir.join("data.csv").write("mock_name,mock_price"+"".join([f"\nmock{i},{i}" for i in range(100)]))
+    #create a dataframe and add it in a data.pkl file
+    import pandas as pd
+    data = []
+    for i in range(100):
+        name = 'name'
+        list_price = i
+        data.append([name, list_price])
+    pd.DataFrame(data, columns=['mock_name', 'mock_price']).to_pickle(csv_source_dir.join("data.pkl"))
 
     # Pipeline file
     pipeline_file = project_dir.join("pipeline.py")
