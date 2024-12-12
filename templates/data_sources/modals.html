@@ -12,7 +12,7 @@
             <textarea id="sourceDescription" name="source_description"></textarea>
 
             <label for="source_type">Type:</label>
-            <select id="sourceType" name="source_type" onchange="toggleSourceTypeSelect()">
+            <select id="sourceType" name="source_type" onchange="toggleSourceType()">
                 {% for short_name, cls in DATA_SOURCE_REGISTRY.items() %}
                     <option value="{{ short_name }}">{{ cls.display_name }}</option>
                 {% endfor %}
@@ -87,29 +87,5 @@
             <button type="submit" class="btn-primary">Create</button>
             <button type="button" class="btn-secondary" id="cancelButton">Cancel</button>
         </form>
-        <script>
-            function toggleSourceTypeSelect() {
-                let optionalArgs = document.getElementsByClassName("optional-arg");
-                for (let i = 0; i < optionalArgs.length; i++) {
-                    optionalArgs[i].style.display = "none";
-                    let optionalInputs = optionalArgs[i].getElementsByTagName("input");
-                    for (let j = 0; j < optionalInputs.length; j++) {
-                        optionalInputs[j].removeAttribute("required");
-                    }
-                }
-
-                let sourceTypeSelect = document.getElementById("sourceType");
-                let toDisplay = document.getElementsByClassName(sourceTypeSelect.value);
-                for (let i = 0; i < toDisplay.length; i++) {
-                    toDisplay[i].style.display = "block";
-                    let requiredInputs = toDisplay[i].getElementsByTagName("input");
-                    for (let j = 0; j < requiredInputs.length; j++) {
-                        if (!requiredInputs[j].classList.contains("never-mandatory")){
-                            requiredInputs[j].required = true;
-                        }
-                    }
-                }
-            }
-        </script>
     </div>
 </div>
