@@ -67,3 +67,51 @@ class DataSourceFile(DataSource):
         
         updated_source = await DataSource._update_source_settings(source, updated_data)
         return updated_source
+
+@data_source_type
+class DataSourceCSV(DataSourceFile):
+    short_name = "csv"
+    display_name = "CSV"
+    icon = "csv_icon.png"
+
+    def create_table(self, form_data):
+        """
+        Return the code to read data file
+        """
+        project_dir = form_data.get("project_dir")
+        data_file_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', self.directory, 'data.csv')
+        data_file_path = os.path.relpath(data_file_path, os.getcwd())
+        table_name = form_data.get("table_name")
+        return f"dfs['{table_name}'] = pd.read_csv(r'{data_file_path}')  #sq_action:Create table {table_name} from {self.name}"
+
+@data_source_type
+class DataSourcePickle(DataSourceFile):
+    short_name = "pkl"
+    display_name = "Pickle"
+    icon = "pickle_icon.png"
+
+    def create_table(self, form_data):
+        """
+        Return the code to read data file
+        """
+        project_dir = form_data.get("project_dir")
+        data_file_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', self.directory, 'data.pkl')
+        data_file_path = os.path.relpath(data_file_path, os.getcwd())
+        table_name = form_data.get("table_name")
+        return f"dfs['{table_name}'] = pd.read_pickle(r'{data_file_path}')  #sq_action:Create table {table_name} from {self.name}"
+    
+@data_source_type
+class DataSourceXLSX(DataSourceFile):
+    short_name = "xlsx"
+    display_name = "Excel"
+    icon = "xlsx_icon.png"
+
+    def create_table(self, form_data):
+        """
+        Return the code to read data file
+        """
+        project_dir = form_data.get("project_dir")
+        data_file_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', self.directory, 'data.xlsx')
+        data_file_path = os.path.relpath(data_file_path, os.getcwd())
+        table_name = form_data.get("table_name")
+        return f"dfs['{table_name}'] = pd.read_excel(r'{data_file_path}')  #sq_action:Create table {table_name} from {self.name}"
