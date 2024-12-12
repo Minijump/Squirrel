@@ -97,34 +97,8 @@
     
             <button type="submit" class="btn-primary">Save</button>
         </form>
-        <script>
-            function toggleSourceType() {
-                let optionalArgs = document.getElementsByClassName("optional-arg");
-                for (let i = 0; i < optionalArgs.length; i++) {
-                    optionalArgs[i].style.display = "none";
-                    let optionalInputs = optionalArgs[i].getElementsByTagName("input");
-                    for (let j = 0; j < optionalInputs.length; j++) {
-                        optionalInputs[j].removeAttribute("required");
-                    }
-                }
-
-                let sourceType = document.getElementById("sourceType");
-                let toDisplay = document.getElementsByClassName(sourceType.value);
-                for (let i = 0; i < toDisplay.length; i++) {
-                    toDisplay[i].style.display = "block";
-                    let requiredInputs = toDisplay[i].getElementsByTagName("input");
-                    for (let j = 0; j < requiredInputs.length; j++) {
-                        if (!requiredInputs[j].classList.contains("never-mandatory")){
-                            requiredInputs[j].required = true;
-                        }
-                    }
-                }
-            }
-
-            document.addEventListener("DOMContentLoaded", function() {toggleSourceType();});
-        </script>
     </main>
+    <script src="{{ url_for('data_sources_static', path='js/script.js') }}"></script>
 </div>
-<script src="{{ url_for('data_sources_static', path='js/scripts.js') }}"></script>
 </body>
 </html>
