@@ -11,6 +11,10 @@ def data_source_type(cls):
     return cls
 
 class DataSource:
+    short_name = "short_name"
+    display_name = "Display name"
+    icon = ""
+
     def __init__(self, manifest):
         self.type = manifest['type']
         self.name = manifest['name']
@@ -18,7 +22,7 @@ class DataSource:
         self.directory = manifest['directory']
 
     @staticmethod
-    def check_available_infos(form_data):
+    def check_available_infos(form_data, additional_required_fields=False):
         """
         Check if the required infos are available
 
@@ -28,6 +32,11 @@ class DataSource:
             raise ValueError("Source name is required")
         if not form_data.get("source_type"):
             raise ValueError("Source type is required")
+        
+        if additional_required_fields:
+            for field in additional_required_fields:
+                if not form_data.get(field):
+                    raise ValueError(f"{field} is required")
 
     @staticmethod
     def _generate_manifest(form_data):
