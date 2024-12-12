@@ -188,7 +188,6 @@ async def execute_action(request: Request, action_name: str):
 ```
 
 ### To do
-* Datasource: Save all in pickle (in csv datasource we would have original_source.csv; data.pkl. We would use only data.pkl in code)
 * Datasource all available args
 * Supabase connection, blockchain.com, json file
 * Make data source sync parallel
@@ -199,7 +198,7 @@ async def execute_action(request: Request, action_name: str):
 
 ### Feature ideas
 * Odoo module; ease imports ?
-* 'Dynamic' data source: sync before running the pipeline. List of dynamics in project settings
+* 'Dynamic' data source: sync before running the pipeline. List of dynamics in project settings + sync file source?
 * Give a way to secure credentials?
 * Great-expectation unit tests
 * Export as jupyter notebook + Make folder runnable as-is outside the app (create a main.py file to run? That would sync all sources,...)???

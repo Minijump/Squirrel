@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 
 from app.data_sources.models.data_source import DataSource, data_source_type
 
@@ -24,31 +25,28 @@ class DataSourceFile(DataSource):
         
         DataSource.check_available_infos(form_data)
 
-    async def _create_data_file(self, form_data):
+    async def _create_pickle_file(self, source_file_path):
+        """
+        To be implemented by the child class
+        """
+        pass
+
+    async def _create_data_file(self, form_data, content=False):
         """
         Creates (copy) the data file for the source
 
         * form_data(dict): The form data
         """
-        source_path = os.path.join(os.getcwd(), "_projects", form_data["project_dir"], "data_sources", self.directory) 
-        data_file_name = 'data.' + self.short_name
-        source_file_path = os.path.join(source_path, data_file_name)
-        source_file = form_data.get("source_file")
-        with open(source_file_path, 'wb') as file:
-            file.write(await source_file.read())
-
-    async def update_data_file(self, content, updated_data):
-        """
-        Update the data file for the source
-
-        * new_file: The new file
-        * updated_data: The updated data
-        """
-        source_path = os.path.join(os.getcwd(), "_projects", updated_data["project_dir"], "data_sources", self.directory) 
-        data_file_name = 'data.' + self.short_name
-        source_file_path = os.path.join(source_path, data_file_name)
+        source_path = os.path.join(os.getcwd(), "_projects", form_data["project_dir"], "data_sources", self.directory)
+        source_file_path = os.path.join(source_path, 'data.' + self.short_name)
+        content = content or await form_data.get("source_file").read()
         with open(source_file_path, 'wb') as file:
             file.write(content)
+
+        # All sources are converted to pickle files, this increase the speed of reading the data
+        # However, the drawback is that if the user change the file (csv,...) manually, the changes will not be reflected 
+        # (must use the settings page) => Is there something to do about this?
+        await self._create_pickle_file(source_file_path)
     
     @classmethod
     async def _update_source_settings(cls, source, updated_data):
@@ -64,33 +62,11 @@ class DataSourceFile(DataSource):
         if new_file:
             content = await new_file.read()
             if content:
-                await cls(source).update_data_file(content, updated_data)
+                await cls(source)._create_data_file(updated_data, content)
         
         updated_source = await DataSource._update_source_settings(source, updated_data)
         return updated_source
-
-@data_source_type
-class DataSourceCSV(DataSourceFile):
-    short_name = "csv"
-    display_name = "CSV"
-    icon = "csv_icon.png"
-
-    def create_table(self, form_data):
-        """
-        Return the code to read data file
-        """
-        project_dir = form_data.get("project_dir")
-        data_file_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', self.directory, 'data.csv')
-        data_file_path = os.path.relpath(data_file_path, os.getcwd())
-        table_name = form_data.get("table_name")
-        return f"dfs['{table_name}'] = pd.read_csv(r'{data_file_path}')  #sq_action:Create table {table_name} from {self.name}"
-
-@data_source_type
-class DataSourcePickle(DataSourceFile):
-    short_name = "pkl"
-    display_name = "Pickle"
-    icon = "pickle_icon.png"
-
+    
     def create_table(self, form_data):
         """
         Return the code to read data file
@@ -100,6 +76,34 @@ class DataSourcePickle(DataSourceFile):
         data_file_path = os.path.relpath(data_file_path, os.getcwd())
         table_name = form_data.get("table_name")
         return f"dfs['{table_name}'] = pd.read_pickle(r'{data_file_path}')  #sq_action:Create table {table_name} from {self.name}"
+
+@data_source_type
+class DataSourceCSV(DataSourceFile):
+    short_name = "csv"
+    display_name = "CSV"
+    icon = "csv_icon.png"
+
+    async def _create_pickle_file(self, source_file_path):
+        """
+        Create a pickle file from the source file
+
+        * source_file_path(str): The source file path
+        """
+        data = pd.read_csv(source_file_path)
+        pickle_file_path = source_file_path.replace(f'.{self.short_name}', '.pkl')
+        data.to_pickle(pickle_file_path)
+
+@data_source_type
+class DataSourcePickle(DataSourceFile):
+    short_name = "pkl"
+    display_name = "Pickle"
+    icon = "pickle_icon.png"
+
+    async def _create_pickle_file(self, source_file_path):
+        """
+        Already pickle: pass
+        """
+        pass
     
 @data_source_type
 class DataSourceXLSX(DataSourceFile):
@@ -107,12 +111,12 @@ class DataSourceXLSX(DataSourceFile):
     display_name = "Excel"
     icon = "xlsx_icon.png"
 
-    def create_table(self, form_data):
+    async def _create_pickle_file(self, source_file_path):
         """
-        Return the code to read data file
+        Create a pickle file from the source file
+
+        * source_file_path(str): The source file path
         """
-        project_dir = form_data.get("project_dir")
-        data_file_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', self.directory, 'data.xlsx')
-        data_file_path = os.path.relpath(data_file_path, os.getcwd())
-        table_name = form_data.get("table_name")
-        return f"dfs['{table_name}'] = pd.read_excel(r'{data_file_path}')  #sq_action:Create table {table_name} from {self.name}"
+        data = pd.read_excel(source_file_path)
+        pickle_file_path = source_file_path.replace(f'.{self.short_name}', '.pkl')
+        data.to_pickle(pickle_file_path)

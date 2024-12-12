@@ -108,7 +108,7 @@ def test_create_table_from_csv(mock_project):
     pipeline_path = os.path.join(mock_project, "pipeline.py")
     with open(pipeline_path, 'r') as file:
         lines = file.readlines()
-        assert any("dfs['df'] = pd.read_csv(" in line for line in lines), "Table not created in pipeline"
+        assert any("dfs['df'] = pd.read_pickle(" in line for line in lines), "Table not created in pipeline"
 
     assert response.context.get("table"), "Response does not contain a table"
     assert "mock_name" in response.context.get("table")['df'], "Table 'df' should contain a 'mock_name' column"

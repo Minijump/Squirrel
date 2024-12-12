@@ -111,7 +111,7 @@ async def source_settings(request: Request, project_dir: str, source_dir: str):
     => Returns a TemplateResponse to display data_sources page
     """
     try:
-        source = get_manifest(project_dir, source_dir)
+        source = await get_manifest(project_dir, source_dir)
         return templates.TemplateResponse(request, "data_sources/data_source_settings.html",
             {"project_dir": project_dir, "source": source})
 
@@ -133,8 +133,8 @@ async def update_source_settings(request: Request):
         project_dir = form_data.get("project_dir")
         source_dir = form_data.get("source_dir")
 
-        manifest_data = get_manifest(project_dir, source_dir)
-        source = init_source_instance(manifest_data)
+        manifest_data = await get_manifest(project_dir, source_dir)
+        source = await init_source_instance(manifest_data)
         await source.update_source_settings(form_data)
 
         return RedirectResponse(url=f"/data_sources/?project_dir={project_dir}", status_code=303)
@@ -157,8 +157,8 @@ async def sync_source(request: Request):
         project_dir = form_data.get("project_dir")
         source_dir = form_data.get("source_dir")
 
-        manifest_data = get_manifest(project_dir, source_dir)
-        source = init_source_instance(manifest_data)
+        manifest_data = await get_manifest(project_dir, source_dir)
+        source = await init_source_instance(manifest_data)
         await source.sync(project_dir)
 
     except Exception as e:
