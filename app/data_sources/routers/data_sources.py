@@ -2,7 +2,6 @@ from fastapi import Request
 from fastapi.responses import RedirectResponse
 from fastapi.responses import JSONResponse
 
-import asyncio
 import os
 import json
 import traceback
@@ -29,6 +28,30 @@ async def get_sources(project_dir):
                 sources.append(manifest_data)
     return sources
 
+async def get_manifest(project_dir, source_dir):
+    """
+    Returns the manifest content
+
+    * project_dir(str): The project directory name
+    * source_dir(str): The source directory name
+    
+    => Returns the manifest of the source
+    """
+    manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir, "__manifest__.json")
+    with open(manifest_path, 'r') as file:
+        return json.load(file)
+    
+async def init_source_instance(manifest_data):
+    """
+    Initialize the source instance
+
+    * manifest_data(dict): The manifest data
+    
+    => Returns the source object
+    """
+    SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
+    return SourceClass(manifest_data)
+
 @router.get("/data_sources")
 async def data_sources(request: Request, project_dir: str):
     """
@@ -42,11 +65,8 @@ async def data_sources(request: Request, project_dir: str):
     """
     try:
         sources = await get_sources(project_dir)
-        return templates.TemplateResponse(
-            request, 
-            "data_sources/data_sources.html", 
-            {
-                "project_dir": project_dir, 
+        return templates.TemplateResponse(request, "data_sources/data_sources.html", 
+            {   "project_dir": project_dir, 
                 "sources": sources,
                 "DATA_SOURCE_REGISTRY": DATA_SOURCE_REGISTRY})
 
@@ -91,13 +111,8 @@ async def source_settings(request: Request, project_dir: str, source_dir: str):
     => Returns a TemplateResponse to display data_sources page
     """
     try:
-        manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir, "__manifest__.json")
-        with open(manifest_path, 'r') as file:
-            source = json.load(file)
-
-        return templates.TemplateResponse(
-            request, 
-            "data_sources/data_source_settings.html",
+        source = get_manifest(project_dir, source_dir)
+        return templates.TemplateResponse(request, "data_sources/data_source_settings.html",
             {"project_dir": project_dir, "source": source})
 
     except Exception as e:
@@ -118,12 +133,8 @@ async def update_source_settings(request: Request):
         project_dir = form_data.get("project_dir")
         source_dir = form_data.get("source_dir")
 
-        manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir, "__manifest__.json")
-        with open(manifest_path, 'r') as file:
-            manifest_data = json.load(file)
-        
-        SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
-        source = SourceClass(manifest_data)
+        manifest_data = get_manifest(project_dir, source_dir)
+        source = init_source_instance(manifest_data)
         await source.update_source_settings(form_data)
 
         return RedirectResponse(url=f"/data_sources/?project_dir={project_dir}", status_code=303)
@@ -146,12 +157,8 @@ async def sync_source(request: Request):
         project_dir = form_data.get("project_dir")
         source_dir = form_data.get("source_dir")
 
-        manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir, "__manifest__.json")
-        with open(manifest_path, 'r') as file:
-            manifest_data = json.load(file)
-
-        SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
-        source = SourceClass(manifest_data)
+        manifest_data = get_manifest(project_dir, source_dir)
+        source = init_source_instance(manifest_data)
         await source.sync(project_dir)
 
     except Exception as e:
