@@ -188,8 +188,10 @@ async def execute_action(request: Request, action_name: str):
 ```
 
 ### To do
-* Subclass dataSourceAPI + Save all in pickle (in csv datasource we would have original_source.csv; data.pkl. We would use only data.pkl in code) + All available args
+* Datasource: Save all in pickle (in csv datasource we would have original_source.csv; data.pkl. We would use only data.pkl in code) + All available args
 * Supabase connection, blockchain.com, json file
+* Make data source sync parallel
+* Data source unit tests + dedicated readme
 * Do not run all pipeline at each actions (especially for pager, infos, ... Save the whole dfs dict as pickle)
 
 ### To Fix

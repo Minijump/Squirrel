@@ -4,7 +4,8 @@ from app.data_sources.models.data_source import DataSource, data_source_type
 
 class DataSourceFile(DataSource):
     short_name = "file_extension (without dot)"
-    display_name = "File name"
+    display_name = "File Type name"
+    icon = ""
 
     def __init__(self, manifest):
         super().__init__(manifest)
