@@ -188,7 +188,8 @@ async def execute_action(request: Request, action_name: str):
 ```
 
 ### To do
-* Datasource: Save all in pickle (in csv datasource we would have original_source.csv; data.pkl. We would use only data.pkl in code) + All available args
+* Datasource: Save all in pickle (in csv datasource we would have original_source.csv; data.pkl. We would use only data.pkl in code)
+* Datasource all available args
 * Supabase connection, blockchain.com, json file
 * Make data source sync parallel
 * Data source unit tests + dedicated readme
