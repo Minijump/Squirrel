@@ -1,0 +1,6 @@
+{
+    "name": "Mock CSV",
+    "type": "csv",
+    "description": "a mock csv\r\nGenerated with mock values",
+    "directory": "Mock_CSV"
+}
