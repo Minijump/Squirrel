@@ -13,11 +13,13 @@ document.querySelectorAll('.card').forEach(card => {
         window.location.href = `/source/settings/?project_dir=${encodeURIComponent(projectDir)}&source_dir=${encodeURIComponent(sourceDir)}`;
     });
 });
-cancelButton.addEventListener('click', () => {
-    createSourceModal.style.display = 'none';
-});
+if (cancelButton) {
+    cancelButton.addEventListener('click', () => {
+        createSourceModal.style.display = 'none';
+    });
+}
 
-// Filter files type for file selection
+// Filter files type for file selection 
 function updateFileAccept() {
     const sourceType = document.getElementById('sourceType');
     const sourceFile = document.getElementById('sourceFile');
@@ -26,7 +28,32 @@ function updateFileAccept() {
 }
 document.addEventListener('DOMContentLoaded', updateFileAccept);
 document.getElementById('sourceType').addEventListener('change', updateFileAccept);
+// Toggle source type
+function toggleSourceType() {
+    let optionalArgs = document.getElementsByClassName("optional-arg");
+    for (let i = 0; i < optionalArgs.length; i++) {
+        optionalArgs[i].style.display = "none";
+        let optionalInputs = optionalArgs[i].getElementsByTagName("input");
+        for (let j = 0; j < optionalInputs.length; j++) {
+            optionalInputs[j].removeAttribute("required");
+        }
+    }
 
+    let sourceType = document.getElementById("sourceType");
+    let toDisplay = document.getElementsByClassName(sourceType.value);
+    for (let i = 0; i < toDisplay.length; i++) {
+        toDisplay[i].style.display = "block";
+        let requiredInputs = toDisplay[i].getElementsByTagName("input");
+        for (let j = 0; j < requiredInputs.length; j++) {
+            if (!requiredInputs[j].classList.contains("never-mandatory")){
+                requiredInputs[j].required = true;
+            }
+        }
+    }
+}
+document.addEventListener('DOMContentLoaded', toggleSourceType);
+
+// Sync source
 function syncSource(sourceDir, projectDir, syncIconId) {
     return new Promise((resolve, reject) => {
         console.log(`Starting sync for source: ${sourceDir}`);
