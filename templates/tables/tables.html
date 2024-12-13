@@ -52,9 +52,7 @@
                     <div id="table-{{ name }}" class="table-container" style="display: none;">
                 {% endif %}
                         <div style="display: flex; justify-content: flex-start; gap: 10px;">
-                            <!-- <button onclick="openSidebarForm('AddCol', { 'table_name': '{{ name }}' })" class="btn-primary">Add Column</button> -->
                             <button onclick="openSidebarActionForm('AddColumn', { 'table_name': '{{ name }}' })" class="btn-primary">Add Column</button>
-                            <!-- <button onclick="openSidebarForm('DeleteRows', { 'table_name': '{{ name }}' })" class="btn-danger">Delete Rows</button> -->
                             <button onclick="openSidebarActionForm('DeleteRow', { 'table_name': '{{ name }}' })" class="btn-danger">Delete Rows</button>
                             <button onclick="openSidebarForm('ExportTable', { 'table_name': '{{ name }}' })" class="btn-primary"><i class="fas fa-file-export" style="margin-right: 5px;"></i></button>
                         </div>

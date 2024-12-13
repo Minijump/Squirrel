@@ -134,6 +134,7 @@ In addition to these folders, you will find a folder named tests that contains t
 * Do not run all pipeline at each actions (especially for pager, infos, ... Save the whole dfs dict as pickle)
 
 ### To Fix
+* In pipeline, can not open action if ' is into the commentary
 
 ### Feature ideas
 * Odoo module; ease imports ?

@@ -10,5 +10,5 @@ class DeleteRow(Action):
 
     async def execute(self):
         table_name, delete_domain = await self._get(["table_name", "delete_domain"])
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].query("not ({delete_domain})")  #sq_action:Delete rows where {delete_domain} in table {table_name}"""
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].query("not ({delete_domain})")  #sq_action:Delete rows in table {table_name}"""
         return new_code
