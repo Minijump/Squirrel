@@ -45,6 +45,46 @@ function openSidebarForm(id, data = {}) {
         }
     }
 }
+async function openSidebarActionForm(action, data = {}) {
+    const form = document.getElementById("ActionSidebar");
+    form.style.width = "250px";
+    // Call Python endpoint to get args of class called 'action', add them to sidebar
+    fetch(`/tables/get_action_args/?action_name=${action}`)
+        .then(response => response.json())
+        .then(args => {
+            const argsDiv = form.querySelector('#args');
+            argsDiv.innerHTML = '';
+            Object.keys(args).forEach(key => {
+                const label = document.createElement('label');
+                label.innerHTML = args[key].string;
+                argsDiv.appendChild(label);
+
+                if (args[key].info) {
+                    const infoNote = document.createElement('div');
+                    infoNote.className = 'info-note';
+                    infoNote.innerHTML = `<i class="fas fa-info-circle"></i> ${args[key].info}`;
+                    argsDiv.appendChild(infoNote);
+                };
+
+                let input = document.createElement('input');
+                if (args[key].type === 'txt') {
+                    input = document.createElement('textarea');
+                }
+                input.name = key;
+                input.id = key
+                input.required = true;
+                argsDiv.appendChild(input);
+        });
+    });
+
+    // Add default values to args if needed
+    form.querySelector('input[name="action_name"]').value = action;
+    for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+            form.querySelector(`input[name="${key}"]`).value = data[key];
+        }
+    }
+}
 
 // InfoColModal
 function formatNumber(num) {

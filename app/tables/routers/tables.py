@@ -156,21 +156,21 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
         traceback.print_exc()
         return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
 
-@router.post("/tables/add_column/")
-@action.add
-async def add_column(request: Request):
-    """
-    Add a column to the dataframe
+# @router.post("/tables/add_column/")
+# @action.add
+# async def add_column(request: Request):
+#     """
+#     Add a column to the dataframe
 
-    * request contains: col_name, col_value, project_dir
+#     * request contains: col_name, col_value, project_dir
     
-    => Returns a string representing the code to add the column
-    """
-    form_data = await request.form()
-    table_name = form_data.get("table_name")
-    col_name = form_data.get("col_name")
-    new_code = f"""dfs['{table_name}']['{col_name}'] = {form_data.get('col_value')}  #sq_action:Add column {col_name} on table {table_name}"""
-    return new_code
+#     => Returns a string representing the code to add the column
+#     """
+#     form_data = await request.form()
+#     table_name = form_data.get("table_name")
+#     col_name = form_data.get("col_name")
+#     new_code = f"""dfs['{table_name}']['{col_name}'] = {form_data.get('col_value')}  #sq_action:Add column {col_name} on table {table_name}"""
+#     return new_code
 
 @router.post("/tables/del_column/")
 @action.add
@@ -453,20 +453,44 @@ async def export_table(request: Request):
         traceback.print_exc()
         return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
     
-@router.post("/tables/delete_rows/")
-@action.add
-async def delete_rows(request: Request):
-    """
-    Delete rows in the dataframe based on a domain
+# @router.post("/tables/delete_rows/")
+# @action.add
+# async def delete_rows(request: Request):
+#     """
+#     Delete rows in the dataframe based on a domain
 
-    * request contains: table_name, delete_domain, project_dir
+#     * request contains: table_name, delete_domain, project_dir
     
-    => Returns a string representing the code to delete the rows
-    """
-    # Should give the possibility to use something else than query? Python domain,...
-    form_data = await request.form()
-    table_name = form_data.get("table_name")
-    delete_domain = form_data.get("delete_domain")
+#     => Returns a string representing the code to delete the rows
+#     """
+#     # Should give the possibility to use something else than query? Python domain,...
+#     form_data = await request.form()
+#     table_name = form_data.get("table_name")
+#     delete_domain = form_data.get("delete_domain")
 
-    new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].query("not ({delete_domain})")  #sq_action:Delete rows where {delete_domain} in table {table_name}"""
+#     new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].query("not ({delete_domain})")  #sq_action:Delete rows where {delete_domain} in table {table_name}"""
+#     return new_code
+
+from app.tables.models.actions import TABLE_ACTION_REGISTRY
+@router.post("/tables/execute_action/")
+@action.add
+async def execute_action(request: Request):
+    form_data = await request.form()
+    action_name = form_data.get("action_name")
+    ActionClass = TABLE_ACTION_REGISTRY.get(action_name)
+    if not ActionClass:
+        raise ValueError(f"Action {action_name} not found")
+
+    action_instance = ActionClass(request)
+    new_code = await action_instance.execute()
     return new_code
+
+@router.get("/tables/get_action_args/")
+async def get_action_args(request: Request, action_name: str):
+    ActionClass = TABLE_ACTION_REGISTRY.get(action_name)
+    if not ActionClass:
+        raise ValueError(f"Action {action_name} not found")
+
+    action_instance = ActionClass(request)
+    args = action_instance.args
+    return args
