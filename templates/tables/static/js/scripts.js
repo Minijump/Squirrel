@@ -39,7 +39,12 @@ function closeSidebarForm(id) {
 function completeInputs(form, data) {
     for (const key in data) {
         if (data.hasOwnProperty(key)) {
-            form.querySelector(`input[name="${key}"]`).value = data[key];
+            const inputElement = document.getElementById(key);
+            if (inputElement) {
+                inputElement.value = data[key];
+            } else {
+                console.warn(`Element with id ${key} not found in the form.`);
+            }
         }
     }
 }
@@ -74,11 +79,18 @@ async function addInputs(action, form) {
             const argsDiv = form.querySelector('#args');
             argsDiv.innerHTML = '';
             Object.keys(args).forEach(key => {
-                addLabel(argsDiv, args[key]);
-                let input = createInput(args[key]);
+                let input
+                if (args[key].invisible) {
+                    input = createInput(args[key]);
+                    input.type = 'hidden';
+                }
+                else{
+                    addLabel(argsDiv, args[key]);
+                    input = createInput(args[key]);
+                    input.required = true;
+                }
                 input.name = key;
-                input.id = key
-                input.required = true;
+                input.id = key;
                 argsDiv.appendChild(input);
         });
     });
