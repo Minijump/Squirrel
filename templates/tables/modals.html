@@ -3,7 +3,7 @@
     <form action="/tables/execute_action/" method="post">
         <input type="hidden" name="action_name" required>
         <input type="hidden" name="project_dir" value="{{ project_dir }}">
-        <input id="table_name" name="table_name" type="hidden" required>
+        <input type="hidden" name="table_name" id="table_name" required>
 
         <div id="args">
         </div>
@@ -72,25 +72,6 @@
             }
         }
     </script>
-</div>
-
-<div id="ReplaceVal" class="right-sidebar-form">
-    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ReplaceVal')">&times;</a>
-    <form action="/tables/replace_values/" method="post">
-        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
-        <input id="table_name" name="table_name" required type="hidden"> 
-        <input id="col_name" name="col_name" required type="hidden">
-        <input id="col_identifier" name="col_identifier" required type="hidden">
-        <input id="col_idx" name="col_idx" required type="hidden">
-
-        <label for="replace_vals">Replace Domain:</label>
-        <div class="info-note">
-            <i class="fas fa-info-circle"></i> The domain must have the format {'to_replace1': 'replacing1', 'to_replace2': 'replacing2', ...}.
-        </div>
-        <textarea id="replace_vals" name="replace_vals" required></textarea>
-        
-        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
-    </form>
 </div>
 
 <div id="NormalizeCol" class="right-sidebar-form">
@@ -304,7 +285,7 @@
             </button>
             <button class="btn-primary" onclick="
                 closeInfoColModal();
-                openSidebarForm('ReplaceVal', 
+                openSidebarActionForm('ReplaceVals', 
                     { 
                         'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
                         'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
@@ -387,7 +368,8 @@
             </div>
         </div>
 
-        <form action="/tables/del_column/" method="post">
+        <form action="/tables/execute_action/" method="post">
+            <input type="hidden" name="action_name" value="DropColumn">
             <input type="hidden" name="project_dir" value="{{ project_dir }}">
             <input id="table_name" name="table_name" type="hidden" required>
             <input id="col_name" name="col_name" type="hidden" required>
