@@ -36,54 +36,59 @@ document.addEventListener('DOMContentLoaded', function() {
 function closeSidebarForm(id) {
     document.getElementById(id).style.width = "0";
 }
-function openSidebarForm(id, data = {}) {
-    const form = document.getElementById(id);
-    form.style.width = "250px";
+function completeInputs(form, data) {
     for (const key in data) {
         if (data.hasOwnProperty(key)) {
             form.querySelector(`input[name="${key}"]`).value = data[key];
         }
     }
 }
-async function openSidebarActionForm(action, data = {}) {
-    const form = document.getElementById("ActionSidebar");
+function openSidebarForm(id, data = {}) {
+    const form = document.getElementById(id);
     form.style.width = "250px";
-    // Call Python endpoint to get args of class called 'action', add them to sidebar
+    completeInputs(form, data);
+}
+function addLabel(argsDiv, arg) {
+    const label = document.createElement('label');
+    label.innerHTML = arg.string;
+    argsDiv.appendChild(label);
+
+    if (arg.info) {
+        const infoNote = document.createElement('div');
+        infoNote.className = 'info-note';
+        infoNote.innerHTML = `<i class="fas fa-info-circle"></i> ${arg.info}`;
+        argsDiv.appendChild(infoNote);
+    };
+}
+function createInput(arg) {
+    let input = document.createElement('input');
+    if (arg.type === 'txt') {
+        input = document.createElement('textarea');
+    }
+    return input;
+}
+async function addInputs(action, form) {
     fetch(`/tables/get_action_args/?action_name=${action}`)
         .then(response => response.json())
         .then(args => {
             const argsDiv = form.querySelector('#args');
             argsDiv.innerHTML = '';
             Object.keys(args).forEach(key => {
-                const label = document.createElement('label');
-                label.innerHTML = args[key].string;
-                argsDiv.appendChild(label);
-
-                if (args[key].info) {
-                    const infoNote = document.createElement('div');
-                    infoNote.className = 'info-note';
-                    infoNote.innerHTML = `<i class="fas fa-info-circle"></i> ${args[key].info}`;
-                    argsDiv.appendChild(infoNote);
-                };
-
-                let input = document.createElement('input');
-                if (args[key].type === 'txt') {
-                    input = document.createElement('textarea');
-                }
+                addLabel(argsDiv, args[key]);
+                let input = createInput(args[key]);
                 input.name = key;
                 input.id = key
                 input.required = true;
                 argsDiv.appendChild(input);
         });
     });
-
-    // Add default values to args if needed
+}
+async function openSidebarActionForm(action, data = {}) {
+    const form = document.getElementById("ActionSidebar");
+    form.style.width = "250px";
+    addInputs(action, form);
     form.querySelector('input[name="action_name"]').value = action;
-    for (const key in data) {
-        if (data.hasOwnProperty(key)) {
-            form.querySelector(`input[name="${key}"]`).value = data[key];
-        }
-    }
+    completeInputs(form, data);
 }
 
 // InfoColModal
