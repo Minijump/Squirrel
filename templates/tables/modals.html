@@ -18,7 +18,7 @@
     </form>
 </div>
 
-<div id="AddCol" class="right-sidebar-form">
+<!-- <div id="AddCol" class="right-sidebar-form">
     <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('AddCol')">&times;</a>
     <form action="/tables/add_column/" method="post">
         <input type="hidden" name="project_dir" value="{{ project_dir }}">
@@ -31,6 +31,19 @@
         <textarea id="add_col_value" name="col_value" required></textarea>
         
         <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Add Column</button>
+    </form>
+</div> -->
+<div id="ActionSidebar" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ActionSidebar')">&times;</a>
+    <form action="/tables/execute_action/" method="post">
+        <input type="hidden" name="action_name" required>
+        <input type="hidden" name="project_dir" value="{{ project_dir }}">
+        <input id="table_name" name="table_name" type="hidden" required>
+
+        <div id="args">
+        </div>
+        
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
     </form>
 </div>
 
@@ -248,7 +261,7 @@
     </form>
 </div>
 
-<div id="DeleteRows" class="right-sidebar-form">
+<!-- <div id="DeleteRows" class="right-sidebar-form">
     <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('DeleteRows')">&times;</a>
     <form action="/tables/delete_rows/" method="post">
         <input name="project_dir" value="{{ project_dir }}" required type="hidden">
@@ -260,7 +273,7 @@
         <textarea id="delete_domain" name="delete_domain" required></textarea>
         <button type="submit" class="btn-danger" style="margin-left: 15px; margin-top: 10px;">Delete Rows</button>
     </form>
-</div>
+</div> -->
 
 <div id="ExportTable" class="right-sidebar-form">
     <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ExportTable')">&times;</a>
