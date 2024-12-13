@@ -7,9 +7,6 @@ from app.data_sources.models.data_source import DATA_SOURCE_REGISTRY
 
 @table_action_type
 class CreateTable(Action):
-    def __init__(self, request):
-        super().__init__(request)
-
     async def execute(self):
         project_dir, data_source_dir = await self._get(["project_dir", "data_source_dir"])
         data_source_path = os.path.relpath(
