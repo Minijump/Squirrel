@@ -124,68 +124,7 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do MVP
-* Table: change structure => one class per action (add an action registry, with tags in arguments?, class.__name__ as key)
-It will have 1 field 'request' (from where we get form data) + others (available args?...)
-
-Copilot proposition:
-Step 1: Create a base TableAction class
-```py
-# app/tables/actions.py
-class TableAction:
-    def __init__(self, request):
-        self.request = request
-
-    async def execute(self):
-        raise NotImplementedError("Subclasses must implement this method")
-```
-Step 2: Create a registry for table actions
-```py
-# app/tables/actions.py
-TABLE_ACTION_REGISTRY = {}
-
-def table_action_type(cls):
-    TABLE_ACTION_REGISTRY[cls.__name__] = cls
-    return cls
-```
-Step 3: Implement specific table actions
-```py
-# app/tables/actions.py
-@table_action_type
-class AddColumn(TableAction):
-    async def execute(self):
-        form_data = await self.request.form()
-        table_name = form_data.get("table_name")
-        col_name = form_data.get("col_name")
-        new_code = f"""dfs['{table_name}']['{col_name}'] = {form_data.get('col_value')}  #sq_action:Add column {col_name} on table {table_name}"""
-        return new_code
-
-@table_action_type
-class RenameColumn(TableAction):
-    async def execute(self):
-        form_data = await self.request.form()
-        table_name = form_data.get("table_name")
-        col_name = form_data.get("col_name")
-        new_col_name = form_data.get("new_col_name")
-        new_code = f"""dfs['{table_name}'].rename(columns={{'{col_name}': '{new_col_name}'}}, inplace=True)  #sq_action:Rename column {col_name} to {new_col_name} in table {table_name}"""
-        return new_code
-
-# Add more actions as needed...
-```
-Step 4: Modify the router to use the registered actions
-```py
-# app/tables/routers/tables.py
-from app.tables.actions import TABLE_ACTION_REGISTRY
-
-@router.post("/tables/execute_action/")
-async def execute_action(request: Request, action_name: str):
-    ActionClass = TABLE_ACTION_REGISTRY.get(action_name)
-    if not ActionClass:
-        raise ValueError(f"Action {action_name} not found")
-
-    action_instance = ActionClass(request)
-    new_code = await action_instance.execute()
-    return new_code
-```
+* Table: change structure => add tags in arguments? + (available args?...)
 
 ### To do
 * Datasource all available args
