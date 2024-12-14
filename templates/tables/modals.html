@@ -95,25 +95,6 @@
     </form>
 </div>
 
-<div id="RemoveUnderOver" class="right-sidebar-form">
-    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('RemoveUnderOver')">&times;</a>
-    <form action="/tables/remove_under_over/" method="post">
-        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
-        <input id="table_name" name="table_name" required type="hidden"> 
-        <input id="col_name" name="col_name" required type="hidden">
-        <input id="col_identifier" name="col_identifier" required type="hidden">
-        <input id="col_idx" name="col_idx" required type="hidden">
-
-        <label for="lower_bound">Lower Bound:</label>
-        <input id="lower_bound" name="lower_bound" type="number" step="any">
-
-        <label for="upper_bound">Upper Bound:</label>
-        <input id="upper_bound" name="upper_bound" type="number" step="any">
-        
-        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
-    </form>
-</div>
-
 <div id="RenameCol" class="right-sidebar-form">
     <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('RenameCol')">&times;</a>
     <form action="/tables/rename_column/" method="post">
@@ -228,24 +209,6 @@
     </form>
 </div>
 
-<div id="ExportTable" class="right-sidebar-form">
-    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ExportTable')">&times;</a>
-    <form action="/tables/export_table/" method="post">
-        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
-        <input id="table_name" name="table_name" required type="hidden"> 
-
-        <label for="export_type">Export Type:</label>
-        <select name="export_type" id="export_type" class="right-sidebar-select">
-            <option value="csv">CSV</option>
-            <option value="xlsx">XLSX</option>
-            <option value="pkl">PKL</option>
-            <option value="json">JSON</option>
-        </select>
-        
-        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Export</button>
-    </form>
-</div>
-
 <div id="InfoColModal" class="modal">
     <div class="modal-content" style="width: 600px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -343,7 +306,7 @@
                 </button>
                 <button class="btn-primary" onclick="
                     closeInfoColModal();
-                    openSidebarForm('RemoveUnderOver', 
+                    openSidebarActionForm('RemoveUnderOver', 
                         { 
                             'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
                             'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
@@ -368,6 +331,24 @@
             </div>
         </div>
 
+        <div id="ExportTable" class="right-sidebar-form">
+            <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ExportTable')">&times;</a>
+            <form action="/tables/export_table/" method="post">
+                <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+                <input id="table_name" name="table_name" required type="hidden"> 
+        
+                <label for="export_type">Export Type:</label>
+                <select name="export_type" id="export_type" class="right-sidebar-select">
+                    <option value="csv">CSV</option>
+                    <option value="xlsx">XLSX</option>
+                    <option value="pkl">PKL</option>
+                    <option value="json">JSON</option>
+                </select>
+                
+                <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Export</button>
+            </form>
+        </div>
+        
         <form action="/tables/execute_action/" method="post">
             <input type="hidden" name="action_name" value="DropColumn">
             <input type="hidden" name="project_dir" value="{{ project_dir }}">
