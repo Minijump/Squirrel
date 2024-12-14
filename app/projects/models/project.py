@@ -1,6 +1,9 @@
 import os
 import json
-from utils import PIPELINE_START_TAG, PIPELINE_END_TAG, NEW_CODE_TAG
+
+NEW_CODE_TAG = "# Add new code here (keep this comment line)"
+PIPELINE_START_TAG = "# Squirrel Pipeline start"
+PIPELINE_END_TAG = "# Squirrel Pipeline end"
 
 BASIC_PIPELINE = """
 import pandas as pd

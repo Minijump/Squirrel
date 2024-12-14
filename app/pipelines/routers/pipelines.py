@@ -5,7 +5,8 @@ import os
 import traceback
 
 from app import router, templates
-from utils import PIPELINE_START_TAG, PIPELINE_END_TAG, NEW_CODE_TAG
+from app.projects.models.project import NEW_CODE_TAG, PIPELINE_START_TAG, PIPELINE_END_TAG
+
 
 async def get_file_lines(file_path):
     """
