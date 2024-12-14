@@ -166,33 +166,6 @@
     </script>
 </div>
 
-<div id="CutValues" class="right-sidebar-form">
-    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('CutValues')">&times;</a>
-    <form action="/tables/cut_values/" method="post">
-        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
-        <input id="table_name" name="table_name" required type="hidden"> 
-        <input id="col_name" name="col_name" required type="hidden">
-        <input id="col_identifier" name="col_identifier" required type="hidden">
-        <input id="col_idx" name="col_idx" required type="hidden">
-
-        <label for="cut_values">Cut Values:</label>
-        <div class="info-note" id="sort_key_info_note">
-            <i class="fas fa-info-circle"></i> 
-            Comma separated. E.g. 0,10,20,30
-        </div>
-        <input id="cut_values" name="cut_values" required>
-
-        <label for="cut_labels">Cut Labels:</label>
-        <div class="info-note" id="sort_key_info_note">
-            <i class="fas fa-info-circle"></i> 
-            Comma separated. E.g. low,middle,high
-        </div>
-        <input id="cut_labels" name="cut_labels" required>
-        
-        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
-    </form>
-</div>
-
 <div id="InfoColModal" class="modal">
     <div class="modal-content" style="width: 600px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -305,7 +278,7 @@
                 </button>
                 <button class="btn-primary" onclick="
                     closeInfoColModal();
-                    openSidebarForm('CutValues', 
+                    openSidebarActionForm('CutValues', 
                         { 
                             'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
                             'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,

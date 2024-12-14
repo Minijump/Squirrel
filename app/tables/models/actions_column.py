@@ -86,3 +86,19 @@ class RenameColumn(ActionColumn):
         table_name, col_name, new_col_name, col_idx = await self._get(["table_name", "col_name", "new_col_name", "col_idx"])
         new_code = f"""dfs['{table_name}'].rename(columns={{{col_idx}: '{new_col_name}'}}, inplace=True)  #sq_action:Rename column {col_name} to {new_col_name} in table {table_name}"""
         return new_code
+
+@table_action_type
+class CutValues(ActionColumn):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args.update({
+            "cut_values": {"type": "str", "string": "Cut Values", "info": "Comma separated. E.g. 0,10,20,30"},
+            "cut_labels": {"type": "str", "string": "Cut Labels", "info": "Comma separated. E.g. low,middle,high'"},
+        })
+
+    async def execute(self):
+        table_name, col_name, cut_values, cut_labels, col_identifier = await self._get(["table_name", "col_name", "cut_values", "cut_labels", "col_identifier"])
+        cut_values = [int(val) for val in cut_values.split(',')]
+        cut_labels = cut_labels.split(',')
+        new_code = f"""dfs['{table_name}']{col_identifier} = pd.cut(dfs['{table_name}']{col_identifier}, bins={cut_values}, labels={cut_labels})  #sq_action:Cut values in column {col_name} of table {table_name}"""
+        return new_code

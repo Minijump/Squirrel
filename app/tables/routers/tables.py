@@ -288,30 +288,6 @@ async def sort_column(request: Request):
     
     return new_code
 
-@router.post("/tables/cut_values/")
-@action.add
-async def cut_values(request: Request):
-    """
-    Cut values in the dataframe
-
-    * request contains: table_name, col_name, cut_values, cut_labels, project_dir
-    
-    => Returns a string representing the code to cut the values
-    """
-    form_data = await request.form()
-    table_name = form_data.get("table_name")
-    col_name = form_data.get("col_name")
-    col_identifier = form_data.get("col_identifier")
-    col_idx = form_data.get("col_idx")
-    if col_idx[0] != '(':
-        col_idx = f"'{col_idx}'"
-    cut_values = form_data.get("cut_values").split(',')
-    cut_labels = form_data.get("cut_labels").split(',')
-
-    int_cut_values = [int(val) for val in cut_values]
-    new_code = f"""dfs['{table_name}']{col_identifier} = pd.cut(dfs['{table_name}']{col_identifier}, bins={int_cut_values}, labels={cut_labels})  #sq_action:Cut values in column {col_name} of table {table_name}"""
-    return new_code
-
 @router.post("/tables/export_table/")
 async def export_table(request: Request):
     """
