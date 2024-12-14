@@ -236,27 +236,6 @@ async def normalize_column(request: Request):
 
     return new_code
 
-@router.post("/tables/rename_column/")
-@action.add
-async def rename_column(request: Request):
-    """
-    Rename a column in the dataframe
-
-    * request contains: table_name, col_name, new_col_name, project_dir
-    
-    => Returns a string representing the code to rename the column
-    """
-    form_data = await request.form()
-    table_name = form_data.get("table_name")
-    col_name = form_data.get("col_name")
-    col_identifier = form_data.get("col_identifier")
-    col_idx = form_data.get("col_idx")
-    if col_idx[0] != '(':
-        col_idx = f"'{col_idx}'"
-    new_col_name = form_data.get("new_col_name")
-    new_code = f"""dfs['{table_name}'].rename(columns={{{col_idx}: '{new_col_name}'}}, inplace=True)  #sq_action:Rename column {col_name} to {new_col_name} in table {table_name}"""
-    return new_code
-
 @router.post("/tables/edit_column_type/")
 @action.add
 async def edit_column_type(request: Request):
