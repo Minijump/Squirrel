@@ -17,14 +17,6 @@ class AddColumn(Action):
         table_name, col_name, col_value = await self._get(["table_name", "col_name", "col_value"])
         new_code = f"""dfs['{table_name}']['{col_name}'] = {col_value}  #sq_action:Add column {col_name} on table {table_name}"""
         return new_code
-    
-@table_action_type
-class DropColumn(Action):
-    async def execute(self):
-        table_name, col_name, col_idx = await self._get(["table_name", "col_name", "col_idx"])
-        col_idx = convert_col_idx(col_idx)
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].drop(columns=[{col_idx}])  #sq_action:Delete column {col_name} on table {table_name}"""
-        return new_code
 
 class ActionColumn(Action):
     def __init__(self, request):
@@ -34,6 +26,25 @@ class ActionColumn(Action):
             "col_identifier": {"type": "str", "invisible": True},
             "col_idx": {"type": "str", "invisible": True},
         })
+
+    async def _get(self, args_list):
+        form_data = await self.request.form()
+        data = []
+        for arg in args_list:
+            if arg == 'col_idx':
+                col_idx = convert_col_idx(form_data.get('col_idx'))
+                data.append(col_idx)
+                continue
+            data.append(form_data.get(arg))
+        return tuple(data)
+    
+@table_action_type
+class DropColumn(ActionColumn):
+    async def execute(self):
+        table_name, col_name, col_idx = await self._get(["table_name", "col_name", "col_idx"])
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].drop(columns=[{col_idx}])  #sq_action:Delete column {col_name} on table {table_name}"""
+        return new_code
+
 @table_action_type
 class ReplaceVals(ActionColumn):
     def __init__(self, request):
@@ -61,4 +72,17 @@ class RemoveUnderOver(ActionColumn):
     async def execute(self):
         table_name, col_name, lower_bound, upper_bound, col_identifier = await self._get(["table_name", "col_name", "lower_bound", "upper_bound", "col_identifier"])
         new_code = f"""dfs['{table_name}'] = dfs['{table_name}'][(dfs['{table_name}']{col_identifier} >= {lower_bound}) & (dfs['{table_name}']{col_identifier} <= {upper_bound})]  #sq_action:Remove vals out of [{lower_bound}, {upper_bound}] in column {col_name} of table {table_name}"""
+        return new_code
+ 
+@table_action_type
+class RenameColumn(ActionColumn):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args.update({
+            "new_col_name": {"type": "str", "string": "New Col. Name"},
+        })
+
+    async def execute(self):
+        table_name, col_name, new_col_name, col_idx = await self._get(["table_name", "col_name", "new_col_name", "col_idx"])
+        new_code = f"""dfs['{table_name}'].rename(columns={{{col_idx}: '{new_col_name}'}}, inplace=True)  #sq_action:Rename column {col_name} to {new_col_name} in table {table_name}"""
         return new_code
