@@ -8,7 +8,7 @@ import pandas as pd
 import json
 import traceback
 
-from utils import action
+from app.tables.models.actions import action
 from app import router, templates
 
 from app.data_sources.routers.data_sources import get_sources
