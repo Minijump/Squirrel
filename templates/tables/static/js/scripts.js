@@ -70,10 +70,14 @@ function createInput(arg) {
     if (arg.type === 'txt') {
         input = document.createElement('textarea');
     }
+    if (arg.type === 'number') {
+        input.type = 'number';
+        input.step = arg.step || 'any';
+    }
     return input;
 }
 async function addInputs(action, form) {
-    fetch(`/tables/get_action_args/?action_name=${action}`)
+    return fetch(`/tables/get_action_args/?action_name=${action}`)
         .then(response => response.json())
         .then(args => {
             const argsDiv = form.querySelector('#args');
@@ -98,7 +102,7 @@ async function addInputs(action, form) {
 async function openSidebarActionForm(action, data = {}) {
     const form = document.getElementById("ActionSidebar");
     form.style.width = "250px";
-    addInputs(action, form);
+    await addInputs(action, form);
     form.querySelector('input[name="action_name"]').value = action;
     completeInputs(form, data);
 }

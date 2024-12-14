@@ -236,28 +236,6 @@ async def normalize_column(request: Request):
 
     return new_code
 
-@router.post("/tables/remove_under_over/")
-@action.add
-async def remove_under_over(request: Request):
-    """
-    Remove under/over values in the dataframe
-
-    * request contains: table_name, col_name, lower_bound, upper_bound, project_dir
-    
-    => Returns a string representing the code to remove under/over values
-    """
-    form_data = await request.form()
-    table_name = form_data.get("table_name")
-    col_name = form_data.get("col_name")
-    col_identifier = form_data.get("col_identifier")
-    col_idx = form_data.get("col_idx")
-    if col_idx[0] != '(':
-        col_idx = f"'{col_idx}'"
-    lower_bound = form_data.get("lower_bound")
-    upper_bound = form_data.get("upper_bound")
-    new_code = f"""dfs['{table_name}'] = dfs['{table_name}'][(dfs['{table_name}']{col_identifier} >= {lower_bound}) & (dfs['{table_name}']{col_identifier} <= {upper_bound})]  #sq_action:Remove vals out of [{lower_bound}, {upper_bound}] in column {col_name} of table {table_name}"""
-    return new_code
-
 @router.post("/tables/rename_column/")
 @action.add
 async def rename_column(request: Request):
