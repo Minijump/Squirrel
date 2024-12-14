@@ -98,7 +98,7 @@ There are 3 main folders:
 * templates: this folder contains the html templates and the statics (img, css, js) used by the project
 * _projects: this is the folder that stores the user's projects. Each projects must contains a manifest, a folder data_source and a pipeline.py file
 
-In addition to these folders, you will find a folder named tests that contains the unit tests, as well as a utils folder, which is somewhat unnecessary but included because large projects often have one.
+In addition to these folders, you will find a folder named tests that contains the unit tests.
 
 ### Running Tests
 
