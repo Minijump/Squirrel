@@ -1,3 +1,4 @@
+// Table selection
 function saveSelectedTable(tableName) {
     localStorage.setItem('selectedTable', tableName);
 }
@@ -183,12 +184,10 @@ function addInfoButtons() {
         });
     });
 }
+document.addEventListener('DOMContentLoaded', function() { addInfoButtons(); });
 
 // Pager logic 
-// + Add the info buttons
 document.addEventListener('DOMContentLoaded', function() {
-    addInfoButtons();
-
     document.querySelectorAll('.pager').forEach(function(pager) {
         const tableName = pager.dataset.table;
         let currentPage = 0;

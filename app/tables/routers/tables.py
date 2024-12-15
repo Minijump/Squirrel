@@ -151,20 +151,18 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
     """
     try:
         pipeline = load_pipeline_module(project_dir)
-        dfs = pipeline.run_pipeline()
-        df = dfs[table]
+        df = pipeline.run_pipeline()[table]
         column = eval(f"df{column_identifier}")
 
-        dtype = str(column.dtype)
         col_infos = {
-            "dtype": dtype,
+            "dtype": str(column.dtype),
             "unique": str(column.nunique()),
             "null": str(column.isna().sum()),
             "count": str(len(column.index)),
-            "is_numeric": False,
+            "is_numeric": column.dtype in ["float64", "int64"],
         }
 
-        if dtype == "float64" or dtype == "int64":
+        if col_infos["is_numeric"]:
             col_infos["is_numeric"] = True
             col_infos["mean"] = str(column.mean())
             col_infos["std"] = str(column.std())
