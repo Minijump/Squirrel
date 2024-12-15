@@ -4,6 +4,7 @@ def convert_col_idx(col_idx):
     if col_idx[0] != '(':
         col_idx = f"'{col_idx}'"
     return col_idx
+
 @table_action_type
 class AddColumn(Action):
     def __init__(self, request):

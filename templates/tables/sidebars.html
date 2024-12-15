@@ -1,0 +1,186 @@
+<div id="ActionSidebar" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ActionSidebar')">&times;</a>
+    <form action="/tables/execute_action/" method="post">
+        <input type="hidden" name="action_name" required>
+        <input type="hidden" name="project_dir" value="{{ project_dir }}">
+        <input type="hidden" name="table_name" id="table_name" required>
+
+        <div id="args">
+        </div>
+        
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
+    </form>
+</div>
+
+<div id="CreateTable" class="right-sidebar-form">
+    <!-- Can't use ActionSidebar because of input 'table_name'-->
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('CreateTable')">&times;</a>
+    <form action="/tables/execute_action/" method="post">
+        <input type="hidden" name="action_name" value="CreateTable">
+        <input type="hidden" name="project_dir" value="{{ project_dir }}">
+
+        <label for="table_name">Table Name:</label>
+        <input id="table_name" name="table_name" required>
+
+        <label for="data_source">Data Source:</label>
+        <select name="data_source_dir" id="data_source" class="right-sidebar-select" onload="toggleSourceSelect()">
+            {% for source in sources %}
+                <option value="{{ source.directory }}" data-type="{{ source.type }}">{{ source.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Create Table</button>
+    </form>
+</div>
+
+<div id="MissingVal" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('MissingVal')">&times;</a>
+    <form action="/tables/missing_values/" method="post">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+        <input id="col_name" name="col_name" required type="hidden">
+        <input id="col_identifier" name="col_identifier" required type="hidden">
+        <input id="col_idx" name="col_idx" required type="hidden">
+
+        <label for="missing_val_action">Deal with missing values:</label>
+        {% set available_actions = ['delete', 'replace', 'interpolate'] %}
+        <select name="action" id="action" class="right-sidebar-select" onchange="toggleActionSelect()">
+            {% for action in available_actions %}
+                <option value="{{ action }}">{{ action }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="replace_missing_val">Replace by:</label>
+        <input id="replace_value" name="replace_value" type="text" style="display: none">
+        
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
+    </form>
+    <script>
+        function toggleActionSelect() {
+            let actionSelect = document.getElementById("action");
+            let replaceValueInput = document.getElementById("replace_value");
+            let replaceValueLabel = document.querySelector("label[for='replace_missing_val']");
+        
+            if (actionSelect.value === "replace") {
+                replaceValueInput.style.display = "block";
+                replaceValueLabel.style.display = "block";
+                replaceValueInput.required = true;
+            } else {
+                replaceValueInput.style.display = "none";
+                replaceValueLabel.style.display = "none";
+                replaceValueInput.required = false;
+            }
+        }
+    </script>
+</div>
+
+<div id="NormalizeCol" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('NormalizeCol')">&times;</a>
+    <form action="/tables/normalize_column/" method="post">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+        <input id="col_name" name="col_name" required type="hidden">
+        <input id="col_identifier" name="col_identifier" required type="hidden">
+        <input id="col_idx" name="col_idx" required type="hidden">
+
+        <label for="normalize_method">Normalize method</label>
+        {% set methods = ['min_max', 'mean'] %}
+        <select name="methods" id="methods" class="right-sidebar-select">
+            {% for method in methods %}
+                <option value="{{ method }}">{{ method }}</option>
+            {% endfor %}
+        </select>
+        
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
+    </form>
+</div>
+
+<div id="ChangeType" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ChangeType')">&times;</a>
+    <form action="/tables/edit_column_type/" method="post" style="margin-top: 20px;">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+        <input id="col_name" name="col_name" required type="hidden">
+        <input id="col_identifier" name="col_identifier" required type="hidden">
+        <input id="col_idx" name="col_idx" required type="hidden">
+
+        <label for="new_col_name">New Column Type:</label>
+        {% set dtypes = ['int', 'float', 'string', 'bool', 'category'] %}
+        <select name="new_col_type" id="new_col_type" class="right-sidebar-select">
+            {% for dtype in dtypes %}
+                <option value="{{ dtype }}">{{ dtype }}</option>
+            {% endfor %}    
+        </select>
+
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Edit Type</button>
+    </form>
+</div>
+
+<div id="SortCol" class="right-sidebar-form">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('SortCol')">&times;</a>
+    <form action="/tables/sort_column/" method="post">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+        <input id="col_name" name="col_name" required type="hidden">
+        <input id="col_identifier" name="col_identifier" required type="hidden">
+        <input id="col_idx" name="col_idx" required type="hidden">
+
+        <label for="sort_order">Sort Order:</label>
+        <select name="sort_order" id="sort_order" class="right-sidebar-select" onchange="toggleSortTypeSelect()">
+            <option value="ascending">Ascending</option>
+            <option value="descending">Descending</option>
+            <option value="custom">Custom</option>
+        </select>
+
+        <label for="sort_key" style="display: none">Sort Key (Python code):</label>
+        <div class="info-note" id="sort_key_info_note" style="display: none">
+            <i class="fas fa-info-circle"></i> 
+            Key must be python code with x as the col values. E.g. x.str.len(), x**2, ...
+            (in practice this will execute: key=lambda x: ...your_input...). 
+            Note that 'key' != 'apply' (see pandas doc.)
+        </div>
+        <textarea id="sort_key" name="sort_key" style="display: none"></textarea>
+        
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Sort</button>
+    </form>
+    <script>
+        function toggleSortTypeSelect() {
+            let sortTypeSelect = document.getElementById("sort_order");
+            let sortKey = document.getElementById("sort_key");
+            let sortKeyLabel = document.querySelector("label[for='sort_key']");
+            let sortKeyInfoNote = document.getElementById("sort_key_info_note");
+            console.log(sortTypeSelect.value);
+        
+            if (sortTypeSelect.value === "custom") {
+                sortKey.style.display = "block";
+                sortKeyLabel.style.display = "block";
+                sortKeyInfoNote.style.display = "block";
+                sortKey.required = true;
+            } else {
+                sortKey.style.display = "none";
+                sortKeyLabel.style.display = "none";
+                sortKeyInfoNote.style.display = "none";
+                sortKey.required = false;
+            }
+        }
+    </script>
+</div>
+
+<div id="ExportTable" class="right-sidebar-form">
+    <!-- Can't use ActionSidebar because it is not an action-->
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ExportTable')">&times;</a>
+    <form action="/tables/export_table/" method="post">
+        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
+        <input id="table_name" name="table_name" required type="hidden"> 
+
+        <label for="export_type">Export Type:</label>
+        <select name="export_type" id="export_type" class="right-sidebar-select">
+            <option value="csv">CSV</option>
+            <option value="xlsx">XLSX</option>
+            <option value="pkl">PKL</option>
+            <option value="json">JSON</option>
+        </select>
+        
+        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Export</button>
+    </form>
+</div>
