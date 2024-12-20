@@ -177,37 +177,6 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
         traceback.print_exc()
         return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
 
-@router.post("/tables/missing_values/")
-@action.add
-async def handle_missing_values(request: Request):
-    """
-    Handle missing values in the dataframe
-
-    * request contains: action (delete, replace,...), table_name
-    
-    => Returns a string representing the code to handle missing values
-    """
-    form_data = await request.form()
-    table_name = form_data.get("table_name")
-    col_name = form_data.get("col_name")
-    action = form_data.get("action")
-    col_identifier = form_data.get("col_identifier")
-    col_idx = form_data.get("col_idx")
-    if col_idx[0] != '(':
-        col_idx = f"'{col_idx}'"
-    
-    if action == "delete":
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].dropna(subset=[{col_idx}])  #sq_action:Delete rows with missing values in column {col_name} of table {table_name}"""
-    elif action == "replace":
-        replace_value = form_data.get("replace_value")
-        new_code = f"""dfs['{table_name}']{col_identifier} = dfs['{table_name}']{col_identifier}.fillna({replace_value})  #sq_action:Replace missing values with {replace_value} in column {col_name} of table {table_name}"""
-    elif action == "interpolate":
-        new_code = f"""dfs['{table_name}']{col_identifier} = dfs['{table_name}']{col_identifier}.interpolate()  #sq_action:Interpolate missing values in column {col_name} of table {table_name}"""
-    else:
-        raise ValueError("Invalid action for handling missing values")
-
-    return new_code
-
 @router.post("/tables/export_table/")
 async def export_table(request: Request):
     """

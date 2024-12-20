@@ -33,47 +33,6 @@
     </form>
 </div>
 
-<div id="MissingVal" class="right-sidebar-form">
-    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('MissingVal')">&times;</a>
-    <form action="/tables/missing_values/" method="post">
-        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
-        <input id="table_name" name="table_name" required type="hidden"> 
-        <input id="col_name" name="col_name" required type="hidden">
-        <input id="col_identifier" name="col_identifier" required type="hidden">
-        <input id="col_idx" name="col_idx" required type="hidden">
-
-        <label for="missing_val_action">Deal with missing values:</label>
-        {% set available_actions = ['delete', 'replace', 'interpolate'] %}
-        <select name="action" id="action" class="right-sidebar-select" onchange="toggleActionSelect()">
-            {% for action in available_actions %}
-                <option value="{{ action }}">{{ action }}</option>
-            {% endfor %}
-        </select>
-
-        <label for="replace_missing_val">Replace by:</label>
-        <input id="replace_value" name="replace_value" type="text" style="display: none">
-        
-        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
-    </form>
-    <script>
-        function toggleActionSelect() {
-            let actionSelect = document.getElementById("action");
-            let replaceValueInput = document.getElementById("replace_value");
-            let replaceValueLabel = document.querySelector("label[for='replace_missing_val']");
-        
-            if (actionSelect.value === "replace") {
-                replaceValueInput.style.display = "block";
-                replaceValueLabel.style.display = "block";
-                replaceValueInput.required = true;
-            } else {
-                replaceValueInput.style.display = "none";
-                replaceValueLabel.style.display = "none";
-                replaceValueInput.required = false;
-            }
-        }
-    </script>
-</div>
-
 <div id="ExportTable" class="right-sidebar-form">
     <!-- Can't use ActionSidebar because it is not an action-->
     <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ExportTable')">&times;</a>
