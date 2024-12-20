@@ -208,32 +208,6 @@ async def handle_missing_values(request: Request):
 
     return new_code
 
-@router.post("/tables/normalize_column/")
-@action.add
-async def normalize_column(request: Request):
-    """
-    Normalize a column in the dataframe
-
-    * request contains: table_name, col_name, project_dir
-    
-    => Returns a string representing the code to normalize the column
-    """
-    form_data = await request.form()
-    table_name = form_data.get("table_name")
-    col_name = form_data.get("col_name")
-    method = form_data.get("methods")
-    col_identifier = form_data.get("col_identifier")
-    col_idx = form_data.get("col_idx")
-    if col_idx[0] != '(':
-        col_idx = f"'{col_idx}'"
-
-    if method == "min_max":
-        new_code = f"""dfs['{table_name}']{col_identifier} = (dfs['{table_name}']{col_identifier} - dfs['{table_name}']{col_identifier}.min()) / (dfs['{table_name}']{col_identifier}.max() - dfs['{table_name}']{col_identifier}.min())  #sq_action:Normalize (min-max) column {col_name} of table {table_name}"""
-    elif method == "mean":
-        new_code = f"""dfs['{table_name}']{col_identifier} = (dfs['{table_name}']{col_identifier} - dfs['{table_name}']{col_identifier}.mean()) / dfs['{table_name}']{col_identifier}.std()  #sq_action:Normalize (mean) column {col_name} of table {table_name}"""
-
-    return new_code
-
 @router.post("/tables/export_table/")
 async def export_table(request: Request):
     """

@@ -144,3 +144,22 @@ class ChangeType(ActionColumn):
         table_name, col_name, new_type, col_idx = await self._get(["table_name", "col_name", "new_type", "col_idx"])
         new_code = f"""dfs['{table_name}'][{col_idx}] = dfs['{table_name}'][{col_idx}].astype('{new_type}')  #sq_action:Change type of column {col_name} to {new_type} in table {table_name}"""
         return new_code
+
+@table_action_type
+class NormalizeColumn(ActionColumn):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args.update({
+            "method": {"type": "select", "string": "Method", 
+                       "options": [("min_max", "Min-Max"), ("z_score", "Z Score")]}
+        })
+
+    async def execute(self):
+        table_name, col_name, method, col_idx = await self._get(["table_name", "col_name", "method", "col_idx"])
+        if method == "min_max":
+            new_code = f"""dfs['{table_name}'][{col_idx}] = (dfs['{table_name}'][{col_idx}] - dfs['{table_name}'][{col_idx}].min()) / (dfs['{table_name}'][{col_idx}].max() - dfs['{table_name}'][{col_idx}].min())  #sq_action:Normalize column {col_name} in table {table_name} with Min-Max"""
+        elif method == "z_score":
+            new_code = f"""dfs['{table_name}'][{col_idx}] = (dfs['{table_name}'][{col_idx}] - dfs['{table_name}'][{col_idx}].mean()) / dfs['{table_name}'][{col_idx}].std()  #sq_action:Normalize column {col_name} in table {table_name} with Z Score"""
+        else:
+            raise ValueError("Invalid normalization method")
+        return new_code
