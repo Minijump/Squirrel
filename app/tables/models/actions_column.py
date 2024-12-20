@@ -163,3 +163,28 @@ class NormalizeColumn(ActionColumn):
         else:
             raise ValueError("Invalid normalization method")
         return new_code
+
+@table_action_type
+class HandleMissingValues(ActionColumn):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args.update({
+            "action": {"type": "select", "string": "Action", 
+                       "options": [("delete", "Delete"), ("replace", "Replace"), ("interpolate", "Interpolate")],
+                       "onchange": "toggleSelect()"},
+            "replace_value": {"type": "txt", "string": "Replace Value", 
+                              "required": False, "select_onchange": "replace"},
+        })
+
+    async def execute(self):
+        table_name, col_name, action, replace_value, col_idx = await self._get(["table_name", "col_name", "action", "replace_value", "col_idx"])
+        if action == "delete":
+            new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].dropna(subset=[{col_idx}])  #sq_action:Delete rows with missing values in column {col_name} of table {table_name}"""
+        elif action == "replace":
+            new_code = f"""dfs['{table_name}'][{col_idx}] = dfs['{table_name}'][{col_idx}].fillna({replace_value})  #sq_action:Replace missing values with {replace_value} in column {col_name} of table {table_name}"""
+        elif action == "interpolate":
+            new_code = f"""dfs['{table_name}'][{col_idx}] = dfs['{table_name}'][{col_idx}].interpolate()  #sq_action:Interpolate missing values in column {col_name} of table {table_name}"""
+        else:
+            raise ValueError("Invalid action for handling missing values")
+
+        return new_code
