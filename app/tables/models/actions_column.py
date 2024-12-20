@@ -130,3 +130,17 @@ class SortColumn(ActionColumn):
             raise ValueError("Invalid sort order")
     
         return new_code
+
+@table_action_type
+class ChangeType(ActionColumn):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args.update({
+            "new_type": {"type": "select", "string": "New Type", 
+                         "options": [("int", "Integer"), ("float", "Float"), ("string", "String"), ("bool", "Boolean"), ("category", "Category")]}
+        })
+
+    async def execute(self):
+        table_name, col_name, new_type, col_idx = await self._get(["table_name", "col_name", "new_type", "col_idx"])
+        new_code = f"""dfs['{table_name}'][{col_idx}] = dfs['{table_name}'][{col_idx}].astype('{new_type}')  #sq_action:Change type of column {col_name} to {new_type} in table {table_name}"""
+        return new_code
