@@ -95,27 +95,6 @@
     </form>
 </div>
 
-<div id="ChangeType" class="right-sidebar-form">
-    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ChangeType')">&times;</a>
-    <form action="/tables/edit_column_type/" method="post" style="margin-top: 20px;">
-        <input name="project_dir" value="{{ project_dir }}" required type="hidden">
-        <input id="table_name" name="table_name" required type="hidden"> 
-        <input id="col_name" name="col_name" required type="hidden">
-        <input id="col_identifier" name="col_identifier" required type="hidden">
-        <input id="col_idx" name="col_idx" required type="hidden">
-
-        <label for="new_col_name">New Column Type:</label>
-        {% set dtypes = ['int', 'float', 'string', 'bool', 'category'] %}
-        <select name="new_col_type" id="new_col_type" class="right-sidebar-select">
-            {% for dtype in dtypes %}
-                <option value="{{ dtype }}">{{ dtype }}</option>
-            {% endfor %}    
-        </select>
-
-        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Edit Type</button>
-    </form>
-</div>
-
 <div id="ExportTable" class="right-sidebar-form">
     <!-- Can't use ActionSidebar because it is not an action-->
     <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ExportTable')">&times;</a>
