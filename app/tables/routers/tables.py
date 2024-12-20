@@ -255,37 +255,6 @@ async def edit_column_type(request: Request):
     new_code = f"""dfs['{table_name}'][{col_idx}] = dfs['{table_name}'][{col_idx}].astype('{new_col_type}')  #sq_action:Change type of column {col_name} to {new_col_type} in table {table_name}"""
     return new_code
 
-@router.post("/tables/sort_column/")
-@action.add
-async def sort_column(request: Request):
-    """
-    Sort a column in the dataframe
-
-    * request contains: table_name, col_name, sort_order, sort_key, project_dir
-    
-    => Returns a string representing the code to sort the column
-    """
-    form_data = await request.form()
-    table_name = form_data.get("table_name")
-    col_name = form_data.get("col_name")
-    col_identifier = form_data.get("col_identifier")
-    col_idx = form_data.get("col_idx")
-    if col_idx[0] != '(':
-        col_idx = f"'{col_idx}'"
-    sort_order = form_data.get("sort_order")
-    sort_key = form_data.get("sort_key")
-
-    if sort_order == "custom":
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=[{col_idx}], key=lambda x: {sort_key})  #sq_action:Sort {col_name} of table {table_name} with custom key"""
-    elif sort_order == "ascending":
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=[{col_idx}], ascending=True)  #sq_action:Sort(asc) {col_name} of table {table_name}"""
-    elif sort_order == "descending":
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=[{col_idx}], ascending=False)  #sq_action:Sort(desc) {col_name} of table {table_name}"""
-    else:
-        raise ValueError("Invalid sort order")
-    
-    return new_code
-
 @router.post("/tables/export_table/")
 async def export_table(request: Request):
     """

@@ -40,7 +40,7 @@ function closeSidebarForm(id) {
 function completeInputs(form, data) {
     for (const key in data) {
         if (data.hasOwnProperty(key)) {
-            const inputElement = document.getElementById(key);
+            const inputElement = form.querySelector(`#${key}`);
             if (inputElement) {
                 inputElement.value = data[key];
             } else {
@@ -57,14 +57,35 @@ function openSidebarForm(id, data = {}) {
 function addLabel(argsDiv, arg) {
     const label = document.createElement('label');
     label.innerHTML = arg.string;
+    if (arg.select_onchange) {
+        label.className += ' select-onchange ';
+        label.className += arg.select_onchange;
+    };
     argsDiv.appendChild(label);
 
     if (arg.info) {
         const infoNote = document.createElement('div');
         infoNote.className = 'info-note';
         infoNote.innerHTML = `<i class="fas fa-info-circle"></i> ${arg.info}`;
+        if (arg.select_onchange) {
+            infoNote.className += ' select-onchange ';
+            infoNote.className += arg.select_onchange;
+        };
         argsDiv.appendChild(infoNote);
     };
+}
+function toggleSelect() {
+    let Select = document.querySelector(".right-sidebar-select");
+    let toggleOptionalArgs = document.querySelectorAll(".select-onchange");
+    toggleOptionalArgs.forEach(element => {
+        if (element.classList.contains(Select.value)) {
+            element.style.display = "block";
+            element.required = true;
+        } else {
+            element.style.display = "none";
+            element.required = false
+        }
+    });
 }
 function createInput(arg) {
     let input = document.createElement('input');
@@ -74,6 +95,23 @@ function createInput(arg) {
     if (arg.type === 'number') {
         input.type = 'number';
         input.step = arg.step || 'any';
+    }
+    if (arg.type === 'select') {
+        input = document.createElement('select');
+        arg.options.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option[0];
+            optionElement.text = option[1];
+            input.appendChild(optionElement);
+        });
+        input.className += 'right-sidebar-select';
+    }
+    if (arg.onchange) {
+        input.setAttribute('onchange', arg.onchange);
+    }
+    if (arg.select_onchange) {
+        input.className += ' select-onchange ';
+        input.className += arg.select_onchange;
     }
     return input;
 }
@@ -106,6 +144,7 @@ async function openSidebarActionForm(action, data = {}) {
     await addInputs(action, form);
     form.querySelector('input[name="action_name"]').value = action;
     completeInputs(form, data);
+    toggleSelect();
 }
 
 // InfoColModal
