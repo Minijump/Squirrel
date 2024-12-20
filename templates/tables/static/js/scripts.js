@@ -146,6 +146,18 @@ async function openSidebarActionForm(action, data = {}) {
     completeInputs(form, data);
     toggleSelect();
 }
+function getColumnInfo(additionalData = {}) {
+    let infos = {
+        'table_name': document.querySelector('#InfoColModal input[name="table_name"]').value,
+        'col_name': document.querySelector('#InfoColModal input[name="col_name"]').value,
+        'col_identifier': document.querySelector('#InfoColModal input[name="col_identifier"]').value,
+        'col_idx': document.querySelector('#InfoColModal input[name="col_idx"]').value,
+    };
+    if (additionalData) {
+        infos = {...infos, ...additionalData};
+    };
+    return infos;
+}
 
 // InfoColModal
 function formatNumber(num) {

@@ -6,13 +6,7 @@
                 <div id="col_dtype" class="info" style="font-style: italic">(<span></span>)</div>
                 <button class="edit-btn" onclick="
                     closeInfoColModal();
-                    openSidebarActionForm('RenameColumn', 
-                        { 
-                            'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
-                            'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
-                            'col_identifier': document.querySelector('#InfoColModal input[name=\'col_identifier\']').value,
-                            'col_idx': document.querySelector('#InfoColModal input[name=\'col_idx\']').value,
-                        })">
+                    openSidebarActionForm('RenameColumn', getColumnInfo())">
                     <i class="fas fa-edit"></i>
                 </button>
             </div>
@@ -28,46 +22,22 @@
         <div class="btn-div">
             <button class="btn-primary" onclick="
                 closeInfoColModal();
-                openSidebarActionForm('HandleMissingValues', 
-                    { 
-                        'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
-                        'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
-                        'col_identifier': document.querySelector('#InfoColModal input[name=\'col_identifier\']').value,
-                        'col_idx': document.querySelector('#InfoColModal input[name=\'col_idx\']').value,
-                    })">
+                openSidebarActionForm('HandleMissingValues', getColumnInfo())">
                 Missing vals.
             </button>
             <button class="btn-primary" onclick="
                 closeInfoColModal();
-                openSidebarActionForm('ReplaceVals', 
-                    { 
-                        'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
-                        'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
-                        'col_identifier': document.querySelector('#InfoColModal input[name=\'col_identifier\']').value,
-                        'col_idx': document.querySelector('#InfoColModal input[name=\'col_idx\']').value,
-                    })">
+                openSidebarActionForm('ReplaceVals', getColumnInfo())">
                 Replace vals.
             </button>
             <button class="btn-primary" onclick="
                 closeInfoColModal();
-                openSidebarActionForm('ChangeType', 
-                    { 
-                        'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
-                        'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
-                        'col_identifier': document.querySelector('#InfoColModal input[name=\'col_identifier\']').value,
-                        'col_idx': document.querySelector('#InfoColModal input[name=\'col_idx\']').value,
-                    })">
+                openSidebarActionForm('ChangeType', getColumnInfo())">
                 Change type
             </button>
             <button class="btn-primary" onclick="
                 closeInfoColModal();
-                openSidebarActionForm('SortColumn', 
-                    { 
-                        'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
-                        'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
-                        'col_identifier': document.querySelector('#InfoColModal input[name=\'col_identifier\']').value,
-                        'col_idx': document.querySelector('#InfoColModal input[name=\'col_idx\']').value,
-                    })">
+                openSidebarActionForm('SortColumn', getColumnInfo())">
                 Sort
             </button>
         </div>
@@ -86,37 +56,20 @@
             <div class="numeric-only">
                 <button class="btn-primary" onclick="
                     closeInfoColModal();
-                    openSidebarActionForm('NormalizeColumn', 
-                        { 
-                            'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
-                            'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
-                            'col_identifier': document.querySelector('#InfoColModal input[name=\'col_identifier\']').value,
-                            'col_idx': document.querySelector('#InfoColModal input[name=\'col_idx\']').value,
-                        })">
+                    openSidebarActionForm('NormalizeColumn', getColumnInfo())">
                     Normalize
                 </button>
                 <button class="btn-primary" onclick="
                     closeInfoColModal();
-                    openSidebarActionForm('RemoveUnderOver', 
-                        { 
-                            'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
-                            'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
-                            'col_identifier': document.querySelector('#InfoColModal input[name=\'col_identifier\']').value,
-                            'col_idx': document.querySelector('#InfoColModal input[name=\'col_idx\']').value,
-                            'lower_bound': document.querySelector('#col_min span').innerText,
-                            'upper_bound': document.querySelector('#col_max span').innerText,
-                        })">
+                    openSidebarActionForm('RemoveUnderOver', getColumnInfo({
+                        'lower_bound': document.querySelector('#col_min span').innerText,
+                        'upper_bound': document.querySelector('#col_max span').innerText,
+                    }))">
                     Remove under/over
                 </button>
                 <button class="btn-primary" onclick="
                     closeInfoColModal();
-                    openSidebarActionForm('CutValues', 
-                        { 
-                            'table_name': document.querySelector('#InfoColModal input[name=\'table_name\']').value,
-                            'col_name': document.querySelector('#InfoColModal input[name=\'col_name\']').value,
-                            'col_identifier': document.querySelector('#InfoColModal input[name=\'col_identifier\']').value,
-                            'col_idx': document.querySelector('#InfoColModal input[name=\'col_idx\']').value,
-                        })">
+                    openSidebarActionForm('CutValues', getColumnInfo())">
                     Cut
                 </button>
             </div>
