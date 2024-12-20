@@ -103,3 +103,30 @@ class CutValues(ActionColumn):
         cut_labels = cut_labels.split(',')
         new_code = f"""dfs['{table_name}']{col_identifier} = pd.cut(dfs['{table_name}']{col_identifier}, bins={cut_values}, labels={cut_labels})  #sq_action:Cut values in column {col_name} of table {table_name}"""
         return new_code
+
+@table_action_type
+class SortColumn(ActionColumn):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args.update({
+            "sort_order": {"type": "select", "string": "Sort Order", 
+                           "options": [("ascending", "Ascending"), ("descending", "Descending"), ("custom", "Custom")], 
+                           "onchange": "toggleSelect()"},
+            "sort_key": {"type": "txt", "string": "Sort Key", 
+                         "info": "Key must be python code with x as the col values. E.g. x.str.len(), x**2, ... (in practice this will execute: key=lambda x: ...your_input...).", 
+                         "required": False, "select_onchange": "custom"}
+        })
+
+    async def execute(self):
+        table_name, col_name, col_idx, sort_order, sort_key = await self._get(["table_name", "col_name", "col_idx", "sort_order", "sort_key"])
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=[{col_idx}], """
+        if sort_order == "custom":
+            new_code += f"""key=lambda x: {sort_key})  #sq_action:Sort {col_name} of table {table_name} with custom key"""
+        elif sort_order == "ascending":
+            new_code += f"""ascending=True)  #sq_action:Sort(asc) {col_name} of table {table_name}"""
+        elif sort_order == "descending":
+            new_code += f"""ascending=False)  #sq_action:Sort(desc) {col_name} of table {table_name}"""
+        else:
+            raise ValueError("Invalid sort order")
+    
+        return new_code
