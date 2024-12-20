@@ -124,40 +124,7 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do MVP
-* Table: change structure => add tags in arguments? + (available args?...)
-
-copilot for selection fields:
-```py
-
-@table_action_type
-class SortColumn(Action):
-    def __init__(self, request):
-        super().__init__(request)
-        self.args.update({
-            "table_name": {"type": "str", "invisible": True},
-            "col_name": {"type": "str", "invisible": True},
-            "col_identifier": {"type": "str", "invisible": True},
-            "col_idx": {"type": "str", "invisible": True},
-            "sort_order": {"type": "select", "string": "Sort Order", "options": ["ascending", "descending", "custom"], "onchange": "toggleSortTypeSelect()"},
-            "sort_key": {"type": "txt", "string": "Sort Key", "info": "Key must be python code with x as the col values. E.g. x.str.len(), x**2, ...", "required": False, "style": "display: none"}
-        })
-```
-
-In JS:
-
-```js
-// Attach the onchange event if specified
-if (args[key].onchange) {
-    input.setAttribute('onchange', args[key].onchange);
-}
-
-// Handle the display style if specified
-if (args[key].style) {
-    input.style = args[key].style;
-}
-```
-
-==> make a generic toggle function!!!
+* Table: change structure
 
 ### To do
 * Datasource all available args
