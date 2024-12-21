@@ -1,4 +1,4 @@
-// Table selection
+// Table selection ---------------------------------------------------------------
 function saveSelectedTable(tableName) {
     localStorage.setItem('selectedTable', tableName);
 }
@@ -6,11 +6,13 @@ function getSelectedTable() {
     return localStorage.getItem('selectedTable');
 }
 function showTable(tableName) {
+    // Show selected table
     document.querySelectorAll('.table-container').forEach(function(table) {
         table.style.display = 'none';
     });
     document.getElementById('table-' + tableName).style.display = 'block';
 
+    // Change selected table button
     document.querySelectorAll('.select-table-btn').forEach(function(button) {
         button.classList.remove('active');
     });
@@ -19,6 +21,8 @@ function showTable(tableName) {
             button.classList.add('active');
         }
     });
+
+    // Save selected table
     saveSelectedTable(tableName);
 }
 document.addEventListener('DOMContentLoaded', function() {
@@ -33,11 +37,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Sidebar
+// Sidebar ---------------------------------------------------------------
+function getColumnInfo(additionalData = {}) {
+    let infos = {
+        'table_name': document.querySelector('#InfoColModal input[name="table_name"]').value,
+        'col_name': document.querySelector('#InfoColModal input[name="col_name"]').value,
+        'col_idx': document.querySelector('#InfoColModal input[name="col_idx"]').value,
+    };
+    if (additionalData) {
+        infos = {...infos, ...additionalData};
+    };
+    return infos;
+}
 function closeSidebarForm(id) {
     document.getElementById(id).style.width = "0";
 }
-function completeInputs(form, data) {
+function openSidebarForm(id, data = {}) {
+    const form = document.getElementById(id);
+    form.style.width = "250px";
+    completeInputs(form, data);
+}
+function completeInputs(form, action, data) {
+    form.querySelector('input[name="action_name"]').value = action;
     for (const key in data) {
         if (data.hasOwnProperty(key)) {
             const inputElement = form.querySelector(`#${key}`);
@@ -48,11 +69,6 @@ function completeInputs(form, data) {
             }
         }
     }
-}
-function openSidebarForm(id, data = {}) {
-    const form = document.getElementById(id);
-    form.style.width = "250px";
-    completeInputs(form, data);
 }
 function addLabel(argsDiv, arg) {
     const label = document.createElement('label');
@@ -73,19 +89,6 @@ function addLabel(argsDiv, arg) {
         };
         argsDiv.appendChild(infoNote);
     };
-}
-function toggleSelect() {
-    let Select = document.querySelector(".right-sidebar-select");
-    let toggleOptionalArgs = document.querySelectorAll(".select-onchange");
-    toggleOptionalArgs.forEach(element => {
-        if (element.classList.contains(Select.value)) {
-            element.style.display = "block";
-            element.required = true;
-        } else {
-            element.style.display = "none";
-            element.required = false
-        }
-    });
 }
 function createInput(arg) {
     let input = document.createElement('input');
@@ -142,23 +145,24 @@ async function openSidebarActionForm(action, data = {}) {
     const form = document.getElementById("ActionSidebar");
     form.style.width = "250px";
     await addInputs(action, form);
-    form.querySelector('input[name="action_name"]').value = action;
-    completeInputs(form, data);
+    completeInputs(form, action, data);
     toggleSelect();
 }
-function getColumnInfo(additionalData = {}) {
-    let infos = {
-        'table_name': document.querySelector('#InfoColModal input[name="table_name"]').value,
-        'col_name': document.querySelector('#InfoColModal input[name="col_name"]').value,
-        'col_idx': document.querySelector('#InfoColModal input[name="col_idx"]').value,
-    };
-    if (additionalData) {
-        infos = {...infos, ...additionalData};
-    };
-    return infos;
+function toggleSelect() {
+    let Select = document.querySelector(".right-sidebar-select");
+    let toggleOptionalArgs = document.querySelectorAll(".select-onchange");
+    toggleOptionalArgs.forEach(element => {
+        if (element.classList.contains(Select.value)) {
+            element.style.display = "block";
+            element.required = true;
+        } else {
+            element.style.display = "none";
+            element.required = false
+        }
+    });
 }
 
-// InfoColModal
+// InfoColModal ---------------------------------------------------------------
 function formatNumber(num) {
     if (typeof num === 'string' && !isNaN(num)) {
         num = parseFloat(num);
@@ -183,6 +187,7 @@ async function openInfoColModal(colName, colIdx, tableName) {
         const fields = ['dtype', 'count', 'unique', 'null',
                         'is_numeric', 'mean', 'std', 'min', '25', '50', '75', 'max'];
         fields.forEach(field => {
+            // display numeric divs (values and buttons)
             if (field === 'is_numeric') {
                 const numericDivs = document.querySelectorAll('.numeric-only');
                 numericDivs.forEach(div => {
@@ -191,11 +196,11 @@ async function openInfoColModal(colName, colIdx, tableName) {
                 return;
             }
 
+            // display the fields
             const element = document.getElementById(`col_${field}`);
             if (!element) {
                 return;
             }
-            
             if (data[field] !== undefined) {
                 element.style.display = 'inline';
                 element.querySelector('span').innerText = `${formatNumber(data[field])}`;
@@ -212,7 +217,7 @@ function closeInfoColModal() {
     document.getElementById('InfoColModal').style.display = "none";
 }
 
-// Add info buttons to the table headers
+// Add info buttons to the table headers ---------------------------------------------------------------
 function addInfoButtons() {
     document.querySelectorAll('.df-table thead').forEach(function(thead) {
         const lastTr = thead.querySelector('tr:last-child');
@@ -234,7 +239,7 @@ function addInfoButtons() {
 }
 document.addEventListener('DOMContentLoaded', function() { addInfoButtons(); });
 
-// Pager logic 
+// Pager logic ---------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.pager').forEach(function(pager) {
         const tableName = pager.dataset.table;
