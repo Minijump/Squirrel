@@ -12,9 +12,10 @@ from functools import wraps
 
 from app.projects.models.project import NEW_CODE_TAG
 from app.data_sources.models.data_source import DATA_SOURCE_REGISTRY
-
+from app.utils.error_handling import squirrel_error
 
 def add(func):
+    @squirrel_error
     @wraps(func)
     async def wrapper(request: Request, *args, **kwargs):
         """
