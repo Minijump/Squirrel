@@ -6,6 +6,7 @@ import traceback
 
 from app import router, templates
 from app.projects.models.project import NEW_CODE_TAG, PIPELINE_START_TAG, PIPELINE_END_TAG
+from app.utils.error_handling import squirrel_error
 
 
 async def get_file_lines(file_path):
@@ -42,6 +43,7 @@ async def get_file_lines(file_path):
     return lines
 
 @router.get("/pipeline")
+@squirrel_error
 async def pipeline(request: Request, project_dir: str):
     """
     Display the pipeline of the project
@@ -52,29 +54,25 @@ async def pipeline(request: Request, project_dir: str):
     => Returns a TemplateResponse that displays the pipeline; 
     the actions are displayed with their squirrel name if they have one
     """
-    try:
-        pipeline_path = os.path.join(os.getcwd(), "_projects", project_dir, "pipeline.py")
-        lines = await get_file_lines(pipeline_path)
+    pipeline_path = os.path.join(os.getcwd(), "_projects", project_dir, "pipeline.py")
+    lines = await get_file_lines(pipeline_path)
 
-        actions = []
-        for line in lines:
-            if isinstance(line, tuple):
-                if "#sq_action:" in line[1]:
-                    actions.append((line[0], line[1].split("#sq_action:")[1].strip(), line[1]))
-                else:
-                    actions.append(line)
-        
-        return templates.TemplateResponse(
-            request,
-            "pipeline/pipeline.html",
-            {"actions": actions, "project_dir": project_dir}
-        )
-    except Exception as e:
-        traceback.print_exc()
-        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
-
+    actions = []
+    for line in lines:
+        if isinstance(line, tuple):
+            if "#sq_action:" in line[1]:
+                actions.append((line[0], line[1].split("#sq_action:")[1].strip(), line[1]))
+            else:
+                actions.append(line)
+    
+    return templates.TemplateResponse(
+        request,
+        "pipeline/pipeline.html",
+        {"actions": actions, "project_dir": project_dir}
+    )
 
 @router.post("/pipeline/delete_action")
+@squirrel_error
 async def delete_action(request: Request, project_dir: str, delete_action_id: int):
     """
     Remove an action from the pipeline
@@ -85,27 +83,23 @@ async def delete_action(request: Request, project_dir: str, delete_action_id: in
 
     => Returns a JSONResponse if OK
     """
-    try:
-        pipeline_path = os.path.join(os.getcwd(), "_projects", project_dir, "pipeline.py")
-        lines = await get_file_lines(pipeline_path)
+    pipeline_path = os.path.join(os.getcwd(), "_projects", project_dir, "pipeline.py")
+    lines = await get_file_lines(pipeline_path)
 
-        new_lines = []
-        for line in lines:
-            if not isinstance(line, tuple):
-                new_lines.append(line)
-            elif line[0] != delete_action_id:
-                new_lines.append(line[1])
+    new_lines = []
+    for line in lines:
+        if not isinstance(line, tuple):
+            new_lines.append(line)
+        elif line[0] != delete_action_id:
+            new_lines.append(line[1])
 
-        with open(pipeline_path, 'w') as file:
-            file.writelines(new_lines)
+    with open(pipeline_path, 'w') as file:
+        file.writelines(new_lines)
 
-        return JSONResponse(content={"message": "Action deleted successfully"}, status_code=200)
-    except Exception as e:
-        # Not working
-        traceback.print_exc()
-        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
+    return JSONResponse(content={"message": "Action deleted successfully"}, status_code=200)
 
 @router.post("/pipeline/confirm_new_order")
+@squirrel_error
 async def confirm_new_order(request: Request, project_dir: str, order: str):
     """
     Reorder the actions in the pipeline, edit the python file
@@ -116,31 +110,28 @@ async def confirm_new_order(request: Request, project_dir: str, order: str):
 
     => Returns a JSONResponse if OK
     """
-    try:
-        pipeline_path = os.path.join(os.getcwd(), "_projects", project_dir, "pipeline.py")
-        lines = await get_file_lines(pipeline_path)
-        new_order = [int(action_str[0]) for action_str in order.split(",")] # the old ids in the new order
-        old_actions = [line for line in lines if isinstance(line, tuple)]  # the actions in the old order
-        new_lines = []
-        action_id = 0
-        for line in lines:
-            if isinstance(line, tuple):
-                id_of_old_order = new_order[action_id]  # Action that had id_of_old_order must now have action_id id
-                new_line = old_actions[id_of_old_order][1]  # [1] because (action_id, line)
-                new_lines.append(new_line)
-                action_id += 1
-            else:
-                new_lines.append(line)
+    pipeline_path = os.path.join(os.getcwd(), "_projects", project_dir, "pipeline.py")
+    lines = await get_file_lines(pipeline_path)
+    new_order = [int(action_str[0]) for action_str in order.split(",")] # the old ids in the new order
+    old_actions = [line for line in lines if isinstance(line, tuple)]  # the actions in the old order
+    new_lines = []
+    action_id = 0
+    for line in lines:
+        if isinstance(line, tuple):
+            id_of_old_order = new_order[action_id]  # Action that had id_of_old_order must now have action_id id
+            new_line = old_actions[id_of_old_order][1]  # [1] because (action_id, line)
+            new_lines.append(new_line)
+            action_id += 1
+        else:
+            new_lines.append(line)
 
-        with open(pipeline_path, 'w') as file:
-            file.writelines(new_lines)
+    with open(pipeline_path, 'w') as file:
+        file.writelines(new_lines)
 
-        return JSONResponse(content={"message": "Order changed successfully"}, status_code=200)
-    except Exception as e:
-        traceback.print_exc()
-        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
+    return JSONResponse(content={"message": "Order changed successfully"}, status_code=200)
 
 @router.post("/pipeline/edit_action")
+@squirrel_error
 async def edit_action(request: Request):
     """
     Edit the code of an action in the pipeline
@@ -152,29 +143,25 @@ async def edit_action(request: Request):
 
     => Returns a redirect response to /pipeline
     """
-    try:
-        form_data = await request.form()
-        action_id = int(form_data["action_id"])
-        action_code = form_data["action_code"].replace("\r\n", "\n") # Temp fix (for windows?), avoid a new empty line
-        project_dir = form_data["project_dir"]
+    form_data = await request.form()
+    action_id = int(form_data["action_id"])
+    action_code = form_data["action_code"].replace("\r\n", "\n") # Temp fix (for windows?), avoid a new empty line
+    project_dir = form_data["project_dir"]
 
-        pipeline_path = os.path.join(os.getcwd(), "_projects", project_dir, "pipeline.py")
-        lines = await get_file_lines(pipeline_path)
+    pipeline_path = os.path.join(os.getcwd(), "_projects", project_dir, "pipeline.py")
+    lines = await get_file_lines(pipeline_path)
 
-        new_lines = []
-        for line in lines:
-            if isinstance(line, tuple):
-                if line[0] == action_id:
-                    new_lines.append(action_code)
-                else:
-                    new_lines.append(line[1])
+    new_lines = []
+    for line in lines:
+        if isinstance(line, tuple):
+            if line[0] == action_id:
+                new_lines.append(action_code)
             else:
-                new_lines.append(line)
-        
-        with open(pipeline_path, 'w') as file:
-            file.writelines(new_lines)
+                new_lines.append(line[1])
+        else:
+            new_lines.append(line)
+    
+    with open(pipeline_path, 'w') as file:
+        file.writelines(new_lines)
 
-        return RedirectResponse(url=f"/pipeline?project_dir={project_dir}", status_code=303)
-    except Exception as e:
-        traceback.print_exc()
-        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
+    return RedirectResponse(url=f"/pipeline?project_dir={project_dir}", status_code=303)

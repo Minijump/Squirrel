@@ -14,6 +14,7 @@ from app import router, templates
 from app.data_sources.routers.data_sources import get_sources
 from app.tables.models.actions import TABLE_ACTION_REGISTRY
 from app.tables.models.actions_column import convert_col_idx
+from app.utils.error_handling import squirrel_error
 
 def load_pipeline_module(project_dir):
     """
@@ -84,6 +85,7 @@ async def tables(request: Request, project_dir: str):
         )
 
 @router.get("/tables/pager/")
+@squirrel_error
 async def tables_pager(request: Request, project_dir: str, table_name: str, page: int, n: int):
     """
     Fetch a specific page of the dataframe
@@ -95,17 +97,13 @@ async def tables_pager(request: Request, project_dir: str, table_name: str, page
 
     => Returns HTML for the specified page of the dataframe
     """
-    try:
-        pipeline = load_pipeline_module(project_dir)
-        dfs = pipeline.run_pipeline()
-        df = dfs[table_name]
-        start = page * n
-        end = start + n
-        table_html = to_html_with_idx(df.iloc[start:end])
-        return table_html
-    except Exception as e:
-        traceback.print_exc()
-        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
+    pipeline = load_pipeline_module(project_dir)
+    dfs = pipeline.run_pipeline()
+    df = dfs[table_name]
+    start = page * n
+    end = start + n
+    table_html = to_html_with_idx(df.iloc[start:end])
+    return table_html
 
 @router.post("/tables/execute_action/")
 @action.add
@@ -131,6 +129,7 @@ async def get_action_args(request: Request, action_name: str):
     return args
 
 @router.get("/tables/column_infos/")
+@squirrel_error
 async def get_col_infos(request: Request, project_dir: str, table: str, column_name: str, column_idx: str):
     """
     Get the column 'column' from table 'tables' informations
@@ -143,35 +142,32 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
     
     => Returns the column informations (dict)
     """
-    try:
-        pipeline = load_pipeline_module(project_dir)
-        df = pipeline.run_pipeline()[table]
-        column = eval(f"df[{convert_col_idx(column_idx)}]")
+    pipeline = load_pipeline_module(project_dir)
+    df = pipeline.run_pipeline()[table]
+    column = eval(f"df[{convert_col_idx(column_idx)}]")
 
-        col_infos = {
-            "dtype": str(column.dtype),
-            "unique": str(column.nunique()),
-            "null": str(column.isna().sum()),
-            "count": str(len(column.index)),
-            "is_numeric": column.dtype in ["float64", "int64"],
-        }
+    col_infos = {
+        "dtype": str(column.dtype),
+        "unique": str(column.nunique()),
+        "null": str(column.isna().sum()),
+        "count": str(len(column.index)),
+        "is_numeric": column.dtype in ["float64", "int64"],
+    }
 
-        if col_infos["is_numeric"]:
-            col_infos["is_numeric"] = True
-            col_infos["mean"] = str(column.mean())
-            col_infos["std"] = str(column.std())
-            col_infos["min"] = str(column.min())
-            col_infos["max"] = str(column.max())
-            col_infos["25"] = str(column.quantile(0.25))
-            col_infos["50"] = str(column.quantile(0.5))
-            col_infos["75"] = str(column.quantile(0.75))
+    if col_infos["is_numeric"]:
+        col_infos["is_numeric"] = True
+        col_infos["mean"] = str(column.mean())
+        col_infos["std"] = str(column.std())
+        col_infos["min"] = str(column.min())
+        col_infos["max"] = str(column.max())
+        col_infos["25"] = str(column.quantile(0.25))
+        col_infos["50"] = str(column.quantile(0.5))
+        col_infos["75"] = str(column.quantile(0.75))
 
-        return col_infos
-    except Exception as e:
-        traceback.print_exc()
-        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
+    return col_infos
 
 @router.post("/tables/export_table/")
+@squirrel_error
 async def export_table(request: Request):
     """
     Export the table in the specified format
@@ -185,26 +181,21 @@ async def export_table(request: Request):
     export_type = form_data.get("export_type")
     project_dir = form_data.get("project_dir")
 
-    try:
-        pipeline = load_pipeline_module(project_dir)
-        dfs = pipeline.run_pipeline()
-        df = dfs[table_name]
+    pipeline = load_pipeline_module(project_dir)
+    dfs = pipeline.run_pipeline()
+    df = dfs[table_name]
 
-        export_dir = os.path.join(os.getcwd(), "_projects", project_dir, "exports")
-        os.makedirs(export_dir, exist_ok=True)
-        export_path = os.path.join(export_dir, f"{table_name}.{export_type}")
+    export_dir = os.path.join(os.getcwd(), "_projects", project_dir, "exports")
+    os.makedirs(export_dir, exist_ok=True)
+    export_path = os.path.join(export_dir, f"{table_name}.{export_type}")
 
-        if export_type == "csv":
-            df.to_csv(export_path, index=False)
-        elif export_type == "xlsx":
-            df.to_excel(export_path, index=False)
-        elif export_type == "pkl":
-            df.to_pickle(export_path)
-        elif export_type == "json":
-            df.to_json(export_path, orient='records')
+    if export_type == "csv":
+        df.to_csv(export_path, index=False)
+    elif export_type == "xlsx":
+        df.to_excel(export_path, index=False)
+    elif export_type == "pkl":
+        df.to_pickle(export_path)
+    elif export_type == "json":
+        df.to_json(export_path, orient='records')
 
-        return FileResponse(export_path, filename=f"{table_name}.{export_type}")
-
-    except Exception as e:
-        traceback.print_exc()
-        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
+    return FileResponse(export_path, filename=f"{table_name}.{export_type}")
