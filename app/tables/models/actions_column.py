@@ -1,23 +1,10 @@
 from .actions import Action, table_action_type
 
+
 def convert_col_idx(col_idx):
     if col_idx[0] != '(':
         col_idx = f"'{col_idx}'"
     return col_idx
-
-@table_action_type
-class AddColumn(Action):
-    def __init__(self, request):
-        super().__init__(request)
-        self.args = {
-            "col_name": {"type": "str", "string": "Col. Name"},
-            "col_value": {"type": "txt", "string": "Col. Value"},
-        }
-
-    async def execute(self):
-        table_name, col_name, col_value = await self._get(["table_name", "col_name", "col_value"])
-        new_code = f"""dfs['{table_name}']['{col_name}'] = {col_value}  #sq_action:Add column {col_name} on table {table_name}"""
-        return new_code
 
 class ActionColumn(Action):
     def __init__(self, request):

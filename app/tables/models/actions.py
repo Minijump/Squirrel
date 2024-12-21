@@ -7,9 +7,12 @@ from fastapi import Request
 from fastapi.responses import RedirectResponse
 
 import os
+import json
 from functools import wraps
 
 from app.projects.models.project import NEW_CODE_TAG
+from app.data_sources.models.data_source import DATA_SOURCE_REGISTRY
+
 
 def add(func):
     @wraps(func)
@@ -66,3 +69,48 @@ class Action:
     
     async def execute(self):
         raise NotImplementedError("Subclasses must implement this method")
+
+@table_action_type
+class AddColumn(Action):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args = {
+            "col_name": {"type": "str", "string": "Col. Name"},
+            "col_value": {"type": "txt", "string": "Col. Value"},
+        }
+
+    async def execute(self):
+        table_name, col_name, col_value = await self._get(["table_name", "col_name", "col_value"])
+        new_code = f"""dfs['{table_name}']['{col_name}'] = {col_value}  #sq_action:Add column {col_name} on table {table_name}"""
+        return new_code
+
+@table_action_type
+class DeleteRow(Action):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args = {
+            "delete_domain": {"type": "txt", "string": "Domain", "info": "With format Col1 &lt; Col2, Colx == 'Value',...."},
+        }
+
+    async def execute(self):
+        table_name, delete_domain = await self._get(["table_name", "delete_domain"])
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].query("not ({delete_domain})")  #sq_action:Delete rows in table {table_name}"""
+        return new_code
+
+@table_action_type
+class CreateTable(Action):
+    async def execute(self):
+        project_dir, data_source_dir = await self._get(["project_dir", "data_source_dir"])
+        data_source_path = os.path.relpath(
+            os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', data_source_dir), 
+            os.getcwd())
+
+        manifest_path = os.path.join(data_source_path, "__manifest__.json")
+        with open(manifest_path, 'r') as file:
+            manifest_data = json.load(file)
+
+        SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
+        source = SourceClass(manifest_data)
+        new_code = source.create_table(await self.request.form())
+        
+        return new_code
