@@ -132,7 +132,6 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To Fix
 * In pipeline, can not open action if ' is into the commentary
-* Black screen when error in 'execute' of actions_column.py
 * float cut_values
 * Interpolate a string column
 
