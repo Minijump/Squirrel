@@ -123,9 +123,6 @@ In addition to these folders, you will find a folder named tests that contains t
     ```
 5. **Create a new Pull Request**
 
-### To do MVP
-* Table: change structure
-
 ### To do
 * Datasource all available args
 * Supabase connection, blockchain.com, json file
@@ -139,6 +136,9 @@ In addition to these folders, you will find a folder named tests that contains t
 * float cut_values
 * Interpolate a string column
 * refactor try except: create a class that inherit APIRouter, override post/get, use router = CustomAPIRouter()
+
+### To do MVP
+* All available table actions + all available args
 
 ### Feature ideas
 * Odoo module; ease imports ?
