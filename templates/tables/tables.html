@@ -23,7 +23,7 @@
                     {% if loop.first %}
                         <button 
                             onclick="showTable('{{ name }}')"
-                            class="select-table-btn active"  
+                            class="select-table-btn"  
                             style="border-top-left-radius: 10px; border-bottom-left-radius: 10px;">
                                 {{ name }}
                         </button>
@@ -46,27 +46,23 @@
                 </button>
             </div>
             {% for name, html_table in table.items() %}
-                {% if loop.first %}
-                    <div id="table-{{ name }}" class="table-container">
-                {% else %}
-                    <div id="table-{{ name }}" class="table-container" style="display: none;">
-                {% endif %}
-                        <div style="display: flex; justify-content: flex-start; gap: 10px;">
-                            <button onclick="openSidebarActionForm('AddColumn', { 'table_name': '{{ name }}' })" class="btn-primary">Add Column</button>
-                            <button onclick="openSidebarActionForm('DeleteRow', { 'table_name': '{{ name }}' })" class="btn-danger">Delete Rows</button>
-                            <button onclick="openSidebarForm('ExportTable', { 'table_name': '{{ name }}' })" class="btn-primary"><i class="fas fa-file-export" style="margin-right: 5px;"></i></button>
-                        </div>
-                        <div class="table-html" id="table-html-{{ name }}">
-                            {{ html_table|safe }}
-                        </div>
-                        <div class="pager" data-table="{{ name }}" data-totallen="{{ table_len_infos.get(name, {}).get('total_len', 0) }}" data-displaylen="{{ table_len_infos.get(name, {}).get('display_len', 0) }}" data-project_dir="{{ project_dir }}">
-                            <div id="prev" class="pager-btn">&lt;</div>
-                            <div id="pager-info-{{ name }}" class="pager-info">
-                                0-{{ table_len_infos.get(name, {}).get('display_len', 0) }} / {{ table_len_infos.get(name, {}).get('total_len', 0) }}
-                            </div>
-                            <div id="next" class="pager-btn">&gt;</div>
-                        </div>
+                <div id="table-{{ name }}" class="table-container" style="display: none;">
+                    <div style="display: flex; justify-content: flex-start; gap: 10px;">
+                        <button onclick="openSidebarActionForm('AddColumn', { 'table_name': '{{ name }}' })" class="btn-primary">Add Column</button>
+                        <button onclick="openSidebarActionForm('DeleteRow', { 'table_name': '{{ name }}' })" class="btn-danger">Delete Rows</button>
+                        <button onclick="openSidebarForm('ExportTable', { 'table_name': '{{ name }}' })" class="btn-primary"><i class="fas fa-file-export" style="margin-right: 5px;"></i></button>
                     </div>
+                    <div class="table-html" id="table-html-{{ name }}">
+                        {{ html_table|safe }}
+                    </div>
+                    <div class="pager" data-table="{{ name }}" data-totallen="{{ table_len_infos.get(name, {}).get('total_len', 0) }}" data-displaylen="{{ table_len_infos.get(name, {}).get('display_len', 0) }}" data-project_dir="{{ project_dir }}">
+                        <div id="prev" class="pager-btn">&lt;</div>
+                        <div id="pager-info-{{ name }}" class="pager-info">
+                            0-{{ table_len_infos.get(name, {}).get('display_len', 0) }} / {{ table_len_infos.get(name, {}).get('total_len', 0) }}
+                        </div>
+                        <div id="next" class="pager-btn">&gt;</div>
+                    </div>
+                </div>
             {% endfor %}
         {% else %}
             {% if exception %}
