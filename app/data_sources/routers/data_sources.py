@@ -8,6 +8,7 @@ import traceback
 
 from app import router, templates
 from app.data_sources.models import DATA_SOURCE_REGISTRY
+from app.utils.error_handling import squirrel_error
 
 
 async def get_sources(project_dir):
@@ -53,6 +54,7 @@ async def init_source_instance(manifest_data):
     return SourceClass(manifest_data)
 
 @router.get("/data_sources")
+@squirrel_error
 async def data_sources(request: Request, project_dir: str):
     """
     This returns the data sources page
@@ -63,18 +65,14 @@ async def data_sources(request: Request, project_dir: str):
 
     => Returns a TemplateResponse to display data_sources page
     """
-    try:
-        sources = await get_sources(project_dir)
-        return templates.TemplateResponse(request, "data_sources/data_sources.html", 
-            {   "project_dir": project_dir, 
-                "sources": sources,
-                "DATA_SOURCE_REGISTRY": DATA_SOURCE_REGISTRY})
-
-    except Exception as e:
-        traceback.print_exc()
-        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
+    sources = await get_sources(project_dir)
+    return templates.TemplateResponse(request, "data_sources/data_sources.html", 
+        {   "project_dir": project_dir, 
+            "sources": sources,
+            "DATA_SOURCE_REGISTRY": DATA_SOURCE_REGISTRY})
 
 @router.post("/create_source/")
+@squirrel_error
 async def create_source(request: Request):
     """
     Create of a new data source
@@ -83,23 +81,19 @@ async def create_source(request: Request):
 
     => Returns a RedirectResponse to the data source page
     """
-    try:
-        form_data = await request.form()
-        project_dir = form_data.get("project_dir")
-        source_type = form_data.get("source_type")
+    form_data = await request.form()
+    project_dir = form_data.get("project_dir")
+    source_type = form_data.get("source_type")
 
-        SourceClass = DATA_SOURCE_REGISTRY[source_type]
-        SourceClass.check_available_infos(form_data)
-        source = await SourceClass._create_source(form_data)
-        await source._create_required_files(form_data)
+    SourceClass = DATA_SOURCE_REGISTRY[source_type]
+    SourceClass.check_available_infos(form_data)
+    source = await SourceClass._create_source(form_data)
+    await source._create_required_files(form_data)
 
-        return RedirectResponse(url=f"/data_sources/?project_dir={project_dir}", status_code=303)
+    return RedirectResponse(url=f"/data_sources/?project_dir={project_dir}", status_code=303)
 
-    except Exception as e:
-        traceback.print_exc()
-        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
-
-@router.get("/source/settings")    
+@router.get("/source/settings") 
+@squirrel_error   
 async def source_settings(request: Request, project_dir: str, source_dir: str):
     """
     This returns the data sources page
@@ -110,16 +104,12 @@ async def source_settings(request: Request, project_dir: str, source_dir: str):
 
     => Returns a TemplateResponse to display data_sources page
     """
-    try:
-        source = await get_manifest(project_dir, source_dir)
-        return templates.TemplateResponse(request, "data_sources/data_source_settings.html",
-            {"project_dir": project_dir, "source": source})
-
-    except Exception as e:
-        traceback.print_exc()
-        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir})
+    source = await get_manifest(project_dir, source_dir)
+    return templates.TemplateResponse(request, "data_sources/data_source_settings.html",
+        {"project_dir": project_dir, "source": source})
 
 @router.post("/source/update_settings/")
+@squirrel_error
 async def update_source_settings(request: Request):
     """
     Update the settings of a data source
@@ -128,20 +118,15 @@ async def update_source_settings(request: Request):
 
     => Returns a RedirectResponse to the source settings page
     """
-    try:
-        form_data = await request.form()
-        project_dir = form_data.get("project_dir")
-        source_dir = form_data.get("source_dir")
+    form_data = await request.form()
+    project_dir = form_data.get("project_dir")
+    source_dir = form_data.get("source_dir")
 
-        manifest_data = await get_manifest(project_dir, source_dir)
-        source = await init_source_instance(manifest_data)
-        await source.update_source_settings(form_data)
+    manifest_data = await get_manifest(project_dir, source_dir)
+    source = await init_source_instance(manifest_data)
+    await source.update_source_settings(form_data)
 
-        return RedirectResponse(url=f"/data_sources/?project_dir={project_dir}", status_code=303)
-
-    except Exception as e:
-        traceback.print_exc()
-        return templates.TemplateResponse(request, "base/html/tables_error.html", {"exception": str(e), "project_dir": project_dir, "source_dir": source_dir})
+    return RedirectResponse(url=f"/data_sources/?project_dir={project_dir}", status_code=303)
     
 @router.post("/source/sync")
 async def sync_source(request: Request):

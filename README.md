@@ -135,7 +135,6 @@ In addition to these folders, you will find a folder named tests that contains t
 * Black screen when error in 'execute' of actions_column.py
 * float cut_values
 * Interpolate a string column
-* refactor try except: create a class that inherit APIRouter, override post/get, use router = CustomAPIRouter()
 
 ### To do MVP
 * All available table actions + all available args
