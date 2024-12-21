@@ -24,7 +24,6 @@ class ActionColumn(Action):
         super().__init__(request)
         self.args.update({
             "col_name": {"type": "str", "invisible": True},
-            "col_identifier": {"type": "str", "invisible": True},
             "col_idx": {"type": "str", "invisible": True},
         })
 
@@ -57,8 +56,8 @@ class ReplaceVals(ActionColumn):
         })
 
     async def execute(self):
-        table_name, col_name, replace_vals, col_identifier = await self._get(["table_name", "col_name", "replace_vals", "col_identifier"])
-        new_code = f"""dfs['{table_name}']{col_identifier} = dfs['{table_name}']{col_identifier}.replace({replace_vals})  #sq_action:Replace values in column {col_name} of table {table_name}"""
+        table_name, col_name, replace_vals, col_idx = await self._get(["table_name", "col_name", "replace_vals", "col_idx"])
+        new_code = f"""dfs['{table_name}'][{col_idx}] = dfs['{table_name}'][{col_idx}].replace({replace_vals})  #sq_action:Replace values in column {col_name} of table {table_name}"""
         return new_code
 
 @table_action_type
@@ -71,8 +70,8 @@ class RemoveUnderOver(ActionColumn):
         })
 
     async def execute(self):
-        table_name, col_name, lower_bound, upper_bound, col_identifier = await self._get(["table_name", "col_name", "lower_bound", "upper_bound", "col_identifier"])
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'][(dfs['{table_name}']{col_identifier} >= {lower_bound}) & (dfs['{table_name}']{col_identifier} <= {upper_bound})]  #sq_action:Remove vals out of [{lower_bound}, {upper_bound}] in column {col_name} of table {table_name}"""
+        table_name, col_name, lower_bound, upper_bound, col_idx = await self._get(["table_name", "col_name", "lower_bound", "upper_bound", "col_idx"])
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'][(dfs['{table_name}'][{col_idx}] >= {lower_bound}) & (dfs['{table_name}'][{col_idx}] <= {upper_bound})]  #sq_action:Remove vals out of [{lower_bound}, {upper_bound}] in column {col_name} of table {table_name}"""
         return new_code
  
 @table_action_type
@@ -98,10 +97,10 @@ class CutValues(ActionColumn):
         })
 
     async def execute(self):
-        table_name, col_name, cut_values, cut_labels, col_identifier = await self._get(["table_name", "col_name", "cut_values", "cut_labels", "col_identifier"])
+        table_name, col_name, cut_values, cut_labels, col_idx = await self._get(["table_name", "col_name", "cut_values", "cut_labels", "col_idx"])
         cut_values = [int(val) for val in cut_values.split(',')]
         cut_labels = cut_labels.split(',')
-        new_code = f"""dfs['{table_name}']{col_identifier} = pd.cut(dfs['{table_name}']{col_identifier}, bins={cut_values}, labels={cut_labels})  #sq_action:Cut values in column {col_name} of table {table_name}"""
+        new_code = f"""dfs['{table_name}'][{col_idx}] = pd.cut(dfs['{table_name}'][{col_idx}], bins={cut_values}, labels={cut_labels})  #sq_action:Cut values in column {col_name} of table {table_name}"""
         return new_code
 
 @table_action_type

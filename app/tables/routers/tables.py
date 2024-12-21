@@ -13,6 +13,7 @@ from app import router, templates
 
 from app.data_sources.routers.data_sources import get_sources
 from app.tables.models.actions import TABLE_ACTION_REGISTRY
+from app.tables.models.actions_column import convert_col_idx
 
 def load_pipeline_module(project_dir):
     """
@@ -28,22 +29,15 @@ def load_pipeline_module(project_dir):
     spec.loader.exec_module(pipeline)
     return pipeline
 
-def generate_column_identifier(columns):
-    """Convert MultiIndex columns into a string identifier."""
-    if isinstance(columns, tuple):
-        return "[" + ", ".join(f"'{c}'" for c in columns) + "]"
-    return f"['{columns}']"
-
-def to_html_with_identifiers(df):
+def to_html_with_idx(df):
     html = df.to_html(classes='df-table', index=False)
     
-    column_identifiers = [generate_column_identifier(col) for col in df.columns]
     header_html = ""
-    for idx, col_id in enumerate(column_identifiers):
+    for idx, col_id in enumerate(df.columns):
         if isinstance(df.columns, pd.MultiIndex):
-            header_html += f"""<th data-columnidentifier="{col_id}" data-columnidx="{df.columns[idx]}">{df.columns[idx][-1]}</th>\n"""
+            header_html += f"""<th data-columnidx="{df.columns[idx]}">{df.columns[idx][-1]}</th>\n"""
         else:
-            header_html += f"""<th data-columnidentifier="{col_id}" data-columnidx="{df.columns[idx]}">{df.columns[idx]}</th>\n"""
+            header_html += f"""<th data-columnidx="{df.columns[idx]}">{df.columns[idx]}</th>\n"""
 
     header_start = html.find('<thead>')
     header_end = html.find('</thead>')
@@ -78,7 +72,7 @@ async def tables(request: Request, project_dir: str):
                 with open(manifest_path, 'r') as file:
                     manifest_data = json.load(file)
                 display_len = manifest_data.get('misc', {}).get("table_len", 10)
-                table_html[name] = to_html_with_identifiers(df.head(display_len))
+                table_html[name] = to_html_with_idx(df.head(display_len))
                 table_len_infos[name] = {'total_len': len(df.index), 'display_len': display_len}
 
         sources = await get_sources(project_dir) # Necessary to be able to get the available sources for table creation
@@ -107,7 +101,7 @@ async def tables_pager(request: Request, project_dir: str, table_name: str, page
         df = dfs[table_name]
         start = page * n
         end = start + n
-        table_html = to_html_with_identifiers(df.iloc[start:end])
+        table_html = to_html_with_idx(df.iloc[start:end])
         return table_html
     except Exception as e:
         traceback.print_exc()
@@ -137,7 +131,7 @@ async def get_action_args(request: Request, action_name: str):
     return args
 
 @router.get("/tables/column_infos/")
-async def get_col_infos(request: Request, project_dir: str, table: str, column_name: str, column_identifier: str):
+async def get_col_infos(request: Request, project_dir: str, table: str, column_name: str, column_idx: str):
     """
     Get the column 'column' from table 'tables' informations
 
@@ -145,14 +139,14 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
     * project_dir(str): The project directory name
     * tables(str): The name of the dataframe
     * column_name(str): The name of the column
-    * column_identifier(str): The column identifier. i.e. "['col1']['col2']" or "['col1']
+    * column_idx(str): The column idx. i.e. "('col1', 'col2')" or "('col1')
     
     => Returns the column informations (dict)
     """
     try:
         pipeline = load_pipeline_module(project_dir)
         df = pipeline.run_pipeline()[table]
-        column = eval(f"df{column_identifier}")
+        column = eval(f"df[{convert_col_idx(column_idx)}]")
 
         col_infos = {
             "dtype": str(column.dtype),
