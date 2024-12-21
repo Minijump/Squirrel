@@ -31,11 +31,12 @@
                             <form style="display: inline-block;" 
                                 onsubmit="editPipelineActionOpenModal(
                                     '{{ action[0] }}', 
-                                    '{{ action[1] }}', 
-                                    this.elements['action'].value, 
+                                    this.elements['action_name'].value, 
+                                    this.elements['action_py'].value, 
                                     '{{ project_dir }}'); return false;">
-                            
-                                <input type="hidden" name="action" value="{{ action[2]|escape }}">
+                                    
+                                <input type="hidden" name="action_name" value="{{ action[1]|escape }}">
+                                <input type="hidden" name="action_py" value="{{ action[2]|escape }}">
                                 <button class="list-edit-btn" type="submit" style="width: 30px;">
                                     &middot;&middot;&middot;
                                 </button>
