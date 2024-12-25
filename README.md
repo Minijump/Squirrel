@@ -124,9 +124,9 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Datasource all available args
-* Move templates into app folder? (merge folders with dame names...)
+* Move templates into app folder? (merge folders with same names...)
 * Use dynamic args for datasources (same as actions, move it in utils?)
+* Datasource all available args
 * Data source unit tests + dedicated readme
 * Supabase connection, blockchain.com, json file
 * Do not run all pipeline at each actions (especially for pager, infos, ... Save the whole dfs dict as pickle)

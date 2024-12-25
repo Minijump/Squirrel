@@ -23,6 +23,7 @@ class DataSourceOdoo(DataSourceAPI):
         self.model = manifest.get("model")
         self.fields = manifest.get("fields")
         self.domain = manifest.get("domain") or []
+        self.kwargs = manifest.get("kwargs") or {}
 
     @staticmethod
     def check_available_infos(form_data):
@@ -55,6 +56,7 @@ class DataSourceOdoo(DataSourceAPI):
         manifest["model"] = form_data.get("model")
         manifest["fields"] = ast.literal_eval(form_data.get("fields"))
         manifest["domain"] = ast.literal_eval(form_data.get("domain")) if form_data.get("domain") else []
+        manifest["kwargs"] = ast.literal_eval(form_data.get("kwargs")) if form_data.get("kwargs") else {}
 
         return manifest
     
@@ -63,7 +65,11 @@ class DataSourceOdoo(DataSourceAPI):
         uid = common.authenticate(self.db, self.username, self.key, {})
 
         models = xmlrpc.client.ServerProxy('{}/xmlrpc/2/object'.format(self.url))
-        table = models.execute_kw(self.db, uid, self.key, self.model, 'search_read', [self.domain], {'fields': self.fields})
+        table = models.execute_kw(self.db, uid, self.key, self.model, 'search_read', [], 
+            {
+                **{'domain': self.domain, 'fields': self.fields}, 
+                **self.kwargs
+            })
 
         data = pd.read_json(json.dumps(table))
 
@@ -78,5 +84,6 @@ class DataSourceOdoo(DataSourceAPI):
 
         updated_source["fields"] = ast.literal_eval(updated_source["fields"])
         updated_source["domain"] = ast.literal_eval(updated_source["domain"]) if updated_source["domain"] else ""
+        updated_source["kwargs"] = ast.literal_eval(updated_source["kwargs"]) if updated_source["kwargs"] else {}
 
         return updated_source
