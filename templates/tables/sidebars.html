@@ -18,6 +18,7 @@
     <form action="/tables/execute_action/" method="post">
         <input type="hidden" name="action_name" value="CreateTable">
         <input type="hidden" name="project_dir" value="{{ project_dir }}">
+        <input type="hidden" name="action_name" value="CreateTable" required>
 
         <label for="table_name">Table Name:</label>
         <input id="table_name" name="table_name" required>
