@@ -125,15 +125,16 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To do
 * Datasource all available args
-* Supabase connection, blockchain.com, json file
+* Move templates into app folder? (merge folders with dame names...)
+* Use dynamic args for datasources (same as actions, move it in utils?)
 * Data source unit tests + dedicated readme
+* Supabase connection, blockchain.com, json file
 * Do not run all pipeline at each actions (especially for pager, infos, ... Save the whole dfs dict as pickle)
 
 ### To Fix
 * float cut_values
 * Interpolate a string column
-* Move templates into app folder? (merge folders with dame names...)
-* Make data source sync parallel (looks like problem occurs in python of odoo data source; _get_data_from_api method)
+* Make data source sync parallel (looks like problem occurs in _get_data_from_api method)
 
 ### To do MVP
 * All available table actions + all available args
