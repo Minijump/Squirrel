@@ -69,6 +69,13 @@
                     With format: [('field1', '=', x), ('field2', !=, y), ...]. No domain= []
                 </div>
                 <input id="odooDomain" name="domain" type="text" value="{{ source.domain }}" class="never-mandatory">
+
+                <label for="fields">Kwargs</label>
+                <div class="info-note">
+                    <i class="fas fa-info-circle"></i> 
+                    With format: {'ofset': 0, 'limit': 10, 'order': 'id desc', ...}
+                </div>
+                <input id="odooKwargs" name="kwargs" type="text" value="{{ source.kwargs }}" class="never-mandatory">
             </div>
 
             <!-- yahoo finance -->
