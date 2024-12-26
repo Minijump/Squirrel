@@ -17,11 +17,11 @@ def squirrel_error(func):
             if project_dir:
                 return templates.TemplateResponse(
                     request, 
-                    "base/html/tables_error.html",
+                    "utils/templates/tables_error.html",
                     {"exception": str(e), "project_dir": project_dir})
             else:
                 return templates.TemplateResponse(
                     request, 
-                    "base/html/projects_error.html", 
+                    "utils/templates/projects_error.html", 
                     {"exception": str(e)})
     return wrapper
