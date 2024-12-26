@@ -31,7 +31,7 @@ async def projects(request: Request):
 
     return templates.TemplateResponse(
         request, 
-        "projects/projects.html", 
+        "projects/templates/projects.html", 
         {"projects": projects, "PROJECT_TYPE_REGISTRY": PROJECT_TYPE_REGISTRY})
 
 @router.post("/projects/create/")
@@ -83,7 +83,7 @@ async def project_settings(request: Request, project_dir: str):
 
     return templates.TemplateResponse(
         request, 
-        "projects/project_settings.html", 
+        "projects/templates/project_settings.html", 
         {"project": manifest_data, "project_dir": project_dir}
     )
 

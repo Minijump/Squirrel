@@ -66,7 +66,7 @@ async def data_sources(request: Request, project_dir: str):
     => Returns a TemplateResponse to display data_sources page
     """
     sources = await get_sources(project_dir)
-    return templates.TemplateResponse(request, "data_sources/data_sources.html", 
+    return templates.TemplateResponse(request, "data_sources/templates/data_sources.html", 
         {   "project_dir": project_dir, 
             "sources": sources,
             "DATA_SOURCE_REGISTRY": DATA_SOURCE_REGISTRY})
@@ -105,7 +105,7 @@ async def source_settings(request: Request, project_dir: str, source_dir: str):
     => Returns a TemplateResponse to display data_sources page
     """
     source = await get_manifest(project_dir, source_dir)
-    return templates.TemplateResponse(request, "data_sources/data_source_settings.html",
+    return templates.TemplateResponse(request, "data_sources/templates/data_source_settings.html",
         {"project_dir": project_dir, "source": source})
 
 @router.post("/source/update_settings/")
