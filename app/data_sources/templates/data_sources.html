@@ -13,7 +13,7 @@
             <a href="/"><i class="fas fa-home" style="color: white;"></i></a>
             <h1 style="margin-left: 5px;">Data Sources</h1>
         </div>
-        {% include 'base/html/project_nav_links.html' %}
+        {% include 'utils/templates/project_nav_links.html' %}
     </aside>
     <main>
         <button id="syncAllSourcesButton" 
@@ -55,7 +55,7 @@
     </main>
 
     <!-- Modals -->
-    {% include 'data_sources/modals.html' %}
+    {% include 'data_sources/templates/modals.html' %}
 
     <!-- JS scripts -->
     <script src="{{ url_for('data_sources_static', path='js/script.js') }}"></script>

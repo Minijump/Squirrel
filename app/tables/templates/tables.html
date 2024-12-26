@@ -13,7 +13,7 @@
             <a href="/"><i class="fas fa-home" style="color: white;"></i></a>
             <h1 style="margin-left: 5px;">Tables</h1>
         </div>
-        {% include 'base/html/project_nav_links.html' %}
+        {% include 'utils/templates/project_nav_links.html' %}
     </aside>
 
     <main> 
@@ -81,11 +81,9 @@
             {% endif %}
         {% endif %}
 
-        <!-- Modals-->
-        <!-- Actions right sidebars-->
-        <!-- Columns infos-->
-        {% include 'tables/modals.html' %}
-        {% include 'tables/sidebars.html' %}
+        <!-- Modals and Sidebars-->
+        {% include 'tables/templates/modals.html' %}
+        {% include 'tables/templates/sidebars.html' %}
 
 
         <!-- JS scripts -->

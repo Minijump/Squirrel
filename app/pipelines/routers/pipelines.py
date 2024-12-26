@@ -67,7 +67,7 @@ async def pipeline(request: Request, project_dir: str):
     
     return templates.TemplateResponse(
         request,
-        "pipeline/pipeline.html",
+        "pipelines/templates/pipeline.html",
         {"actions": actions, "project_dir": project_dir}
     )
 

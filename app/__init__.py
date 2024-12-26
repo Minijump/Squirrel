@@ -13,12 +13,13 @@ router = APIRouter()
 async def favicon():
     return FileResponse("templates/base/static/img/favicon.ico")
 
-app.mount("/static/base", StaticFiles(directory="templates/base/static"), name="base_static")
-app.mount("/static/projects", StaticFiles(directory="templates/projects/static"), name="projects_static")
-app.mount("/static/data_sources", StaticFiles(directory="templates/data_sources/static"), name="data_sources_static")
-app.mount("/static/tables", StaticFiles(directory="templates/tables/static"), name="tables_static")
-app.mount("/static/pipeline", StaticFiles(directory="templates/pipeline/static"), name="pipeline_static")
-templates = Jinja2Templates(directory="templates")
+app.mount("/static/base", StaticFiles(directory="app/utils/templates/static"), name="base_static")
+app.mount("/static/projects", StaticFiles(directory="app/projects/templates/static"), name="projects_static")
+app.mount("/static/data_sources", StaticFiles(directory="app/data_sources/templates/static"), name="data_sources_static")
+app.mount("/static/tables", StaticFiles(directory="app/tables/templates/static"), name="tables_static")
+app.mount("/static/pipeline", StaticFiles(directory="app/pipelines/templates/static"), name="pipeline_static")
+templates = Jinja2Templates(directory="app")
+
 
 from app.projects import projects
 from app.tables import tables

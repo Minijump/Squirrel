@@ -124,7 +124,6 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Move templates into app folder? (merge folders with same names...)
 * Use dynamic args for datasources (same as actions, move it in utils?)
 * Datasource all available args
 * Data source unit tests + dedicated readme
