@@ -11,7 +11,7 @@ app = FastAPI(title="Squirrel", version="0.1.0")
 router = APIRouter()
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
-    return FileResponse("templates/base/static/img/favicon.ico")
+    return FileResponse("app/utils/templates/static/img/favicon.ico")
 
 app.mount("/static/base", StaticFiles(directory="app/utils/templates/static"), name="base_static")
 app.mount("/static/projects", StaticFiles(directory="app/projects/templates/static"), name="projects_static")

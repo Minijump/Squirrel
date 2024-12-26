@@ -2,7 +2,7 @@
 <div class="modal" id="createSourceModal">
     <div class="modal-content">
         <h3>Create New Source</h3>
-        <form method="post" action="/create_source/" enctype="multipart/form-data" id="createSourceModal">
+        <form method="post" action="/create_source/" enctype="multipart/form-data" id="createSourceModalForm">
             <input type="hidden" name="project_dir" value="{{ project_dir }}">
 
             <label for="source_name">Name</label>
@@ -17,82 +17,17 @@
                     <option value="{{ short_name }}">{{ cls.display_name }}</option>
                 {% endfor %}
             </select>
-
-            <!-- csv, xlsx, pickle -->
-            <div class="optional-arg csv xlsx pkl">
-                <label for="source_file">Source File</label>
-                <input id="sourceFile" name="source_file" type="file">
-            </div>
-
-            <!-- odoo -->
-            <div class="optional-arg odoo" style="display: none">
-                <label for="url">URL</label>
-                <input id="odooUrl" name="url" type="text">
-
-                <label for="db">Database</label>
-                <input id="odooDb" name="db" type="text">
-
-                <label for="username">User</label>
-                <input id="odooUser" name="username" type="text">
-                
-                <label for="key">Key</label>
-                <input id="odooKey" name="key" type="password">
-
-                <label for="model">Model</label>
-                <div class="info-note">
-                    <i class="fas fa-info-circle"></i> 
-                    E.g. res.partner
-                </div>
-                <input id="odooModel" name="model" type="text">
-
-                <label for="fields">Fields</label>
-                <div class="info-note">
-                    <i class="fas fa-info-circle"></i> 
-                    With format: ['field_name1', 'field_name2', ...]
-                </div>
-                <input id="odooFields" name="fields" type="text">
-
-                <label for="domain">Domain</label>
-                <div class="info-note">
-                    <i class="fas fa-info-circle"></i> 
-                    With format: [('field1', '=', x), ('field2', !=, y), ...] No domain= []
-                </div>
-                <input id="odooDomain" name="domain" type="text" class="never-mandatory">
-
-                <label for="fields">Kwargs</label>
-                <div class="info-note">
-                    <i class="fas fa-info-circle"></i> 
-                    With format: {'ofset': 0, 'limit': 10, 'order': 'id desc', ...}
-                </div>
-                <input id="odooKwargs" name="kwargs" type="text">
-            </div>
-
-            <!-- yahoo finance -->
-            <div class="optional-arg yahoo_finance" style="display: none">
-                <h3>Yahoo Finance Settings</h3>
-                <label for="tickers">Tickers</label>
-                <div class="info-note">
-                    <i class="fas fa-info-circle"></i> 
-                    With format: ['ticker1', 'ticker2', ...]
-                </div>
-                <input id="tickers" name="tickers" type="text">
             
-                <label for="start_date">Start Date</label>
-                <input id="start_date" name="start_date" type="date">
-            
-                <label for="end_date">End Date</label>
-                <input id="end_date" name="end_date" type="date">
-            
-                <label for="interval">Interval</label>
-                <select id="interval" name="interval">
-                    <option value="1d">1 Day</option>
-                    <option value="1wk">1 Week</option>
-                    <option value="1mo">1 Month</option>
-                </select>
+            <div id="toggle-args">
             </div>
             
             <button type="submit" class="btn-primary">Create</button>
             <button type="button" class="btn-secondary" id="cancelButton">Cancel</button>
         </form>
+        <!-- Provide the optionals inputs for diffenrent data source types -->
+        <!-- Will be copied into the 'toggle-args' div -->
+        <div style="display: none">
+            {% include 'data_sources/templates/optional_args_modals.html' %}
+        </div>
     </div>
 </div>
