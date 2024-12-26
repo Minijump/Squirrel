@@ -28,82 +28,17 @@
             <label for="sourceDescription">Description</label>
             <textarea id="sourceDescription" name="description">{{ source.description }}</textarea>
 
-            <div class="optional-arg csv xlsx pkl" style="display: none">
-                <h3>File Settings</h3>
-                <label for="file">File</label>
-                <input type="file" id="sourceFile" name="file" accept=".{{ source.type }}" required class="never-mandatory">
-            </div>
-
-            <!-- odoo -->
-            <div class="optional-arg odoo" style="display: none">
-                <h3>Odoo Settings</h3>
-                <label for="url">URL</label>
-                <input id="odooUrl" name="url" type="text" value="{{ source.url }}">
-
-                <label for="db">Database</label>
-                <input id="odooDb" name="db" type="text" value="{{ source.db }}">
-
-                <label for="username">User</label>
-                <input id="odooUser" name="username" type="text" value="{{ source.username }}">
-                
-                <label for="key">Key</label>
-                <input id="odooKey" name="key" type="password" value="{{ source.key }}">
-
-                <label for="model">Model</label>
-                <div class="info-note">
-                    <i class="fas fa-info-circle"></i> 
-                    E.g. res.partner
-                </div>
-                <input id="odooModel" name="model" type="text" value="{{ source.model }}">
-
-                <label for="fields">Fields</label>
-                <div class="info-note">
-                    <i class="fas fa-info-circle"></i> 
-                    With format: ['field_name1', 'field_name2', ...]
-                </div>
-                <input id="odooFields" name="fields" type="text" value="{{ source.fields }}">
-
-                <label for="domain">Domain</label>
-                <div class="info-note">
-                    <i class="fas fa-info-circle"></i> 
-                    With format: [('field1', '=', x), ('field2', !=, y), ...]. No domain= []
-                </div>
-                <input id="odooDomain" name="domain" type="text" value="{{ source.domain }}" class="never-mandatory">
-
-                <label for="fields">Kwargs</label>
-                <div class="info-note">
-                    <i class="fas fa-info-circle"></i> 
-                    With format: {'ofset': 0, 'limit': 10, 'order': 'id desc', ...}
-                </div>
-                <input id="odooKwargs" name="kwargs" type="text" value="{{ source.kwargs }}" class="never-mandatory">
-            </div>
-
-            <!-- yahoo finance -->
-            <div class="optional-arg yahoo_finance" style="display: none">
-                <h3>Yahoo Finance Settings</h3>
-                <div class="info-note">
-                    <i class="fas fa-info-circle"></i> 
-                    With format: ['ticker1', 'ticker2', ...]
-                </div>
-                <label for="tickers">Tickers</label>
-                <input id="tickers" name="tickers" type="text" value="{{ source.tickers }}">
-            
-                <label for="start_date">Start Date</label>
-                <input id="start_date" name="start_date" type="date" value="{{ source.start_date }}">
-            
-                <label for="end_date">End Date</label>
-                <input id="end_date" name="end_date" type="date" value="{{ source.end_date }}">
-            
-                <label for="interval">Interval</label>
-                <select id="interval" name="interval">
-                    <option value="1d" {% if source.interval == "1d" %}selected{% endif %}>1 Day</option>
-                    <option value="1wk" {% if source.interval == "1wk" %}selected{% endif %}>1 Week</option>
-                    <option value="1mo" {% if source.interval == "1mo" %}selected{% endif %}>1 Month</option>
-                </select>         
+            <div id="toggle-args">
             </div>
     
             <button type="submit" class="btn-primary">Save</button>
         </form>
+        <!-- Provide the optionals inputs for diffenrent data source types -->
+        <!-- Will be copied into the 'toggle-args' div -->
+        <div style="display: none">
+            {% include 'data_sources/templates/optional_args_settings.html' %}
+        </div>
+
     </main>
     <script src="{{ url_for('data_sources_static', path='js/script.js') }}"></script>
 </div>

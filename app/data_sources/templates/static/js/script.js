@@ -23,33 +23,25 @@ if (cancelButton) {
 function updateFileAccept() {
     const sourceType = document.getElementById('sourceType');
     const sourceFile = document.getElementById('sourceFile');
-    const selectedType = sourceType.value;
-    sourceFile.accept = `.${selectedType}`;
+    if (sourceFile) {
+        const selectedType = sourceType.value;
+        sourceFile.accept = `.${selectedType}`;
+    }
 }
 document.addEventListener('DOMContentLoaded', updateFileAccept);
 document.getElementById('sourceType').addEventListener('change', updateFileAccept);
-// Toggle source type
-function toggleSourceType() {
-    let optionalArgs = document.getElementsByClassName("optional-arg");
-    for (let i = 0; i < optionalArgs.length; i++) {
-        optionalArgs[i].style.display = "none";
-        let optionalInputs = optionalArgs[i].getElementsByTagName("input");
-        for (let j = 0; j < optionalInputs.length; j++) {
-            optionalInputs[j].removeAttribute("required");
-        }
-    }
 
-    let sourceType = document.getElementById("sourceType");
-    let toDisplay = document.getElementsByClassName(sourceType.value);
-    for (let i = 0; i < toDisplay.length; i++) {
-        toDisplay[i].style.display = "block";
-        let requiredInputs = toDisplay[i].getElementsByTagName("input");
-        for (let j = 0; j < requiredInputs.length; j++) {
-            if (!requiredInputs[j].classList.contains("never-mandatory")){
-                requiredInputs[j].required = true;
-            }
-        }
-    }
+// Toggle source type => show/hide optional args
+function toggleSourceType() {
+    const form_div = document.getElementById('toggle-args');
+    form_div.innerHTML = ''; 
+
+    const sourceType = document.getElementById('sourceType').value;
+    const relevantArgs = document.querySelectorAll(`.optional-arg.${sourceType}`);
+    relevantArgs.forEach(arg => {
+        const clone = arg.cloneNode(true);
+        form_div.appendChild(clone);
+    });
 }
 document.addEventListener('DOMContentLoaded', toggleSourceType);
 
