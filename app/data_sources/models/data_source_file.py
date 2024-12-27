@@ -1,4 +1,5 @@
 import os
+import ast
 import pandas as pd
 
 from app.data_sources.models.data_source import DataSource, data_source_type
@@ -10,6 +11,7 @@ class DataSourceFile(DataSource):
 
     def __init__(self, manifest):
         super().__init__(manifest)
+        self.kwargs = manifest.get("kwargs") or {}
 
     @classmethod
     def check_available_infos(cls, form_data):
@@ -25,6 +27,19 @@ class DataSourceFile(DataSource):
         
         DataSource.check_available_infos(form_data)
 
+    @staticmethod
+    def _generate_manifest(form_data):
+        """
+        Generates the manifest of the source
+
+        * form_data(dict): The form data
+
+        => Returns the manifest (dict)
+        """
+        manifest = DataSource._generate_manifest(form_data)
+        manifest["kwargs"] = ast.literal_eval(form_data.get("kwargs")) if form_data.get("kwargs") else {}
+        return manifest
+
     async def _create_pickle_file(self, source_file_path):
         """
         To be implemented by the child class
@@ -39,9 +54,11 @@ class DataSourceFile(DataSource):
         """
         source_path = os.path.join(os.getcwd(), "_projects", form_data["project_dir"], "data_sources", self.directory)
         source_file_path = os.path.join(source_path, 'data.' + self.short_name)
-        content = content or await form_data.get("source_file").read()
-        with open(source_file_path, 'wb') as file:
-            file.write(content)
+        form_data_content = await form_data.get("source_file").read() if form_data.get("source_file") else False
+        content = content or form_data_content
+        if content:
+            with open(source_file_path, 'wb') as file:
+                file.write(content)
 
         # All sources are converted to pickle files, this increase the speed of reading the data
         # However, the drawback is that if the user change the file (csv,...) manually, the changes will not be reflected 
@@ -58,13 +75,22 @@ class DataSourceFile(DataSource):
 
         => Returns the updated source
         """
+        old_kwargs = source.get("kwargs") or {}
+
+        updated_source = await DataSource._update_source_settings(source, updated_data)
+        updated_source["kwargs"] = ast.literal_eval(updated_source["kwargs"]) if updated_source.get("kwargs") else {}
+
         new_file = dict(updated_data).get("file")
+        new_kwargs = old_kwargs != source.get("kwargs")
+        content = False
         if new_file:
             content = await new_file.read()
-            if content:
-                await cls(source)._create_data_file(updated_data, content)
-        
-        updated_source = await DataSource._update_source_settings(source, updated_data)
+
+        if content:
+            await cls(source)._create_data_file(updated_data, content)
+        elif new_kwargs:
+            await cls(source)._create_data_file(updated_data)
+
         return updated_source
     
     def create_table(self, form_data):
@@ -89,7 +115,7 @@ class DataSourceCSV(DataSourceFile):
 
         * source_file_path(str): The source file path
         """
-        data = pd.read_csv(source_file_path)
+        data = pd.read_csv(source_file_path, **self.kwargs)
         pickle_file_path = source_file_path.replace(f'.{self.short_name}', '.pkl')
         data.to_pickle(pickle_file_path)
 
@@ -101,7 +127,7 @@ class DataSourcePickle(DataSourceFile):
 
     async def _create_pickle_file(self, source_file_path):
         """
-        Already pickle: pass
+        Already pickle file: kwargs does not work here
         """
         pass
     
@@ -117,6 +143,6 @@ class DataSourceXLSX(DataSourceFile):
 
         * source_file_path(str): The source file path
         """
-        data = pd.read_excel(source_file_path)
+        data = pd.read_excel(source_file_path, **self.kwargs)
         pickle_file_path = source_file_path.replace(f'.{self.short_name}', '.pkl')
         data.to_pickle(pickle_file_path)
