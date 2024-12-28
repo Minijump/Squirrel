@@ -96,31 +96,31 @@ class DataSource:
 
     async def _create_python_file(self, form_data=False):
         """
-        To be implemented by subclasses
+        To be implemented by subclasses (optional)
         """
         pass
 
     async def _create_data_file(self, form_data=False):
         """
-        To be implemented by subclasses
+        To be implemented by subclasses (mandatory)
         """
         pass
 
     def create_table(self, form_data=False):
         """
-        To be implemented by subclasses
+        To be implemented by subclasses (mandatory)
         """
         pass
 
     async def sync(self, project_dir):
         """
-        To be implemented by subclasses
+        To be implemented by subclasses (optional)
         """
         pass
 
     async def update_last_sync(self, project_dir):
         """
-        To be implemented by subclasses
+        To be implemented by subclasses (optional)
         """
         pass
 

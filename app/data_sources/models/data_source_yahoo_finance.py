@@ -7,6 +7,7 @@ from app.data_sources.models.data_source_api import DataSourceAPI
 
 @data_source_type
 class DataSourceYahooFinance(DataSourceAPI):
+    # Uses yfinance to get data from Yahoo Finance, if more infos are required use official yahoo finance API
     short_name = "yahoo_finance"
     display_name = "Yahoo Finance"
     icon = "yahoo_finance_icon.png"
