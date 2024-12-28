@@ -146,3 +146,19 @@ class DataSourceXLSX(DataSourceFile):
         data = pd.read_excel(source_file_path, **self.kwargs)
         pickle_file_path = source_file_path.replace(f'.{self.short_name}', '.pkl')
         data.to_pickle(pickle_file_path)
+
+@data_source_type
+class DataSourceJSON(DataSourceFile):
+    short_name = "json"
+    display_name = "JSON"
+    icon = "json_icon.png"
+
+    async def _create_pickle_file(self, source_file_path):
+        """
+        Create a pickle file from the source file
+
+        * source_file_path(str): The source file path
+        """
+        data = pd.read_json(source_file_path, **self.kwargs)
+        pickle_file_path = source_file_path.replace(f'.{self.short_name}', '.pkl')
+        data.to_pickle(pickle_file_path)

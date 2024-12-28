@@ -124,7 +124,6 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Supabase connection, blockchain.com, json file
 * Do not run all pipeline at each actions (especially for pager, infos, ... Save the whole dfs dict as pickle)
 
 ### To Fix
@@ -143,5 +142,6 @@ In addition to these folders, you will find a folder named tests that contains t
 * Export as jupyter notebook + Make folder runnable as-is outside the app (create a main.py file to run? That would sync all sources,...)???
 * See diff before doing an action/ at each actions in pipeline
 * Git github integration
+* Supabase connection, blockchain.com
 * Multiple pipelines
 * ...
