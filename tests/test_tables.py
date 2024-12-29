@@ -34,6 +34,7 @@ def test_tables(mock_project):
     assert response.status_code == 200, "Failed to access the table endpoint"
     assert response.context.get("table"), "Response does not contain a table"
     assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
+    assert os.path.exists(os.path.join(os.getcwd(), "_projects", mock_project, "data_tables.pkl")), "No data_tables.pkl file in project directory"
 
 def test_fail_pipeline(mock_project):
     """

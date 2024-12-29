@@ -7,6 +7,7 @@ import importlib.util
 import pandas as pd
 import json
 import traceback
+import pickle
 
 from app.tables.models.actions import action
 from app import router, templates
@@ -65,6 +66,11 @@ async def tables(request: Request, project_dir: str):
     except Exception as e:
         exception = e
     finally:
+        # save dfs as a pickle file (will increase speed of things that does not read the whole pipeline to be run)
+        datatables_path = os.path.join( os.getcwd(), "_projects", project_dir, "data_tables.pkl")
+        with open(datatables_path, 'wb') as f:
+            pickle.dump(dfs, f)
+        # Convert them to html (first lines)
         table_html = {}
         table_len_infos = {}
         for name, df in dfs.items():
@@ -76,7 +82,8 @@ async def tables(request: Request, project_dir: str):
                 table_html[name] = to_html_with_idx(df.head(display_len))
                 table_len_infos[name] = {'total_len': len(df.index), 'display_len': display_len}
 
-        sources = await get_sources(project_dir) # Necessary to be able to get the available sources for table creation
+        # Add available sources for table creation
+        sources = await get_sources(project_dir)
 
         return templates.TemplateResponse(
             request,
@@ -97,8 +104,13 @@ async def tables_pager(request: Request, project_dir: str, table_name: str, page
 
     => Returns HTML for the specified page of the dataframe
     """
-    pipeline = load_pipeline_module(project_dir)
-    dfs = pipeline.run_pipeline()
+    data_tables_path = os.path.join( os.getcwd(), "_projects", project_dir, "data_tables.pkl")
+    if os.path.exists(data_tables_path):
+        with open(data_tables_path, 'rb') as f:
+            dfs = pickle.load(f)
+    else:
+        pipeline = load_pipeline_module(project_dir)
+        dfs = pipeline.run_pipeline()
     df = dfs[table_name]
     start = page * n
     end = start + n
@@ -142,9 +154,15 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
     
     => Returns the column informations (dict)
     """
-    pipeline = load_pipeline_module(project_dir)
-    df = pipeline.run_pipeline()[table]
-    column = eval(f"df[{convert_col_idx(column_idx)}]")
+    data_tables_path = os.path.join( os.getcwd(), "_projects", project_dir, "data_tables.pkl")
+    if os.path.exists(data_tables_path):
+        with open(data_tables_path, 'rb') as f:
+            dfs = pickle.load(f)
+            df = dfs[table]
+    else:
+        pipeline = load_pipeline_module(project_dir)
+        df = pipeline.run_pipeline()[table]
+    column = df[eval(convert_col_idx(column_idx))]
 
     col_infos = {
         "dtype": str(column.dtype),
