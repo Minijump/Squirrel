@@ -33,6 +33,15 @@
     
             <button type="submit" class="btn-primary">Save</button>
         </form>
+        <form id="deleteSource" method="post" action="/source/delete/" class="std-form">
+            <h3>Danger zone</h3>
+            <input type="hidden" name="project_dir" value="{{ project_dir }}">
+            <input type="hidden" name="source_dir" value="{{ source.directory }}">
+            <div style="display: flex; align-items: center;">
+                <button type="submit" class="btn-danger">Delete Source</button>
+                <p style="margin-left: 10px; font-size: 12px;">Deleting a source is permanent, think twice before doing it</p>
+            </div>
+        </form>
         <!-- Provide the optionals inputs for diffenrent data source types -->
         <!-- Will be copied into the 'toggle-args' div -->
         <div style="display: none">
