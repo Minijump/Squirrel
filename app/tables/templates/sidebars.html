@@ -15,13 +15,13 @@
 <div id="CreateTable" class="right-sidebar-form">
     <!-- Can't use ActionSidebar because of input 'table_name'-->
     <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('CreateTable')">&times;</a>
-    <form action="/tables/execute_action/" method="post">
+    <form action="/tables/execute_action/" method="post" onsubmit="saveSelectedTable(document.getElementById('new_table_name').value)">
         <input type="hidden" name="action_name" value="CreateTable">
         <input type="hidden" name="project_dir" value="{{ project_dir }}">
         <input type="hidden" name="action_name" value="CreateTable" required>
 
         <label for="table_name">Table Name:</label>
-        <input id="table_name" name="table_name" required>
+        <input id="new_table_name" name="table_name" required>
 
         <label for="data_source">Data Source:</label>
         <select name="data_source_dir" id="data_source" class="right-sidebar-select" onload="toggleSourceSelect()">
