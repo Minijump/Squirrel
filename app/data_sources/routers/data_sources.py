@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 import os
 import json
 import traceback
+import shutil
 
 from app import router, templates
 from app.data_sources.models import DATA_SOURCE_REGISTRY
@@ -149,3 +150,22 @@ async def sync_source(request: Request):
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(content={"message": str(e)}, status_code=500)
+    
+@router.post("/source/delete")
+@squirrel_error
+async def delete_source(request: Request):
+    """
+    Delete the data source
+
+    * request: contains the project_dir and source_dir
+
+    =>
+    """
+    form_data = await request.form()
+    project_dir = form_data.get("project_dir")
+    source_dir = form_data.get("source_dir")
+
+    source_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir)
+    shutil.rmtree(source_path)
+
+    return RedirectResponse(url=f"/data_sources/?project_dir={project_dir}", status_code=303)
