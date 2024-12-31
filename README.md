@@ -124,14 +124,15 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
+* Deletable data sources
+* At table creation, automatically set this new table as the displayed one
 
 ### To Fix
-* float cut_values
-* Interpolate a string column
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method)
 
 ### To do MVP
 * All available table actions + all available args
+* Write python code in table page, added as action
 
 ### Feature ideas
 * Odoo module; ease imports ?
@@ -143,4 +144,7 @@ In addition to these folders, you will find a folder named tests that contains t
 * Git github integration
 * Supabase connection, blockchain.com
 * Multiple pipelines
+* Datasources are only credentials, set the request args at table creation?? Automatic creation of a source when creating a table?
+* basic graphs (chart.js, d3.js,...?)
+* Dashboards? (can be saved)
 * ...

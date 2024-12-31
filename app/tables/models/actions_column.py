@@ -85,7 +85,7 @@ class CutValues(ActionColumn):
 
     async def execute(self):
         table_name, col_name, cut_values, cut_labels, col_idx = await self._get(["table_name", "col_name", "cut_values", "cut_labels", "col_idx"])
-        cut_values = [int(val) for val in cut_values.split(',')]
+        cut_values = [float(val) for val in cut_values.split(',')]
         cut_labels = cut_labels.split(',')
         new_code = f"""dfs['{table_name}'][{col_idx}] = pd.cut(dfs['{table_name}'][{col_idx}], bins={cut_values}, labels={cut_labels})  #sq_action:Cut values in column {col_name} of table {table_name}"""
         return new_code
@@ -157,7 +157,8 @@ class HandleMissingValues(ActionColumn):
         self.args.update({
             "action": {"type": "select", "string": "Action", 
                        "options": [("delete", "Delete"), ("replace", "Replace"), ("interpolate", "Interpolate")],
-                       "onchange": "toggleSelect()"},
+                       "onchange": "toggleSelect()",
+                       "info": "Interpolate will only work for numeric columns."},
             "replace_value": {"type": "txt", "string": "Replace Value", 
                               "required": False, "select_onchange": "replace"},
         })
