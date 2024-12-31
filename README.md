@@ -125,7 +125,6 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To do
 * Deletable data sources
-* At table creation, automatically set this new table as the displayed one
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method)
