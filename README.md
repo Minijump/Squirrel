@@ -124,13 +124,17 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
+* Write python code in table page, added as action
+* Group by, 'Vlookup', date format, new column=formula of existing ones
+* Create table from other table(s) (merge, union, ...)
+* Add kwargs to actions
+* Edit table style (button colors?, table not bigger than screen, ...)
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method)
 
 ### To do MVP
 * All available table actions + all available args
-* Write python code in table page, added as action
 
 ### Feature ideas
 * Odoo module; ease imports ?
@@ -145,4 +149,5 @@ In addition to these folders, you will find a folder named tests that contains t
 * Datasources are only credentials, set the request args at table creation?? Automatic creation of a source when creating a table?
 * basic graphs (chart.js, d3.js,...?)
 * Dashboards? (can be saved)
+* computed vars
 * ...
