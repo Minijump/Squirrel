@@ -86,6 +86,20 @@ class AddColumn(Action):
         return new_code
 
 @table_action_type
+class AddRow(Action):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args = {
+            "new_rows": {"type": "txt", "string": "New rows", "info": """With format<br/> [<br/>{'Col1': Value1, 'Col2': Value2, ...},<br/> {'Col1': Value3 ...<br/>]"""},
+        }
+
+    async def execute(self):
+        table_name, new_rows = await self._get(["table_name", "new_rows"])
+        new_rows = f"pd.DataFrame({new_rows})" if new_rows else "pd.DataFrame()"
+        new_code = f"""dfs['{table_name}'] = pd.concat([dfs['{table_name}'], {new_rows}], ignore_index=True)  #sq_action:Add rows in table {table_name}"""
+        return new_code
+
+@table_action_type
 class DeleteRow(Action):
     def __init__(self, request):
         super().__init__(request)
