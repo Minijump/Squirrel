@@ -115,3 +115,17 @@ class CreateTable(Action):
         new_code = source.create_table(await self.request.form())
         
         return new_code
+    
+@table_action_type
+class CustomPythonAction(Action):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args = {
+            "python_action_code": {"type": "txt", "string": "Python"},
+            "python_action_name": {"type": "str", "string": "Action Name"},
+        }
+
+    async def execute(self):
+        python_action_code, python_action_name = await self._get(["python_action_code", "python_action_name"])
+        new_code = f"""{python_action_code}  #sq_action: {python_action_name}"""
+        return new_code
