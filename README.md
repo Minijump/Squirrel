@@ -124,7 +124,6 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Add row
 * Group by, 'Vlookup', date format, new column=formula of existing ones
 * Create table from other table(s) (merge, union, ...)
 * Add kwargs to actions
