@@ -50,6 +50,7 @@
                     <div style="display: flex; justify-content: flex-start; gap: 10px;">
                         <button onclick="openSidebarActionForm('AddColumn', { 'table_name': '{{ name }}' })" class="btn-primary">Add Column</button>
                         <button onclick="openSidebarActionForm('DeleteRow', { 'table_name': '{{ name }}' })" class="btn-danger">Delete Rows</button>
+                        <button onclick="openCustomActionModal()" class="btn-primary">Add Action</button>
                         <button onclick="openSidebarForm('ExportTable', { 'table_name': '{{ name }}' })" class="btn-primary"><i class="fas fa-file-export" style="margin-right: 5px;"></i></button>
                     </div>
                     <div class="table-html" id="table-html-{{ name }}">

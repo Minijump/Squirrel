@@ -217,6 +217,14 @@ function closeInfoColModal() {
     document.getElementById('InfoColModal').style.display = "none";
 }
 
+// CustomActionModal ---------------------------------------------------------------
+function openCustomActionModal() {
+    document.getElementById('CustomActionModal').style.display = "flex";
+}
+function closeCustomActionModal() {
+    document.getElementById('CustomActionModal').style.display = "none";
+}
+
 // Add info buttons to the table headers ---------------------------------------------------------------
 function addInfoButtons() {
     document.querySelectorAll('.df-table thead').forEach(function(thead) {
