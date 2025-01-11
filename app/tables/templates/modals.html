@@ -85,3 +85,35 @@
         </form>
     </div>
 </div>
+
+<div id="CustomActionModal" class="modal">
+    <div class="modal-content" style="width: 600px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 id="modalTitle" style="display: inline">Custom Action Modal</h3>
+            </div>
+            <a href="javascript:void(0)" class="close-btn" onclick="closeCustomActionModal()">&times;</a>
+        </div>
+        <form action="/tables/execute_action/" method="post">
+            <input type="hidden" name="action_name" value="CustomPythonAction">
+            <input type="hidden" name="project_dir" value="{{ project_dir }}">
+
+            <label for="python_action_code">Action Code</label>
+            <div class="info-note" style="color: var(--secondary-text-color); margin-bottom: 8px;">
+                <i class="fas fa-info-circle"></i> 
+                Your tables are available in a dictionnary called dfs, to edit it use dfs['table_name']<br>
+                i.e.: dfs['table_name']['col_name'] = dfs['table_name']['col_name'] * 2
+            </div>
+            <textarea name="python_action_code" required></textarea>
+
+            <label for="python_action_name">Action Name</label>
+            <div class="info-note" style="color: var(--secondary-text-color); margin-bottom: 8px;">
+                <i class="fas fa-info-circle"></i> 
+                Name used in the pipeline
+            </div>
+            <input name="python_action_name" value="CustomAction" required>
+            
+            <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
+        </form>
+    </div>
+</div>
