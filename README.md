@@ -127,10 +127,11 @@ In addition to these folders, you will find a folder named tests that contains t
 * Group by, 'Vlookup', date format, new column=formula of existing ones
 * Create table from other table(s) (merge, union, ...)
 * Add kwargs to actions
-* Edit table style (button colors?, table not bigger than screen, ...)
+* Edit table style (button, ...)
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method)
+* Sticky header when scrolling table vertically
 
 ### To do MVP
 * All available table actions + all available args
