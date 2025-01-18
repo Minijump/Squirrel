@@ -38,8 +38,6 @@
 
 .table-html {
     overflow-y: auto;
-    /* overflow-x: auto; */
-    /* position: relative; */
     max-height: 90%;
     margin-top: 25px;
 }
@@ -64,25 +62,38 @@
     border-collapse: collapse; /*Reduce space between cells*/
     font-size: 0.9em;
     width: 100%;
-    border-radius: 5px 5px 0 0;
-    overflow: hidden;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+.df-table thead {
+    position: sticky;
+    top: 0;
 }
 .df-table thead tr {
     background-color: var(--structure-color);
     color: var(--primary-text-color);
     font-weight: bold;
 }
+.df-table thead tr th{
+    border-bottom: 0;
+}
 .df-table th, .df-table td {
     padding: 12px 15px;
     text-align: left;
     white-space: nowrap;
+    border-top: 0;
+    border-left: 0;
+}
+.df-table th:last-of-type, .df-table td:last-of-type {
+    border-right: 0;
 }
 .df-table tbody tr:nth-of-type(even) {
     background-color: var(--light-structure-color);
 }
 .df-table tbody tr:last-of-type {
-    border-bottom: 2px solid var(--structure-color); /*Last row border bottom*/
+    border-bottom: 2px solid var(--structure-color);
 }
 
 .pager {
