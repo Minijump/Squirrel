@@ -128,10 +128,11 @@ In addition to these folders, you will find a folder named tests that contains t
 * Create table from other table(s) (merge, union, ...)
 * Add kwargs to actions
 * Edit table style (button, ...)
+* Autocomplete widget for table/column
+* Dictionnary widget
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method)
-* Sticky header when scrolling table vertically
 
 ### To do MVP
 * All available table actions + all available args
