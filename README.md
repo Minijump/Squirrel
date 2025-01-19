@@ -124,12 +124,12 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Group by, 'Vlookup', date format, new column=formula of existing ones
+* Group by, 'Vlookup', date format
 * Create table from other table(s) (merge, union, ...)
 * Add kwargs to actions
 * Edit table style (button, ...)
-* Autocomplete widget for table/column
-* Dictionnary widget
+* Autocomplete widget for squirrel action
+* Dictionnary, list widgets
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method)
@@ -151,4 +151,5 @@ In addition to these folders, you will find a folder named tests that contains t
 * basic graphs (chart.js, d3.js,...?)
 * Dashboards? (can be saved)
 * computed vars
+* Look at https://github.com/SortableJS/Sortable for potential swappy replacment
 * ...

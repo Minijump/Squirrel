@@ -59,6 +59,17 @@ def add(func):
 
 action = type('action', (object,), {'add': add})
 
+def convert_to_squirrel_action(code, actual_table_name=None):
+    """
+    t[t_name] means 'table with name t_name' and is accessed by dfs[t_name]
+    t[t_name]c[name] means 'column with name name in table t_name' and is accessed by dfs[t_name][name]
+    c[name[] means 'column with name name in actual_table' and is accessed by dfs[actual_table_name][name]
+    """
+    code = code.replace(']c[', f'][') # if a table id provided
+    code = code.replace('c[', f"dfs['{actual_table_name}'][") # if a table id not provided
+    code = code.replace('t[', 'dfs[')
+    return code
+
 class Action:
     def __init__(self, request):
         self.request = request
@@ -77,12 +88,20 @@ class AddColumn(Action):
         super().__init__(request)
         self.args = {
             "col_name": {"type": "str", "string": "Col. Name"},
+            "value_type": {"type": "select", "string": "Value Type", 
+                           "options": [("sq_action", "Squirrel action"), ("python", "Python")]},
             "col_value": {"type": "txt", "string": "Col. Value"},
         }
 
     async def execute(self):
-        table_name, col_name, col_value = await self._get(["table_name", "col_name", "col_value"])
-        new_code = f"""dfs['{table_name}']['{col_name}'] = {col_value}  #sq_action:Add column {col_name} on table {table_name}"""
+        table_name, col_name, col_value, value_type = await self._get(["table_name", "col_name", "col_value", "value_type"])
+        if value_type == "python":
+            new_code = f"""dfs['{table_name}']['{col_name}'] = {col_value}  #sq_action:Add column {col_name} on table {table_name}"""
+        elif value_type == "sq_action":
+            sq_action = convert_to_squirrel_action(col_value, table_name)
+            new_code = f"""dfs['{table_name}']['{col_name}'] = {sq_action}  #sq_action:Add column {col_name} on table {table_name}"""
+        else:
+            raise ValueError("Invalid value type")
         return new_code
 
 @table_action_type
