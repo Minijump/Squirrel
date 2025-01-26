@@ -23,12 +23,30 @@
         <label for="table_name">Table Name:</label>
         <input id="new_table_name" name="table_name" required>
 
-        <label for="data_source">Data Source:</label>
-        <select name="data_source_dir" id="data_source" class="right-sidebar-select" onload="toggleSourceSelect()">
-            {% for source in sources %}
-                <option value="{{ source.directory }}" data-type="{{ source.type }}">{{ source.name }}</option>
+        <label for="source_creation_type">From:</label>
+        <select name="source_creation_type" id="source_creation_type" class="right-sidebar-select">
+            {% for type in [('data_source', 'Data Sources'), ('other_tables', 'Other Tables')] %}
+                <option value="{{ type[0] }}">{{ type[1] }}</option>
             {% endfor %}
         </select>
+
+        <div class="data_source_type_onchange data_source">
+            <label for="data_source">Data Source:</label>
+            <select name="data_source_dir" id="data_source" class="right-sidebar-select">
+                {% for source in sources %}
+                    <option value="{{ source.directory }}" data-type="{{ source.type }}">{{ source.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="data_source_type_onchange other_tables">
+            <label for="table_df">Table: </label>
+            <select name="table_df" id="table_df" class="right-sidebar-select">
+                {% for name, html_table in table.items() %}
+                    <option value="{{ name }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
         <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Create Table</button>
     </form>

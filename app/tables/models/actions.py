@@ -134,18 +134,27 @@ class DeleteRow(Action):
 @table_action_type
 class CreateTable(Action):
     async def execute(self):
-        project_dir, data_source_dir = await self._get(["project_dir", "data_source_dir"])
-        data_source_path = os.path.relpath(
-            os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', data_source_dir), 
-            os.getcwd())
+        table_name, project_dir, data_source_dir, source_creation_type, table_df = await self._get(
+            ["table_name", "project_dir", "data_source_dir", "source_creation_type", "table_df"])
+        
+        if source_creation_type == "data_source":
+            data_source_path = os.path.relpath(
+                os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', data_source_dir), 
+                os.getcwd())
 
-        manifest_path = os.path.join(data_source_path, "__manifest__.json")
-        with open(manifest_path, 'r') as file:
-            manifest_data = json.load(file)
+            manifest_path = os.path.join(data_source_path, "__manifest__.json")
+            with open(manifest_path, 'r') as file:
+                manifest_data = json.load(file)
 
-        SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
-        source = SourceClass(manifest_data)
-        new_code = source.create_table(await self.request.form())
+            SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
+            source = SourceClass(manifest_data)
+            new_code = source.create_table(await self.request.form())
+
+        elif source_creation_type == "other_tables":
+            new_code = f"dfs['{table_name}'] = dfs['{table_df}']  #sq_action:Create table {table_name}"
+
+        else:
+            raise ValueError("Invalid source_creation_type")
         
         return new_code
     

@@ -162,6 +162,22 @@ function toggleSelect() {
     });
 }
 
+// Create-Table Sidebar -------------------------------------------------------
+function sourceCreationTypeToggle() {
+    let select_value = document.getElementById('source_creation_type').value;
+    let elements = document.getElementsByClassName('data_source_type_onchange');
+    
+    for (let i = 0; i < elements.length; i++) {
+        if (elements[i].classList.contains(select_value)) {
+            elements[i].style.display = "block";
+        } else {
+            elements[i].style.display = "none";
+        }
+    }
+}
+document.getElementById('source_creation_type').addEventListener('change', sourceCreationTypeToggle);
+document.addEventListener('DOMContentLoaded', function() { sourceCreationTypeToggle(); });
+
 // InfoColModal ---------------------------------------------------------------
 function formatNumber(num) {
     if (typeof num === 'string' && !isNaN(num)) {
