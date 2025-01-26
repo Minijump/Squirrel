@@ -125,7 +125,7 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To do
 * Group by, 'Vlookup', date format
-* Create table from other table(s) (merge, union, ...)
+* Create table from pandas merge=sql join, union, ...
 * Add kwargs to actions
 * Edit table style (button, ...)
 * Autocomplete widget for squirrel action
