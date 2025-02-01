@@ -171,3 +171,33 @@ class CustomPythonAction(Action):
         python_action_code, python_action_name = await self._get(["python_action_code", "python_action_name"])
         new_code = f"""{python_action_code}  #sq_action: {python_action_name}"""
         return new_code
+    
+@table_action_type
+class MergeTables(Action):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args = {
+            "table2": {"type": "str", "string": "Table to merge"},
+            "on": {"type": "str", "string": "On", "info": "Column name (must be in both tables)"},
+            "how": {"type": "select", "string": "How", 
+                    "options": [("inner", "Inner"), ("outer", "Outer"), ("left", "Left"), ("right", "Right")],
+                    "info": "Type of merge, see pandas merge doc (similar to SQL JOIN)"},
+        }
+
+    async def execute(self):
+        table_name, table2, on, how = await self._get(["table_name", "table2", "on", "how"])
+        new_code = f"""dfs['{table_name}'] = pd.merge(dfs['{table_name}'], dfs['{table2}'], on='{on}', how='{how}')  #sq_action:Merge {table_name} with {table2}"""
+        return new_code
+
+@table_action_type
+class ConcatenateTables(Action):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args = {
+            "table": {"type": "str", "string": "Table to concat", "info": "Table name to concatenate (SQL UNION)"},
+        }
+
+    async def execute(self):
+        table_name, table = await self._get(["table_name", "table"])
+        new_code = f"""dfs['{table_name}'] = pd.concat([dfs['{table_name}'], dfs['{table}']], ignore_index=True)  #sq_action:Concatenate tables {table_name} and {table}"""
+        return new_code
