@@ -123,12 +123,19 @@ class ChangeType(ActionColumn):
         super().__init__(request)
         self.args.update({
             "new_type": {"type": "select", "string": "New Type", 
-                         "options": [("int", "Integer"), ("float", "Float"), ("string", "String"), ("bool", "Boolean"), ("category", "Category")]}
-        })
+                         "options": [("int", "Integer"), ("float", "Float"), 
+                                     ("string", "String"), ("bool", "Boolean"), ("category", "Category"), 
+                                     ("datetime", "Datetime")]},
+                })
 
     async def execute(self):
         table_name, col_name, new_type, col_idx = await self._get(["table_name", "col_name", "new_type", "col_idx"])
-        new_code = f"""dfs['{table_name}'][{col_idx}] = dfs['{table_name}'][{col_idx}].astype('{new_type}')  #sq_action:Change type of column {col_name} to {new_type} in table {table_name}"""
+
+        if new_type == "datetime":
+            new_code = f"""dfs['{table_name}'][{col_idx}] = pd.to_datetime(dfs['{table_name}'][{col_idx}])  #sq_action:Change type of column {col_name} to {new_type} in table {table_name}"""
+        else:
+            new_code = f"""dfs['{table_name}'][{col_idx}] = dfs['{table_name}'][{col_idx}].astype('{new_type}')  #sq_action:Change type of column {col_name} to {new_type} in table {table_name}"""
+
         return new_code
 
 @table_action_type
