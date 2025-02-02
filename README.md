@@ -124,7 +124,7 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Group by, date format
+* date format
 * Add kwargs to actions
 * Edit table style (button, ...)
 * Autocomplete widget for squirrel action
