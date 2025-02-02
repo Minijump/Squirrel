@@ -56,6 +56,7 @@ function openSidebarForm(id, data = {}) {
     const form = document.getElementById(id);
     form.style.width = "250px";
     completeInputs(form, data);
+    focusOnInput();
 }
 function completeInputs(form, action, data) {
     form.querySelector('input[name="action_name"]').value = action;
@@ -147,6 +148,7 @@ async function openSidebarActionForm(action, data = {}) {
     await addInputs(action, form);
     completeInputs(form, action, data);
     toggleSelect();
+    focusOnInput();
 }
 function toggleSelect() {
     let Select = document.querySelector(".right-sidebar-select");
@@ -160,6 +162,15 @@ function toggleSelect() {
             element.required = false
         }
     });
+}
+function focusOnInput() {
+    let inputs = document.querySelectorAll('input, textarea');
+    for (const input of inputs) {
+        if (input.offsetParent !== null) { // Check if the element is visible
+            input.focus();
+            break;
+        }
+    }
 }
 
 // Create-Table Sidebar -------------------------------------------------------
