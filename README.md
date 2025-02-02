@@ -124,11 +124,9 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* date format
-* Add kwargs to actions
+* Add kwargs to actions (fetch them dynamically? enable user to complete them with widget?)
 * Edit table style (button, ...)
-* Autocomplete widget for squirrel action
-* Dictionnary, list widgets
+* Widgets: autocomplete Squirrel action, dictionnaries, lists
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method)
