@@ -201,3 +201,24 @@ class ConcatenateTables(Action):
         table_name, table = await self._get(["table_name", "table"])
         new_code = f"""dfs['{table_name}'] = pd.concat([dfs['{table_name}'], dfs['{table}']], ignore_index=True)  #sq_action:Concatenate tables {table_name} and {table}"""
         return new_code
+
+@table_action_type
+class GroupBy(Action):
+    def __init__(self, request):
+        super().__init__(request)
+        # agg is mandatory, without agg it returns a dfGroupBy object whiwh can not be displayed yet
+        self.args = {
+            "groupby": {"type": "txt", "string": "Group by", 
+                        "info": "Column name or list of column names </br> i.e. col1 or ['col1', 'col2']"},
+            "agg": {"type": "txt", "string": "Aggregation",
+                    "info": "Aggregation functions to apply to each group </br> i.e. sum or {'col1': 'sum', 'col2': 'mean'}"},
+        }
+
+    async def execute(self):
+        table_name, groupby, agg = await self._get(["table_name", "groupby", "agg"])
+
+        groupby_str = groupby if groupby.startswith('[') else f"'{groupby}'"
+        agg_str = f".agg({agg})" if agg.startswith('{') else f".agg('{agg}')"
+
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].groupby({groupby_str}){agg_str if agg else ''}.reset_index()  #sq_action:Group by {groupby} {('aggr' + agg) if agg else ''} table {table_name}"""
+        return new_code

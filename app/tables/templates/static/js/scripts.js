@@ -133,7 +133,7 @@ async function addInputs(action, form) {
                 else{
                     addLabel(argsDiv, args[key]);
                     input = createInput(args[key]);
-                    input.required = true;
+                    input.required = (args[key].required !== undefined) ? args[key].required : true;
                 }
                 input.name = key;
                 input.id = key;
