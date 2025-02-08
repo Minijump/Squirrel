@@ -6,49 +6,53 @@ class SquirrelDictionary {
     }
 
     initialize() {
-        // Create wrapper
         this.wrapper = document.createElement('div');
         this.wrapper.className = 'squirrel-dict-widget';
         this.textarea.parentNode.insertBefore(this.wrapper, this.textarea);
         this.textarea.style.display = 'none';
         
-        // Create table
         this.table = document.createElement('table');
         this.table.innerHTML = `
             <tbody></tbody>
         `;
         this.wrapper.appendChild(this.table);
 
-        // Add button if creation allowed
         if (this.options.create) {
             const addBtn = document.createElement('button');
-            addBtn.textContent = 'Add Entry';
-            addBtn.className = 'btn btn-sm btn-primary';
-            addBtn.onclick = () => this.addRow();
+            addBtn.textContent = 'Add Line';
+            addBtn.className = 'btn-add-line';
+            addBtn.onclick = (event) => {
+                event.preventDefault();
+                this.addRow();
+            };
             this.wrapper.appendChild(addBtn);
         }
 
-        // Load initial data
         this.loadData();
     }
 
     loadData() {
         const data = JSON.parse(this.textarea.value || '{}');
         Object.entries(data).forEach(([key, value]) => {
-            this.addRow(key, value);
+            this.addDefaultRow(key, value);
         });
     }
 
-    addRow(key = '', value = '') {
+    addDefaultRow(key = '', value = '') {
+        this.addRow(key, value, true);
+    }
+
+    addRow(key = '', value = '', default_row = false) {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td><input type="text" class="form-control" value="${key}"></td>
-            <td><input type="text" class="form-control" value="${value}"></td>
-            <td>
-                ${this.options.remove_default !== false ? 
-                '<button class="btn btn-sm btn-danger">Remove</button>' : ''}
-            </td>
+            <td><input type="text" value="${key}"></td>
+            <td><input type="text" value="${value}"></td>
+            <td></td>
         `;
+        if (this.options.remove_default !== false || !default_row) {
+            row.querySelector('td:last-child').innerHTML = '<button class="btn-remove-line">X</button>';
+        }
+            
 
         const removeBtn = row.querySelector('button');
         if (removeBtn) {

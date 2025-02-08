@@ -1,0 +1,38 @@
+/* Dictionary widget */
+.squirrel-dict-widget {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.squirrel-dict-widget table {
+    width: 80%;
+    border-collapse: collapse;
+}
+
+.squirrel-dict-widget input {
+    width: 95%;
+}
+
+.squirrel-dict-widget button.btn-danger {
+    padding: 0.25rem 0.5rem;
+}
+
+.btn-add-line {
+    background: transparent;
+    color: var(--primary-text-color);
+    border: solid 1px var(--primary-text-color);
+    padding: 2px 4px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-remove-line {
+    background: transparent;
+    color: red;
+    border: 0px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+.btn-remove-line:hover {
+    text-decoration: underline;
+}

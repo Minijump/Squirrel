@@ -1,19 +1,1 @@
 @import url('/static/base/css/style.css');
-
-.squirrel-dict-widget {
-    margin-top: 5px;
-}
-
-.squirrel-dict-widget table {
-    width: 80%;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-}
-
-.squirrel-dict-widget input {
-    width: 95%;
-}
-
-.squirrel-dict-widget button.btn-danger {
-    padding: 0.25rem 0.5rem;
-}
