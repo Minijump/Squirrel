@@ -27,14 +27,14 @@
             <label for="projectMisc">Misc</label>
             <div class="info-note">
                 <i class="fas fa-info-circle"></i> 
-                With format: {"key": "value", "key2": value2, ...} Use double quotes. If invalid input, misc is reset to default.
+                If invalid, misc is reset to default.
             </div>
-            <textarea id="projectMisc" name="misc">{{ project.misc | tojson }}</textarea>
+            <textarea id="projectMisc" name="misc" widget="squirrel-dictionary" options='{"create":false, "remove_default":false}'>{{ project.misc | tojson }}</textarea>
     
             <button type="submit" class="btn-primary">Save</button>
         </form>
     </main>
 </div>
-<script src="{{ url_for('projects_static', path='js/scripts.js') }}"></script>
+<script src="{{ url_for('projects_static', path='js/scripts_project_settings.js') }}"></script>
 </body>
 </html>
