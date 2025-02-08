@@ -124,12 +124,14 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Add kwargs to actions (fetch them dynamically? enable user to complete them with widget?)
+* Add kwargs to actions => see fct.__code__.co_varnames/fct.__defaults__ or inspect.signature(fct)
 * Edit table style (button, ...)
-* Widgets: autocomplete Squirrel action, dictionnaries, lists
+* Dictionnary widget: make it a util widget + fix create new and remove lines + test everywhere
+* Widgets: autocomplete Squirrel action, lists
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method)
+* Removing 'value['table_len'] = int(value['table_len'])' in project.py raise an errors: normal as widget returns a str. However error display a black screen
 
 ### To do MVP
 * All available table actions + all available args
