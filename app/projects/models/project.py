@@ -103,6 +103,7 @@ class Project:
             if key in ('misc'):
                 try:
                     value = json.loads(value)
+                    value['table_len'] = int(value['table_len'])
                 except:
                     value = self.create_misc({})
             if key in manifest_data:
