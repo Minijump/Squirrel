@@ -131,7 +131,6 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method)
-* Removing 'value['table_len'] = int(value['table_len'])' in project.py raise an errors: normal as widget returns a str. However error display a black screen
 
 ### To do MVP
 * All available table actions + all available args
@@ -151,4 +150,5 @@ In addition to these folders, you will find a folder named tests that contains t
 * Dashboards? (can be saved)
 * computed vars
 * Look at https://github.com/SortableJS/Sortable for potential swappy replacment
+* integrated llm / Connection with online ones (+ crewAI?)
 * ...

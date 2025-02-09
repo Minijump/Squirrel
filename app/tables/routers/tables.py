@@ -49,6 +49,7 @@ def to_html_with_idx(df):
     return html[:header_start] + modified_header + html[header_end:]
 
 @router.get("/tables/")
+@squirrel_error
 async def tables(request: Request, project_dir: str):
     """
     Run the pipeline contained in the project directory and display the result
