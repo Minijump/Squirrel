@@ -10,7 +10,9 @@
         <i class="fas fa-info-circle"></i> 
         With format: {'nrows': 10, ...}
     </div>
-    <input id="kwargs" name="kwargs" type="text" value="{{ source.kwargs }}">
+    <textarea id="kwargs" name="kwargs" type="text" widget="squirrel-dictionary" options='{"create":true, "remove_default":true}'>
+        {{ source.kwargs | tojson }}
+    </textarea>
 </div>
 
 <!-- odoo -->
@@ -54,7 +56,9 @@
         <i class="fas fa-info-circle"></i> 
         With format: {'ofset': 0, 'limit': 10, 'order': 'id desc', ...}
     </div>
-    <input id="odooKwargs" name="kwargs" type="text" value="{{ source.kwargs }}">
+    <textarea id="odooKwargs" name="kwargs" type="text" widget="squirrel-dictionary" options='{"create":false, "remove_default":false}'>
+        {{ source.kwargs | tojson }}
+    </textarea>
 </div>
 
 <!-- yahoo finance -->
