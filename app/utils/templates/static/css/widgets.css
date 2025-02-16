@@ -11,6 +11,8 @@
 
 .squirrel-dict-widget input {
     width: 95%;
+    margin-bottom: 1px;
+    margin-top: 1px;
 }
 
 .squirrel-dict-widget button.btn-danger {
@@ -21,9 +23,10 @@
     background: transparent;
     color: var(--primary-text-color);
     border: solid 1px var(--primary-text-color);
-    padding: 2px 4px;
+    padding: 1px 5px;
     border-radius: 5px;
     cursor: pointer;
+    margin-left: 6px;
 }
 
 .btn-remove-line {
@@ -31,7 +34,8 @@
     color: red;
     border: 0px;
     cursor: pointer;
-    margin-left: 5px;
+    padding: 1px 5px;
+    margin-left: 6px;
 }
 .btn-remove-line:hover {
     text-decoration: underline;

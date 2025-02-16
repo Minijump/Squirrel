@@ -14,18 +14,16 @@ class SquirrelDictionary {
         this.table = document.createElement('table');
         this.table.innerHTML = `
             <tbody></tbody>
+            ${this.options.create ? '<tfoot><tr><td></td><td></td><td><button class="btn-add-line">+</button></td></tr></tfoot>' : ''}
         `;
         this.wrapper.appendChild(this.table);
 
         if (this.options.create) {
-            const addBtn = document.createElement('button');
-            addBtn.textContent = 'Add Line';
-            addBtn.className = 'btn-add-line';
+            const addBtn = this.table.querySelector('.btn-add-line');
             addBtn.onclick = (event) => {
                 event.preventDefault();
                 this.addRow();
             };
-            this.wrapper.appendChild(addBtn);
         }
 
         this.loadData();
@@ -44,8 +42,10 @@ class SquirrelDictionary {
 
     addRow(key = '', value = '', default_row = false) {
         const row = document.createElement('tr');
+        const isKeyReadOnly = default_row && this.options.remove_default === false;
+
         row.innerHTML = `
-            <td><input type="text" value="${key}"></td>
+            <td><input type="text" value="${key}" ${isKeyReadOnly ? 'readonly' : ''}></td>
             <td><input type="text" value="${value}"></td>
             <td></td>
         `;
@@ -76,7 +76,9 @@ class SquirrelDictionary {
             const inputs = row.querySelectorAll('input');
             const key = inputs[0].value.trim();
             if (key) {
-                data[key] = inputs[1].value;
+                const value = inputs[1].value;
+                const numValue = Number(value);
+                data[key] = !isNaN(numValue) && value.trim() !== '' ? numValue : value;
             }
         });
         this.textarea.value = JSON.stringify(data);
