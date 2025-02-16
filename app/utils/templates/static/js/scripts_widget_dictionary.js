@@ -1,7 +1,12 @@
 class SquirrelDictionary {
     constructor(element) {
         this.textarea = element;
-        this.options = JSON.parse(element.getAttribute('options') || '{}');
+        const defaultOptions = {
+            create: true,
+            remove: true
+        };
+        const userOptions = JSON.parse(element.getAttribute('options') || '{}');
+        this.options = { ...defaultOptions, ...userOptions };
         this.initialize();
     }
 
@@ -42,14 +47,14 @@ class SquirrelDictionary {
 
     addRow(key = '', value = '', default_row = false) {
         const row = document.createElement('tr');
-        const isKeyReadOnly = default_row && this.options.remove_default === false;
+        const isKeyReadOnly = default_row && this.options.remove === false;
 
         row.innerHTML = `
             <td><input type="text" value="${key}" ${isKeyReadOnly ? 'readonly' : ''}></td>
             <td><input type="text" value="${value}"></td>
             <td></td>
         `;
-        if (this.options.remove_default !== false || !default_row) {
+        if (this.options.remove !== false || !default_row) {
             row.querySelector('td:last-child').innerHTML = '<button class="btn-remove-line">X</button>';
         }
             

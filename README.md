@@ -126,7 +126,7 @@ In addition to these folders, you will find a folder named tests that contains t
 ### To do
 * Add kwargs to actions => see fct.__code__.co_varnames/fct.__defaults__ or inspect.signature(fct)
 * Edit table style (button, ...)
-* Dictionnary widget: add everywhere + !! differentiate default values and values (that can be deleted)
+* Dictionnary widget: add everywhere
 * Widgets: autocomplete Squirrel action, lists
 
 ### To Fix
