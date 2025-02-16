@@ -82,6 +82,12 @@ main h2 {
   border: none;
   margin: 12px;
 }
+.std-form input:read-only {
+  pointer-events: none;
+  outline: none;
+  user-select: none;
+  background-color: #3b4351;
+}
 .std-form select option {
   padding: 5px;
   background-color: #4b5563;
