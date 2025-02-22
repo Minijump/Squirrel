@@ -96,6 +96,11 @@ function createInput(arg) {
     if (arg.type === 'txt') {
         input = document.createElement('textarea');
     }
+    if (arg.type === 'dict') {
+        input = document.createElement('textarea');
+        input.setAttribute('widget', 'squirrel-dictionary');
+        input.setAttribute('options', '{"create":true, "remove":true}');
+    }
     if (arg.type === 'number') {
         input.type = 'number';
         input.step = arg.step || 'any';
@@ -139,6 +144,9 @@ async function addInputs(action, form) {
                 input.name = key;
                 input.id = key;
                 argsDiv.appendChild(input);
+                if (args[key].type === 'dict') {
+                    new SquirrelDictionary(input);
+                }
         });
     });
 }
@@ -293,7 +301,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     const startElement = page * n + 1;
                     const endElement = startElement + n - 1;
-                    document.getElementById(`pager-info-${tableName}`).innerText = `${startElement}-${endElement} / ${tableNumLines}`;
+                    const displayEndElement = Math.min(endElement, tableNumLines);                    
+                    console.log(startElement, displayEndElement, tableNumLines);
+                    document.getElementById(`pager-info-${tableName}`).innerText = `${startElement}-${displayEndElement} / ${tableNumLines}`;
                     addInfoButtons();
                 })
                 .catch(error => console.error('Error:', error));

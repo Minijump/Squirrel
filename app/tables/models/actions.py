@@ -194,7 +194,7 @@ class ConcatenateTables(Action):
     def __init__(self, request):
         super().__init__(request)
         self.args = {
-            "table": {"type": "str", "string": "Table to concat", "info": "Table name to concatenate (SQL UNION)"},
+            "table": {"type": "str", "string": "Table to concat", "info": "Table name to concatenate (SQL UNION) into actual table"},
         }
 
     async def execute(self):
@@ -210,7 +210,7 @@ class GroupBy(Action):
         self.args = {
             "groupby": {"type": "txt", "string": "Group by", 
                         "info": "Column name or list of column names </br> i.e. col1 or ['col1', 'col2']"},
-            "agg": {"type": "txt", "string": "Aggregation",
+            "agg": {"type": "dict", "string": "Aggregation",
                     "info": "Aggregation functions to apply to each group </br> i.e. sum or {'col1': 'sum', 'col2': 'mean'}"},
         }
 
