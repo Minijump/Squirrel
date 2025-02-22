@@ -5,8 +5,8 @@ class SquirrelDictionary {
             create: true,
             remove: true
         };
-        const userOptions = JSON.parse(element.getAttribute('options') || '{}');
-        this.options = { ...defaultOptions, ...userOptions };
+        const userOptions = element.getAttribute('options');
+        this.options = userOptions ? { ...defaultOptions, ...JSON.parse(userOptions) } : defaultOptions;
         this.initialize();
     }
 
@@ -19,7 +19,7 @@ class SquirrelDictionary {
         this.table = document.createElement('table');
         this.table.innerHTML = `
             <tbody></tbody>
-            ${this.options.create ? '<tfoot><tr><td></td><td></td><td><button class="btn-add-line">+</button></td></tr></tfoot>' : ''}
+            ${this.options.create ? '<tfoot><tr><td></td><td></td><td><button type="button" class="btn-add-line">+</button></td></tr></tfoot>' : ''}
         `;
         this.wrapper.appendChild(this.table);
 
@@ -35,6 +35,9 @@ class SquirrelDictionary {
     }
 
     loadData() {
+        if (!this.textarea.value.trim()) {
+            return;
+        }
         const data = JSON.parse(this.textarea.value || '{}');
         Object.entries(data).forEach(([key, value]) => {
             this.addDefaultRow(key, value);

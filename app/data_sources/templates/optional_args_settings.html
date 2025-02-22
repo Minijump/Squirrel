@@ -11,7 +11,7 @@
         With format: {'nrows': 10, ...}
     </div>
     <textarea id="kwargs" name="kwargs" widget="squirrel-dictionary" options='{"create":true, "remove":true}'>
-        {{ source.kwargs | tojson }}
+        {{ source.kwargs | default({}, true) | tojson }}
     </textarea>
 </div>
 
@@ -57,7 +57,7 @@
         With format: {'ofset': 0, 'limit': 10, 'order': 'id desc', ...}
     </div>
     <textarea id="odooKwargs" name="kwargs" widget="squirrel-dictionary" options='{"create":true, "remove":true}'>
-        {{ source.kwargs | tojson }}
+        {{ source.kwargs | default({}, true) | tojson }}
     </textarea>
 </div>
 
