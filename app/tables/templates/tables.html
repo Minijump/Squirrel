@@ -63,7 +63,9 @@
                     <div class="pager" data-table="{{ name }}" data-totallen="{{ table_len_infos.get(name, {}).get('total_len', 0) }}" data-displaylen="{{ table_len_infos.get(name, {}).get('display_len', 0) }}" data-project_dir="{{ project_dir }}">
                         <div id="prev" class="pager-btn">&lt;</div>
                         <div id="pager-info-{{ name }}" class="pager-info">
-                            0-{{ table_len_infos.get(name, {}).get('display_len', 0) }} / {{ table_len_infos.get(name, {}).get('total_len', 0) }}
+                            {% set display_len = table_len_infos.get(name, {}).get('display_len', 0) %}
+                            {% set total_len = table_len_infos.get(name, {}).get('total_len', 0) %}
+                            0-{% if display_len > total_len %}{{ total_len }}{% else %}{{ display_len }}{% endif %} / {{ total_len }}
                         </div>
                         <div id="next" class="pager-btn">&gt;</div>
                     </div>
@@ -93,7 +95,9 @@
 
         <!-- JS scripts -->
         <!-- Sidebar, Modal, Pager, Info button-->
-        <script src="{{ url_for('tables_static', path='js/scripts.js') }}"></script>         
+        <script src="{{ url_for('base_static', path='js/scripts_widget_dictionary.js') }}"></script>
+        <script type="module" src="{{ url_for('base_static', path='js/scripts_base.js') }}"></script>
+        <script src="{{ url_for('tables_static', path='js/scripts.js') }}"></script>
     </main>
 </div>
 </body>

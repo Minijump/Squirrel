@@ -37,7 +37,7 @@ class ReplaceVals(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
         self.args.update({
-            "replace_vals": {"type": "txt", 
+            "replace_vals": {"type": "dict", 
                              "string": "Replace Domain:", 
                              "info": "With format {'to_replace1': 'replacing1', 'to_replace2': 'replacing2', ...}"},
         })

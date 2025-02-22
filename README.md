@@ -126,11 +126,11 @@ In addition to these folders, you will find a folder named tests that contains t
 ### To do
 * Add kwargs to actions => see fct.__code__.co_varnames/fct.__defaults__ or inspect.signature(fct)
 * Edit table style (button, ...)
-* Dictionnary widget: add everywhere
 * Widgets: autocomplete Squirrel action, lists
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method)
+* Bugs in pipeline? When action deletion?
 
 ### To do MVP
 * All available table actions + all available args
