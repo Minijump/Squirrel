@@ -30,9 +30,9 @@
                 If invalid, misc is reset to default.
             </div>
             <textarea id="projectMisc" name="misc" widget="squirrel-dictionary" options='{"create":false, "remove":false}'>
-                {{ project.misc | tojson }}
+                {{ project.misc | default({}, true) | tojson }}
             </textarea>
-    
+
             <button type="submit" class="btn-primary">Save</button>
         </form>
     </main>

@@ -2,21 +2,27 @@
 .squirrel-dict-widget {
     margin-top: 5px;
     margin-bottom: 10px;
+    width: 100%;
+    max-width: 800px; 
 }
 
 .squirrel-dict-widget table {
-    width: 80%;
+    width: 100%;
     border-collapse: collapse;
+    min-width: 200px;
+}
+
+.squirrel-dict-widget td {
+    padding: 2px;
+    box-sizing: border-box; /* Ensure padding is included in width calculations */
 }
 
 .squirrel-dict-widget input {
-    width: 95%;
+    width: 100%;
     margin-bottom: 1px;
     margin-top: 1px;
-}
-
-.squirrel-dict-widget button.btn-danger {
-    padding: 0.25rem 0.5rem;
+    box-sizing: border-box; /* Ensure padding is included in width calculations */
+    min-width: 60px; 
 }
 
 .btn-add-line {
@@ -27,6 +33,7 @@
     border-radius: 5px;
     cursor: pointer;
     margin-left: 6px;
+    white-space: nowrap;
 }
 
 .btn-remove-line {
@@ -36,6 +43,7 @@
     cursor: pointer;
     padding: 1px 5px;
     margin-left: 6px;
+    white-space: nowrap;
 }
 .btn-remove-line:hover {
     text-decoration: underline;
