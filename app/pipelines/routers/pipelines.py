@@ -112,7 +112,7 @@ async def confirm_new_order(request: Request, project_dir: str, order: str):
     """
     pipeline_path = os.path.join(os.getcwd(), "_projects", project_dir, "pipeline.py")
     lines = await get_file_lines(pipeline_path)
-    new_order = [int(action_str[0]) for action_str in order.split(",")] # the old ids in the new order
+    new_order = [int(action_str.split('-')[0]) for action_str in order.split(",")] # the old ids in the new order
     old_actions = [line for line in lines if isinstance(line, tuple)]  # the actions in the old order
     new_lines = []
     action_id = 0

@@ -130,10 +130,10 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method)
-* Bugs in pipeline? When action deletion?
 
 ### To do MVP
 * All available table actions + all available args
+* Imp unit tests: test with frontend (use selenium/selenium ide? https://www.youtube.com/watch?v=1FXJc20pZ2o&t=67s&ab_channel=SimpleTech)
 
 ### Feature ideas
 * Odoo module; ease imports ?
