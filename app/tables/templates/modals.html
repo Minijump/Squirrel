@@ -40,6 +40,11 @@
                 openSidebarActionForm('SortColumn', getColumnInfo())">
                 Sort
             </button>
+            <button class="btn-primary" onclick="
+                closeInfoColModal();
+                openSidebarActionForm('ApplyFunction', getColumnInfo())">
+                Apply Function
+            </button>
         </div>
         <div class="infos-div">
             <div class="numeric-only">
@@ -71,6 +76,16 @@
                     closeInfoColModal();
                     openSidebarActionForm('CutValues', getColumnInfo())">
                     Cut
+                </button>
+                <button class="btn-primary" onclick="
+                    closeInfoColModal();
+                    openSidebarActionForm('NLargest', getColumnInfo())">
+                    Keep N largest
+                </button>
+                <button class="btn-primary" onclick="
+                    closeInfoColModal();
+                    openSidebarActionForm('NSmallest', getColumnInfo())">
+                    Keep N smallest
                 </button>
             </div>
         </div>

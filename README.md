@@ -125,15 +125,15 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To do
 * Add kwargs to actions => see fct.__code__.co_varnames/fct.__defaults__ or inspect.signature(fct)
-* Edit table style (button, ...)
+* All available table actions + all available args (easy action: dfs['testdesign']['price-diff'] = dfs['testdesign']['price'].diff() should be easier than typing the code in add a column, we should have the choice to select a diff fct when clicking on add column)
 * Widgets: autocomplete Squirrel action, lists
+* Edit table style (button, ...)
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method)
 
 ### To do MVP
-* All available table actions + all available args
-* Imp unit tests: test with frontend (use selenium/selenium ide? https://www.youtube.com/watch?v=1FXJc20pZ2o&t=67s&ab_channel=SimpleTech)
+* Imp unit tests: test with frontend (use selenium/selenium ide? https://www.youtube.com/watch?v=1FXJc20pZ2o&t=67s&ab_channel=SimpleTech) (create demo personas : tech guy/old/good user/...)
 
 ### Feature ideas
 * Odoo module; ease imports ?

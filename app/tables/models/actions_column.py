@@ -60,7 +60,41 @@ class RemoveUnderOver(ActionColumn):
         table_name, col_name, lower_bound, upper_bound, col_idx = await self._get(["table_name", "col_name", "lower_bound", "upper_bound", "col_idx"])
         new_code = f"""dfs['{table_name}'] = dfs['{table_name}'][(dfs['{table_name}'][{col_idx}] >= {lower_bound}) & (dfs['{table_name}'][{col_idx}] <= {upper_bound})]  #sq_action:Remove vals out of [{lower_bound}, {upper_bound}] in column {col_name} of table {table_name}"""
         return new_code
- 
+
+@table_action_type
+class NLargest(ActionColumn):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args.update({
+            "n": {"type": "number", "string": "N"},
+            "keep": {"type": "select", "string": "Keep",
+                     "options": [("first", "First"), ("last", "Last"), ("all", "All")],
+                     "info": "If some lines have similar values:<br/> -'First' will keep the first one<br/> -'Last' will keep the last one<br/> -'All' will keep all of them (even if the number of elements is bigger than expected).", 
+},
+        })
+
+    async def execute(self):
+        table_name, col_name, n, keep, col_idx = await self._get(["table_name", "col_name", "n", "keep", "col_idx"])
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].nlargest({n}, [{col_idx}], keep='{keep}')  #sq_action:Get {n} largest values in column {col_name} of table {table_name}"""
+        return new_code
+    
+@table_action_type
+class NSmallest(ActionColumn):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args.update({
+            "n": {"type": "number", "string": "N"},
+            "keep": {"type": "select", "string": "Keep",
+                     "options": [("first", "First"), ("last", "Last"), ("all", "All")],
+                     "info": "If some lines have similar values:<br/> -'First' will keep the first one<br/> -'Last' will keep the last one<br/> -'All' will keep all of them (even if the number of elements is bigger than expected).", 
+},
+        })
+
+    async def execute(self):
+        table_name, col_name, n, keep, col_idx = await self._get(["table_name", "col_name", "n", "keep", "col_idx"])
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].nsmallest({n}, [{col_idx}], keep='{keep}')  #sq_action:Get {n} smallest values in column {col_name} of table {table_name}"""
+        return new_code
+
 @table_action_type
 class RenameColumn(ActionColumn):
     def __init__(self, request):
@@ -181,4 +215,18 @@ class HandleMissingValues(ActionColumn):
         else:
             raise ValueError("Invalid action for handling missing values")
 
+        return new_code
+
+@table_action_type
+class ApplyFunction(ActionColumn):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args.update({
+            "function": {"type": "txt", "string": "Function", 
+                         "info": "Function must be python code with 'row['Col_name']' as the col values. E.g. row['Col_name'].str.len(), row['Col_name'] * -1 if row['Col_name'] < 0 else row['Col_name'], ...",},
+        })
+
+    async def execute(self):
+        table_name, col_name, function, col_idx = await self._get(["table_name", "col_name", "function", "col_idx"])
+        new_code = f"""dfs['{table_name}'][{col_idx}] = dfs['{table_name}'].apply(lambda row: {function}, axis=1)  #sq_action:Apply function to column {col_name} of table {table_name}"""
         return new_code

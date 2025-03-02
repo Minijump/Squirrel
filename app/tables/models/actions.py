@@ -130,6 +130,19 @@ class DeleteRow(Action):
         table_name, delete_domain = await self._get(["table_name", "delete_domain"])
         new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].query("not ({delete_domain})")  #sq_action:Delete rows in table {table_name}"""
         return new_code
+    
+@table_action_type
+class KeepRow(Action):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args = {
+            "keep_domain": {"type": "txt", "string": "Domain", "info": "With format Col1 &lt; Col2, Colx == 'Value',...."},
+        }
+
+    async def execute(self):
+        table_name, keep_domain = await self._get(["table_name", "keep_domain"])
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].query("({keep_domain})")  #sq_action:Keep rows in table {table_name}"""
+        return new_code
 
 @table_action_type
 class CreateTable(Action):
@@ -171,7 +184,7 @@ class CustomPythonAction(Action):
         python_action_code, python_action_name = await self._get(["python_action_code", "python_action_name"])
         new_code = f"""{python_action_code}  #sq_action: {python_action_name}"""
         return new_code
-    
+
 @table_action_type
 class MergeTables(Action):
     def __init__(self, request):
