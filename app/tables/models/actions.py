@@ -8,6 +8,7 @@ from fastapi.responses import RedirectResponse
 
 import os
 import json
+import inspect
 from functools import wraps
 
 from app.projects.models.project import NEW_CODE_TAG
@@ -81,6 +82,27 @@ class Action:
     
     async def execute(self):
         raise NotImplementedError("Subclasses must implement this method")
+    
+    def _get_method_sig(self, function, keep=False, remove=False):
+        """
+        Returns the method signature of the class
+        Remove all or keep only the specified args
+
+        => returns a dictionary with the args and their default values
+        """
+        sig = inspect.signature(function)
+        args_dict = {}
+        
+        for param in sig.parameters.values():
+            if param.name != 'self':
+                args_dict[param.name] = param.default if param.default is not inspect.Parameter.empty else None
+        
+        if keep:
+            args_dict = {k: v for k, v in args_dict.items() if k in keep}
+        if remove:
+            args_dict = {k: v for k, v in args_dict.items() if k not in remove}
+                
+        return args_dict
 
 @table_action_type
 class AddColumn(Action):

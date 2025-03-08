@@ -124,8 +124,8 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Add kwargs to actions => see fct.__code__.co_varnames/fct.__defaults__ or inspect.signature(fct)
-* All available table actions + all available args (easy action: dfs['testdesign']['price-diff'] = dfs['testdesign']['price'].diff() should be easier than typing the code in add a column, we should have the choice to select a diff fct when clicking on add column)
+* All available table actions + all available args (easy action: dfs['testdesign']['price-diff'] = dfs['testdesign']['price'].diff() should be easier than typing the code in add a column, we should have the choice to select a diff fct when clicking on add column) 
+* Dynamic kwargs of an action: it should be in another tab: either you chose the easy tab where you have suggested inputs, either the 'all kwargs' tab
 * Widgets: autocomplete Squirrel action, lists
 * Edit table style (button, ...)
 

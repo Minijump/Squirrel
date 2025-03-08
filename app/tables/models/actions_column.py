@@ -1,3 +1,6 @@
+import ast
+import pandas as pd
+
 from .actions import Action, table_action_type
 
 
@@ -128,18 +131,25 @@ class CutValues(ActionColumn):
 class SortColumn(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
+        kwargs = self._get_method_sig(pd.DataFrame.sort_values, keep=['kind', 'na_position'])
         self.args.update({
             "sort_order": {"type": "select", "string": "Sort Order", 
                            "options": [("ascending", "Ascending"), ("descending", "Descending"), ("custom", "Custom")], 
                            "onchange": "toggleSelect()"},
             "sort_key": {"type": "txt", "string": "Sort Key", 
                          "info": "Key must be python code with x as the col values. E.g. x.str.len(), x**2, ... (in practice this will execute: key=lambda x: ...your_input...).", 
-                         "required": False, "select_onchange": "custom"}
+                         "required": False, "select_onchange": "custom"},
+            "kwargs": {"type": "dict", "string": "Kwargs", "required": False,
+                       "info": "Additional arguments for the sort_values method.", 
+                       "options": {'create': False, 'remove': False}, 'default': kwargs},
         })
 
     async def execute(self):
-        table_name, col_name, col_idx, sort_order, sort_key = await self._get(["table_name", "col_name", "col_idx", "sort_order", "sort_key"])
+        table_name, col_name, col_idx, sort_order, sort_key, kwargs = await self._get(["table_name", "col_name", "col_idx", "sort_order", "sort_key", "kwargs"])
         new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=[{col_idx}], """
+        kwrags_str = ', '.join([f"{key}='{val}'" for key, val in ast.literal_eval(kwargs).items() if val])
+        if kwrags_str:
+            new_code += f"{kwrags_str}, "
         if sort_order == "custom":
             new_code += f"""key=lambda x: {sort_key})  #sq_action:Sort {col_name} of table {table_name} with custom key"""
         elif sort_order == "ascending":

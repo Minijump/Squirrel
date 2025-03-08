@@ -99,7 +99,12 @@ function createInput(arg) {
     if (arg.type === 'dict') {
         input = document.createElement('textarea');
         input.setAttribute('widget', 'squirrel-dictionary');
-        input.setAttribute('options', '{"create":true, "remove":true}');
+        defaultOptions = {create:true, remove:true};
+        const userOptions = arg.options;
+        const options = userOptions ? { ...defaultOptions, ...userOptions } : defaultOptions;
+        const str_options = JSON.stringify(options);
+        input.setAttribute('options', str_options);
+        input.value = JSON.stringify(arg.default || {});
     }
     if (arg.type === 'number') {
         input.type = 'number';
