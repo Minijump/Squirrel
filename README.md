@@ -131,7 +131,6 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
-* click on '...' for pipeline action with code: dfs['testdesign'] = dfs['testdesign'].sort_values(by=['price'], ascending=False, kind='quicksort', na_position='first', key=None)  #sq_action:Sort price of table testdesign with kwargs
 
 
 ### To do MVP
