@@ -124,31 +124,29 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* All available table actions + all available args (easy action: dfs['testdesign']['price-diff'] = dfs['testdesign']['price'].diff() should be easier than typing the code in add a column, we should have the choice to select a diff fct when clicking on add column) 
-* Dynamic kwargs of an action: it should be in another tab: either you chose the easy tab where you have suggested inputs, either the 'all kwargs' tab
-* Widgets: autocomplete Squirrel action, lists
+* All available table actions (easy action: dfs['testdesign']['price-diff'] = dfs['testdesign']['price'].diff() should be easy) 
+* Dynamic kwargs (new tab) either the easy tab with the suggested inputs, either the 'all kwargs' tab
+* Uniformisation of everything: dic widgets, all kwargs, squirrel action,...
 * Edit table style (button, ...)
-
-### To Fix
-* Make data source sync parallel (looks like problem occurs in _get_data_from_api method)
-
-### To do MVP
 * Imp unit tests: test with frontend (use selenium/selenium ide? https://www.youtube.com/watch?v=1FXJc20pZ2o&t=67s&ab_channel=SimpleTech) (create demo personas : tech guy/old/good user/...)
 
+### To Fix
+* Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
+
+### To do MVP
+
 ### Feature ideas
-* Odoo module; ease imports ?
+* Great-expectation unit test
 * 'Dynamic' data source: sync before running the pipeline. List of dynamics in project settings + sync file source?
-* Give a way to secure credentials?
-* Great-expectation unit tests
-* Export as jupyter notebook + Make folder runnable as-is outside the app (create a main.py file to run? That would sync all sources,...)???
 * See diff before doing an action/ at each actions in pipeline
-* Git github integration
-* Supabase connection, blockchain.com
 * Multiple pipelines
-* Datasources are only credentials, set the request args at table creation?? Automatic creation of a source when creating a table?
 * basic graphs (chart.js, d3.js,...?)
-* Dashboards? (can be saved)
-* computed vars
-* Look at https://github.com/SortableJS/Sortable for potential swappy replacment
+* Dashboards? (can be saved) (computed var)
+* Widgets: autocomplete Squirrel action, lists
+* Give a way to secure credentials?
+* Supabase connection, blockchain.com
+* Datasources are only credentials, set the request args at table creation?? Automatic creation of a source when creating a table?
+* Odoo module; ease imports ?
+* Git/Github integration
 * integrated llm / Connection with online ones (+ crewAI?)
 * ...
