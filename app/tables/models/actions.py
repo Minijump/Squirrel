@@ -75,6 +75,7 @@ class Action:
     def __init__(self, request):
         self.request = request
         self.args = {}
+        self.kwargs = {}
 
     async def _get(self, args_list):
         form_data = await self.request.form()

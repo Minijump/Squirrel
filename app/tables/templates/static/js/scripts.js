@@ -155,10 +155,55 @@ async function addInputs(action, form) {
         });
     });
 }
+async function addKwargs(action, form, data = {}) {
+    return fetch(`/tables/get_action_kwargs/?action_name=${action}`)
+        .then(response => response.json())
+        .then(kwargs => {
+            const kwargsForm = form.querySelector('#args-kwargs-form');
+            if (Object.keys(kwargs).length === 0) {
+                kwargsForm.style.display = 'none';
+                return;
+            }
+            kwargsForm.style.display = 'block';
+            
+            kwargsForm.querySelector('input[name="action_name"]').value = action;
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    const inputElement = kwargsForm.querySelector(`#${key}`);
+                    if (inputElement) {
+                        inputElement.value = data[key];
+                    } else {
+                        console.warn(`Element with id ${key} not found in the form.`);
+                    }
+                }
+            }
+
+            const kwargsDiv = form.querySelector('#args-kwargs');
+            kwargsDiv.innerHTML = '';            
+            const kwargsInput = document.createElement('textarea');
+            kwargsInput.name = "kwargs";
+            kwargsInput.setAttribute('widget', 'squirrel-dictionary');
+            // kwargsInput.value = JSON.stringify(kwargs);
+            kwargsInput.value = JSON.stringify(kwargs, function(key, value) {
+                // Convert JavaScript booleans to Python string representations
+                if (typeof value === 'boolean') {
+                    return value ? 'True' : 'False';  
+                }
+                // Convert JavaScript null to Python None
+                if (value === null) {
+                    return 'None';
+                }
+                return value;
+            });
+            kwargsDiv.appendChild(kwargsInput);
+            new SquirrelDictionary(kwargsInput);
+    });
+}
 async function openSidebarActionForm(action, data = {}) {
     const form = document.getElementById("ActionSidebar");
     form.style.width = "250px";
     await addInputs(action, form);
+    await addKwargs(action, form, data);
     completeInputs(form, action, data);
     toggleSelect();
     focusOnInput();

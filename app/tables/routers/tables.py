@@ -128,6 +128,10 @@ async def execute_action(request: Request):
         raise ValueError(f"Action {action_name} not found")
 
     action_instance = ActionClass(request)
+
+    if form_data.get("advanced"):
+        new_code = await action_instance.execute_advanced()
+        return new_code
     new_code = await action_instance.execute()
     return new_code
 
@@ -140,6 +144,16 @@ async def get_action_args(request: Request, action_name: str):
     action_instance = ActionClass(request)
     args = action_instance.args
     return args
+
+@router.get("/tables/get_action_kwargs/")
+async def get_action_kwargs(request: Request, action_name: str):
+    ActionClass = TABLE_ACTION_REGISTRY.get(action_name)
+    if not ActionClass:
+        raise ValueError(f"Action {action_name} not found")
+
+    action_instance = ActionClass(request)
+    kwargs = action_instance.kwargs
+    return kwargs
 
 @router.get("/tables/column_infos/")
 @squirrel_error

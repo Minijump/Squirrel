@@ -9,6 +9,14 @@ def convert_col_idx(col_idx):
         col_idx = f"'{col_idx}'"
     return col_idx
 
+def isnt_str(val):
+        if val in ['True', 'False']:
+            return True
+        elif val == 'None':
+            return True
+        elif val.isdigit():
+            return True
+
 class ActionColumn(Action):
     def __init__(self, request):
         super().__init__(request)
@@ -40,6 +48,7 @@ class ReplaceVals(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
         self.args.update({
+            #also available argument for type:dict = "options": {'create': False, 'remove': False}, 'default': kwargs
             "replace_vals": {"type": "dict", 
                              "string": "Replace Domain:", 
                              "info": "With format {'to_replace1': 'replacing1', 'to_replace2': 'replacing2', ...}"},
@@ -131,7 +140,7 @@ class CutValues(ActionColumn):
 class SortColumn(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
-        kwargs = self._get_method_sig(pd.DataFrame.sort_values, keep=['kind', 'na_position'])
+        self.kwargs = self._get_method_sig(pd.DataFrame.sort_values, remove=['by', 'inplace', 'ignore_index', 'axis'])
         self.args.update({
             "sort_order": {"type": "select", "string": "Sort Order", 
                            "options": [("ascending", "Ascending"), ("descending", "Descending"), ("custom", "Custom")], 
@@ -139,17 +148,11 @@ class SortColumn(ActionColumn):
             "sort_key": {"type": "txt", "string": "Sort Key", 
                          "info": "Key must be python code with x as the col values. E.g. x.str.len(), x**2, ... (in practice this will execute: key=lambda x: ...your_input...).", 
                          "required": False, "select_onchange": "custom"},
-            "kwargs": {"type": "dict", "string": "Kwargs", "required": False,
-                       "info": "Additional arguments for the sort_values method.", 
-                       "options": {'create': False, 'remove': False}, 'default': kwargs},
         })
 
     async def execute(self):
-        table_name, col_name, col_idx, sort_order, sort_key, kwargs = await self._get(["table_name", "col_name", "col_idx", "sort_order", "sort_key", "kwargs"])
+        table_name, col_name, col_idx, sort_order, sort_key = await self._get(["table_name", "col_name", "col_idx", "sort_order", "sort_key"])
         new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=[{col_idx}], """
-        kwrags_str = ', '.join([f"{key}='{val}'" for key, val in ast.literal_eval(kwargs).items() if val])
-        if kwrags_str:
-            new_code += f"{kwrags_str}, "
         if sort_order == "custom":
             new_code += f"""key=lambda x: {sort_key})  #sq_action:Sort {col_name} of table {table_name} with custom key"""
         elif sort_order == "ascending":
@@ -158,6 +161,18 @@ class SortColumn(ActionColumn):
             new_code += f"""ascending=False)  #sq_action:Sort(desc) {col_name} of table {table_name}"""
         else:
             raise ValueError("Invalid sort order")
+    
+        return new_code
+    
+    async def execute_advanced(self):
+        table_name, col_name, col_idx, kwargs = await self._get(["table_name", "col_name", "col_idx", "kwargs"])
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=[{col_idx}], """
+        kwrags_str = ', '.join(
+            [
+                f"{key}={val}" if isnt_str(val) 
+                else f"{key}='{val}'" 
+            for key, val in ast.literal_eval(kwargs).items()])
+        new_code += f"{kwrags_str})  #sq_action:Sort {col_name} of table {table_name} with kwargs"
     
         return new_code
 
