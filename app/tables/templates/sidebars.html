@@ -1,30 +1,37 @@
 <div id="ActionSidebar" class="right-sidebar-form">
     <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ActionSidebar')">&times;</a>
-    <form action="/tables/execute_action/" method="post">
-        <input type="hidden" name="action_name" required>
-        <input type="hidden" name="project_dir" value="{{ project_dir }}">
-        <input type="hidden" name="table_name" id="table_name" required>
+    
+    <div class="sidebar-tabs">
+        <button class="tab-button active n-l-border" onclick="switchTab(event, 'basic-tab')">Basic</button>
+        <button class="tab-button n-r-border" onclick="switchTab(event, 'advanced-tab')">Advanced</button>
+    </div>
+    
+    <div id="basic-tab" class="tab-content active">
+        <form action="/tables/execute_action/" method="post">
+            <input type="hidden" name="action_name" required class="sync-action-name">
+            <input type="hidden" name="project_dir" value="{{ project_dir }}">
+            <input type="hidden" name="table_name" id="table_name" required class="sync-table-name">
 
-        <div id="args">
-        </div>
-        
-        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
-    </form>
+            <div id="args"></div>
+            
+            <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
+        </form>
+    </div>
+    
+    <div id="advanced-tab" class="tab-content">
+        <form action="/tables/execute_action/" method="post" id="args-kwargs-form">
+            <input type="hidden" name="action_name" required class="sync-action-name">
+            <input type="hidden" name="project_dir" value="{{ project_dir }}">
+            <input type="hidden" name="table_name" required class="sync-table-name">
+            <input type="hidden" name="col_name" id="col_name" required>
+            <input type="hidden" name="col_idx" id="col_idx" required>
+            <input type="hidden" name="advanced" value="true">
 
-    <form action="/tables/execute_action/" method="post" id="args-kwargs-form">
-        <h3>Advanced</h3>
-        <input type="hidden" name="action_name" required>
-        <input type="hidden" name="project_dir" value="{{ project_dir }}">
-        <input type="hidden" name="table_name" id="table_name" required>
-        <input type="hidden" name="col_name" id="col_name" required>
-        <input type="hidden" name="col_idx" id="col_idx" required>
-        <input type="hidden" name="advanced" value="true">
-
-        <div id="args-kwargs">
-        </div>
-        
-        <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
-    </form>
+            <div id="args-kwargs"></div>
+            
+            <button type="submit" class="btn-primary" style="margin-left: 15px; margin-top: 10px;">Confirm</button>
+        </form>
+    </div>
 </div>
 
 <div id="CreateTable" class="right-sidebar-form">

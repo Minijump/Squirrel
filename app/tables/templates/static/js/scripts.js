@@ -231,6 +231,44 @@ function focusOnInput() {
     }
 }
 
+function switchTab(evt, tabId) {
+    var tabContents = document.querySelectorAll(".tab-content");
+    tabContents.forEach(function(tab) {
+        tab.classList.remove("active");
+    });
+    var tabButtons = document.querySelectorAll(".tab-button");
+    tabButtons.forEach(function(button) {
+        button.classList.remove("active");
+    });
+    
+    document.getElementById(tabId).classList.add("active");
+    evt.currentTarget.classList.add("active");
+    
+    syncFormValues();
+}
+
+function syncFormValues() {
+    // Sync action name between forms
+    var actionInputs = document.querySelectorAll(".sync-action-name");
+    var actionValue = "";
+    actionInputs.forEach(function(input) {
+        if (input.value) actionValue = input.value;
+    });
+    actionInputs.forEach(function(input) {
+        input.value = actionValue;
+    });
+    
+    // Sync table name between forms
+    var tableInputs = document.querySelectorAll(".sync-table-name");
+    var tableValue = "";
+    tableInputs.forEach(function(input) {
+        if (input.value) tableValue = input.value;
+    });
+    tableInputs.forEach(function(input) {
+        input.value = tableValue;
+    });
+}
+
 // Create-Table Sidebar -------------------------------------------------------
 function sourceCreationTypeToggle() {
     let select_value = document.getElementById('source_creation_type').value;

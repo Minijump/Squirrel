@@ -125,13 +125,14 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To do
 * All available table actions (easy action: dfs['testdesign']['price-diff'] = dfs['testdesign']['price'].diff() should be easy) 
-* Dynamic kwargs (new tab) either the easy tab with the suggested inputs, either the 'all kwargs' tab
 * Uniformisation of everything: dic widgets, all kwargs, squirrel action,...
 * Edit table style (button, ...)
 * Imp unit tests: test with frontend (use selenium/selenium ide? https://www.youtube.com/watch?v=1FXJc20pZ2o&t=67s&ab_channel=SimpleTech) (create demo personas : tech guy/old/good user/...)
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
+* click on '...' for pipeline action with code: dfs['testdesign'] = dfs['testdesign'].sort_values(by=['price'], ascending=False, kind='quicksort', na_position='first', key=None)  #sq_action:Sort price of table testdesign with kwargs
+
 
 ### To do MVP
 
