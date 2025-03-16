@@ -314,7 +314,7 @@ async function openInfoColModal(colName, colIdx, tableName) {
             if (field === 'is_numeric') {
                 const numericDivs = document.querySelectorAll('.numeric-only');
                 numericDivs.forEach(div => {
-                    div.style.display = data[field] ? 'inline' : 'none';
+                    div.style.display = data[field] ? 'block' : 'none';
                 });
                 return;
             }

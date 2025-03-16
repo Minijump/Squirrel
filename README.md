@@ -124,16 +124,18 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* All available table actions (easy action: dfs['testdesign']['price-diff'] = dfs['testdesign']['price'].diff() should be easy) 
 * Uniformisation of everything: dic widgets, all kwargs, squirrel action,...
-* Edit table style (button, ...)
+* Edit table style (button, full screen table, ...)
 * Imp unit tests: test with frontend (use selenium/selenium ide? https://www.youtube.com/watch?v=1FXJc20pZ2o&t=67s&ab_channel=SimpleTech) (create demo personas : tech guy/old/good user/...)
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
+* Can not scroll down in right-sidebar
 
 
 ### To do MVP
+* App settings
+* Imp pipeline: create models, full screen list view + nice pipeline summary on the top (display with blocks and lines)?
 
 ### Feature ideas
 * Great-expectation unit test

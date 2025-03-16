@@ -255,3 +255,16 @@ class ApplyFunction(ActionColumn):
         table_name, col_name, function, col_idx = await self._get(["table_name", "col_name", "function", "col_idx"])
         new_code = f"""dfs['{table_name}'][{col_idx}] = dfs['{table_name}'].apply(lambda row: {function}, axis=1)  #sq_action:Apply function to column {col_name} of table {table_name}"""
         return new_code
+
+@table_action_type
+class ColDiff(ActionColumn):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args.update({
+            "periods": {"type": "number", "string": "Periods"},
+        })
+
+    async def execute(self):
+        table_name, col_name, periods, col_idx = await self._get(["table_name", "col_name", "periods", "col_idx"])
+        new_code = f"""dfs['{table_name}']['{col_name}-diff'] = dfs['{table_name}'][{col_idx}].diff(periods={periods})  #sq_action:Calculate difference of {col_name} in table {table_name}"""
+        return new_code

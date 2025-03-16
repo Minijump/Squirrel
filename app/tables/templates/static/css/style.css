@@ -220,11 +220,12 @@
 
 .btn-div {
     display: flex;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     margin-left: 10px;
 }
 .btn-div button {
     margin-left: 5px;
+    margin-bottom: 5px;
 }
 .modal-content .close-btn {
     font-size: 36px;
