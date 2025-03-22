@@ -124,13 +124,14 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Uniformisation of everything: dic widgets, all kwargs, squirrel action,...
+* Uniformisation of everything: all kwargs, squirrel action,...
 * Edit table style (button, full screen table, ...)
 * Imp unit tests: test with frontend (use selenium/selenium ide? https://www.youtube.com/watch?v=1FXJc20pZ2o&t=67s&ab_channel=SimpleTech) (create demo personas : tech guy/old/good user/...)
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
 * When scrolling in right sidebar 'advanced' (add kwargs until need of scroll down): we see the inputs' default values in blue under the inputs (sticky). (same problem for confirm button when too many kwargs at first nload(cause by tabs?) not if add kwargs into widget afterward(caused by widget?))
+* Changes description of datasources often raise an error: IndentationError: unexpected indent
 
 ### To do MVP
 * App settings

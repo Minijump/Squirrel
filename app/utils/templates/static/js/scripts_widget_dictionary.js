@@ -58,7 +58,7 @@ class SquirrelDictionary {
             <td></td>
         `;
         if (this.options.remove !== false || !default_row) {
-            row.querySelector('td:last-child').innerHTML = '<button class="btn-remove-line">X</button>';
+            row.querySelector('td:last-child').innerHTML = '<button class="btn-remove-line"><i class="fas fa-times"></i></button>';
         }
             
 

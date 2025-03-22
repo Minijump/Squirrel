@@ -9,7 +9,6 @@
 .squirrel-dict-widget table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 200px;
 }
 
 .squirrel-dict-widget td {
@@ -18,11 +17,9 @@
 }
 
 .squirrel-dict-widget input {
-    width: 100%;
-    margin-bottom: 1px;
-    margin-top: 1px;
+    width: 100% !important; /* !important to override right sidebar values*/
+    margin: 1px !important;
     box-sizing: border-box; /* Ensure padding is included in width calculations */
-    min-width: 60px; 
 }
 
 .btn-add-line {
@@ -38,7 +35,7 @@
 
 .btn-remove-line {
     background: transparent;
-    color: red;
+    color: rgba(255, 0, 0, 0.614);
     border: 0px;
     cursor: pointer;
     padding: 1px 5px;
@@ -47,4 +44,5 @@
 }
 .btn-remove-line:hover {
     text-decoration: underline;
+    color: red;
 }
