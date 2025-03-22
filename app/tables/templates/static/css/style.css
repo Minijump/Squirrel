@@ -47,15 +47,15 @@
     height: 5px;
 }
 ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px grey; 
-    border-radius: 10px;
-}
-::-webkit-scrollbar-thumb {
     background: var(--structure-color);
     border-radius: 10px;
 }
-::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb {
     background: var(--light-structure-color); 
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    box-shadow: inset 0 0 5px grey; 
 }
 
 .df-table{
@@ -125,6 +125,7 @@
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
+    box-sizing: border-box;
 }
 .right-sidebar-form a {
     padding: 8px 8px 8px 32px;
@@ -200,9 +201,13 @@
 .tab-content {
     display: none;
     padding: 10px 0;
+    max-height: calc(100vh - 150px); 
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
 .tab-content.active {
     display: block;
+    overflow-y: auto;
 }
 
 /* --------------------------     MODAL     -------------------------- */

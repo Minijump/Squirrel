@@ -130,8 +130,7 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
-* Can not scroll down in right-sidebar
-
+* When scrolling in right sidebar 'advanced' (add kwargs until need of scroll down): we see the inputs' default values in blue under the inputs (sticky). (same problem for confirm button when too many kwargs at first nload(cause by tabs?) not if add kwargs into widget afterward(caused by widget?))
 
 ### To do MVP
 * App settings
