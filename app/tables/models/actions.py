@@ -6,10 +6,12 @@ def table_action_type(cls):
 from fastapi import Request
 from fastapi.responses import RedirectResponse
 
+import ast
 import os
 import json
 import inspect
 from functools import wraps
+import pandas as pd
 
 from app.projects.models.project import NEW_CODE_TAG
 from app.data_sources.models.data_source import DATA_SOURCE_REGISTRY
@@ -70,6 +72,22 @@ def convert_to_squirrel_action(code, actual_table_name=None):
     code = code.replace('c[', f"dfs['{actual_table_name}'][") # if a table id not provided
     code = code.replace('t[', 'dfs[')
     return code
+
+def isnt_str(val):
+    #TODO factorize
+    if val in ['True', 'False']:
+        return True
+    elif val == 'None':
+        return True
+    elif isinstance(val, int) or isinstance(val, float) or (isinstance(val, str) and val.isdigit()):
+        return True
+    elif val[:1] == '[' and val[-1:] == ']':
+        return True
+    elif val[:1] == '{' and val[-1:] == '}':
+        return True
+    elif val[:1] == '(' and val[-1:] == ')':
+        return True
+    return False
 
 class Action:
     def __init__(self, request):
@@ -132,7 +150,10 @@ class AddRow(Action):
     def __init__(self, request):
         super().__init__(request)
         self.args = {
-            "new_rows": {"type": "txt", "string": "New rows", "info": """With format<br/> [<br/>{'Col1': Value1, 'Col2': Value2, ...},<br/> {'Col1': Value3 ...<br/>]"""},
+            "new_rows": {
+                "type": "txt", 
+                "string": "New rows", 
+                "info": """With format<br/> [<br/>{'Col1': Value1, 'Col2': Value2, ...},<br/> {'Col1': Value3 ...<br/>]"""},
         }
 
     async def execute(self):
@@ -212,6 +233,8 @@ class CustomPythonAction(Action):
 class MergeTables(Action):
     def __init__(self, request):
         super().__init__(request)
+        self.kwargs = self._get_method_sig(pd.merge, remove=['left', 'left_index', 'right_index', 'copy', 'indicator'])
+        self.kwargs['suffixes'] = str(self.kwargs['suffixes']) # convert tuple to str, else parenthesis are removed in frontend
         self.args = {
             "table2": {"type": "str", "string": "Table to merge"},
             "on": {"type": "str", "string": "On", "info": "Column name (must be in both tables)"},
@@ -223,6 +246,18 @@ class MergeTables(Action):
     async def execute(self):
         table_name, table2, on, how = await self._get(["table_name", "table2", "on", "how"])
         new_code = f"""dfs['{table_name}'] = pd.merge(dfs['{table_name}'], dfs['{table2}'], on='{on}', how='{how}')  #sq_action:Merge {table_name} with {table2}"""
+        return new_code
+    
+    async def execute_advanced(self):
+        table_name, kwargs = await self._get(["table_name", "kwargs"])
+        kwargs = ast.literal_eval(kwargs)
+        table2_name = kwargs.pop("right")
+        kwrags_str = ', '.join(
+            [
+                f"{key}={val}" if isnt_str(val) 
+                else f"{key}='{val}'" 
+            for key, val in kwargs.items()])
+        new_code = f"""dfs['{table_name}'] = pd.merge(dfs['{table_name}'], dfs['{table2_name}'], {kwrags_str})  #sq_action:Merge {table_name}"""
         return new_code
 
 @table_action_type

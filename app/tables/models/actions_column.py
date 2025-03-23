@@ -10,6 +10,7 @@ def convert_col_idx(col_idx):
     return col_idx
 
 def isnt_str(val):
+        #TODO factorize
         if val in ['True', 'False']:
             return True
         elif val == 'None':
@@ -18,6 +19,11 @@ def isnt_str(val):
             return True
         elif val[:1] == '[' and val[-1:] == ']':
             return True
+        elif val[:1] == '{' and val[-1:] == '}':
+            return True
+        elif val[:1] == '(' and val[-1:] == ')':
+            return True
+        return False
 
 class ActionColumn(Action):
     def __init__(self, request):

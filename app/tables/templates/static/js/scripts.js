@@ -186,7 +186,6 @@ async function addKwargs(action, form, data = {}) {
             const kwargsInput = document.createElement('textarea');
             kwargsInput.name = "kwargs";
             kwargsInput.setAttribute('widget', 'squirrel-dictionary');
-            // kwargsInput.value = JSON.stringify(kwargs);
             kwargsInput.value = JSON.stringify(kwargs, function(key, value) {
                 // Convert JavaScript booleans to Python string representations
                 if (typeof value === 'boolean') {
