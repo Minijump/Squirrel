@@ -160,11 +160,14 @@ async function addKwargs(action, form, data = {}) {
         .then(response => response.json())
         .then(kwargs => {
             const kwargsForm = form.querySelector('#args-kwargs-form');
+            const kwargsBtn = form.querySelector('#kwargs-btn');
             if (Object.keys(kwargs).length === 0) {
                 kwargsForm.style.display = 'none';
+                kwargsBtn.style.display = 'none';
                 return;
             }
             kwargsForm.style.display = 'block';
+            kwargsBtn.style.display = 'block';
             
             kwargsForm.querySelector('input[name="action_name"]').value = action;
             for (const key in data) {

@@ -130,7 +130,7 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
-* When scrolling in right sidebar 'advanced' (add kwargs until need of scroll down): we see the inputs' default values in blue under the inputs (sticky). (same problem for confirm button when too many kwargs at first nload(cause by tabs?) not if add kwargs into widget afterward(caused by widget?))
+* When scrolling in right sidebar 'advanced' (add kwargs until need of scroll down): we see the inputs' default values in blue under the inputs (sticky). (same problem for confirm button when too many kwargs at first nload(cause by tabs?) not if add kwargs into widget afterward(caused by widget?)) (same bug if input is too long)
 * Changes description of datasources often raise an error: IndentationError: unexpected indent
 
 ### To do MVP
@@ -138,6 +138,7 @@ In addition to these folders, you will find a folder named tests that contains t
 * Imp pipeline: create models, full screen list view + nice pipeline summary on the top (display with blocks and lines)?
 
 ### Feature ideas
+* Add dynamic doctrsing (expl: pd.Series.replace.__doc__)
 * Great-expectation unit test
 * 'Dynamic' data source: sync before running the pipeline. List of dynamics in project settings + sync file source?
 * See diff before doing an action/ at each actions in pipeline

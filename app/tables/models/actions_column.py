@@ -14,7 +14,9 @@ def isnt_str(val):
             return True
         elif val == 'None':
             return True
-        elif val.isdigit():
+        elif isinstance(val, int) or isinstance(val, float) or (isinstance(val, str) and val.isdigit()):
+            return True
+        elif val[:1] == '[' and val[-1:] == ']':
             return True
 
 class ActionColumn(Action):
@@ -47,16 +49,27 @@ class DropColumn(ActionColumn):
 class ReplaceVals(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
+        self.kwargs = self._get_method_sig(pd.Series.replace, remove=['inplace', 'limit', 'method'])
         self.args.update({
-            #also available argument for type:dict = "options": {'create': False, 'remove': False}, 'default': kwargs
             "replace_vals": {"type": "dict", 
                              "string": "Replace Domain:", 
-                             "info": "With format {'to_replace1': 'replacing1', 'to_replace2': 'replacing2', ...}"},
+                             "info": "With format {'to_replace1': 'replacing1', 'to_replace2': 'replacing2', ...}",
+                             "options": {'create': True, 'remove': True}},
         })
 
     async def execute(self):
         table_name, col_name, replace_vals, col_idx = await self._get(["table_name", "col_name", "replace_vals", "col_idx"])
         new_code = f"""dfs['{table_name}'][{col_idx}] = dfs['{table_name}'][{col_idx}].replace({replace_vals})  #sq_action:Replace values in column {col_name} of table {table_name}"""
+        return new_code
+    
+    async def execute_advanced(self):
+        table_name, col_name, col_idx, kwargs = await self._get(["table_name", "col_name", "col_idx", "kwargs"])
+        kwrags_str = ', '.join(
+            [
+                f"{key}={val}" if isnt_str(val) 
+                else f"{key}='{val}'" 
+            for key, val in ast.literal_eval(kwargs).items()])
+        new_code = f"""dfs['{table_name}'][{col_idx}] = dfs['{table_name}'][{col_idx}].replace({kwrags_str})  #sq_action:Replace values in column {col_name} of table {table_name}"""    
         return new_code
 
 @table_action_type
@@ -124,6 +137,7 @@ class RenameColumn(ActionColumn):
 class CutValues(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
+        self.kwargs = self._get_method_sig(pd.cut, remove=['x', 'retbins', 'duplicates'])
         self.args.update({
             "cut_values": {"type": "str", "string": "Cut Values", "info": "Comma separated. E.g. 0,10,20,30"},
             "cut_labels": {"type": "str", "string": "Cut Labels", "info": "Comma separated. E.g. low,middle,high'"},
@@ -134,6 +148,16 @@ class CutValues(ActionColumn):
         cut_values = [float(val) for val in cut_values.split(',')]
         cut_labels = cut_labels.split(',')
         new_code = f"""dfs['{table_name}'][{col_idx}] = pd.cut(dfs['{table_name}'][{col_idx}], bins={cut_values}, labels={cut_labels})  #sq_action:Cut values in column {col_name} of table {table_name}"""
+        return new_code
+    
+    async def execute_advanced(self):
+        table_name, col_name, col_idx, kwargs = await self._get(["table_name", "col_name", "col_idx", "kwargs"])
+        kwrags_str = ', '.join(
+            [
+                f"{key}={val}" if isnt_str(val) 
+                else f"{key}='{val}'" 
+            for key, val in ast.literal_eval(kwargs).items()])
+        new_code = f"""dfs['{table_name}'][{col_idx}] = pd.cut(dfs['{table_name}'][{col_idx}], {kwrags_str})  #sq_action:Cut values in column {col_name} of table {table_name}"""    
         return new_code
 
 @table_action_type
@@ -260,11 +284,24 @@ class ApplyFunction(ActionColumn):
 class ColDiff(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
+        self.kwargs = self._get_method_sig(pd.DataFrame.diff, remove=['axis'])
         self.args.update({
             "periods": {"type": "number", "string": "Periods"},
         })
 
     async def execute(self):
         table_name, col_name, periods, col_idx = await self._get(["table_name", "col_name", "periods", "col_idx"])
-        new_code = f"""dfs['{table_name}']['{col_name}-diff'] = dfs['{table_name}'][{col_idx}].diff(periods={periods})  #sq_action:Calculate difference of {col_name} in table {table_name}"""
+        new_col_idx = col_idx.replace(", ", "-").replace("'", "").replace("(", "").replace(")", "") + "-diff"
+        new_code = f"""dfs['{table_name}']['{new_col_idx}'] = dfs['{table_name}'][{col_idx}].diff(periods={periods})  #sq_action:Calculate difference of {col_name} in table {table_name}"""
+        return new_code
+    
+    async def execute_advanced(self):
+        table_name, col_name, col_idx, kwargs = await self._get(["table_name", "col_name", "col_idx", "kwargs"])
+        kwrags_str = ', '.join(
+            [
+                f"{key}={val}" if isnt_str(val) 
+                else f"{key}='{val}'" 
+            for key, val in ast.literal_eval(kwargs).items()])
+        new_col_idx = col_idx.replace(", ", "-").replace("'", "").replace("(", "").replace(")", "") + "-diff"
+        new_code = f"""dfs['{table_name}']['{new_col_idx}'] = dfs['{table_name}'][{col_idx}].diff({kwrags_str})  #sq_action:Calculate difference of {col_name} in table {table_name}"""    
         return new_code
