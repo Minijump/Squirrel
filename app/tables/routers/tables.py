@@ -9,11 +9,11 @@ import json
 import traceback
 import pickle
 
-from app.tables.models.actions import action
+from app.tables.models.actions_utils import action
 from app import router, templates
 
 from app.data_sources.routers.data_sources import get_sources
-from app.tables.models.actions import TABLE_ACTION_REGISTRY
+from app.tables.models.actions_utils import TABLE_ACTION_REGISTRY
 from app.tables.models.actions_column import convert_col_idx
 from app.utils.error_handling import squirrel_error
 

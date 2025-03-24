@@ -1,93 +1,10 @@
-TABLE_ACTION_REGISTRY = {}
-def table_action_type(cls):
-    TABLE_ACTION_REGISTRY[cls.__name__] = cls
-    return cls
-
-from fastapi import Request
-from fastapi.responses import RedirectResponse
-
 import ast
 import os
 import json
-import inspect
-from functools import wraps
 import pandas as pd
 
-from app.projects.models.project import NEW_CODE_TAG
+from .actions_utils import table_action_type, convert_to_squirrel_action, _get_method_sig, isnt_str
 from app.data_sources.models.data_source import DATA_SOURCE_REGISTRY
-from app.utils.error_handling import squirrel_error
-
-def add(func):
-    @squirrel_error
-    @wraps(func)
-    async def wrapper(request: Request, *args, **kwargs):
-        """
-        Adds code returned by func to the pipeline (with the correct indentation)
-
-        * request contains the project_dir
-        * func provides the new code line(s) (str)
-          (func MUST return lines splitted with '\n'
-           expl: 'line1\nline2\nline3'
-           else indentation will be wrong)
-
-        => Returns a RedirectResponse to the project page
-        """        
-        form_data = await request.form()
-        project_dir = form_data.get("project_dir")
-        pipeline_path = os.path.join(os.getcwd(), "_projects", project_dir, "pipeline.py")
-
-        # Find the line with the NEW_CODE_TAG, and get the indentation
-        with open(pipeline_path, 'r') as file:
-            lines = file.readlines()
-            for line in lines:
-                if NEW_CODE_TAG in line:
-                    current_indentation = len(line) - len(line.lstrip())
-                    break
-            
-        # Edit pipeline code
-        with open(pipeline_path, 'r') as file:
-          pipeline_code = file.read()
-          new_code = await func(request)
-          new_code += """\n""" + NEW_CODE_TAG 
-          new_code_list = new_code.split('\n')
-          new_code = str(new_code_list[0]) + '\n' + '\n'.join((' ' * current_indentation) + l for l in new_code_list[1:])
-          new_pipeline_code = pipeline_code.replace(NEW_CODE_TAG, new_code)
-
-        # Write the new content to the file
-        with open(pipeline_path, 'w') as file:
-            file.write(new_pipeline_code)
-        
-        return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)                                                    
-    return wrapper
-
-action = type('action', (object,), {'add': add})
-
-def convert_to_squirrel_action(code, actual_table_name=None):
-    """
-    t[t_name] means 'table with name t_name' and is accessed by dfs[t_name]
-    t[t_name]c[name] means 'column with name name in table t_name' and is accessed by dfs[t_name][name]
-    c[name[] means 'column with name name in actual_table' and is accessed by dfs[actual_table_name][name]
-    """
-    code = code.replace(']c[', f'][') # if a table id provided
-    code = code.replace('c[', f"dfs['{actual_table_name}'][") # if a table id not provided
-    code = code.replace('t[', 'dfs[')
-    return code
-
-def isnt_str(val):
-    #TODO factorize
-    if val in ['True', 'False']:
-        return True
-    elif val == 'None':
-        return True
-    elif isinstance(val, int) or isinstance(val, float) or (isinstance(val, str) and val.isdigit()):
-        return True
-    elif val[:1] == '[' and val[-1:] == ']':
-        return True
-    elif val[:1] == '{' and val[-1:] == '}':
-        return True
-    elif val[:1] == '(' and val[-1:] == ')':
-        return True
-    return False
 
 class Action:
     def __init__(self, request):
@@ -102,26 +19,16 @@ class Action:
     async def execute(self):
         raise NotImplementedError("Subclasses must implement this method")
     
-    def _get_method_sig(self, function, keep=False, remove=False):
-        """
-        Returns the method signature of the class
-        Remove all or keep only the specified args
-
-        => returns a dictionary with the args and their default values
-        """
-        sig = inspect.signature(function)
-        args_dict = {}
-        
-        for param in sig.parameters.values():
-            if param.name != 'self':
-                args_dict[param.name] = param.default if param.default is not inspect.Parameter.empty else None
-        
-        if keep:
-            args_dict = {k: v for k, v in args_dict.items() if k in keep}
-        if remove:
-            args_dict = {k: v for k, v in args_dict.items() if k not in remove}
-                
-        return args_dict
+    async def _get_kwargs_str(self, kwargs):
+        kwargs_str = ', '.join(
+            [
+                f"{key}={val}" if isnt_str(val) 
+                else f"{key}='{val}'" 
+            for key, val in kwargs.items()])
+        return kwargs_str
+    
+    async def execute_advanced(self):
+        raise NotImplementedError("Subclasses must implement this method")
 
 @table_action_type
 class AddColumn(Action):
@@ -233,7 +140,7 @@ class CustomPythonAction(Action):
 class MergeTables(Action):
     def __init__(self, request):
         super().__init__(request)
-        self.kwargs = self._get_method_sig(pd.merge, remove=['left', 'left_index', 'right_index', 'copy', 'indicator'])
+        self.kwargs = _get_method_sig(pd.merge, remove=['left', 'left_index', 'right_index', 'copy', 'indicator'])
         self.kwargs['suffixes'] = str(self.kwargs['suffixes']) # convert tuple to str, else parenthesis are removed in frontend
         self.args = {
             "table2": {"type": "str", "string": "Table to merge"},
@@ -252,12 +159,8 @@ class MergeTables(Action):
         table_name, kwargs = await self._get(["table_name", "kwargs"])
         kwargs = ast.literal_eval(kwargs)
         table2_name = kwargs.pop("right")
-        kwrags_str = ', '.join(
-            [
-                f"{key}={val}" if isnt_str(val) 
-                else f"{key}='{val}'" 
-            for key, val in kwargs.items()])
-        new_code = f"""dfs['{table_name}'] = pd.merge(dfs['{table_name}'], dfs['{table2_name}'], {kwrags_str})  #sq_action:Merge {table_name}"""
+        kwargs_str = await self._get_kwargs_str(kwargs)
+        new_code = f"""dfs['{table_name}'] = pd.merge(dfs['{table_name}'], dfs['{table2_name}'], {kwargs_str})  #sq_action:Merge {table_name}"""
         return new_code
 
 @table_action_type

@@ -1,29 +1,9 @@
 import ast
 import pandas as pd
 
-from .actions import Action, table_action_type
+from .actions_utils import table_action_type, _get_method_sig, isnt_str, convert_col_idx
+from .actions import Action
 
-
-def convert_col_idx(col_idx):
-    if col_idx[0] != '(':
-        col_idx = f"'{col_idx}'"
-    return col_idx
-
-def isnt_str(val):
-        #TODO factorize
-        if val in ['True', 'False']:
-            return True
-        elif val == 'None':
-            return True
-        elif isinstance(val, int) or isinstance(val, float) or (isinstance(val, str) and val.isdigit()):
-            return True
-        elif val[:1] == '[' and val[-1:] == ']':
-            return True
-        elif val[:1] == '{' and val[-1:] == '}':
-            return True
-        elif val[:1] == '(' and val[-1:] == ')':
-            return True
-        return False
 
 class ActionColumn(Action):
     def __init__(self, request):
@@ -55,7 +35,7 @@ class DropColumn(ActionColumn):
 class ReplaceVals(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
-        self.kwargs = self._get_method_sig(pd.Series.replace, remove=['inplace', 'limit', 'method'])
+        self.kwargs = _get_method_sig(pd.Series.replace, remove=['inplace', 'limit', 'method'])
         self.args.update({
             "replace_vals": {"type": "dict", 
                              "string": "Replace Domain:", 
@@ -70,11 +50,7 @@ class ReplaceVals(ActionColumn):
     
     async def execute_advanced(self):
         table_name, col_name, col_idx, kwargs = await self._get(["table_name", "col_name", "col_idx", "kwargs"])
-        kwrags_str = ', '.join(
-            [
-                f"{key}={val}" if isnt_str(val) 
-                else f"{key}='{val}'" 
-            for key, val in ast.literal_eval(kwargs).items()])
+        kwrags_str = await self._get_kwargs_str(ast.literal_eval(kwargs))
         new_code = f"""dfs['{table_name}'][{col_idx}] = dfs['{table_name}'][{col_idx}].replace({kwrags_str})  #sq_action:Replace values in column {col_name} of table {table_name}"""    
         return new_code
 
@@ -143,7 +119,7 @@ class RenameColumn(ActionColumn):
 class CutValues(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
-        self.kwargs = self._get_method_sig(pd.cut, remove=['x', 'retbins', 'duplicates'])
+        self.kwargs = _get_method_sig(pd.cut, remove=['x', 'retbins', 'duplicates'])
         self.args.update({
             "cut_values": {"type": "str", "string": "Cut Values", "info": "Comma separated. E.g. 0,10,20,30"},
             "cut_labels": {"type": "str", "string": "Cut Labels", "info": "Comma separated. E.g. low,middle,high'"},
@@ -158,11 +134,7 @@ class CutValues(ActionColumn):
     
     async def execute_advanced(self):
         table_name, col_name, col_idx, kwargs = await self._get(["table_name", "col_name", "col_idx", "kwargs"])
-        kwrags_str = ', '.join(
-            [
-                f"{key}={val}" if isnt_str(val) 
-                else f"{key}='{val}'" 
-            for key, val in ast.literal_eval(kwargs).items()])
+        kwrags_str = await self._get_kwargs_str(ast.literal_eval(kwargs))
         new_code = f"""dfs['{table_name}'][{col_idx}] = pd.cut(dfs['{table_name}'][{col_idx}], {kwrags_str})  #sq_action:Cut values in column {col_name} of table {table_name}"""    
         return new_code
 
@@ -170,7 +142,7 @@ class CutValues(ActionColumn):
 class SortColumn(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
-        self.kwargs = self._get_method_sig(pd.DataFrame.sort_values, remove=['by', 'inplace', 'ignore_index', 'axis'])
+        self.kwargs = _get_method_sig(pd.DataFrame.sort_values, remove=['by', 'inplace', 'ignore_index', 'axis'])
         self.args.update({
             "sort_order": {"type": "select", "string": "Sort Order", 
                            "options": [("ascending", "Ascending"), ("descending", "Descending"), ("custom", "Custom")], 
@@ -196,14 +168,8 @@ class SortColumn(ActionColumn):
     
     async def execute_advanced(self):
         table_name, col_name, col_idx, kwargs = await self._get(["table_name", "col_name", "col_idx", "kwargs"])
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=[{col_idx}], """
-        kwrags_str = ', '.join(
-            [
-                f"{key}={val}" if isnt_str(val) 
-                else f"{key}='{val}'" 
-            for key, val in ast.literal_eval(kwargs).items()])
-        new_code += f"{kwrags_str})  #sq_action:Sort {col_name} of table {table_name} with kwargs"
-    
+        kwrags_str = await self._get_kwargs_str(ast.literal_eval(kwargs))
+        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].sort_values(by=[{col_idx}], {kwrags_str})  #sq_action:Sort {col_name} of table {table_name} with kwargs"""
         return new_code
 
 @table_action_type
@@ -290,7 +256,7 @@ class ApplyFunction(ActionColumn):
 class ColDiff(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
-        self.kwargs = self._get_method_sig(pd.DataFrame.diff, remove=['axis'])
+        self.kwargs = _get_method_sig(pd.DataFrame.diff, remove=['axis'])
         self.args.update({
             "periods": {"type": "number", "string": "Periods"},
         })
@@ -303,11 +269,7 @@ class ColDiff(ActionColumn):
     
     async def execute_advanced(self):
         table_name, col_name, col_idx, kwargs = await self._get(["table_name", "col_name", "col_idx", "kwargs"])
-        kwrags_str = ', '.join(
-            [
-                f"{key}={val}" if isnt_str(val) 
-                else f"{key}='{val}'" 
-            for key, val in ast.literal_eval(kwargs).items()])
+        kwrags_str = await self._get_kwargs_str(ast.literal_eval(kwargs))
         new_col_idx = col_idx.replace(", ", "-").replace("'", "").replace("(", "").replace(")", "") + "-diff"
         new_code = f"""dfs['{table_name}']['{new_col_idx}'] = dfs['{table_name}'][{col_idx}].diff({kwrags_str})  #sq_action:Calculate difference of {col_name} in table {table_name}"""    
         return new_code
