@@ -123,17 +123,24 @@ class CreateTable(Action):
         return new_code
     
 @table_action_type
-class CustomPythonAction(Action):
+class CustomAction(Action):
     def __init__(self, request):
         super().__init__(request)
         self.args = {
-            "python_action_code": {"type": "txt", "string": "Python"},
-            "python_action_name": {"type": "str", "string": "Action Name"},
+            "custom_action_type": {"type": "select", "string": "Value Type", 
+                           "options": [("sq_action", "Squirrel action"), ("python", "Python")]},
+            "custom_action_code": {"type": "txt", "string": "Python"},
+            "custom_action_name": {"type": "str", "string": "Action Name"},
         }
 
     async def execute(self):
-        python_action_code, python_action_name = await self._get(["python_action_code", "python_action_name"])
-        new_code = f"""{python_action_code}  #sq_action: {python_action_name}"""
+        custom_action_code, custom_action_name, custom_action_type, default_table_name = await self._get(["custom_action_code", "custom_action_name", "custom_action_type", "default_table_name"])
+        if custom_action_type == "python":
+            new_code = f"""{custom_action_code}  #sq_action: {custom_action_name}"""
+        elif custom_action_type == "sq_action":
+            new_code = f"""{convert_to_squirrel_action(custom_action_code, default_table_name)}  #sq_action: {custom_action_name}"""
+        else:
+            raise ValueError("Invalid value type")
         return new_code
 
 @table_action_type

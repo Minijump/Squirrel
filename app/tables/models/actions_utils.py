@@ -68,10 +68,10 @@ def convert_to_squirrel_action(code, actual_table_name=None):
     """
     t[t_name] means 'table with name t_name' and is accessed by dfs[t_name]
     t[t_name]c[name] means 'column with name name in table t_name' and is accessed by dfs[t_name][name]
-    c[name[] means 'column with name name in actual_table' and is accessed by dfs[actual_table_name][name]
+    c[name] means 'column with name name in actual_table' and is accessed by dfs[actual_table_name][name]
     """
-    code = code.replace(']c[', f'][') # if a table id provided
-    code = code.replace('c[', f"dfs['{actual_table_name}'][") # if a table id not provided
+    code = code.replace(']c[', f'][') # if a table is provided
+    code = code.replace('c[', f"dfs['{actual_table_name}'][") # if a table is not provided
     code = code.replace('t[', 'dfs[')
     return code
 

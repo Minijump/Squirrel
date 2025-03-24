@@ -343,8 +343,9 @@ function closeInfoColModal() {
 }
 
 // CustomActionModal ---------------------------------------------------------------
-function openCustomActionModal() {
+function openCustomActionModal(tableName='') {
     document.getElementById('CustomActionModal').style.display = "flex";
+    document.querySelector('#CustomActionModal input[name="default_table_name"]').value = tableName;
 }
 function closeCustomActionModal() {
     document.getElementById('CustomActionModal').style.display = "none";
