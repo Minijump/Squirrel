@@ -3,7 +3,7 @@ import os
 import json
 import pandas as pd
 
-from .actions_utils import table_action_type, convert_to_squirrel_action, _get_method_sig, isnt_str
+from .actions_utils import table_action_type, convert_sq_action_to_python, _get_method_sig, isnt_str
 from app.data_sources.models.data_source import DATA_SOURCE_REGISTRY
 
 class Action:
@@ -43,13 +43,8 @@ class AddColumn(Action):
 
     async def execute(self):
         table_name, col_name, col_value, value_type = await self._get(["table_name", "col_name", "col_value", "value_type"])
-        if value_type == "python":
-            new_code = f"""dfs['{table_name}']['{col_name}'] = {col_value}  #sq_action:Add column {col_name} on table {table_name}"""
-        elif value_type == "sq_action":
-            sq_action = convert_to_squirrel_action(col_value, table_name)
-            new_code = f"""dfs['{table_name}']['{col_name}'] = {sq_action}  #sq_action:Add column {col_name} on table {table_name}"""
-        else:
-            raise ValueError("Invalid value type")
+        code = convert_sq_action_to_python(col_value, actual_table_name=table_name, is_sq_action=(value_type == "sq_action"))
+        new_code = f"""dfs['{table_name}']['{col_name}'] = {code}  #sq_action:Add column {col_name} on table {table_name}"""
         return new_code
 
 @table_action_type
@@ -135,12 +130,8 @@ class CustomAction(Action):
 
     async def execute(self):
         custom_action_code, custom_action_name, custom_action_type, default_table_name = await self._get(["custom_action_code", "custom_action_name", "custom_action_type", "default_table_name"])
-        if custom_action_type == "python":
-            new_code = f"""{custom_action_code}  #sq_action: {custom_action_name}"""
-        elif custom_action_type == "sq_action":
-            new_code = f"""{convert_to_squirrel_action(custom_action_code, default_table_name)}  #sq_action: {custom_action_name}"""
-        else:
-            raise ValueError("Invalid value type")
+        code = convert_sq_action_to_python(custom_action_code, actual_table_name=default_table_name, is_sq_action=(custom_action_type == "sq_action"))
+        new_code = f"""{code}  #sq_action: {custom_action_name}"""
         return new_code
 
 @table_action_type
