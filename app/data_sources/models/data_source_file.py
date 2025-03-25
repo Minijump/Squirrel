@@ -78,7 +78,10 @@ class DataSourceFile(DataSource):
         old_kwargs = source.get("kwargs") or {}
 
         updated_source = await DataSource._update_source_settings(source, updated_data)
-        updated_source["kwargs"] = ast.literal_eval(updated_source["kwargs"]) if updated_source.get("kwargs") else {}
+        try: 
+            updated_source["kwargs"] = ast.literal_eval(updated_source["kwargs"])
+        except:
+            updated_source["kwargs"] = {}
 
         new_file = dict(updated_data).get("file")
         new_kwargs = old_kwargs != source.get("kwargs")

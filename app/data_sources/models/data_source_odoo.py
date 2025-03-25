@@ -84,6 +84,9 @@ class DataSourceOdoo(DataSourceAPI):
 
         updated_source["fields"] = ast.literal_eval(updated_source["fields"])
         updated_source["domain"] = ast.literal_eval(updated_source["domain"]) if updated_source["domain"] else ""
-        updated_source["kwargs"] = ast.literal_eval(updated_source["kwargs"]) if updated_source["kwargs"] else {}
+        try: 
+            updated_source["kwargs"] = ast.literal_eval(updated_source["kwargs"])
+        except:
+            updated_source["kwargs"] = {}
 
         return updated_source
