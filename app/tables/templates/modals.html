@@ -20,27 +20,27 @@
             <div id="col_null"  class="info"> (<span></span> missing)</div>
         </div>
         <div class="btn-div">
-            <button class="btn-primary" onclick="
+            <button class="table-action-btn" onclick="
                 closeInfoColModal();
                 openSidebarActionForm('HandleMissingValues', getColumnInfo())">
                 Missing vals.
             </button>
-            <button class="btn-primary" onclick="
+            <button class="table-action-btn" onclick="
                 closeInfoColModal();
                 openSidebarActionForm('ReplaceVals', getColumnInfo())">
                 Replace vals.
             </button>
-            <button class="btn-primary" onclick="
+            <button class="table-action-btn" onclick="
                 closeInfoColModal();
                 openSidebarActionForm('ChangeType', getColumnInfo())">
                 Change type
             </button>
-            <button class="btn-primary" onclick="
+            <button class="table-action-btn" onclick="
                 closeInfoColModal();
                 openSidebarActionForm('SortColumn', getColumnInfo())">
                 Sort
             </button>
-            <button class="btn-primary" onclick="
+            <button class="table-action-btn" onclick="
                 closeInfoColModal();
                 openSidebarActionForm('ApplyFunction', getColumnInfo())">
                 Apply Function
@@ -56,12 +56,12 @@
             <div id="col_std"  class="info">σ: <span></span>)</div>
         </div> 
         <div class="btn-div numeric-only">
-            <button class="btn-primary" onclick="
+            <button class="table-action-btn" onclick="
                 closeInfoColModal();
                 openSidebarActionForm('NormalizeColumn', getColumnInfo())">
                 Normalize
             </button>
-            <button class="btn-primary" onclick="
+            <button class="table-action-btn" onclick="
                 closeInfoColModal();
                 openSidebarActionForm('RemoveUnderOver', getColumnInfo({
                     'lower_bound': document.querySelector('#col_min span').innerText,
@@ -69,22 +69,22 @@
                 }))">
                 Remove under/over
             </button>
-            <button class="btn-primary" onclick="
+            <button class="table-action-btn" onclick="
                 closeInfoColModal();
                 openSidebarActionForm('CutValues', getColumnInfo())">
                 Cut
             </button>
-            <button class="btn-primary" onclick="
+            <button class="table-action-btn" onclick="
                 closeInfoColModal();
                 openSidebarActionForm('NLargest', getColumnInfo())">
                 Keep N largest
             </button>
-            <button class="btn-primary" onclick="
+            <button class="table-action-btn" onclick="
                 closeInfoColModal();
                 openSidebarActionForm('NSmallest', getColumnInfo())">
                 Keep N smallest
             </button>
-            <button class="btn-primary" onclick="
+            <button class="table-action-btn" onclick="
                 closeInfoColModal();
                 openSidebarActionForm('ColDiff', getColumnInfo())">
                 Diff

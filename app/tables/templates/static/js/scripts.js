@@ -13,10 +13,10 @@ function showTable(tableName) {
     document.getElementById('table-' + tableName).style.display = 'block';
 
     // Change selected table button
-    document.querySelectorAll('.select-table-btn').forEach(function(button) {
+    document.querySelectorAll('.table-select-btn').forEach(function(button) {
         button.classList.remove('active');
     });
-    document.querySelectorAll('.select-table-btn').forEach(function(button) {
+    document.querySelectorAll('.table-select-btn').forEach(function(button) {
         if (button.textContent.trim() === tableName) {
             button.classList.add('active');
         }
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (selectedTable && document.getElementById('table-' + selectedTable)) {
         showTable(selectedTable);
     } else {
-        const firstTableButton = document.querySelector('.select-table-btn');
+        const firstTableButton = document.querySelector('.table-select-btn');
         if (firstTableButton) {
             showTable(firstTableButton.textContent.trim());
         }
@@ -51,10 +51,14 @@ function getColumnInfo(additionalData = {}) {
 }
 function closeSidebarForm(id) {
     document.getElementById(id).style.width = "0";
+    const overlay = document.getElementById("sidebar-overlay");
+    overlay.style.display = "none";
 }
 function openSidebarForm(id, data = {}) {
     const form = document.getElementById(id);
-    form.style.width = "250px";
+    const overlay = document.getElementById("sidebar-overlay");
+    form.style.width = "300px";
+    overlay.style.display = "block";
     completeInputs(form, data);
     focusOnInput();
 }
@@ -203,7 +207,9 @@ async function addKwargs(action, form, data = {}) {
 }
 async function openSidebarActionForm(action, data = {}) {
     const form = document.getElementById("ActionSidebar");
-    form.style.width = "250px";
+    const overlay = document.getElementById("sidebar-overlay");
+    form.style.width = "300px";
+    overlay.style.display = "block";
     await addInputs(action, form);
     await addKwargs(action, form, data);
     completeInputs(form, action, data);
@@ -316,7 +322,7 @@ async function openInfoColModal(colName, colIdx, tableName) {
             if (field === 'is_numeric') {
                 const numericDivs = document.querySelectorAll('.numeric-only');
                 numericDivs.forEach(div => {
-                    div.style.display = data[field] ? 'block' : 'none';
+                    div.style.display = data[field] ? 'flex' : 'none';
                 });
                 return;
             }

@@ -124,7 +124,6 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Edit table style (button, full screen table, ...)
 * Imp unit tests: test with frontend (use selenium/selenium ide? https://www.youtube.com/watch?v=1FXJc20pZ2o&t=67s&ab_channel=SimpleTech) (create demo personas : tech guy/old/good user/...)
 
 ### To Fix
@@ -151,4 +150,5 @@ In addition to these folders, you will find a folder named tests that contains t
 * Odoo module; ease imports ?
 * Git/Github integration
 * integrated llm / Connection with online ones (+ crewAI?)
+* df explorer for vs code? Not much in common with squirrel?
 * ...
