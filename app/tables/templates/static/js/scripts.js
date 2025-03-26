@@ -59,11 +59,13 @@ function openSidebarForm(id, data = {}) {
     const overlay = document.getElementById("sidebar-overlay");
     form.style.width = "300px";
     overlay.style.display = "block";
-    completeInputs(form, data);
+    completeInputs(form, action=null, data=data);
     focusOnInput();
 }
-function completeInputs(form, action, data) {
-    form.querySelector('input[name="action_name"]').value = action;
+function completeInputs(form, action=null, data={}) {
+    if (action !== null) {
+        form.querySelector('input[name="action_name"]').value = action;
+    }
     for (const key in data) {
         if (data.hasOwnProperty(key)) {
             const inputElement = form.querySelector(`#${key}`);

@@ -16,7 +16,7 @@
         {% include 'utils/templates/project_nav_links.html' %}
     </aside>
 
-    <main style="padding: 0 !important; background-color: var(--light-structure-color) !important"> 
+    <main class="table-main"> 
         {% if table and not exception %}
             <div class="table-select-btn-div">
                 {% for name, html_table in table.items() %}

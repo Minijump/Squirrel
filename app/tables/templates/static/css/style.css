@@ -1,5 +1,9 @@
 @import url('/static/base/css/style.css');
 
+.table-main {
+    padding: 0 !important;
+    background-color: var(--light-structure-color) !important;
+}
 .table-container {
     height: 85vh;
 }
@@ -17,17 +21,24 @@
     padding: 12px;
     transition: 0.3s;
     flex: 1;
+    border-bottom: solid 1px var(--first-secondary-color);
 }
 .table-select-btn:hover {
     background: var(--light-structure-color);
 }
 .active {
     background: transparent;
+    border-bottom: 0;
+    border-right: solid 1px var(--first-secondary-color);
+    border-left: solid 1px var(--first-secondary-color);
 }
 
 .table-action-btn-div {
     display: flex;
     justify-content: left;
+    border-left: solid 20px var(--structure-color);
+    border-right: solid 20px var(--structure-color);
+    padding: 5px;
 }
 .table-action-btn {
     background-color: transparent;
@@ -36,7 +47,7 @@
     border-left: 1px solid white;
     border-right: 1px solid white;     
     cursor: pointer;
-    padding: 8px;
+    padding: 3px;
     transition: 0.3s;
     flex: 1;
 }
