@@ -422,3 +422,31 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 });
+
+
+// Add dropdown functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle dropdown on click
+    document.addEventListener('click', function(e) {
+        if (e.target.matches('.dropdown-toggle')) {
+            e.preventDefault();
+            const content = e.target.nextElementSibling;
+            
+            // Close all other dropdowns
+            document.querySelectorAll('.dropdown-content').forEach(item => {
+                if (item !== content) {
+                    item.classList.remove('show');
+                }
+            });
+            
+            // Toggle current dropdown
+            content.classList.toggle('show');
+        } else if (!e.target.closest('.dropdown-content')) {
+            // Close all dropdowns when clicking outside
+            document.querySelectorAll('.dropdown-content').forEach(content => {
+                content.classList.remove('show');
+            });
+        }
+    });
+});
+

@@ -36,10 +36,19 @@
             {% for name, html_table in table.items() %}
                 <div id="table-{{ name }}" class="table-container" style="display: none;">
                     <div class="table-action-btn-div">
+                        <!-- Rows dropdown -->
+                        <div class="dropdown table-action-btn">
+                            <button class="table-action-btn dropdown-toggle" style="width: 100%; border: 0;">Rows</button>
+                            <div class="dropdown-content">
+                                <a href="#" onclick="openSidebarActionForm('DeleteRow', { 'table_name': '{{ name }}' }); return false;">Delete Rows</a>
+                                <a href="#" onclick="openSidebarActionForm('KeepRow', { 'table_name': '{{ name }}' }); return false;">Keep Rows</a>
+                                <a href="#" onclick="openSidebarActionForm('AddRow', { 'table_name': '{{ name }}' }); return false;">Add Rows</a>
+                            </div>
+                        </div>
                         <button onclick="openSidebarActionForm('AddColumn', { 'table_name': '{{ name }}' })" class="table-action-btn">Add Column</button>
-                        <button onclick="openSidebarActionForm('DeleteRow', { 'table_name': '{{ name }}' })" class="table-action-btn">Delete Rows</button>
+                        <!-- <button onclick="openSidebarActionForm('DeleteRow', { 'table_name': '{{ name }}' })" class="table-action-btn">Delete Rows</button>
                         <button onclick="openSidebarActionForm('KeepRow', { 'table_name': '{{ name }}' })" class="table-action-btn">Keep Rows</button>
-                        <button onclick="openSidebarActionForm('AddRow', { 'table_name': '{{ name }}' })" class="table-action-btn">Add Rows</button>
+                        <button onclick="openSidebarActionForm('AddRow', { 'table_name': '{{ name }}' })" class="table-action-btn">Add Rows</button> -->
                         <button onclick="openSidebarActionForm('GroupBy', { 'table_name': '{{ name }}' })" class="table-action-btn">Group By</button>
                         <button onclick="openSidebarActionForm('MergeTables', { 'table_name': '{{ name }}' })" class="table-action-btn">Merge Table</button>
                         <button onclick="openSidebarActionForm('ConcatenateTables', { 'table_name': '{{ name }}' })" class="table-action-btn">Concatenate Table</button>
