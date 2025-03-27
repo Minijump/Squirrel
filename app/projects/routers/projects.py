@@ -1,9 +1,8 @@
+import json
+import os
+
 from fastapi import Request
 from fastapi.responses import RedirectResponse
-
-import os
-import json
-import traceback
 
 from app import router, templates
 from app.projects.models import PROJECT_TYPE_REGISTRY
