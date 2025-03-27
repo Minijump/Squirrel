@@ -36,6 +36,26 @@ class TestTestopenCreateProjectmodal():
     self.driver.find_element(By.ID, "cancelButton").click()
     WebDriverWait(self.driver, 0.0005).until(
       expected_conditions.invisibility_of_element_located((By.XPATH, "//form[@id=\'projectForm\']")))
+
+  @pytest.mark.slow
+  def test_mandatory_input_create_project_modal(self, server):
+    """
+    Check the mandatory input in the create project modal
+    """
+    self.driver.get(f"{server}/projects/")
+    self.driver.set_window_size(1524, 716)
+
+    # Try to confirm with no name, pop up does not disappear
+    self.driver.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
+    self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+    WebDriverWait(self.driver, 0.0005).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, ".modal-content")))
+
+    # Add a name and confirm, pop up disappears
+    self.driver.find_element(By.ID, "projectName").click()
+    self.driver.find_element(By.ID, "projectName").send_keys("dumb project name")
+    self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+    WebDriverWait(self.driver, 0.0005).until(
+      expected_conditions.invisibility_of_element_located((By.CSS_SELECTOR, ".modal-content")))
     
   @pytest.mark.slow
   def test_project_creation(self, server):
@@ -61,6 +81,63 @@ class TestTestopenCreateProjectmodal():
     assert value == project_name
     value = self.driver.find_element(By.ID, "projectDescription").get_attribute("value")
     assert value == project_description
+
+  @pytest.mark.slow
+  def test_invalid_or_existing_project_name(self, server):
+    """
+    Check invalid/existing project name
+    """
+    self.driver.get(f"{server}/projects/")
+    self.driver.set_window_size(1524, 717)
+
+    # Try to create a project with an invalid name (containing "..\\")
+    self.driver.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
+    self.driver.find_element(By.ID, "projectName").click()
+    self.driver.find_element(By.ID, "projectName").send_keys("..\\")
+    self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+    # Check that an error message is well displayed
+    assert self.driver.find_element(By.CSS_SELECTOR, "h3").text == "Error"
+
+    # Return on projects page and create one
+    project_name = "existing"
+    self.driver.find_element(By.LINK_TEXT, "Projects").click()
+    self.driver.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
+    self.driver.find_element(By.ID, "projectName").click()
+    self.driver.find_element(By.ID, "projectName").send_keys(project_name)
+    self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+
+    # Return on projects page and try to create a project with the same name
+    self.driver.find_element(By.CSS_SELECTOR, ".fa-home").click()
+    self.driver.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
+    self.driver.find_element(By.ID, "projectName").click()
+    self.driver.find_element(By.ID, "projectName").send_keys(project_name)
+    self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+    # Check that an error message is well displayed
+    assert self.driver.find_element(By.CSS_SELECTOR, "h3").text == "Error"
+
+  @pytest.mark.slow
+  def test_openexistingproject(self, server):
+    """
+    Check we can open an existing project
+    """
+    self.driver.get(f"{server}/projects/")
+    self.driver.set_window_size(1524, 717)
+
+    # Create Project
+    project_name = "open existing"
+    self.driver.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
+    self.driver.find_element(By.ID, "projectName").click()
+    self.driver.find_element(By.ID, "projectName").send_keys(project_name)
+    self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+
+    # Come back to project's page, check the new project is displayed, open it and check its name in settings
+    self.driver.find_element(By.CSS_SELECTOR, ".fa-home").click()
+    WebDriverWait(self.driver, 0.001).until(
+      expected_conditions.visibility_of_element_located((By.XPATH, f"//div[@id=\'projectGrid\']//h3[text()=\'{project_name}\']")))
+    self.driver.find_element(By.XPATH, f"//div[@id=\'projectGrid\']//h3[text()=\'{project_name}\']").click()
+    self.driver.find_element(By.LINK_TEXT, "Settings").click()
+    value = self.driver.find_element(By.ID, "projectName").get_attribute("value")
+    assert value == project_name
 
   @pytest.mark.slow
   def test_project_edits_ettings(self, server):

@@ -124,14 +124,17 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Imp unit tests: test with frontend (use selenium/selenium ide? https://www.youtube.com/watch?v=1FXJc20pZ2o&t=67s&ab_channel=SimpleTech) (create demo personas : tech guy/old/good user/...)
+* Imp unit tests: reformat tests + tours
+* Reformat code (split css and js for table, ...)
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
+* Make tours run faster
 
 ### To do MVP
 * App settings
 * Imp pipeline: create models, full screen list view + nice pipeline summary on the top (display with blocks and lines)?
+* Add actions ...
 
 ### Feature ideas
 * Add dynamic doctrsing (expl: pd.Series.replace.__doc__)

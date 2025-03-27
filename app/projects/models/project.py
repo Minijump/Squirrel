@@ -39,7 +39,18 @@ class Project:
         """
         Creates a new project directory in the ./_projects directory
         """
-        os.makedirs(self.path)
+        project_dir = self.path
+
+        if os.path.exists(project_dir):
+            raise FileExistsError(f"Project with name {self.name} or similar already exists")
+        invalid_chars = '/\\.:?*'
+        if any(char in self.name for char in invalid_chars):
+            raise Exception(f"Project name cannot contain /, \\, ., :, ?, *")
+
+        try:
+            os.makedirs(project_dir)
+        except Exception as e:
+            raise Exception(f"Could not create a project with this name: {e}")
 
     async def _create_manifest(self):
         """
