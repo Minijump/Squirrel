@@ -13,16 +13,20 @@ class TestTestopenCreateProjectmodal():
     options = Options()
     options.add_argument('--headless')
 
-    self.driver = webdriver.Firefox(options=options)
+    self.driver = webdriver.Firefox(options=options) #TODO: is too slow
     self.vars = {}
   
   def teardown_method(self, method):
     self.driver.quit()
   
   @pytest.mark.slow
-  def test_testopenCreateProjectmodal(self, server):
+  def test_create_project_modal(self, server):
+    """
+    Check we can open/close the create project modal
+    """
     self.driver.get(f"{server}/projects/")
     self.driver.set_window_size(1524, 716)
+
     # Click on "Create Project Card and check name input is visible"
     self.driver.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
     WebDriverWait(self.driver, 0.0005).until(
@@ -34,17 +38,63 @@ class TestTestopenCreateProjectmodal():
       expected_conditions.invisibility_of_element_located((By.XPATH, "//form[@id=\'projectForm\']")))
     
   @pytest.mark.slow
-  def test_testprojectcreation(self, server):
+  def test_project_creation(self, server):
+    """
+    Check project creation
+    """
     self.driver.get(f"{server}/projects/")
     self.driver.set_window_size(1524, 717)
+
+    # Create Project
+    project_name = "Yolo"
+    project_description = "Project creation test tour"
     self.driver.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
     self.driver.find_element(By.ID, "projectName").click()
-    self.driver.find_element(By.ID, "projectName").send_keys("Yolo")
+    self.driver.find_element(By.ID, "projectName").send_keys(project_name)
     self.driver.find_element(By.ID, "projectDescription").click()
-    self.driver.find_element(By.ID, "projectDescription").send_keys("Project creation test tour")
+    self.driver.find_element(By.ID, "projectDescription").send_keys(project_description)
     self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+
+    # Check in project settings that the project has been created with the correct values
     self.driver.find_element(By.LINK_TEXT, "Settings").click()
     value = self.driver.find_element(By.ID, "projectName").get_attribute("value")
-    assert value == "Yolo"
+    assert value == project_name
     value = self.driver.find_element(By.ID, "projectDescription").get_attribute("value")
-    assert value == "Project creation test tour"
+    assert value == project_description
+
+  @pytest.mark.slow
+  def test_project_edits_ettings(self, server):
+    """
+    Check project settings edition
+    """
+    self.driver.get(f"{server}/projects/")
+    self.driver.set_window_size(1524, 717)
+
+    # Create Project
+    project_name = "update settings project"
+    project_description = "test update settings"
+    self.driver.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
+    self.driver.find_element(By.ID, "projectName").click()
+    self.driver.find_element(By.ID, "projectName").send_keys(project_name)
+    self.driver.find_element(By.ID, "projectDescription").click()
+    self.driver.find_element(By.ID, "projectDescription").send_keys(project_description)
+    self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+
+    # Edit Project Settings
+    description_update = ", settings updated"
+    updated_project_description = "test update settings, settings updated"
+    table_len_update = "0"
+    updated_project_table_len = "100"
+    self.driver.find_element(By.LINK_TEXT, "Settings").click()
+    self.driver.find_element(By.ID, "projectDescription").click()
+    self.driver.find_element(By.ID, "projectDescription").send_keys(description_update)
+    self.driver.find_element(By.CSS_SELECTOR, "td:nth-child(2) > input").click()
+    self.driver.find_element(By.CSS_SELECTOR, "td:nth-child(2) > input").send_keys(table_len_update)
+    self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+
+    # Check settings were edited
+    self.driver.find_element(By.LINK_TEXT, "Settings").click()
+    value = self.driver.find_element(By.ID, "projectDescription").get_attribute("value")
+    assert value == updated_project_description
+    value = self.driver.find_element(By.CSS_SELECTOR, "td:nth-child(2) > input").get_attribute("value")
+    assert value == updated_project_table_len
