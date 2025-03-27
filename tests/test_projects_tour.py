@@ -33,19 +33,18 @@ class TestTestopenCreateProjectmodal():
     WebDriverWait(self.driver, 0.0005).until(
       expected_conditions.invisibility_of_element_located((By.XPATH, "//form[@id=\'projectForm\']")))
     
-  # TODO: make its creation in temp file
-  # @pytest.mark.slow
-  # def test_testprojectcreation(self, server):
-  #   self.driver.get(f"{server}/projects/")
-  #   self.driver.set_window_size(1524, 717)
-  #   self.driver.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
-  #   self.driver.find_element(By.ID, "projectName").click()
-  #   self.driver.find_element(By.ID, "projectName").send_keys("Yolo")
-  #   self.driver.find_element(By.ID, "projectDescription").click()
-  #   self.driver.find_element(By.ID, "projectDescription").send_keys("Project creation test tour")
-  #   self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
-  #   self.driver.find_element(By.LINK_TEXT, "Settings").click()
-  #   value = self.driver.find_element(By.ID, "projectName").get_attribute("value")
-  #   assert value == "Yolo"
-  #   value = self.driver.find_element(By.ID, "projectDescription").get_attribute("value")
-  #   assert value == "Project creation test tour"
+  @pytest.mark.slow
+  def test_testprojectcreation(self, server):
+    self.driver.get(f"{server}/projects/")
+    self.driver.set_window_size(1524, 717)
+    self.driver.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
+    self.driver.find_element(By.ID, "projectName").click()
+    self.driver.find_element(By.ID, "projectName").send_keys("Yolo")
+    self.driver.find_element(By.ID, "projectDescription").click()
+    self.driver.find_element(By.ID, "projectDescription").send_keys("Project creation test tour")
+    self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+    self.driver.find_element(By.LINK_TEXT, "Settings").click()
+    value = self.driver.find_element(By.ID, "projectName").get_attribute("value")
+    assert value == "Yolo"
+    value = self.driver.find_element(By.ID, "projectDescription").get_attribute("value")
+    assert value == "Project creation test tour"
