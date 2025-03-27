@@ -5,7 +5,7 @@ import os
 import traceback
 
 from app import router, templates
-from app.projects.models.project import NEW_CODE_TAG, PIPELINE_START_TAG, PIPELINE_END_TAG
+from app.projects.models import NEW_CODE_TAG, PIPELINE_START_TAG, PIPELINE_END_TAG
 from app.utils.error_handling import squirrel_error
 
 

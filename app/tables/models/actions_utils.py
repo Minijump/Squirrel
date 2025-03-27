@@ -5,7 +5,7 @@ from functools import wraps
 from fastapi import Request
 from fastapi.responses import RedirectResponse
 
-from app.projects.models.project import NEW_CODE_TAG
+from app.projects.models import NEW_CODE_TAG
 from app.utils.error_handling import squirrel_error
 
 

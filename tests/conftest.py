@@ -1,12 +1,25 @@
-import pytest
 import multiprocessing
-import time
 import os
-import uvicorn
-import socket
+import pytest
 import shutil
+import socket
+import tempfile
+import time
+from unittest.mock import patch
+import uvicorn
+
 from app.main import app
 
+@pytest.fixture
+def temp_project_dir_fixture():
+    """Fixture that creates a temporary directory and patches os.getcwd to return it."""
+    with tempfile.TemporaryDirectory() as temp_dir:
+        with patch('os.getcwd', return_value=temp_dir):
+            yield temp_dir
+
+
+# Running Server for Tours: START ---------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------------------------
 def find_free_port():
     """Find a free port on localhost"""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -50,3 +63,6 @@ def server(tmpdir):
     proc.terminate()
     proc.join()
     os.chdir(original_cwd)
+
+# Running Server for Tours: END -----------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------------------------

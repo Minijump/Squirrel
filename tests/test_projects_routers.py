@@ -9,7 +9,7 @@ import pytest
 from app.main import app
 from tests import mock_project
 
-from app.projects.models.project import Project, BASIC_PIPELINE, PROJECT_TYPE_REGISTRY
+from app.projects.models import Project, BASIC_PIPELINE, PROJECT_TYPE_REGISTRY
 
 client = TestClient(app)
 
