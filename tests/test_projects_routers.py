@@ -1,15 +1,13 @@
-from fastapi.testclient import TestClient
-
 import os
 import tempfile
 from unittest.mock import patch
 import json
-import pytest
+
+from fastapi.testclient import TestClient
 
 from app.main import app
-from tests import mock_project
-
 from app.projects.models import Project, BASIC_PIPELINE, PROJECT_TYPE_REGISTRY
+from tests import mock_project
 
 client = TestClient(app)
 
