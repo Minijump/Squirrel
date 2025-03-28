@@ -137,10 +137,3 @@ def test_fail_update_project_settings(temp_project_dir_fixture):
     response = client.post("/project/update_settings/", data=form_data)
     assert response.status_code == 200, "Failed to deal with error while updating project settings"
     assert response.context.get("exception"), "Response does not contain an exception"
-
-def test_access_app_settings():
-    """
-    Test if the application settings endpoint is accessible
-    """
-    response = client.get("/app/settings/")
-    assert response.status_code == 200, "Failed to access the application settings endpoint"

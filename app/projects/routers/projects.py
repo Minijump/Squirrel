@@ -108,15 +108,3 @@ async def update_project_settings(request: Request):
     await project.update_settings(form_data)
 
     return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303) 
-
-@router.get("/app/settings/")
-@squirrel_error
-async def app_settings(request: Request):
-    """
-    Display the application settings
-
-    * request
-
-    => Returns a TemplateResponse to display application settings (empty for now)
-    """
-    return templates.TemplateResponse(request, "projects/templates/app_settings.html", {})                                                   
