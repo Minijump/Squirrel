@@ -132,7 +132,6 @@ In addition to these folders, you will find a folder named tests that contains t
 * Make tours run faster
 
 ### To do MVP
-* App settings
 * Imp pipeline: create models, full screen list view + nice pipeline summary on the top (display with blocks and lines)?
 * Add actions ...
 

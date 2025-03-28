@@ -175,3 +175,19 @@ class TestTestopenCreateProjectmodal():
     assert value == updated_project_description
     value = self.driver.find_element(By.CSS_SELECTOR, "td:nth-child(2) > input").get_attribute("value")
     assert value == updated_project_table_len
+
+  @pytest.mark.slow
+  def test_navigate_in_app_menus(self, server):
+      """
+      Test the navigation in the app menus
+      """
+      self.driver.get(f"{server}/projects/")
+      self.driver.set_window_size(1524, 717)
+
+      # Navigate to app settings
+      self.driver.find_element(By.LINK_TEXT, "Settings").click()
+      assert self.driver.find_element(By.CSS_SELECTOR, "h1").text == "App settings"
+
+      # Navigate back to projects
+      self.driver.find_element(By.LINK_TEXT, "Projects").click()
+      assert self.driver.find_element(By.CSS_SELECTOR, "h1").text == "ProjectHub"
