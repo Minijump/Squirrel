@@ -1,6 +1,6 @@
-from fastapi.testclient import TestClient
-
 import pytest
+
+from fastapi.testclient import TestClient
 
 from app.main import app
 from app.data_sources.models import DATA_SOURCE_REGISTRY, DataSourceFile
@@ -36,6 +36,19 @@ def test_generate_manifest():
     }
     manifest = DataSourceFile._generate_manifest(form_data)
     assert manifest["kwargs"] == {}
+
+def test_instance_from_manifest():
+    """
+    Test instance creation of DataSourceFile from manifest
+    """
+    manifest = {
+        "name": "Mock source",
+        "directory": "mock_directory",
+        "type": "csv",
+        "kwargs": {}
+    }
+    source = DataSourceFile(manifest)
+    assert source.name == "Mock source"
 
 def test_subclass_create_pickle_file_implemented():
     """
