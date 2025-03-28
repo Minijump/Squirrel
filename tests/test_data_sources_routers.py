@@ -1,7 +1,5 @@
 import json
 import os
-import tempfile
-from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
@@ -12,7 +10,7 @@ from tests import mock_project
 client = TestClient(app)
 
 
-def test_data_sources(mock_project):
+def test_access_data_sources(mock_project):
     """
     Test if the data_sources endpoint is accessible
     Test if the response contains the correct sources
@@ -27,21 +25,54 @@ def test_data_sources(mock_project):
         "directory": "mock_source_csv"
     }
     assert expected_source in response.context.get("sources"), "Expected one mock source csv"
+
+def test_fail_access_data_sources(mock_project):
+    """
+    Test if in case of a failing access to data sources, page is displayed correctly
+    """
+    response = client.get("/data_sources/?project_dir=non_existing")
+    assert response.status_code == 200, "Failed to access the data_sources endpoint"
+    assert response.context.get("exception"), "Response does not contain an exception"
+
+def test_create_data_source(mock_project, temp_project_dir_fixture):
+    """
+    Test the creation of a data source (with demo_random_data.csv from mock_datas)
+    """
+    with open("tests/mock_datas/demo_random_data.csv", "rb") as f:
+        file_content = f.read()
+
+    response = client.post(
+        "/create_source/",
+        files={"source_file": ("demo_random_data.csv", file_content, "text/csv")},
+        data={
+            "project_dir": mock_project,
+            "source_name": "test create source",
+            "source_type": "csv",
+            "source_description": "a mock csv source, to test creation",
+        }
+    )
+    assert response.status_code == 200, "Failed to create data source"
+    expected_source = {
+        'name': 'test create source', 
+        'type': 'csv', 
+        'description': 'a mock csv source, to test creation', 
+        'directory': 'test_create_source', 
+        'kwargs': {}}
+    assert expected_source in response.context.get("sources"), "Expected one test create source"
+
     
-def test_fail_data_source_creation(mock_project):
+def test_fail_data_source_creation(mock_project, temp_project_dir_fixture):
     """
     Test if in case of a failing source creation, page is displayed correctly
     """
     form_data = {
         "source_name": "Other arguments are missing=> will raise an error", 
         }
-    with tempfile.TemporaryDirectory() as temp_dir:
-        with patch('os.getcwd', return_value=temp_dir):
-            response = client.post("/create_source/", data=form_data)
-            assert response.status_code == 200, "Unexpected error while failing to create data source"
-            assert response.context.get("exception"), "Response does not contain an exception"
+    response = client.post("/create_source/", data=form_data)
+    assert response.status_code == 200, "Unexpected error while failing to create data source"
+    assert response.context.get("exception"), "Response does not contain an exception"
 
-def test_source_settings(mock_project): 
+def test_access_source_settings(mock_project): 
     """
     Test if the source_settings endpoint is accessible
     Test if the response contains the correct source
@@ -57,15 +88,13 @@ def test_source_settings(mock_project):
     }
     assert response.context.get("source") == expected_source, "Expected one mock source csv"
 
-def test_fail_source_settings(mock_project):
+def test_fail_access_source_settings(mock_project, temp_project_dir_fixture):
     """
     Test if in case of a failing source settings, page is displayed correctly
     """
-    with tempfile.TemporaryDirectory() as temp_dir:
-        with patch('os.getcwd', return_value=temp_dir):
-            response = client.get("/source/settings?project_dir="+mock_project+"&source_dir=non_existing")
-            assert response.status_code == 200, "Failed to access the source_settings endpoint"
-            assert response.context.get("exception"), "Response does not contain an exception"
+    response = client.get("/source/settings?project_dir="+mock_project+"&source_dir=non_existing")
+    assert response.status_code == 200, "Failed to access the source_settings endpoint"
+    assert response.context.get("exception"), "Response does not contain an exception"
 
 def test_update_source_settings(mock_project):
     """
@@ -114,3 +143,44 @@ def test_sync_source(mock_project):
     }
     response = client.post("/source/sync", data=form_data)
     assert response.status_code == 200, "Failed to access the sync_source endpoint"
+
+def test_delete_source(mock_project):
+    """
+    Test if the delete_source endpoint is accessible
+    """
+    with open("tests/mock_datas/demo_random_data.csv", "rb") as f:
+        file_content = f.read()
+    response = client.post(
+        "/create_source/",
+        files={"source_file": ("demo_random_data.csv", file_content, "text/csv")},
+        data={
+            "project_dir": mock_project,
+            "source_name": "test delete source",
+            "source_type": "csv",
+            "source_description": "a source to delete",
+        }
+    )
+
+    mock_source_path = os.path.join(os.getcwd(), "_projects", mock_project, "data_sources", "test_delete_source")
+    assert os.path.exists(mock_source_path), "Source directory was not created"
+
+    form_data = {
+        "project_dir": mock_project,
+        "source_dir": "test_delete_source"
+    }
+    response = client.post("/source/delete", data=form_data)
+
+    assert response.status_code == 200, "Failed to access the delete_source endpoint"
+    assert not os.path.exists(mock_source_path), "Source directory was not deleted"
+
+def test_fail_delete_source(mock_project):
+    """
+    Test if in case of a failing delete source, page is displayed correctly
+    """
+    form_data = {
+        "project_dir": mock_project,
+        "source_dir": "non_existing"
+    }
+    response = client.post("/source/delete", data=form_data)
+    assert response.status_code == 200, "Failed to access the delete_source endpoint"
+    assert response.context.get("exception"), "Response does not contain an exception"
