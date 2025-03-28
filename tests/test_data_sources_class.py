@@ -1,11 +1,12 @@
+import os
 import pytest
 import warnings
 
 from fastapi.testclient import TestClient
 
 from app.main import app
-from tests import mock_project
 from app.data_sources.models import DATA_SOURCE_REGISTRY, DataSource
+from tests import mock_project
 
 
 client = TestClient(app)
@@ -39,8 +40,8 @@ def test_data_source_types_required_class_attributes():
     """
     for source_type in DATA_SOURCE_REGISTRY:
         source = DATA_SOURCE_REGISTRY[source_type]
-        assert source.short_name, f"Expected short_name for {source_type}"
-        assert source.display_name, f"Expected display_name for {source_type}"
+        assert source.short_name != 'short_name', f"Expected short_name for {source_type}"
+        assert source.display_name != 'Display name', f"Expected display_name for {source_type}"
         if not source.icon:
             warnings.warn("Missing icon for source type" + source.display_name, UserWarning)
 
@@ -57,7 +58,6 @@ def test_check_available_infos_error():
 def test_check_available_infos_with_additional_fields():
     """
     Test if the check_available_infos method is correctly implemented
-    for an empty dictionary, it should raise a ValueError
     """
     infos = {
         "source_name": "Mock source",
@@ -135,6 +135,8 @@ async def test_create_source(mock_project):
     }
     source = await DataSource._create_source(form_data)
     assert source.__class__.__name__ == "DataSource", "Expected instance of DataSource"
+    assert os.path.exists(os.path.join(mock_project, "data_sources", "mock_source")), "Expected mock_source directory to exist"
+    assert os.path.exists(os.path.join(mock_project, "data_sources", "mock_source", "__manifest__.json")), "Expected __manifest__.json to exist"
 
 @pytest.mark.asyncio
 async def test_update_source_settings(mock_project):
