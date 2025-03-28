@@ -124,8 +124,7 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Imp unit tests: reformat tests + tours
-* Reformat code (split css and js for table, ...)
+* imp table unit tests
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
@@ -133,8 +132,9 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To do MVP
 * Imp pipeline: create models, full screen list view + nice pipeline summary on the top (display with blocks and lines)?
-* Add actions ...
 * Generalize unit tests (should be the same everywhere, create 1 fake project in data,...) + test everything
+* Reformat code (split css and js for table, ...)
+* Add actions ...
 
 ### Feature ideas
 * Add dynamic doctrsing (expl: pd.Series.replace.__doc__)
