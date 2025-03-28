@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class TestDataSourcesTours():
@@ -92,3 +93,68 @@ class TestDataSourcesTours():
         self.driver.find_element(By.CSS_SELECTOR, "#sourceType > option:nth-child(2)").click()
         # Check the goods inputs are visible
         WebDriverWait(self.driver, 0.001).until(expected_conditions.visibility_of_element_located((By.ID, "sourceFile")))
+
+    @pytest.mark.slow
+    def test_data_source_edit(self, server):
+        """
+        Test editing a data source
+        """
+        self.driver.get(f"{server}/projects/")
+        self.driver.set_window_size(1524, 716)
+
+        # Open a project and go to data sources
+        self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2)").click()
+        self.driver.find_element(By.LINK_TEXT, "Data sources").click()
+
+        # Select the first source and edit it
+        self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2) .card-sync").click()
+        self.driver.find_element(By.ID, "sourceDescription").click()
+        description_value = self.driver.find_element(By.ID, "sourceDescription").get_attribute("value")
+        edit_value = ", test edit"
+        self.driver.find_element(By.ID, "sourceDescription").send_keys(edit_value)
+        self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+
+        # Check the source was edited
+        self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2) .card-description").click()
+        value = self.driver.find_element(By.ID, "sourceDescription").get_attribute("value")
+        assert value == description_value + edit_value
+
+    @pytest.mark.slow
+    def test_testcreateyahoodatasource(self, server):
+        """
+        Test create yahoo data source
+        """
+        self.driver.get(f"{server}/projects/")
+        self.driver.set_window_size(1524, 716)
+
+        # Create a project
+        self.driver.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
+        self.driver.find_element(By.ID, "projectName").click()
+        self.driver.find_element(By.ID, "projectName").send_keys("test create yahoo data source")
+        self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+
+        # Go to data sources
+        self.driver.find_element(By.LINK_TEXT, "Data sources").click()
+        # Open create modal and complete the inputs
+        self.driver.find_element(By.CSS_SELECTOR, "p").click()
+        self.driver.find_element(By.ID, "sourceName").click()
+        self.driver.find_element(By.ID, "sourceName").send_keys("test yahoo")
+        self.driver.find_element(By.ID, "sourceDescription").click()
+        self.driver.find_element(By.ID, "sourceDescription").send_keys("a simple test for yahoo data source")
+        self.driver.find_element(By.ID, "sourceType").click()
+        dropdown = self.driver.find_element(By.ID, "sourceType")
+        dropdown.find_element(By.XPATH, "//option[. = 'Yahoo Finance']").click()
+        self.driver.find_element(By.CSS_SELECTOR, "option:nth-child(6)").click()
+        self.driver.find_element(By.ID, "tickers").click()
+        self.driver.find_element(By.ID, "tickers").send_keys("[\'AU\']")
+        self.driver.find_element(By.ID, "start_date").click()
+        self.driver.find_element(By.ID, "start_date").send_keys("2025-03-03")
+        self.driver.find_element(By.ID, "end_date").click()
+        self.driver.find_element(By.ID, "end_date").send_keys("2025-03-21")
+        self.driver.find_element(By.CSS_SELECTOR, ".btn-primary:nth-child(9)").click()
+
+        # Check the source was created, and displayed on screen
+        elements = WebDriverWait(self.driver, 0.01).until(
+            EC.visibility_of_all_elements_located((By.CSS_SELECTOR, ".card-title"))
+        )
+        assert any(element.text.strip() == "test yahoo" for element in elements), "No visible card with 'test yahoo' found"
