@@ -1,5 +1,6 @@
 import multiprocessing
 import os
+import pandas as pd
 import pytest
 import shutil
 import socket
@@ -50,6 +51,16 @@ def server(tmpdir):
         else:
             shutil.copy2(src_path, dst_path)
     os.makedirs(os.path.join(temp_dir, "_projects"), exist_ok=True)
+
+    mock_project_dir = temp_dir.join("_projects").mkdir("mock_project")
+    mock_project_dir.join("__manifest__.json").write('{"name": "Mock project", "description": "A mock project use in unit tests", "directory": "mock_project", "project_type": "std", "misc": {}}')
+    mock_project_dir.mkdir("data_sources").mkdir("mock_source_csv")
+    mock_project_dir.join("data_sources/mock_source_csv/__manifest__.json").write('{"name": "Mock source csv", "type": "csv", "description": "a mock csv source", "directory": "mock_source_csv"}')
+    with open("tests/mock_datas/demo_ordered_data.csv", "r") as f:
+        mock_project_dir.join("data_sources/mock_source_csv/data.csv").write(f.read())
+    pd.read_csv(mock_project_dir.join("data_sources/mock_source_csv/data.csv")).to_pickle(mock_project_dir.join("data_sources/mock_source_csv/data.pkl"))
+    with open("tests/mock_datas/mock_pipeline.py", "r") as f:
+        mock_project_dir.join("pipeline.py").write(f.read())
     
     os.chdir(temp_dir)
     
