@@ -107,7 +107,7 @@ class TestDataSourcesTours():
         self.driver.find_element(By.LINK_TEXT, "Data sources").click()
 
         # Select the first source and edit it
-        self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2) .card-sync").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2)").click()
         self.driver.find_element(By.ID, "sourceDescription").click()
         description_value = self.driver.find_element(By.ID, "sourceDescription").get_attribute("value")
         edit_value = ", test edit"
@@ -120,7 +120,7 @@ class TestDataSourcesTours():
         assert value == description_value + edit_value
 
     @pytest.mark.slow
-    def test_testcreateyahoodatasource(self, server):
+    def test_create_yahoo_data_source(self, server):
         """
         Test create yahoo data source
         """
@@ -158,3 +158,32 @@ class TestDataSourcesTours():
             EC.visibility_of_all_elements_located((By.CSS_SELECTOR, ".card-title"))
         )
         assert any(element.text.strip() == "test yahoo" for element in elements), "No visible card with 'test yahoo' found"
+
+    @pytest.mark.slow
+    def test_delete_data_source(self, server):
+        """
+        Test data source deletion
+        """
+        self.driver.get(f"{server}/projects/")
+        self.driver.set_window_size(1524, 716)
+
+        # Open a project and go to data sources
+        self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2)").click()
+        self.driver.find_element(By.LINK_TEXT, "Data sources").click()
+
+        # Check source is present, before deletion
+        source_name =  self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2) .card-title").text
+        elements = WebDriverWait(self.driver, 0.01).until(
+            EC.visibility_of_all_elements_located((By.CSS_SELECTOR, ".card-title"))
+        )
+        assert any(element.text.strip() == source_name for element in elements), f"Card with '{source_name}' still present"
+        # Select the first source and click on delete button
+        self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2)").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".btn-danger").click()
+
+        # Check the source was deleted (check source_name is not present)
+        elements = WebDriverWait(self.driver, 0.01).until(
+            EC.visibility_of_all_elements_located((By.CSS_SELECTOR, ".card-title"))
+        )
+        assert not any(element.text.strip() == source_name for element in elements), f"Card with '{source_name}' still present"
+        

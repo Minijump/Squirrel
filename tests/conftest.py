@@ -59,6 +59,11 @@ def server(tmpdir):
     with open("tests/mock_datas/demo_ordered_data.csv", "r") as f:
         mock_project_dir.join("data_sources/mock_source_csv/data.csv").write(f.read())
     pd.read_csv(mock_project_dir.join("data_sources/mock_source_csv/data.csv")).to_pickle(mock_project_dir.join("data_sources/mock_source_csv/data.pkl"))
+    mock_project_dir.join("data_sources").mkdir("mock_source_csv_2")
+    mock_project_dir.join("data_sources/mock_source_csv_2/__manifest__.json").write('{"name": "Mock source csv 2", "type": "csv", "description": "a 2nd mock csv source", "directory": "mock_source_csv_2"}')
+    with open("tests/mock_datas/demo_ordered_data.csv", "r") as f:
+        mock_project_dir.join("data_sources/mock_source_csv_2/data.csv").write(f.read())
+    pd.read_csv(mock_project_dir.join("data_sources/mock_source_csv_2/data.csv")).to_pickle(mock_project_dir.join("data_sources/mock_source_csv_2/data.pkl"))
     with open("tests/mock_datas/mock_pipeline.py", "r") as f:
         mock_project_dir.join("pipeline.py").write(f.read())
     
