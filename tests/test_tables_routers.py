@@ -1,16 +1,16 @@
-from fastapi.testclient import TestClient
-
-import pandas as pd
 import os
+import pandas as pd
 from unittest.mock import patch
-import pytest
+
+from fastapi.testclient import TestClient
 
 from app.main import app
 from tests import mock_project
 
+
 client = TestClient(app)
 
-
+# Test methods used in the enpoints --------------------------------------------------
 def test_load_pipeline_module(mock_project):
     """
     Test if pipeline is loaded correctly 
@@ -25,6 +25,8 @@ def test_load_pipeline_module(mock_project):
     # check that dfs is a dictionarry of dataframes
     assert isinstance(dfs, dict) and isinstance(dfs['df'], pd.DataFrame), "'run_pipeline' response should be a dictionary"
 
+
+# Test the endpoints ---------------------------------------------------------------
 def test_tables(mock_project):
     """
     Test if the table endpoint is accessible
