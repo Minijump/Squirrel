@@ -124,15 +124,14 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
+* Imp pipeline: create models, full screen list view + nice pipeline summary on the top (display with blocks and lines)?
+* Generalize unit tests (should be the same everywhere, create 1/n fake project in data,...) + test everything (fcts, endpoints, class, flows (+result in 'backend' after flow), ...) + Make tours run faster (if not possible, decrease their number by doing lots of assert in same test) + create tests/tours 'framework' (click table button fct, look table value, click on grid card where name, ...) + make it possible/easy to tests with selenium ide into the test env (to be able to export the test easily)
+* Reformat code (split css and js for table, ...)
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
-* Make tours run faster
 
 ### To do MVP
-* Imp pipeline: create models, full screen list view + nice pipeline summary on the top (display with blocks and lines)?
-* Generalize unit tests (should be the same everywhere, create 1 fake project in data,...) + test everything
-* Reformat code (split css and js for table, ...)
 * Add actions + imp table design ...
 
 ### Feature ideas
