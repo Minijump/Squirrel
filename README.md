@@ -134,7 +134,7 @@ In addition to these folders, you will find a folder named tests that contains t
 * Imp pipeline: create models, full screen list view + nice pipeline summary on the top (display with blocks and lines)?
 * Generalize unit tests (should be the same everywhere, create 1 fake project in data,...) + test everything
 * Reformat code (split css and js for table, ...)
-* Add actions ...
+* Add actions + imp table design ...
 
 ### Feature ideas
 * Add dynamic doctrsing (expl: pd.Series.replace.__doc__)

@@ -1,20 +1,16 @@
-from fastapi import Request
-from fastapi.responses import FileResponse
-from fastapi.responses import RedirectResponse
-
-import os
 import importlib.util
-import pandas as pd
 import json
-import traceback
+import os
+import pandas as pd
 import pickle
 
-from app.tables.models.actions_utils import action
-from app import router, templates
+from fastapi import Request
+from fastapi.responses import FileResponse
 
+from app import router, templates
 from app.data_sources.routers.data_sources import get_sources
-from app.tables.models.actions_utils import TABLE_ACTION_REGISTRY
 from app.tables.models.actions_column import convert_col_idx
+from app.tables.models.actions_utils import action, TABLE_ACTION_REGISTRY
 from app.utils.error_handling import squirrel_error
 
 def load_pipeline_module(project_dir):
