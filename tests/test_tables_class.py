@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
@@ -144,3 +145,55 @@ def test_convert_col_idx():
 
     df2_col1_idx = str(df2.columns[0])
     assert convert_col_idx(df2_col1_idx) == f"('level1', 'A')", "Expected multi-index column name to be formatted correctly"
+
+
+# Action class ------------------------------------------------------------------------
+def test_table_action_registry_execute():
+    """
+    Test if all classes in the table action registry have an execute method that is different from the Action class.
+    """
+    from app.tables.models.actions_utils import TABLE_ACTION_REGISTRY
+    from app.tables.models.actions import Action
+    
+    for action_name, action_class in TABLE_ACTION_REGISTRY.items():
+        assert hasattr(action_class, "execute"), f"{action_name} does not have an execute method"
+        assert action_class.execute != Action.execute, f"{action_name} execute method was not implemented"
+
+def test_table_action_registry_execute_advanced():
+    """
+    Test if all classes that have kwrags in the table action registry have an execute_advanced method.
+    """
+    from app.tables.models.actions_utils import TABLE_ACTION_REGISTRY
+    from app.tables.models.actions import Action
+    
+    for action_name, action_class in TABLE_ACTION_REGISTRY.items():
+        class_object = action_class(request=None)
+        if class_object.kwargs:
+            assert hasattr(action_class, "execute_advanced"), f"{action_name} does not have an execute_advanced method"
+            assert action_class.execute_advanced != Action.execute_advanced, f"{action_name} execute_advanced method was not implemented"
+
+@pytest.mark.asyncio()
+async def test_action_get_method():
+    """
+    Test that the Action._get method correctly extracts values from form data.
+    """
+    from app.tables.models.actions import Action
+    action_object = Action(request=None)
+
+    mock_kwargs = {
+        "arg1": "value1",
+        "arg2": "value2",
+        "arg3": "value3"
+    }
+    expected = "arg1='value1', arg2='value2', arg3='value3'"
+    result = await action_object._get_kwargs_str(mock_kwargs)
+    assert result == expected, f"Expected string representation of kwargs to be {expected}"
+
+    mock_kwargs_with_no_str = {
+        "arg1": 1,
+        "arg2": 2.5,
+        "arg3": True
+    }
+    expected = "arg1=1, arg2=2.5, arg3=True"
+    result_no_str = await action_object._get_kwargs_str(mock_kwargs_with_no_str)
+    assert result_no_str == expected, f"Expected string representation of kwargs to be {expected}"
