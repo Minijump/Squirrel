@@ -3,9 +3,15 @@ import random
 
 def run_pipeline():
     data = []
-    for _ in range(100):
+    for i in range(100):
         name = 'test'
-        list_price = random.randint(1, 1000)
+        if i == 0:
+            # Used to test sort in tour test_sort_column
+            list_price = 0.01
+        elif i == 1:
+            list_price = 2000
+        else:
+            list_price = random.randint(1, 1000)
         data.append([name, list_price])
     dfs = {}
     dfs['df'] = pd.DataFrame(data, columns=['name', 'price'])
