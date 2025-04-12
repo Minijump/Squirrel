@@ -11,7 +11,7 @@ from selenium.webdriver.firefox.options import Options
 class TestTablesTours():
     def setup_method(self, method):
         options = Options()
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
 
         self.driver = webdriver.Firefox(options=options) #TODO: is too slow
         self.vars = {}

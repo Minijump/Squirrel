@@ -1,27 +1,35 @@
 @import url('/static/base/css/style.css');
 
+.pipeline-main {
+    padding: 0 !important;
+    height: 100%;
+    overflow: hidden;
+}
+
 .action-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    width: 400px;
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .action {
     width: 100%;
+    max-width: 100%;
     background: var(--light-structure-color);
-    border-radius: 10px;
-    padding: 5px;
-    margin-left: 5px;
+    border: solid 1px var(--structure-color);
+    padding: 10px;
     display: flex;
     justify-content: space-between;
     transition: transform 0.2s;
     cursor: grab;
     overflow: hidden; 
+    box-sizing: border-box;
 }
 .action:hover {
-    /* transform not working after drag/drop due to swappy */
-    transform: scale(1.05);
+    transform: scale(1.005);
     filter: brightness(1.1);
 }
 

@@ -1,0 +1,15 @@
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+::-webkit-scrollbar-track {
+    background: var(--light-structure-color);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: grey;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    box-shadow: inset 0 0 5px white; 
+}

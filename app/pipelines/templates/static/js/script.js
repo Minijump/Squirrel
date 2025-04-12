@@ -41,9 +41,16 @@ function getOrder() {
 
 function saveNewOrderVisibility() {
     // Set visibility of save button
-    // each element has name: 'id-item', starting with 1; alphabetical order = initial order
+    // each element has name: 'id-item', starting with 0
     const order = getOrder()
-    const sorted = [...order].sort();
+    // Sort numerically by extracting and comparing the numeric part
+    const sorted = [...order].sort((a, b) => {
+        const numA = parseInt(a.split('-')[0], 10);
+        const numB = parseInt(b.split('-')[0], 10);
+        return numA - numB;
+    });
+    console.log("order", order)
+    console.log("sorted", sorted)
     if (JSON.stringify(order) === JSON.stringify(sorted)) {
         document.getElementById('save-order').style.visibility = "hidden";
     } else{
