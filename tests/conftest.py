@@ -34,8 +34,11 @@ def temp_project_dir_fixture():
             
             project_dir = os.path.join(projects_dir, "ut_mock_project_1")
             os.makedirs(project_dir, exist_ok=True)
-            
             copy_dir("tests/utils/mock_projects/ut_mock_project_1", project_dir)
+
+            project_dir = os.path.join(projects_dir, "ut_mock_project_2")
+            os.makedirs(project_dir, exist_ok=True)
+            copy_dir("tests/utils/mock_projects/ut_mock_project_2", project_dir)
 
             yield temp_dir
 

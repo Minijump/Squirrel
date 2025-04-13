@@ -5,7 +5,7 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 
 from app.main import app
-from tests import MOCK_PROJECT
+from tests import MOCK_PROJECT, MOCK_PROJECT_CWD_INDEPENDENT
 
 
 client = TestClient(app)
@@ -37,10 +37,10 @@ def test_open_project(temp_project_dir_fixture):
     Test if the open_project endpoint is accessible 
     Contains a table, the project_dir and is redirected to table endpoint
     """
-    response = client.get(f"/projects/open/?project_dir={MOCK_PROJECT}")
+    response = client.get(f"/projects/open/?project_dir={MOCK_PROJECT_CWD_INDEPENDENT}")
     assert response.status_code == 200, "Failed to access the open_project endpoint"
     assert response.context.get("table"), "Response does not contain a table"
-    assert response.context.get("project_dir") == MOCK_PROJECT, "Response does not contain the correct project_dir"
+    assert response.context.get("project_dir") == MOCK_PROJECT_CWD_INDEPENDENT, "Response does not contain the correct project_dir"
     assert "/tables/?project_dir=" in str(response.url), "Failed to redirect to table's page"
 
 def test_fail_open_project():

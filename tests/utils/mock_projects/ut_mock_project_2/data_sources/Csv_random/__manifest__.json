@@ -1,0 +1,7 @@
+{
+    "name": "Csv random",
+    "type": "csv",
+    "description": "a csv with random data",
+    "directory": "Csv_random",
+    "kwargs": {}
+}

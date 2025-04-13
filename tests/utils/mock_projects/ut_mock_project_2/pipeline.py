@@ -6,7 +6,6 @@ def run_pipeline():
     for i in range(100):
         name = 'test'
         if i == 0:
-            # Used to test sort in tour test_sort_column
             list_price = 0.01
         elif i == 1:
             list_price = 2000

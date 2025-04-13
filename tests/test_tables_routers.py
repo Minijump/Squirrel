@@ -5,7 +5,7 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 
 from app.main import app
-from tests import MOCK_PROJECT
+from tests import MOCK_PROJECT, MOCK_PROJECT_CWD_INDEPENDENT
 
 
 client = TestClient(app)
@@ -18,7 +18,7 @@ def test_load_pipeline_module(temp_project_dir_fixture):
     Test wether the pipeline is 'runable'
     """
     from app.tables.routers.tables import load_pipeline_module
-    pipeline = load_pipeline_module(MOCK_PROJECT)
+    pipeline = load_pipeline_module(MOCK_PROJECT_CWD_INDEPENDENT)
     try:
         dfs = pipeline.run_pipeline()
     except Exception as e:
@@ -63,11 +63,11 @@ def test_access_tables(temp_project_dir_fixture):
     Test if the table endpoint is accessible
     Test if the response contains a table and the correct project_dir
     """
-    response = client.get("/tables/?project_dir=" + MOCK_PROJECT)
+    response = client.get("/tables/?project_dir=" + MOCK_PROJECT_CWD_INDEPENDENT)
     assert response.status_code == 200, "Failed to access the table endpoint"
     assert response.context.get("table"), "Response does not contain a table"
-    assert response.context.get("project_dir") == MOCK_PROJECT, "Response does not contain the correct project_dir"
-    assert os.path.exists(os.path.join(os.getcwd(), "_projects", MOCK_PROJECT, "data_tables.pkl")), "No data_tables.pkl file in project directory"
+    assert response.context.get("project_dir") == MOCK_PROJECT_CWD_INDEPENDENT, "Response does not contain the correct project_dir"
+    assert os.path.exists(os.path.join(os.getcwd(), "_projects", MOCK_PROJECT_CWD_INDEPENDENT, "data_tables.pkl")), "No data_tables.pkl file in project directory"
 
 def test_fail_access_tables():
     """
@@ -93,21 +93,21 @@ def test_tables_pager(temp_project_dir_fixture):
     Test if the tables_pager endpoint functions correctly:
     """
     # First, make sure the data_tables.pkl file exists by calling the tables endpoint
-    response = client.get(f"/tables/?project_dir={MOCK_PROJECT}")
+    response = client.get(f"/tables/?project_dir={MOCK_PROJECT_CWD_INDEPENDENT}")
     assert response.status_code == 200
     
-    response = client.get(f"/tables/pager/?project_dir={MOCK_PROJECT}&table_name=df&page=0&n=5")
+    response = client.get(f"/tables/pager/?project_dir={MOCK_PROJECT_CWD_INDEPENDENT}&table_name=df&page=0&n=5")
     assert response.status_code == 200
     assert "<table " in response.text, "Response does not contain a table"
     assert response.text.count("<tr>") <= 6, "Table should have at most 6 rows (header + 5 data rows)"
     table_html = response.text
     
-    response = client.get(f"/tables/pager/?project_dir={MOCK_PROJECT}&table_name=df&page=1&n=5")
+    response = client.get(f"/tables/pager/?project_dir={MOCK_PROJECT_CWD_INDEPENDENT}&table_name=df&page=1&n=5")
     assert response.status_code == 200
     assert "<table " in response.text, "Response does not contain a table"
     assert response.text != table_html, "Table should be different from the first page"
     
-    response = client.get(f"/tables/pager/?project_dir={MOCK_PROJECT}&table_name=df&page=0&n=10")
+    response = client.get(f"/tables/pager/?project_dir={MOCK_PROJECT_CWD_INDEPENDENT}&table_name=df&page=0&n=10")
     assert response.status_code == 200
     assert "<table " in response.text, "Response does not contain a table"
     assert response.text.count("<tr>") <= 11, "Table should have at most 11 rows (header + 10 data rows)"
@@ -159,10 +159,10 @@ def test_get_col_infos(temp_project_dir_fixture):
     Test if the column_infos endpoint correctly returns column information.
     """
     # First, make sure the data_tables.pkl file exists by calling the tables endpoint
-    client.get(f"/tables/?project_dir={MOCK_PROJECT}")
+    client.get(f"/tables/?project_dir={MOCK_PROJECT_CWD_INDEPENDENT}")
     
     # Test with a numeric column
-    response = client.get(f"/tables/column_infos/?project_dir={MOCK_PROJECT}&table=df&column_name=price&column_idx=price")
+    response = client.get(f"/tables/column_infos/?project_dir={MOCK_PROJECT_CWD_INDEPENDENT}&table=df&column_name=price&column_idx=price")
     assert response.status_code == 200, "Failed to get column info"
     col_info = response.json()
     
@@ -175,7 +175,7 @@ def test_get_col_infos(temp_project_dir_fixture):
         assert field in col_info, f"Missing numeric field '{field}' in column info"
     
     # Test with a non-numeric column
-    response = client.get(f"/tables/column_infos/?project_dir={MOCK_PROJECT}&table=df&column_name=name&column_idx=name")
+    response = client.get(f"/tables/column_infos/?project_dir={MOCK_PROJECT_CWD_INDEPENDENT}&table=df&column_name=name&column_idx=name")
     assert response.status_code == 200
     col_info = response.json()
 

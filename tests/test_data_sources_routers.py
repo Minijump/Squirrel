@@ -19,10 +19,11 @@ def test_access_data_sources(temp_project_dir_fixture):
     assert response.status_code == 200, "Failed to access the data_sources endpoint"
 
     expected_source = {
-        "name": "Mock source csv",
+        "name": "Csv ordered",
         "type": "csv",
-        "description": "a mock csv source",
-        "directory": "mock_source_csv"
+        "description": "a csv data source, with ordered date",
+        "directory": "Csv_ordered",
+        "kwargs": {}
     }
     assert expected_source in response.context.get("sources"), "Expected one mock source csv"
 
@@ -77,14 +78,15 @@ def test_access_source_settings(temp_project_dir_fixture):
     Test if the source_settings endpoint is accessible
     Test if the response contains the correct source
     """
-    response = client.get("/source/settings?project_dir="+MOCK_PROJECT+"&source_dir=mock_source_csv")
+    response = client.get("/source/settings?project_dir="+MOCK_PROJECT+"&source_dir=Csv_ordered")
     assert response.status_code == 200, "Failed to access the source_settings endpoint"
 
     expected_source = {
-        "name": "Mock source csv",
+        "name": "Csv ordered",
         "type": "csv",
-        "description": "a mock csv source",
-        "directory": "mock_source_csv"
+        "description": "a csv data source, with ordered date",
+        "directory": "Csv_ordered",
+        "kwargs": {}
     }
     assert response.context.get("source") == expected_source, "Expected one mock source csv"
 
@@ -102,16 +104,16 @@ def test_update_source_settings(temp_project_dir_fixture):
     """
     form_data = {
         "project_dir": MOCK_PROJECT,
-        "source_dir": "mock_source_csv",
-        "name": "Mock source csv, new name",
+        "source_dir": "Csv_ordered",
+        "name": "Csv ordered, new name",
         "source_type": "csv",
-        "description": "a mock csv source, new description",
+        "description": "a csv data source, with ordered date, new description",
         "arg_not_in_manifest": "test_update_settings"
     }
     response = client.post("/source/update_settings", data=form_data)
     assert response.status_code == 200, "Failed to access the update_source_settings endpoint"
 
-    mock_manifest_path = os.path.join(os.getcwd(), "_projects", MOCK_PROJECT, "data_sources", "mock_source_csv", "__manifest__.json")
+    mock_manifest_path = os.path.join(os.getcwd(), "_projects", MOCK_PROJECT, "data_sources", "Csv_ordered", "__manifest__.json")
     with open(mock_manifest_path, 'r') as file:
         mock_manifest_data = json.load(file)
     assert mock_manifest_data["name"] == form_data['name'], "Name was not updated"
@@ -139,7 +141,7 @@ def test_sync_source(temp_project_dir_fixture):
     """
     form_data = {
         "project_dir": MOCK_PROJECT,
-        "source_dir": "mock_source_csv"
+        "source_dir": "Csv_ordered"
     }
     response = client.post("/source/sync", data=form_data)
     assert response.status_code == 200, "Failed to access the sync_source endpoint"

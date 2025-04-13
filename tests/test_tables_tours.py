@@ -52,15 +52,7 @@ class TestTablesTours():
         self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2) .card-description").click()
 
         # Click on table header button
-        self.driver.find_element(By.CSS_SELECTOR, "#table-html-df th:nth-child(2) > .table-header-btn").click()
-        # Click on "Sort" button + confirm
-        self.driver.find_element(By.XPATH, "//button[@onclick=\"\n                closeInfoColModal();\n                openSidebarActionForm(\'SortColumn\', getColumnInfo())\"]").click()
-        self.driver.find_element(By.CSS_SELECTOR, "form:nth-child(1) > .btn-primary:nth-child(5)").click()
-        element = self.driver.find_element(By.CSS_SELECTOR, "#table-html-df tr:nth-child(1) > td:nth-child(2)")
-        assert element.text == "0.01"
-
-        # Click on table header button
-        self.driver.find_element(By.CSS_SELECTOR, "#table-html-df th:nth-child(2) > .table-header-btn").click()
+        self.driver.find_element(By.CSS_SELECTOR, "#table-html-ordered th:nth-child(2) > .table-header-btn").click()
         # Click on "Sort" button + select descending + confirm
         self.driver.find_element(By.XPATH, "//button[@onclick=\"\n                closeInfoColModal();\n                openSidebarActionForm(\'SortColumn\', getColumnInfo())\"]").click()
         from selenium.webdriver.support.ui import Select
@@ -68,12 +60,12 @@ class TestTablesTours():
         select = Select(select_element)
         select.select_by_value("descending")
         self.driver.find_element(By.CSS_SELECTOR, "form:nth-child(1) > .btn-primary:nth-child(5)").click()
-        element = self.driver.find_element(By.CSS_SELECTOR, "#table-html-df tr:nth-child(1) > td:nth-child(2)")
-        assert element.text == "2000.0"
+        element = self.driver.find_element(By.CSS_SELECTOR, "#table-html-ordered tr:nth-child(1) > td:nth-child(2)")
+        assert element.text == "99"
 
         # Sort back to ascending
-        self.driver.find_element(By.CSS_SELECTOR, "#table-html-df th:nth-child(2) > .table-header-btn").click()
+        self.driver.find_element(By.CSS_SELECTOR, "#table-html-ordered th:nth-child(2) > .table-header-btn").click()
         self.driver.find_element(By.XPATH, "//button[@onclick=\"\n                closeInfoColModal();\n                openSidebarActionForm(\'SortColumn\', getColumnInfo())\"]").click()
         self.driver.find_element(By.CSS_SELECTOR, "form:nth-child(1) > .btn-primary:nth-child(5)").click()
-        element = self.driver.find_element(By.CSS_SELECTOR, "#table-html-df tr:nth-child(1) > td:nth-child(2)")
-        assert element.text == "0.01"
+        element = self.driver.find_element(By.CSS_SELECTOR, "#table-html-ordered tr:nth-child(1) > td:nth-child(2)")
+        assert element.text == "0"
