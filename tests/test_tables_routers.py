@@ -5,20 +5,20 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 
 from app.main import app
-from tests import mock_project
+from tests import MOCK_PROJECT
 
 
 client = TestClient(app)
 
 
 # Test methods used in the enpoints --------------------------------------------------
-def test_load_pipeline_module(mock_project):
+def test_load_pipeline_module(temp_project_dir_fixture):
     """
     Test if pipeline is loaded correctly 
     Test wether the pipeline is 'runable'
     """
     from app.tables.routers.tables import load_pipeline_module
-    pipeline = load_pipeline_module(mock_project)
+    pipeline = load_pipeline_module(MOCK_PROJECT)
     try:
         dfs = pipeline.run_pipeline()
     except Exception as e:
@@ -58,16 +58,16 @@ def test_to_html_with_idx():
         assert f">{col_name}<" in html2
 
 # Test the endpoints ---------------------------------------------------------------
-def test_access_tables(mock_project):
+def test_access_tables(temp_project_dir_fixture):
     """
     Test if the table endpoint is accessible
     Test if the response contains a table and the correct project_dir
     """
-    response = client.get("/tables/?project_dir=" + mock_project)
+    response = client.get("/tables/?project_dir=" + MOCK_PROJECT)
     assert response.status_code == 200, "Failed to access the table endpoint"
     assert response.context.get("table"), "Response does not contain a table"
-    assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
-    assert os.path.exists(os.path.join(os.getcwd(), "_projects", mock_project, "data_tables.pkl")), "No data_tables.pkl file in project directory"
+    assert response.context.get("project_dir") == MOCK_PROJECT, "Response does not contain the correct project_dir"
+    assert os.path.exists(os.path.join(os.getcwd(), "_projects", MOCK_PROJECT, "data_tables.pkl")), "No data_tables.pkl file in project directory"
 
 def test_fail_access_tables():
     """
@@ -77,37 +77,37 @@ def test_fail_access_tables():
     assert response.status_code == 200, "Failed to access the table endpoint"
     assert response.context.get("exception"), "Response does not contain an exception"
 
-def test_fail_pipeline(mock_project):
+def test_fail_pipeline(temp_project_dir_fixture):
     """
     Test if the table endpoint is accessible
     Test if in case of failing pipeline, page is displayed correctly
     """
     with patch("app.tables.load_pipeline_module") as mock_load_pipeline_module:
         mock_load_pipeline_module.side_effect = Exception("Mock exception")
-        response = client.get("/tables/?project_dir=" + mock_project)
+        response = client.get("/tables/?project_dir=" + MOCK_PROJECT)
         assert response.status_code == 200, "Failed to access the table endpoint"
         assert response.context.get("exception"), "Response does not contain an exception"
 
-def test_tables_pager(mock_project):
+def test_tables_pager(temp_project_dir_fixture):
     """
     Test if the tables_pager endpoint functions correctly:
     """
     # First, make sure the data_tables.pkl file exists by calling the tables endpoint
-    response = client.get(f"/tables/?project_dir={mock_project}")
+    response = client.get(f"/tables/?project_dir={MOCK_PROJECT}")
     assert response.status_code == 200
     
-    response = client.get(f"/tables/pager/?project_dir={mock_project}&table_name=df&page=0&n=5")
+    response = client.get(f"/tables/pager/?project_dir={MOCK_PROJECT}&table_name=df&page=0&n=5")
     assert response.status_code == 200
     assert "<table " in response.text, "Response does not contain a table"
     assert response.text.count("<tr>") <= 6, "Table should have at most 6 rows (header + 5 data rows)"
     table_html = response.text
     
-    response = client.get(f"/tables/pager/?project_dir={mock_project}&table_name=df&page=1&n=5")
+    response = client.get(f"/tables/pager/?project_dir={MOCK_PROJECT}&table_name=df&page=1&n=5")
     assert response.status_code == 200
     assert "<table " in response.text, "Response does not contain a table"
     assert response.text != table_html, "Table should be different from the first page"
     
-    response = client.get(f"/tables/pager/?project_dir={mock_project}&table_name=df&page=0&n=10")
+    response = client.get(f"/tables/pager/?project_dir={MOCK_PROJECT}&table_name=df&page=0&n=10")
     assert response.status_code == 200
     assert "<table " in response.text, "Response does not contain a table"
     assert response.text.count("<tr>") <= 11, "Table should have at most 11 rows (header + 10 data rows)"
@@ -154,15 +154,15 @@ def test_get_action_kwargs():
         for key in expected_kwargs:
             assert str(key) in kwargs, f"Missing key '{key}' for action {action_name}"
 
-def test_get_col_infos(mock_project):
+def test_get_col_infos(temp_project_dir_fixture):
     """
     Test if the column_infos endpoint correctly returns column information.
     """
     # First, make sure the data_tables.pkl file exists by calling the tables endpoint
-    client.get(f"/tables/?project_dir={mock_project}")
+    client.get(f"/tables/?project_dir={MOCK_PROJECT}")
     
     # Test with a numeric column
-    response = client.get(f"/tables/column_infos/?project_dir={mock_project}&table=df&column_name=price&column_idx=price")
+    response = client.get(f"/tables/column_infos/?project_dir={MOCK_PROJECT}&table=df&column_name=price&column_idx=price")
     assert response.status_code == 200, "Failed to get column info"
     col_info = response.json()
     
@@ -175,7 +175,7 @@ def test_get_col_infos(mock_project):
         assert field in col_info, f"Missing numeric field '{field}' in column info"
     
     # Test with a non-numeric column
-    response = client.get(f"/tables/column_infos/?project_dir={mock_project}&table=df&column_name=name&column_idx=name")
+    response = client.get(f"/tables/column_infos/?project_dir={MOCK_PROJECT}&table=df&column_name=name&column_idx=name")
     assert response.status_code == 200
     col_info = response.json()
 

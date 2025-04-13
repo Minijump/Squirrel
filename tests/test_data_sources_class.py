@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.data_sources.models import DATA_SOURCE_REGISTRY, DataSource
-from tests import mock_project
+from tests import MOCK_PROJECT
 
 
 client = TestClient(app)
@@ -123,23 +123,23 @@ def test_data_sources_specific_methods_implemented():
         assert source.create_table != DataSource.create_table, f"create_table not implemented for {source_type}"
 
 @pytest.mark.asyncio
-async def test_create_source(mock_project):
+async def test_create_source(temp_project_dir_fixture):
     """
     Test if the create_source_base method is correctly implemented
     """
     form_data = {
-        "project_dir": mock_project,
+        "project_dir": MOCK_PROJECT,
         "source_name": "Mock source",
         "source_type": "std (no type)",
         "source_description": "a mock source"
     }
     source = await DataSource._create_source(form_data)
     assert source.__class__.__name__ == "DataSource", "Expected instance of DataSource"
-    assert os.path.exists(os.path.join(mock_project, "data_sources", "mock_source")), "Expected mock_source directory to exist"
-    assert os.path.exists(os.path.join(mock_project, "data_sources", "mock_source", "__manifest__.json")), "Expected __manifest__.json to exist"
+    assert os.path.exists(os.path.join(os.getcwd(), '_projects', MOCK_PROJECT, "data_sources", "mock_source")), "Expected mock_source directory to exist"
+    assert os.path.exists(os.path.join(os.getcwd(), '_projects', MOCK_PROJECT, "data_sources", "mock_source", "__manifest__.json")), "Expected __manifest__.json to exist"
 
 @pytest.mark.asyncio
-async def test_update_source_settings(mock_project):
+async def test_update_source_settings(temp_project_dir_fixture):
     """
     Test if the _update_source_settings method is correctly implemented
     """

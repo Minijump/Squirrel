@@ -54,7 +54,7 @@ def test_create_table():
     }
     source = DataSourceAPI(form_data)
     table_form_data = {
-        "project_dir": "mock_project",
+        "project_dir": "mock_fake_dir",
         "table_name": "mock_table",
     }
     python_line =  source.create_table(table_form_data)

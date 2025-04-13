@@ -1,12 +1,11 @@
-import os
-import tempfile
-from unittest.mock import patch
 import json
+import os
+from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
 from app.main import app
-from tests import mock_project
+from tests import MOCK_PROJECT
 
 
 client = TestClient(app)
@@ -33,15 +32,15 @@ def test_fail_access_projects():
         assert response.status_code == 200, "Failed to access the projects endpoint"
         assert response.context.get("exception"), "Response does not contain an exception"
 
-def test_open_project(mock_project):
+def test_open_project(temp_project_dir_fixture):
     """
     Test if the open_project endpoint is accessible 
     Contains a table, the project_dir and is redirected to table endpoint
     """
-    response = client.get(f"/projects/open/?project_dir={mock_project}")
+    response = client.get(f"/projects/open/?project_dir={MOCK_PROJECT}")
     assert response.status_code == 200, "Failed to access the open_project endpoint"
     assert response.context.get("table"), "Response does not contain a table"
-    assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
+    assert response.context.get("project_dir") == MOCK_PROJECT, "Response does not contain the correct project_dir"
     assert "/tables/?project_dir=" in str(response.url), "Failed to redirect to table's page"
 
 def test_fail_open_project():
@@ -83,16 +82,16 @@ def test_fail_create_project(temp_project_dir_fixture):
     assert response.status_code == 200, "Unexpected error while failing to create project"
     assert response.context.get("exception"), "Response does not contain an exception"
 
-def test_access_project_settings(mock_project):
+def test_access_project_settings(temp_project_dir_fixture):
     """
     Test if the project settings endpoint is accessible
     Contains the project's manifest and project_dir
     """
-    response = client.get(f"/project/settings/?project_dir={mock_project}")
+    response = client.get(f"/project/settings/?project_dir={MOCK_PROJECT}")
     assert response.status_code == 200, "Failed to access the project settings endpoint"
     assert response.context.get("project"), "Response does not contain the project infos (manifest data)"
-    assert response.context.get("project")['directory'] == 'mock_project', "Response does not contain the correct project"
-    assert response.context.get("project_dir") == mock_project, "Response does not contain the correct project_dir"
+    assert response.context.get("project")['directory'] == MOCK_PROJECT, "Response does not contain the correct project"
+    assert response.context.get("project_dir") == MOCK_PROJECT, "Response does not contain the correct project_dir"
 
 def test_fail_access_project_settings():
     """
