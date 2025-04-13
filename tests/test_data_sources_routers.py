@@ -36,9 +36,9 @@ def test_fail_access_data_sources(mock_project):
 
 def test_create_data_source(mock_project, temp_project_dir_fixture):
     """
-    Test the creation of a data source (with demo_random_data.csv from mock_datas)
+    Test the creation of a data source (with demo_random_data.csv from utils/mock_datas)
     """
-    with open("tests/mock_datas/demo_random_data.csv", "rb") as f:
+    with open("tests/utils/mock_datas/demo_random_data.csv", "rb") as f:
         file_content = f.read()
 
     response = client.post(
@@ -148,7 +148,7 @@ def test_delete_source(mock_project):
     """
     Test if the delete_source endpoint is accessible
     """
-    with open("tests/mock_datas/demo_random_data.csv", "rb") as f:
+    with open("tests/utils/mock_datas/demo_random_data.csv", "rb") as f:
         file_content = f.read()
     response = client.post(
         "/create_source/",

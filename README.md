@@ -131,7 +131,7 @@ In addition to these folders, you will find a folder named tests that contains t
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
 
 ### To do MVP
-* Add actions + imp table design ...
+* Add actions + imp table design + imp pipeline (summary on top? foldable actions instead of pop up? Test before save?) ...
 
 ### Feature ideas
 * Add dynamic doctrsing (expl: pd.Series.replace.__doc__)

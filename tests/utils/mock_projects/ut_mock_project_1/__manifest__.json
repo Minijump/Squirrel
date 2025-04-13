@@ -1,0 +1,9 @@
+{
+    "name": "UT Mock Project 1",
+    "description": "This is a mock project for unit testing squirrel app.",
+    "directory": "ut_mock_project_1",
+    "project_type": "std",
+    "misc": {
+        "table_len": 10
+    }
+}

@@ -1,0 +1,7 @@
+{
+    "name": "Csv ordered",
+    "type": "csv",
+    "description": "a csv data source, with ordered date",
+    "directory": "Csv_ordered",
+    "kwargs": {}
+}
