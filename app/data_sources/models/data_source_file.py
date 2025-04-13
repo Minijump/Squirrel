@@ -37,7 +37,10 @@ class DataSourceFile(DataSource):
         => Returns the manifest (dict)
         """
         manifest = DataSource._generate_manifest(form_data)
-        manifest["kwargs"] = ast.literal_eval(form_data.get("kwargs")) if form_data.get("kwargs") else {}
+        try:
+            manifest["kwargs"] = ast.literal_eval(form_data["kwargs"])
+        except:
+            manifest["kwargs"] = {}
         return manifest
 
     async def _create_pickle_file(self, source_file_path):
