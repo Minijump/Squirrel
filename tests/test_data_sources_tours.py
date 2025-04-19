@@ -2,160 +2,144 @@
 import pytest
 import warnings
 
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 
 
-class TestDataSourcesTours():
-    def setup_method(self, method):
-        options = Options()
-        options.add_argument('--headless')
-
-        self.driver = webdriver.Firefox(options=options) #TODO: is too slow
-        self.vars = {}
-  
-    def teardown_method(self, method):
-        self.driver.quit()
-  
+class TestDataSourcesTours:    
     @pytest.mark.slow
-    def test_create_data_source_modal(self, server):
+    def test_create_data_source_modal(self, server, browser, reset_projects):
         """
         Test create project modal appears and disappears
         """
-        self.driver.get(f"{server}/projects/")
-        self.driver.set_window_size(1524, 716)
+        browser.get(f"{server}/projects/")
 
         # Create a project
-        self.driver.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
-        self.driver.find_element(By.ID, "projectName").click()
-        self.driver.find_element(By.ID, "projectName").send_keys("test create data source modal")
-        self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+        browser.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
+        browser.find_element(By.ID, "projectName").click()
+        browser.find_element(By.ID, "projectName").send_keys("test create data source modal")
+        browser.find_element(By.CSS_SELECTOR, ".btn-primary").click()
 
         # Go to data sources
-        self.driver.find_element(By.LINK_TEXT, "Data sources").click()
+        browser.find_element(By.LINK_TEXT, "Data sources").click()
         # Open modal
-        self.driver.find_element(By.CSS_SELECTOR, "p").click()
-        WebDriverWait(self.driver, 0.001).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, ".modal-content")))
+        browser.find_element(By.CSS_SELECTOR, "p").click()
+        WebDriverWait(browser, 2, poll_frequency=0.1).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, ".modal-content")))
         # Close modal
-        self.driver.find_element(By.ID, "cancelButton").click()
-        WebDriverWait(self.driver, 0.001).until(expected_conditions.invisibility_of_element_located((By.CSS_SELECTOR, ".modal-content")))
+        browser.find_element(By.ID, "cancelButton").click()
+        WebDriverWait(browser, 2, poll_frequency=0.1).until(expected_conditions.invisibility_of_element_located((By.CSS_SELECTOR, ".modal-content")))
 
     @pytest.mark.slow
-    def test_form_input_depends_data_source_type(self, server):
+    def test_form_input_depends_data_source_type(self, server, browser, reset_projects):
         """
         Test that form changes when changing source type
         """
-        self.driver.get(f"{server}/projects/")
-        self.driver.set_window_size(1524, 716)
+        browser.get(f"{server}/projects/")
 
         # Create a project
-        self.driver.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
-        self.driver.find_element(By.ID, "projectName").click()
-        self.driver.find_element(By.ID, "projectName").send_keys("test data sources inputs")
-        self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+        browser.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
+        browser.find_element(By.ID, "projectName").click()
+        browser.find_element(By.ID, "projectName").send_keys("test data sources inputs")
+        browser.find_element(By.CSS_SELECTOR, ".btn-primary").click()
 
         # Go to data sources
-        self.driver.find_element(By.LINK_TEXT, "Data sources").click()
+        browser.find_element(By.LINK_TEXT, "Data sources").click()
 
         # Open modal
-        self.driver.find_element(By.CSS_SELECTOR, "p").click()
+        browser.find_element(By.CSS_SELECTOR, "p").click()
         # Check the goods inputs are visible
-        WebDriverWait(self.driver, 0.001).until(expected_conditions.visibility_of_element_located((By.ID, "sourceName")))
-        WebDriverWait(self.driver, 0.001).until(expected_conditions.visibility_of_element_located((By.ID, "sourceDescription")))
-        WebDriverWait(self.driver, 0.001).until(expected_conditions.visibility_of_element_located((By.ID, "sourceFile")))
+        WebDriverWait(browser, 2, poll_frequency=0.1).until(expected_conditions.visibility_of_element_located((By.ID, "sourceName")))
+        WebDriverWait(browser, 2, poll_frequency=0.1).until(expected_conditions.visibility_of_element_located((By.ID, "sourceDescription")))
+        WebDriverWait(browser, 2, poll_frequency=0.1).until(expected_conditions.visibility_of_element_located((By.ID, "sourceFile")))
 
         # Change source type to Odoo
-        self.driver.find_element(By.ID, "sourceType").click()
-        dropdown = self.driver.find_element(By.ID, "sourceType")
+        browser.find_element(By.ID, "sourceType").click()
+        dropdown = browser.find_element(By.ID, "sourceType")
         dropdown.find_element(By.XPATH, "//option[. = 'Odoo']").click()
-        self.driver.find_element(By.CSS_SELECTOR, "option:nth-child(5)").click()
+        browser.find_element(By.CSS_SELECTOR, "option:nth-child(5)").click()
         # Check the goods inputs are visible
-        WebDriverWait(self.driver, 0.001).until(expected_conditions.visibility_of_element_located((By.ID, "odooUrl")))
-        WebDriverWait(self.driver, 0.001).until(expected_conditions.visibility_of_element_located((By.ID, "odooDb")))
-        WebDriverWait(self.driver, 0.001).until(expected_conditions.visibility_of_element_located((By.ID, "odooModel")))
+        WebDriverWait(browser, 2, poll_frequency=0.1).until(expected_conditions.visibility_of_element_located((By.ID, "odooUrl")))
+        WebDriverWait(browser, 2, poll_frequency=0.1).until(expected_conditions.visibility_of_element_located((By.ID, "odooDb")))
+        WebDriverWait(browser, 2, poll_frequency=0.1).until(expected_conditions.visibility_of_element_located((By.ID, "odooModel")))
 
         # Change source type to Yahoo Finance
-        self.driver.find_element(By.ID, "sourceType").click()
-        dropdown = self.driver.find_element(By.ID, "sourceType")
+        browser.find_element(By.ID, "sourceType").click()
+        dropdown = browser.find_element(By.ID, "sourceType")
         dropdown.find_element(By.XPATH, "//option[. = 'Yahoo Finance']").click()
-        self.driver.find_element(By.CSS_SELECTOR, "option:nth-child(6)").click()
+        browser.find_element(By.CSS_SELECTOR, "option:nth-child(6)").click()
         # Check the goods inputs are visible
-        WebDriverWait(self.driver, 0.001).until(expected_conditions.visibility_of_element_located((By.ID, "start_date")))
-        WebDriverWait(self.driver, 0.001).until(expected_conditions.visibility_of_element_located((By.ID, "interval")))
+        WebDriverWait(browser, 2, poll_frequency=0.1).until(expected_conditions.visibility_of_element_located((By.ID, "start_date")))
+        WebDriverWait(browser, 2, poll_frequency=0.1).until(expected_conditions.visibility_of_element_located((By.ID, "interval")))
 
         # Change source type to Pickle
-        self.driver.find_element(By.ID, "sourceType").click()
-        dropdown = self.driver.find_element(By.ID, "sourceType")
+        browser.find_element(By.ID, "sourceType").click()
+        dropdown = browser.find_element(By.ID, "sourceType")
         dropdown.find_element(By.XPATH, "//option[. = 'Pickle']").click()
-        self.driver.find_element(By.CSS_SELECTOR, "#sourceType > option:nth-child(2)").click()
+        browser.find_element(By.CSS_SELECTOR, "#sourceType > option:nth-child(2)").click()
         # Check the goods inputs are visible
-        WebDriverWait(self.driver, 0.001).until(expected_conditions.visibility_of_element_located((By.ID, "sourceFile")))
+        WebDriverWait(browser, 2, poll_frequency=0.1).until(expected_conditions.visibility_of_element_located((By.ID, "sourceFile")))
 
     @pytest.mark.slow
-    def test_data_source_edit(self, server):
+    def test_data_source_edit(self, server, browser, reset_projects):
         """
         Test editing a data source
         """
-        self.driver.get(f"{server}/projects/")
-        self.driver.set_window_size(1524, 716)
+        browser.get(f"{server}/projects/")
 
         # Open a project and go to data sources
-        self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2)").click()
-        self.driver.find_element(By.LINK_TEXT, "Data sources").click()
+        browser.find_element(By.CSS_SELECTOR, ".card:nth-child(2)").click()
+        browser.find_element(By.LINK_TEXT, "Data sources").click()
 
         # Select the first source and edit it
-        self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2)").click()
-        self.driver.find_element(By.ID, "sourceDescription").click()
-        description_value = self.driver.find_element(By.ID, "sourceDescription").get_attribute("value")
+        browser.find_element(By.CSS_SELECTOR, ".card:nth-child(2)").click()
+        browser.find_element(By.ID, "sourceDescription").click()
+        description_value = browser.find_element(By.ID, "sourceDescription").get_attribute("value")
         edit_value = ", test edit"
-        self.driver.find_element(By.ID, "sourceDescription").send_keys(edit_value)
-        self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+        browser.find_element(By.ID, "sourceDescription").send_keys(edit_value)
+        browser.find_element(By.CSS_SELECTOR, ".btn-primary").click()
 
         # Check the source was edited
-        self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2) .card-description").click()
-        value = self.driver.find_element(By.ID, "sourceDescription").get_attribute("value")
+        browser.find_element(By.CSS_SELECTOR, ".card:nth-child(2) .card-description").click()
+        value = browser.find_element(By.ID, "sourceDescription").get_attribute("value")
         assert value == description_value + edit_value
 
     @pytest.mark.slow
-    def test_create_yahoo_data_source(self, server):
+    def test_create_yahoo_data_source(self, server, browser, reset_projects):
         """
         Test create yahoo data source
         """
-        self.driver.get(f"{server}/projects/")
-        self.driver.set_window_size(1524, 716)
+        browser.get(f"{server}/projects/")
 
         # Create a project
-        self.driver.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
-        self.driver.find_element(By.ID, "projectName").click()
-        self.driver.find_element(By.ID, "projectName").send_keys("test create yahoo data source")
-        self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+        browser.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
+        browser.find_element(By.ID, "projectName").click()
+        browser.find_element(By.ID, "projectName").send_keys("test create yahoo data source")
+        browser.find_element(By.CSS_SELECTOR, ".btn-primary").click()
 
         # Go to data sources
-        self.driver.find_element(By.LINK_TEXT, "Data sources").click()
+        browser.find_element(By.LINK_TEXT, "Data sources").click()
         # Open create modal and complete the inputs
-        self.driver.find_element(By.CSS_SELECTOR, "p").click()
-        self.driver.find_element(By.ID, "sourceName").click()
-        self.driver.find_element(By.ID, "sourceName").send_keys("test yahoo")
-        self.driver.find_element(By.ID, "sourceDescription").click()
-        self.driver.find_element(By.ID, "sourceDescription").send_keys("a simple test for yahoo data source")
-        self.driver.find_element(By.ID, "sourceType").click()
-        dropdown = self.driver.find_element(By.ID, "sourceType")
+        browser.find_element(By.CSS_SELECTOR, "p").click()
+        browser.find_element(By.ID, "sourceName").click()
+        browser.find_element(By.ID, "sourceName").send_keys("test yahoo")
+        browser.find_element(By.ID, "sourceDescription").click()
+        browser.find_element(By.ID, "sourceDescription").send_keys("a simple test for yahoo data source")
+        browser.find_element(By.ID, "sourceType").click()
+        dropdown = browser.find_element(By.ID, "sourceType")
         dropdown.find_element(By.XPATH, "//option[. = 'Yahoo Finance']").click()
-        self.driver.find_element(By.CSS_SELECTOR, "option:nth-child(6)").click()
-        self.driver.find_element(By.ID, "tickers").click()
-        self.driver.find_element(By.ID, "tickers").send_keys("[\'AU\']")
-        self.driver.find_element(By.ID, "start_date").click()
-        self.driver.find_element(By.ID, "start_date").send_keys("2025-03-03")
-        self.driver.find_element(By.ID, "end_date").click()
-        self.driver.find_element(By.ID, "end_date").send_keys("2025-03-21")
-        self.driver.find_element(By.CSS_SELECTOR, ".btn-primary:nth-child(9)").click()
+        browser.find_element(By.CSS_SELECTOR, "option:nth-child(6)").click()
+        browser.find_element(By.ID, "tickers").click()
+        browser.find_element(By.ID, "tickers").send_keys("[\'AU\']")
+        browser.find_element(By.ID, "start_date").click()
+        browser.find_element(By.ID, "start_date").send_keys("2025-03-03")
+        browser.find_element(By.ID, "end_date").click()
+        browser.find_element(By.ID, "end_date").send_keys("2025-03-21")
+        browser.find_element(By.CSS_SELECTOR, ".btn-primary:nth-child(9)").click()
 
         # Check the source was created, and displayed on screen
-        elements = WebDriverWait(self.driver, 0.1).until(
+        elements = WebDriverWait(browser, 2, poll_frequency=0.1).until(
             EC.visibility_of_all_elements_located((By.CSS_SELECTOR, ".card-title"))
         )
 
@@ -164,30 +148,28 @@ class TestDataSourcesTours():
             warnings.warn("Yahoo data source was not created in time")
 
     @pytest.mark.slow
-    def test_delete_data_source(self, server):
+    def test_delete_data_source(self, server, browser, reset_projects):
         """
         Test data source deletion
         """
-        self.driver.get(f"{server}/projects/")
-        self.driver.set_window_size(1524, 716)
+        browser.get(f"{server}/projects/")
 
         # Open a project and go to data sources
-        self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2)").click()
-        self.driver.find_element(By.LINK_TEXT, "Data sources").click()
+        browser.find_element(By.CSS_SELECTOR, ".card:nth-child(2)").click()
+        browser.find_element(By.LINK_TEXT, "Data sources").click()
 
         # Check source is present, before deletion
-        source_name =  self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2) .card-title").text
-        elements = WebDriverWait(self.driver, 0.01).until(
+        source_name = browser.find_element(By.CSS_SELECTOR, ".card:nth-child(2) .card-title").text
+        elements = WebDriverWait(browser, 2, poll_frequency=0.1).until(
             EC.visibility_of_all_elements_located((By.CSS_SELECTOR, ".card-title"))
         )
         assert any(element.text.strip() == source_name for element in elements), f"Card with '{source_name}' still present"
         # Select the first source and click on delete button
-        self.driver.find_element(By.CSS_SELECTOR, ".card:nth-child(2)").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".btn-danger").click()
+        browser.find_element(By.CSS_SELECTOR, ".card:nth-child(2)").click()
+        browser.find_element(By.CSS_SELECTOR, ".btn-danger").click()
 
         # Check the source was deleted (check source_name is not present)
-        elements = WebDriverWait(self.driver, 0.01).until(
+        elements = WebDriverWait(browser, 2, poll_frequency=0.1).until(
             EC.visibility_of_all_elements_located((By.CSS_SELECTOR, ".card-title"))
         )
         assert not any(element.text.strip() == source_name for element in elements), f"Card with '{source_name}' still present"
-        
