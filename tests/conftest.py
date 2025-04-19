@@ -5,8 +5,12 @@ import shutil
 import socket
 import tempfile
 import time
-from unittest.mock import patch
 import uvicorn
+
+from unittest.mock import patch
+
+from selenium.webdriver.firefox.options import Options as FirefoxOptions  
+from selenium.webdriver import Firefox
 
 from app.main import app
 
@@ -54,32 +58,68 @@ def run_server(port):
     """Run the FastAPI app with uvicorn"""
     uvicorn.run(app, host="127.0.0.1", port=port)
 
-@pytest.fixture(scope="function")
-def server(tmpdir):
-    """Start a server in a separate process using a temporary directory and yield the URL"""
+@pytest.fixture(scope="session")
+def server(tmpdir_factory):
+    """Start a server once for all tests"""
     port = find_free_port()
     
+    temp_dir = tmpdir_factory.mktemp("squirrel_test")
     original_cwd = os.getcwd()
-    temp_dir = tmpdir.mkdir("squirrel_test")
     copy_dir(original_cwd, temp_dir, ignore="_projects")
-    
-    # Create _projects directory in the temp directory
-    projects_dir = temp_dir.mkdir("_projects")
-    project_dir = projects_dir.mkdir("ut_mock_project_1")
-    copy_dir("tests/utils/mock_projects/ut_mock_project_1", project_dir)
-    
+    projects_dir = os.path.join(temp_dir, "_projects")
+    os.makedirs(projects_dir)
     os.chdir(temp_dir)
     
     proc = multiprocessing.Process(target=run_server, args=(port,))
     proc.start()
-    
     time.sleep(1)
     server_url = f"http://127.0.0.1:{port}"
+
     yield server_url
     
     proc.terminate()
     proc.join()
     os.chdir(original_cwd)
+
+@pytest.fixture
+def reset_projects(server):
+    """Reset projects to initial state before each test"""
+    server_parts = server.split(":")
+    port = server_parts[2]
+    
+    temp_dir = None
+    for proc in multiprocessing.active_children():
+        if hasattr(proc, '_args') and str(port) in str(proc._args):
+            temp_dir = os.path.dirname(proc._args[0])
+            break
+
+    if not temp_dir:
+        temp_dir = os.getcwd()
+    
+    # Clear _projects directory
+    projects_dir = os.path.join(temp_dir, "_projects")
+    if os.path.exists(projects_dir):
+        shutil.rmtree(projects_dir)
+    os.makedirs(projects_dir)
+    
+    # (Re)create project(s)
+    project_dir = os.path.join(projects_dir, "ut_mock_project_1") 
+    os.makedirs(project_dir)
+    copy_dir("tests/utils/mock_projects/ut_mock_project_1", project_dir)
+    
+    yield
+
+@pytest.fixture(scope="session")
+def browser():
+    options = FirefoxOptions()
+    options.add_argument('--headless')
+    
+    driver = Firefox(options=options)
+    
+    driver.set_window_size(1524, 716)
+    driver.implicitly_wait(3)
+    yield driver
+    driver.quit()
 
 # Running Server for Tours: END -----------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------------------------------------

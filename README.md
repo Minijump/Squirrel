@@ -124,7 +124,7 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Generalize unit tests (should be the same everywhere, create 1/n fake project in data,...) + test everything (fcts, endpoints, class, flows (+result in 'backend' after flow), ...) + Make tours run faster (if not possible, decrease their number by doing lots of assert in same test) + create tests/tours 'framework' (click table button fct, look table value, click on grid card where name, ...) + make it possible/easy to tests with selenium ide into the test env (to be able to export the test easily)
+* Generalize unit tests: test everything + create tests/tours 'framework' (click table button fct, look table value, click on grid card where name, ... !!! test offline, thing such as '.fa-home' does not work as selector offline, use ActionChains ?) 
 * Reformat code (split css and js for table, ...)
 
 ### To Fix
