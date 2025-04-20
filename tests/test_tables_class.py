@@ -1,6 +1,5 @@
 import pandas as pd
 import pytest
-from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
@@ -172,7 +171,7 @@ def test_table_action_registry_execute_advanced():
             assert hasattr(action_class, "execute_advanced"), f"{action_name} does not have an execute_advanced method"
             assert action_class.execute_advanced != Action.execute_advanced, f"{action_name} execute_advanced method was not implemented"
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_action_get_method():
     """
     Test that the Action._get method correctly extracts values from form data.

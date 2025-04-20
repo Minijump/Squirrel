@@ -1,5 +1,6 @@
 import json
 import os
+import pytest
 
 from fastapi.testclient import TestClient
 
@@ -10,6 +11,49 @@ from tests import MOCK_PROJECT
 client = TestClient(app)
 
 
+# Test methods used by controllers
+@pytest.mark.asyncio
+async def test_get_sources(temp_project_dir_fixture):
+    """
+    Test the get_sources function
+    """
+    from app.data_sources.routers.data_sources import get_sources
+    sources = await get_sources(MOCK_PROJECT)
+    assert len(sources) == 2, "Expected 2 sources in the project"
+    assert sources[0]["name"] == "Csv ordered", "Expected first source to be 'Csv ordered'"
+    assert sources[1]["name"] == "Csv random", "Expected second source to be 'Csv unordered'"
+
+@pytest.mark.asyncio
+async def test_get_manifest(temp_project_dir_fixture):
+    """
+    Test the get_manifest function
+    """
+    from app.data_sources.routers.data_sources import get_manifest
+    manifest = await get_manifest(MOCK_PROJECT, "Csv_ordered")
+    assert manifest["name"] == "Csv ordered", "Expected source name to be 'Csv ordered'"
+    assert manifest["type"] == "csv", "Expected source type to be 'csv'"
+    assert manifest["description"] == "a csv data source, with ordered date", "Expected source description to be correct"
+
+@pytest.mark.asyncio
+async def test_init_source_instance(temp_project_dir_fixture):
+    """
+    Test the init_source_instance function
+    """
+    from app.data_sources.routers.data_sources import init_source_instance
+    from app.data_sources.models import DATA_SOURCE_REGISTRY
+
+    manifest_data = {
+        "name": "Mock init source instance",
+        "type": "csv",
+        "description": "a csv data source, with ordered date",
+        "directory": "Csv_ordered",
+        "kwargs": {}
+    }
+    source_instance = await init_source_instance(manifest_data)
+    assert isinstance(source_instance, DATA_SOURCE_REGISTRY["csv"]), "Expected source instance to be of type 'csv'"
+    assert source_instance.name == "Mock init source instance", "Expected source name is incorrect"
+
+# Test controllers
 def test_access_data_sources(temp_project_dir_fixture):
     """
     Test if the data_sources endpoint is accessible
@@ -26,14 +70,6 @@ def test_access_data_sources(temp_project_dir_fixture):
         "kwargs": {}
     }
     assert expected_source in response.context.get("sources"), "Expected one mock source csv"
-
-def test_fail_access_data_sources(temp_project_dir_fixture):
-    """
-    Test if in case of a failing access to data sources, page is displayed correctly
-    """
-    response = client.get("/data_sources/?project_dir=non_existing")
-    assert response.status_code == 200, "Failed to access the data_sources endpoint"
-    assert response.context.get("exception"), "Response does not contain an exception"
 
 def test_create_data_source(temp_project_dir_fixture):
     """
@@ -61,18 +97,6 @@ def test_create_data_source(temp_project_dir_fixture):
         'kwargs': {}}
     assert expected_source in response.context.get("sources"), "Expected one test create source"
 
-    
-def test_fail_data_source_creation(temp_project_dir_fixture):
-    """
-    Test if in case of a failing source creation, page is displayed correctly
-    """
-    form_data = {
-        "source_name": "Other arguments are missing=> will raise an error", 
-        }
-    response = client.post("/create_source/", data=form_data)
-    assert response.status_code == 200, "Unexpected error while failing to create data source"
-    assert response.context.get("exception"), "Response does not contain an exception"
-
 def test_access_source_settings(temp_project_dir_fixture): 
     """
     Test if the source_settings endpoint is accessible
@@ -89,14 +113,6 @@ def test_access_source_settings(temp_project_dir_fixture):
         "kwargs": {}
     }
     assert response.context.get("source") == expected_source, "Expected one mock source csv"
-
-def test_fail_access_source_settings(temp_project_dir_fixture):
-    """
-    Test if in case of a failing source settings, page is displayed correctly
-    """
-    response = client.get("/source/settings?project_dir="+MOCK_PROJECT+"&source_dir=non_existing")
-    assert response.status_code == 200, "Failed to access the source_settings endpoint"
-    assert response.context.get("exception"), "Response does not contain an exception"
 
 def test_update_source_settings(temp_project_dir_fixture):
     """
@@ -119,21 +135,6 @@ def test_update_source_settings(temp_project_dir_fixture):
     assert mock_manifest_data["name"] == form_data['name'], "Name was not updated"
     assert mock_manifest_data["description"] == form_data['description'], "Description was not updated"
     assert "arg_not_in_manifest" not in mock_manifest_data, "arg_not_in_manifest should not have been added into manifest"
-
-def test_fail_update_source_settings(temp_project_dir_fixture):
-    """
-    Test if in case of a failing update source settings, page is displayed correctly
-    """
-    form_data = {
-        "project_dir": MOCK_PROJECT,
-        "source_dir": "non_existing",
-        "name": "Not existing source",
-        "source_type": "csv",
-        "description": "Should raise an error, source does not exist",
-    }
-    response = client.post("/source/update_settings", data=form_data)
-    assert response.status_code == 200, "Failed to access the update_source_settings endpoint"
-    assert response.context.get("exception"), "Response does not contain an exception"
 
 def test_sync_source(temp_project_dir_fixture):
     """
@@ -174,15 +175,3 @@ def test_delete_source(temp_project_dir_fixture):
 
     assert response.status_code == 200, "Failed to access the delete_source endpoint"
     assert not os.path.exists(mock_source_path), "Source directory was not deleted"
-
-def test_fail_delete_source(temp_project_dir_fixture):
-    """
-    Test if in case of a failing delete source, page is displayed correctly
-    """
-    form_data = {
-        "project_dir": MOCK_PROJECT,
-        "source_dir": "non_existing"
-    }
-    response = client.post("/source/delete", data=form_data)
-    assert response.status_code == 200, "Failed to access the delete_source endpoint"
-    assert response.context.get("exception"), "Response does not contain an exception"

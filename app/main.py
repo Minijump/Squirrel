@@ -6,6 +6,7 @@ from app.utils.error_handling import squirrel_error
 
 
 @app.get("/")
+@squirrel_error
 async def read_root(request: Request):
     """
     This returns to projects's homepage

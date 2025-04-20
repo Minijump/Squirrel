@@ -125,7 +125,7 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To do
 * Generalize unit tests: test everything + create tests/tours 'framework' (click table button fct, look table value, click on grid card where name, ... !!! test offline, thing such as '.fa-home' does not work as selector offline, use ActionChains ?) 
-* Reformat code (split css and js for table, ...)
+* Reformat code (split css and js for table + code utils (factorize file manager ->use pathlib? | use PyO3 (rust)))
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))

@@ -51,25 +51,6 @@ class Pipeline:
         with open(self.pipeline_path, 'w') as file:
             file.writelines(new_lines)
 
-    async def delete_action(self, delete_action_id: int):
-        """
-        Remove an action from the pipeline.
-
-        Args:
-            delete_action_id (int): The ID of the action to delete.
-        """
-        lines = await get_file_lines(self.pipeline_path)
-
-        new_lines = []
-        for line in lines:
-            if not isinstance(line, tuple):
-                new_lines.append(line)
-            elif line[0] != delete_action_id:
-                new_lines.append(line[1])
-
-        with open(self.pipeline_path, 'w') as file:
-            file.writelines(new_lines)
-
     async def edit_action(self, action_id: int, action_code: str):
         """
         Edit the code of an action in the pipeline.
@@ -89,6 +70,25 @@ class Pipeline:
                     new_lines.append(line[1])
             else:
                 new_lines.append(line)
+
+        with open(self.pipeline_path, 'w') as file:
+            file.writelines(new_lines)
+
+    async def delete_action(self, delete_action_id: int):
+        """
+        Remove an action from the pipeline.
+
+        Args:
+            delete_action_id (int): The ID of the action to delete.
+        """
+        lines = await get_file_lines(self.pipeline_path)
+
+        new_lines = []
+        for line in lines:
+            if not isinstance(line, tuple):
+                new_lines.append(line)
+            elif line[0] != delete_action_id:
+                new_lines.append(line[1])
 
         with open(self.pipeline_path, 'w') as file:
             file.writelines(new_lines)

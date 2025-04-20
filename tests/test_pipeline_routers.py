@@ -1,25 +1,13 @@
-from fastapi.testclient import TestClient
-
 import os
+
+from fastapi.testclient import TestClient
 
 from app.main import app
 from tests import MOCK_PROJECT
-import pytest
+
 
 client = TestClient(app)
 
-@pytest.mark.asyncio()
-async def test_get_file_lines(temp_project_dir_fixture):
-    """
-    Test if the get_file_lines function returns the correct number of actions
-    Test if their format is ok
-    """
-    from app.pipelines.models.pipeline_utils import get_file_lines
-    pipeline_path = os.path.join(os.getcwd(), "_projects", MOCK_PROJECT, "pipeline.py")
-    lines = await get_file_lines(pipeline_path)
-    actions = [line for line in lines if isinstance(line, tuple)]
-    assert len(actions) == 3, "File should contain 3 actions"
-    assert len(actions[0]) == 2, "Actions should be a tuple with following structure: (action_id, action_line(s)))"
 
 def test_pipeline(temp_project_dir_fixture):
     """
@@ -29,30 +17,6 @@ def test_pipeline(temp_project_dir_fixture):
     response = client.get("/pipeline/?project_dir="+ MOCK_PROJECT)
     assert response.status_code == 200, "Failed to access the pipeline endpoint"
     assert len(response.context.get("actions")) == 3, "Response does not contain 3 actions"
-
-def test_fail_access_pipeline():
-    """
-    Test if error in pipeline enpoint is correctly managed
-    """
-    incorrect_project_dir = "incorrect_project_dir"
-    response = client.get("/pipeline/?project_dir="+ incorrect_project_dir)  
-    assert response.status_code == 200, "Failed to redirect to correct page in case of failing to access pipeline"
-    assert response.context.get("exception"), "Missing exception"
-
-def test_delete_action(temp_project_dir_fixture):
-    """
-    Test initial state (2 actions)
-    Test if the delete_action endpoint is accessible
-    Test if the action was deleted in python file
-    """
-    before_delete_response = client.get("/pipeline/?project_dir="+ MOCK_PROJECT)
-    assert len(before_delete_response.context.get("actions")) == 3, "Response should contains 3 actions before deletion"
-
-    response = client.post("/pipeline/delete_action/?project_dir="+ MOCK_PROJECT + "&delete_action_id=0")
-    assert response.status_code == 200, "Failed to access the delete_action endpoint"
-
-    after_delete_response = client.get("/pipeline/?project_dir="+ MOCK_PROJECT)
-    assert len(after_delete_response.context.get("actions")) == 2, "Response should contains only 2 action after deletion"
 
 def test_confirm_new_order(temp_project_dir_fixture):
     """
@@ -99,3 +63,18 @@ def test_edit_action(temp_project_dir_fixture):
         lines = file.readlines()
         action_line = [line for line in lines if 'sq_action:Add column ref + 2 * price on table random' in line][0]
         assert "dfs['random']['ref + price'] = dfs['random']['reference'] + 2* dfs['random']['price']" in action_line , "Action should have been edited"
+
+def test_delete_action(temp_project_dir_fixture):
+    """
+    Test initial state (2 actions)
+    Test if the delete_action endpoint is accessible
+    Test if the action was deleted in python file
+    """
+    before_delete_response = client.get("/pipeline/?project_dir="+ MOCK_PROJECT)
+    assert len(before_delete_response.context.get("actions")) == 3, "Response should contains 3 actions before deletion"
+
+    response = client.post("/pipeline/delete_action/?project_dir="+ MOCK_PROJECT + "&delete_action_id=0")
+    assert response.status_code == 200, "Failed to access the delete_action endpoint"
+
+    after_delete_response = client.get("/pipeline/?project_dir="+ MOCK_PROJECT)
+    assert len(after_delete_response.context.get("actions")) == 2, "Response should contains only 2 action after deletion"

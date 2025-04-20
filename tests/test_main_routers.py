@@ -1,9 +1,10 @@
 from fastapi.testclient import TestClient
+
 from app.main import app
 
 client = TestClient(app)
 
-def test_get_home_page():
+def test_access_home_page():
     """
     Test if the homepage is accessible
     Test if response url finish with /projects/

@@ -54,7 +54,7 @@ async def init_source_instance(manifest_data):
     SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
     return SourceClass(manifest_data)
 
-@router.get("/data_sources")
+@router.get("/data_sources/")
 @squirrel_error
 async def data_sources(request: Request, project_dir: str):
     """
@@ -151,7 +151,7 @@ async def sync_source(request: Request):
         traceback.print_exc()
         return JSONResponse(content={"message": str(e)}, status_code=500)
     
-@router.post("/source/delete")
+@router.post("/source/delete/")
 @squirrel_error
 async def delete_source(request: Request):
     """

@@ -1,11 +1,18 @@
-from fastapi import FastAPI, Request
-from app import templates
-import traceback
 from functools import wraps
+import traceback
+
+from fastapi import FastAPI, Request
+
+from app import templates
+
 
 app = FastAPI()
 
+# Used in Unit Tests
+SQUIRREL_ERROR_DECORATED = set()
+
 def squirrel_error(func):
+    SQUIRREL_ERROR_DECORATED.add(func.__name__)
     @wraps(func)
     async def wrapper(request: Request, *args, **kwargs):
         try:

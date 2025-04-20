@@ -69,14 +69,6 @@ def test_access_tables(temp_project_dir_fixture):
     assert response.context.get("project_dir") == MOCK_PROJECT_CWD_INDEPENDENT, "Response does not contain the correct project_dir"
     assert os.path.exists(os.path.join(os.getcwd(), "_projects", MOCK_PROJECT_CWD_INDEPENDENT, "data_tables.pkl")), "No data_tables.pkl file in project directory"
 
-def test_fail_access_tables():
-    """
-    Test we have a correct error page in case of a non-existing project_dir
-    """
-    response = client.get("/tables/?project_dir=non_existing_project")
-    assert response.status_code == 200, "Failed to access the table endpoint"
-    assert response.context.get("exception"), "Response does not contain an exception"
-
 def test_fail_pipeline(temp_project_dir_fixture):
     """
     Test if the table endpoint is accessible

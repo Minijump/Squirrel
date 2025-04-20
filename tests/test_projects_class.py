@@ -14,28 +14,28 @@ from app.projects.models import (
     PIPELINE_START_TAG
 )
 
+
 client = TestClient(app)
 
-@pytest.mark.asyncio()
-async def test_project_registry():
+
+def test_project_utils_registry():
     """
     Test if the project registry is correctly initialized
     """
     assert PROJECT_TYPE_REGISTRY != {}, "Empty project type registry"
     assert "std" in PROJECT_TYPE_REGISTRY, "Failed to register standard project type"
 
-@pytest.mark.asyncio()
-async def test_pipeline_content():
+def test_project_utils_basic_pipeline():
     """
     Test if the pipeline content is correctly set
     """
     assert NEW_CODE_TAG in BASIC_PIPELINE, "Basic pipeline does not contain new code tag"
     assert PIPELINE_START_TAG in BASIC_PIPELINE, "Basic pipeline does not contain pipeline start tag"
     assert PIPELINE_END_TAG in BASIC_PIPELINE, "Basic pipeline does not contain pipeline end tag"
-
+    assert "def run_pipeline():" in BASIC_PIPELINE, "Basic pipeline does not contain run_pipeline function"
 
 # Test Project Creation methods -----------------------------------------------------------------------------
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_create(temp_project_dir_fixture):
     """
     Test if the created method
@@ -51,7 +51,7 @@ async def test_create(temp_project_dir_fixture):
     assert os.path.exists(os.path.join(project.path, "pipeline.py")), "Failed to create project pipeline"
     assert os.path.exists(os.path.join(project.path, "data_sources")), "Failed to create project data_sources directory"
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_create_project_directory(temp_project_dir_fixture):
     """
     Test if the project directory is created
@@ -64,7 +64,7 @@ async def test_create_project_directory(temp_project_dir_fixture):
     await project._create_project_directory()
     assert os.path.exists(project.path), "Failed to create project directory"
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_create_manifest(temp_project_dir_fixture):
     """
     Test if the manifest file is correctly created
@@ -85,7 +85,7 @@ async def test_create_manifest(temp_project_dir_fixture):
         "misc": project.misc
     } == json.load(open(os.path.join(project.path, "__manifest__.json"))), "Failed to create project manifest with the correct content"
     
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_create_data_sources_directory(temp_project_dir_fixture):
     """
     Test if the data_sources directory is created
@@ -99,7 +99,7 @@ async def test_create_data_sources_directory(temp_project_dir_fixture):
     await project._create_data_sources_directory()
     assert os.path.exists(os.path.join(project.path, "data_sources")), "Failed to create project data_sources directory"
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_create_pipeline_file(temp_project_dir_fixture):
     """
     Test if the pipeline file is created
@@ -114,7 +114,7 @@ async def test_create_pipeline_file(temp_project_dir_fixture):
     assert os.path.exists(os.path.join(project.path, "pipeline.py")), "Failed to create project pipeline"
     assert BASIC_PIPELINE in open(os.path.join(project.path, "pipeline.py")).read(), "Failed to create project pipeline with the correct content"
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_create_misc(temp_project_dir_fixture):
     """
     Test if the misc values are correctly created
@@ -128,7 +128,7 @@ async def test_create_misc(temp_project_dir_fixture):
     assert project.create_misc({"table_len": 20})["table_len"] == 20, "Failed to set custom misc values"
 
 # Test init/edit methods -------------------------------------------------------------------------------------
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_init_from_manifest(temp_project_dir_fixture):
     """
     Test if the project is correctly initialized from a manifest
@@ -151,7 +151,7 @@ async def test_init_from_manifest(temp_project_dir_fixture):
     assert project.project_type[0] == project.short_name, "Failed to initialize project project_type from manifest"
     assert project.misc == project.create_misc({}), "Failed to initialize project misc from manifest"
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_update_settings(temp_project_dir_fixture):
     """
     Test if the project settings are correctly updated
