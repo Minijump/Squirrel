@@ -20,8 +20,6 @@ def test_squirrel_error():
         assert response.status_code == 200, "Error page not displayed"
         assert response.context.get("exception"), "Response does not contain an exception"
 
-import pytest
-@pytest.mark.debug
 def test_squirrel_error_decorator_usage():
     """
     Test that squirrel_error decorator is applied to the expected routes.
