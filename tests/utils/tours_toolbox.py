@@ -56,6 +56,11 @@ class App(BaseTool):
         else:
             raise ValueError("Either 'by_id' or 'by_css_selector' must be provided.")
 
+        if element.tag_name.lower() == 'select':
+            option = element.find_element(By.XPATH, f"//option[contains(text(), '{value}')]")
+            option.click()
+            return
+
         element.click()
         element.clear()
         element.send_keys(value)
@@ -102,13 +107,19 @@ class Modal(BaseTool):
                 expected_conditions.visibility_of_element_located((By.XPATH, self.expected_visible)),
                 message="Modal did not appear as expected.")
         else:
-            WebDriverWait(self.browser, 10, poll_frequency=0.1).until(
+            WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
                 expected_conditions.invisibility_of_element_located((By.XPATH, self.expected_visible)),
                 message="Modal did not close as expected.")
             
     def fill(self, field_id: str, value: str) -> None:
         """Fill a field in the modal dialog."""
         field = self.browser.find_element(By.ID, field_id)
+
+        if field.tag_name.lower() == 'select':
+            option = field.find_element(By.XPATH, f"//option[contains(text(), '{value}')]")
+            option.click()
+            return
+        
         field.click()
         field.clear()
         field.send_keys(value)
@@ -120,25 +131,40 @@ class Modal(BaseTool):
         
     def submit(self, assert_closed=True) -> None:
         """Submit the modal dialog."""
-        self.browser.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+        self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[contains(@class, 'btn-primary')]").click()
         self.assert_visibility(visible=not assert_closed)
 
 
 class Grid(BaseTool):
     """Represents a grid view in the application."""
 
+    def assert_card_visibility(self, visible=True, by_title=False) -> None:
+        xpath = f"//div[@class=\'grid\']//h3[text()=\'{by_title}\']"
+        if visible:
+            WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
+                expected_conditions.visibility_of_element_located((By.XPATH, xpath)),
+                message=f"Data source {by_title} should be displayed")
+        else:
+            WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
+                expected_conditions.invisibility_of_element_located((By.XPATH, xpath)),
+                message="Data source {by_title} should not be displayed")
+
     def click_create_card(self, expected_visible=False) -> Modal:
         """Click on the create card button."""
         self.browser.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
         return Modal(self.browser, expected_visible)
     
-    def click_card(self, by_xpath:str = False, by_title:str = False) -> None:
+    def click_card(self, by_xpath:str = False, by_title:str = False, by_position: int = 0) -> None:
         """Click on a card in the grid."""
         if by_xpath:
             self.browser.find_element(By.XPATH, by_xpath).click()
         elif by_title:
             xpath = f"//div[@class=\'grid\']//h3[text()=\'{by_title}\']"
             self.browser.find_element(By.XPATH, xpath).click()
+        elif by_position:
+            self.browser.find_element(By.CSS_SELECTOR, f".card:nth-child({by_position})").click()
+        else:
+            raise ValueError("Either 'by_xpath', 'by_title', or 'by_position' must be provided.")
 
 
 class Tour(App, Navbar, Grid):

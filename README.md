@@ -124,11 +124,14 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Generalize unit tests: test everything + create tests/tours 'framework' (click table button fct, look table value, click on grid card where name, ... !!! test offline, thing such as '.fa-home' does not work as selector offline, use ActionChains ?) 
+* Use toolox for tables tours
+* Factorize + imp toolbox
+* Tours on everything (complete untested + pipeline) + imp tours (test only once: do not create a new project at each tour,...) (! test offline)
 * Reformat code (split css and js for table + code utils (factorize file manager ->use pathlib? | use PyO3 (rust)))
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
+* fix perf of create_project (in tours_toolbox) => problems seems to occur when checking modal disappears
 
 ### To do MVP
 * Add actions + imp table design + imp pipeline (summary on top? foldable actions instead of pop up? Test before save?) ...
