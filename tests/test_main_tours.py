@@ -12,9 +12,6 @@ class TestAppTours:
         browser.get(f"{server}/projects/")
         tour = Tour(browser, "Test navbar")
 
-        # Check the navbar has an over effect
-        tour.check_navbar_hover_effect()
-
         # Navigate to app settings
         tour.navbar_click("Settings")
         tour.check_page(title="App settings", url="/app/settings/")

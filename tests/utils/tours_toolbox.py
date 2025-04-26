@@ -27,22 +27,17 @@ class Navbar(BaseTool):
     def navbar_click(self, text: str) -> None:
         """Click on a navigation link by its text."""
         nav_element = self.browser.find_element(By.TAG_NAME, "nav")
+        self.check_navbar_hover_effect(nav_element)
         link = nav_element.find_element(By.LINK_TEXT, text)
         link.click()
 
-    def check_navbar_hover_effect(self) -> None:
-        """
-        Check if hover effects work on navbar elements.
-        """
-        nav_element = self.browser.find_element(By.TAG_NAME, "nav")
-        links = nav_element.find_elements(By.TAG_NAME, "a")        
+    def check_navbar_hover_effect(self, nav_element) -> None:
+        """Check if hover effects works on navbar elements."""
+        links = nav_element.find_elements(By.TAG_NAME, "a") 
+        actions = ActionChains(self.browser)       
         for link in links:            
             original_color = link.value_of_css_property("background-color")
-            
-            # Hover over the element
-            actions = ActionChains(self.browser)
             actions.move_to_element(link).perform()
-            
             hover_color = link.value_of_css_property("background-color")
             
             if hover_color == original_color:
