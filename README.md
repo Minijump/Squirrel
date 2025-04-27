@@ -124,7 +124,6 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Use toolox for tables tours
 * Factorize + imp toolbox
 * Tours on everything (complete untested + pipeline) + imp tours (test only once: do not create a new project at each tour,...) (! test offline)
 * Reformat code (split css and js for table + code utils (factorize file manager ->use pathlib? | use PyO3 (rust)))

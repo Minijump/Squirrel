@@ -93,6 +93,42 @@ class Navbar(BaseTool):
                 assert False, f"Hover effect not working on link with text: {link.text}"
 
 
+class RightSidebar(BaseTool):
+    def __init__(self, browser, expected_visible) -> None:
+        super().__init__(browser)
+        self.expected_visible = expected_visible
+        self.assert_visibility(visible=True)
+
+    def assert_visibility(self, visible=True) -> None:
+        sidebar_style = self.browser.find_element(By.XPATH, self.expected_visible).get_attribute("style")
+        if visible:
+             WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
+                lambda driver: "width: 300px" in sidebar_style,
+                message="Sidebar did not appear as expected.")
+        else:
+             WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
+                lambda driver: "width: 0" in sidebar_style or "width: 0px" in sidebar_style or not sidebar_style,
+                message="Sidebar did not close as expected.")
+            
+    def fill(self, field_id: str, value: str) -> None:
+        """Fill a field in the modal dialog."""
+        field = self.browser.find_element(By.ID, field_id)
+
+        # TODO: use from selenium.webdriver.support.ui import Select ?
+        if field.tag_name.lower() == 'select':
+            option = field.find_element(By.XPATH, f"//option[contains(text(), '{value}')]")
+            option.click()
+            return
+        
+        field.click()
+        field.clear()
+        field.send_keys(value)
+
+    def submit(self, assert_closed=True) -> None:
+        """Submit the modal dialog."""
+        self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[contains(@class, 'btn-primary')]").click()
+        self.assert_visibility(visible=not assert_closed)
+
 class Modal(BaseTool):
     """Represents a modal dialog in the application."""
 
@@ -123,6 +159,17 @@ class Modal(BaseTool):
         field.click()
         field.clear()
         field.send_keys(value)
+
+    def click_button(self, by_button_text: str) -> None:
+        """Click a button in the modal dialog."""
+        button = self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[contains(text(), '{by_button_text}')]")
+        button.click()
+        self.assert_visibility(visible=False)
+
+    def click_action_button(self, by_button_text: str) -> None:
+        """Click an action button in the modal dialog."""
+        self.click_button(by_button_text)
+        return RightSidebar(self.browser, expected_visible="//div[@id=\'ActionSidebar\']")
 
     def close(self, assert_closed=True) -> None:
         """Close the modal dialog."""
@@ -167,7 +214,48 @@ class Grid(BaseTool):
             raise ValueError("Either 'by_xpath', 'by_title', or 'by_position' must be provided.")
 
 
-class Tour(App, Navbar, Grid):
+class Table(BaseTool):
+    def __init__(self, browser: WebDriver, table_name: str) -> None:
+        super().__init__(browser)
+        self.table_name = table_name
+        self.table_id = f"table-html-{table_name}"
+
+    def click_header_button(self, by_col_number: int = 0) -> Modal:
+        """Click on the header button of the table."""
+        if by_col_number:
+            self.browser.find_element(By.CSS_SELECTOR, f"#{self.table_id} th:nth-child({by_col_number}) > .table-header-btn").click()
+
+        return Modal(self.browser, expected_visible=f"//div[@id='InfoColModal']")
+    
+    def get_cell(self, by_col_number: int, by_row_number: int) -> None:
+        """Get the cell from the table at ColxLine."""
+        return self.browser.find_element(
+            By.CSS_SELECTOR, f"#table-html-ordered tr:nth-child({by_row_number}) > td:nth-child({by_col_number})")
+        
+
+class TablesScreen(BaseTool):
+    """Represents the tables view in the application."""
+
+    def click_create_new_table(self) -> None:
+        """Click on the create new table button."""
+        self.browser.find_element(By.CSS_SELECTOR, "img").click()
+        return RightSidebar(self.browser, expected_visible="//div[@id=\'CreateTable\']")
+    
+    def check_table_exists(self, table_name: str) -> None:
+        """Check if the table with the given name exists."""
+        xpath = f"//button[contains(.,\'{table_name}\')]"
+        WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
+            expected_conditions.visibility_of_element_located((By.XPATH, xpath)),
+            message=f"Table {table_name} should be displayed")
+        
+    def select_table(self, by_name: str = False) -> None:
+        """Select a table by its name."""
+        if by_name:
+            self.browser.find_element(By.CSS_SELECTOR, f"#table-html-{by_name}").click()
+            return Table(self.browser, by_name)
+
+
+class Tour(App, Navbar, Grid, TablesScreen):
     """Represents a tour."""
 
     def __init__(self, browser: WebDriver, tour_name: str = "Tour") -> None:
