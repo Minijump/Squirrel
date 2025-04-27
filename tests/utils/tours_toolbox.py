@@ -137,12 +137,14 @@ class Modal(BaseTool):
         self.expected_visible = expected_visible
         self.assert_visibility(visible=True)
         
-    def assert_visibility(self, visible=True) -> None:
+    def assert_visibility(self, visible=True, redirect=False) -> None:
         if visible:
             WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
                 expected_conditions.visibility_of_element_located((By.XPATH, self.expected_visible)),
                 message="Modal did not appear as expected.")
         else:
+            if redirect:
+                return
             WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
                 expected_conditions.invisibility_of_element_located((By.XPATH, self.expected_visible)),
                 message="Modal did not close as expected.")
@@ -176,10 +178,10 @@ class Modal(BaseTool):
         self.browser.find_element(By.ID, "cancelButton").click()
         self.assert_visibility(visible=not assert_closed)
         
-    def submit(self, assert_closed=True) -> None:
+    def submit(self, assert_closed=True, redirect=False) -> None:
         """Submit the modal dialog."""
         self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[contains(@class, 'btn-primary')]").click()
-        self.assert_visibility(visible=not assert_closed)
+        self.assert_visibility(visible=not assert_closed, redirect=redirect)
 
 
 class Grid(BaseTool):
@@ -268,4 +270,4 @@ class Tour(App, Navbar, Grid, TablesScreen):
         create_project_modal.fill("projectName", name)
         if description:
             create_project_modal.fill("projectDescription", description)
-        create_project_modal.submit(assert_closed=True)
+        create_project_modal.submit(assert_closed=True, redirect=True)

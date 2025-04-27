@@ -130,7 +130,6 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
-* fix perf of create_project (in tours_toolbox) => problems seems to occur when checking modal disappears
 
 ### To do MVP
 * Add actions + imp table design + imp pipeline (summary on top? foldable actions instead of pop up? Test before save?) ...
