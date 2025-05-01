@@ -25,7 +25,7 @@ class TestProjectsTours:
         create_project_modal.submit(assert_closed=False)
         # Add a name and confirm, pop up disappears
         create_project_modal.fill([("projectName", "dumb project name")])
-        create_project_modal.submit(assert_closed=True, redirect=True)
+        create_project_modal.submit(assert_closed=True)
 
     @pytest.mark.slow
     def test_project_creation(self, server, browser, reset_projects):
@@ -63,7 +63,7 @@ class TestProjectsTours:
         tour.navbar_click("Projects")
         tour.create_project(project_name)
 
-        browser.find_element(By.CSS_SELECTOR, ".fa-home").click()
+        tour.click_home_button()
         tour.create_project(project_name)
         tour.assert_error_page()
 
@@ -77,7 +77,7 @@ class TestProjectsTours:
         tour.create_project(project_name)
 
         # Check that the new project is displayed, open it and check its name in settings
-        browser.find_element(By.CSS_SELECTOR, ".fa-home").click()
+        tour.click_home_button()
         tour.click_card(by_title=project_name)
         tour.navbar_click("Settings")
         tour.check_elements(by_ids=[('projectName', project_name)])

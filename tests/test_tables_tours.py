@@ -19,7 +19,7 @@ class TestTablesTours:
         sidebar.fill([("new_table_name", table_name), ("data_source", "Csv ordered")])
         sidebar.submit()
 
-        tour.check_table_exists(table_name)
+        tour.check_table_visibility(table_name)
 
     @pytest.mark.slow
     def test_sort_column(self, server, browser, reset_projects):
