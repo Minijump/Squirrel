@@ -117,7 +117,7 @@ def browser():
     driver = Firefox(options=options)
     
     driver.set_window_size(1524, 716)
-    driver.implicitly_wait(3)
+    driver.implicitly_wait(0.5)
     yield driver
     driver.quit()
 

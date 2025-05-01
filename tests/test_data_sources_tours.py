@@ -36,13 +36,13 @@ class TestDataSourcesTours:
         # Check visible inputs are correct while changing source type (default type is CSV)
         tour.check_elements(by_ids=[("sourceName", ""), ("sourceDescription", ""), ("sourceType", "csv"), ("sourceFile", "")])
 
-        create_source_modal.fill("sourceType", "Odoo")
+        create_source_modal.fill([("sourceType", "Odoo")])
         tour.check_elements(by_ids=[("odooUrl", ""), ("odooDb", ""), ("odooModel", "")])
 
-        create_source_modal.fill("sourceType", "Yahoo Finance")
+        create_source_modal.fill([("sourceType", "Yahoo Finance")])
         tour.check_elements(by_ids=[("start_date", ""), ("interval", "1d")])
 
-        create_source_modal.fill("sourceType", "Pickle")
+        create_source_modal.fill([("sourceType", "Pickle")])
         tour.check_elements(by_ids=[("sourceFile", "")])
 
     @pytest.mark.slow
@@ -72,12 +72,14 @@ class TestDataSourcesTours:
         tour.navbar_click("Data sources")
 
         create_source_modal = tour.click_create_card(expected_visible="//div[@class=\'modal-content\']")
-        create_source_modal.fill("sourceName", "test yahoo")
-        create_source_modal.fill("sourceDescription", "a simple test for yahoo data source")
-        create_source_modal.fill("sourceType", "Yahoo Finance")
-        create_source_modal.fill("tickers", "[\'AU\']")
-        create_source_modal.fill("start_date", "2025-03-03")
-        create_source_modal.fill("end_date", "2025-03-21")
+        create_source_modal.fill([
+            ("sourceName", "test yahoo"),
+            ("sourceDescription", "a simple test for yahoo data source"),
+            ("sourceType", "Yahoo Finance"),
+            ("tickers", "[\'AU\']"),
+            ("start_date", "2025-03-03"),
+            ("end_date", "2025-03-21")
+        ])
         with patch('yfinance.download', return_value=MOCK_YFINANCE_DATA):
             create_source_modal.submit()
 

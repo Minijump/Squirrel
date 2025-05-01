@@ -2,27 +2,26 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-class BaseTool:
+class BaseElement:
     """Base class for all toolbox components providing common functionality."""
     
     def __init__(self, browser: WebDriver):
         self.browser = browser
 
-
-class App(BaseTool):
-    """Represents the main application."""
-    
-    def check_page(self, title:str = False, url:str = False) -> None:
-        """Check if the page title or URL matches the expected values."""
-        if title:
-            actual_title = self.browser.find_element(By.CSS_SELECTOR, "h1").text
-            assert actual_title == title, f"Expected title: {title}, but got: {actual_title}"
-        if url:
-            actual_url = self.browser.current_url
-            assert url in actual_url, f"Expected '{url}' in the url"
+    def check_visibility(self, xpath: str = False, visible: bool = True, message: str= False) -> None:
+        """Check if the element is visible or not."""
+        if visible:
+            WebDriverWait(self.browser, 1, poll_frequency=0.1).until(
+                expected_conditions.visibility_of_element_located((By.XPATH, xpath)),
+                message=message or "Elemnet should be visible.")
+        else:
+            WebDriverWait(self.browser, 0.2, poll_frequency=0.1).until(
+                expected_conditions.invisibility_of_element_located((By.XPATH, xpath)),
+                message=message or "Element should not be visible.")
 
     def check_elements(self, by_ids: list = False, by_css_selectors: list = False) -> None:
         """
@@ -34,18 +33,18 @@ class App(BaseTool):
         by_ids = by_ids or []
         by_css_selectors = by_css_selectors or []
 
-        def check_element(element):
+        def check_element(element, expected_value):
             assert element.is_displayed(), f"Element is not displayed."
             actual_value = element.get_attribute("value")
             assert actual_value == expected_value, f"Expected value: {expected_value}, but got: {actual_value}"
 
         for id, expected_value in by_ids:
             element = self.browser.find_element(By.ID, id)
-            check_element(element)
+            check_element(element, expected_value)
 
         for css_selector, expected_value in by_css_selectors:
             element = self.browser.find_element(By.CSS_SELECTOR, css_selector)
-            check_element(element)
+            check_element(element, expected_value)
 
     def fill_element(self, by_id: str = False, by_css_selector: str = False, value: str = False) -> None:
         """Fill an element with the given value."""
@@ -57,26 +56,40 @@ class App(BaseTool):
             raise ValueError("Either 'by_id' or 'by_css_selector' must be provided.")
 
         if element.tag_name.lower() == 'select':
-            option = element.find_element(By.XPATH, f"//option[contains(text(), '{value}')]")
-            option.click()
+            select = Select(element)
+            select.select_by_visible_text(value)
             return
 
         element.click()
         element.clear()
         element.send_keys(value)
 
+
+class App(BaseElement):
+    """Represents the main application."""
+    
+    def check_page(self, title:str = False, url:str = False) -> None:
+        """Check if the page title or URL matches the expected values."""
+        if title:
+            actual_title = self.browser.find_element(By.CSS_SELECTOR, "h1").text
+            assert actual_title == title, f"Expected title: {title}, but got: {actual_title}"
+        if url:
+            actual_url = self.browser.current_url
+            assert url in actual_url, f"Expected '{url}' in the url"
+
     def assert_error_page(self) -> None:
         """Check if the error page is displayed."""
         assert self.browser.find_element(By.CSS_SELECTOR, "h3").text == "Error", "Error page not displayed as expected."
 
 
-class Navbar(BaseTool):
+class Navbar(BaseElement):
     """Represents the navigation bar of the application."""
     
-    def navbar_click(self, text: str) -> None:
+    def navbar_click(self, text: str, check_over_effect=False) -> None:
         """Click on a navigation link by its text."""
         nav_element = self.browser.find_element(By.TAG_NAME, "nav")
-        self.check_navbar_hover_effect(nav_element)
+        if check_over_effect:
+            self.check_navbar_hover_effect(nav_element)
         link = nav_element.find_element(By.LINK_TEXT, text)
         link.click()
 
@@ -93,74 +106,51 @@ class Navbar(BaseTool):
                 assert False, f"Hover effect not working on link with text: {link.text}"
 
 
-class RightSidebar(BaseTool):
-    def __init__(self, browser, expected_visible) -> None:
+class TransientElement(BaseElement):
+    """Represents a transient element in the application."""
+    def __init__(self, browser: WebDriver, expected_visible: str) -> None:
         super().__init__(browser)
         self.expected_visible = expected_visible
         self.assert_visibility(visible=True)
 
-    def assert_visibility(self, visible=True) -> None:
+    def assert_visibility(self, visible=True, redirect=False) -> None:
+        if redirect:
+            return
+        self.check_visibility(
+            xpath=self.expected_visible, 
+            visible=visible, 
+            message=f"Transient element did not {'appear' if visible else 'closed'} as expected.")
+
+    def fill(self, values: list) -> None:
+        """Fill the modal dialog with the given values. values should be a list of tuples (id, value)."""
+        for value in values:
+            self.fill_element(by_id=value[0], value=value[1])
+
+    def submit(self, assert_closed=True, redirect=False) -> None:
+        """Submit the modal dialog."""
+        self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[contains(@class, 'btn-primary')]").click()
+        self.assert_visibility(visible=not assert_closed, redirect=redirect)
+
+
+class RightSidebar(TransientElement):
+    """Represents the right sidebar."""
+
+    def assert_visibility(self, visible=True, redirect=False) -> None:
         sidebar_style = self.browser.find_element(By.XPATH, self.expected_visible).get_attribute("style")
         if visible:
-             WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
+             WebDriverWait(self.browser, 1, poll_frequency=0.1).until(
                 lambda driver: "width: 300px" in sidebar_style,
                 message="Sidebar did not appear as expected.")
         else:
-             WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
+             if redirect:
+                return
+             WebDriverWait(self.browser, 0.2, poll_frequency=0.1).until(
                 lambda driver: "width: 0" in sidebar_style or "width: 0px" in sidebar_style or not sidebar_style,
                 message="Sidebar did not close as expected.")
-            
-    def fill(self, field_id: str, value: str) -> None:
-        """Fill a field in the modal dialog."""
-        field = self.browser.find_element(By.ID, field_id)
 
-        # TODO: use from selenium.webdriver.support.ui import Select ?
-        if field.tag_name.lower() == 'select':
-            option = field.find_element(By.XPATH, f"//option[contains(text(), '{value}')]")
-            option.click()
-            return
-        
-        field.click()
-        field.clear()
-        field.send_keys(value)
 
-    def submit(self, assert_closed=True) -> None:
-        """Submit the modal dialog."""
-        self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[contains(@class, 'btn-primary')]").click()
-        self.assert_visibility(visible=not assert_closed)
-
-class Modal(BaseTool):
+class Modal(TransientElement):
     """Represents a modal dialog in the application."""
-
-    def __init__(self, browser, expected_visible) -> None:
-        super().__init__(browser)
-        self.expected_visible = expected_visible
-        self.assert_visibility(visible=True)
-        
-    def assert_visibility(self, visible=True, redirect=False) -> None:
-        if visible:
-            WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
-                expected_conditions.visibility_of_element_located((By.XPATH, self.expected_visible)),
-                message="Modal did not appear as expected.")
-        else:
-            if redirect:
-                return
-            WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
-                expected_conditions.invisibility_of_element_located((By.XPATH, self.expected_visible)),
-                message="Modal did not close as expected.")
-            
-    def fill(self, field_id: str, value: str) -> None:
-        """Fill a field in the modal dialog."""
-        field = self.browser.find_element(By.ID, field_id)
-
-        if field.tag_name.lower() == 'select':
-            option = field.find_element(By.XPATH, f"//option[contains(text(), '{value}')]")
-            option.click()
-            return
-        
-        field.click()
-        field.clear()
-        field.send_keys(value)
 
     def click_button(self, by_button_text: str) -> None:
         """Click a button in the modal dialog."""
@@ -177,26 +167,16 @@ class Modal(BaseTool):
         """Close the modal dialog."""
         self.browser.find_element(By.ID, "cancelButton").click()
         self.assert_visibility(visible=not assert_closed)
-        
-    def submit(self, assert_closed=True, redirect=False) -> None:
-        """Submit the modal dialog."""
-        self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[contains(@class, 'btn-primary')]").click()
-        self.assert_visibility(visible=not assert_closed, redirect=redirect)
 
 
-class Grid(BaseTool):
+class Grid(BaseElement):
     """Represents a grid view in the application."""
 
     def assert_card_visibility(self, visible=True, by_title=False) -> None:
-        xpath = f"//div[@class=\'grid\']//h3[text()=\'{by_title}\']"
-        if visible:
-            WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
-                expected_conditions.visibility_of_element_located((By.XPATH, xpath)),
-                message=f"Data source {by_title} should be displayed")
-        else:
-            WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
-                expected_conditions.invisibility_of_element_located((By.XPATH, xpath)),
-                message="Data source {by_title} should not be displayed")
+        self.check_visibility(
+            xpath=f"//div[@class=\'grid\']//h3[text()=\'{by_title}\']", 
+            visible=visible, 
+            message=f"Data source {by_title} should {'' if visible else 'not'} be displayed")
 
     def click_create_card(self, expected_visible=False) -> Modal:
         """Click on the create card button."""
@@ -216,7 +196,7 @@ class Grid(BaseTool):
             raise ValueError("Either 'by_xpath', 'by_title', or 'by_position' must be provided.")
 
 
-class Table(BaseTool):
+class Table(BaseElement):
     def __init__(self, browser: WebDriver, table_name: str) -> None:
         super().__init__(browser)
         self.table_name = table_name
@@ -235,7 +215,7 @@ class Table(BaseTool):
             By.CSS_SELECTOR, f"#table-html-ordered tr:nth-child({by_row_number}) > td:nth-child({by_col_number})")
         
 
-class TablesScreen(BaseTool):
+class TablesScreen(BaseElement):
     """Represents the tables view in the application."""
 
     def click_create_new_table(self) -> None:
@@ -243,12 +223,12 @@ class TablesScreen(BaseTool):
         self.browser.find_element(By.CSS_SELECTOR, "img").click()
         return RightSidebar(self.browser, expected_visible="//div[@id=\'CreateTable\']")
     
-    def check_table_exists(self, table_name: str) -> None:
+    def check_table_exists(self, table_name: str, visible: bool = True) -> None:
         """Check if the table with the given name exists."""
-        xpath = f"//button[contains(.,\'{table_name}\')]"
-        WebDriverWait(self.browser, 2, poll_frequency=0.1).until(
-            expected_conditions.visibility_of_element_located((By.XPATH, xpath)),
-            message=f"Table {table_name} should be displayed")
+        self.check_visibility(
+            xpath=f"//button[contains(.,\'{table_name}\')]",
+            visible=visible,
+            message=f"Table {table_name} should {'' if visible else 'not'} be displayed")
         
     def select_table(self, by_name: str = False) -> None:
         """Select a table by its name."""
@@ -267,7 +247,7 @@ class Tour(App, Navbar, Grid, TablesScreen):
     def create_project(self, name, description=False):
         """Create a new project with the given name and description."""
         create_project_modal = self.click_create_card(expected_visible="//form[@id=\'projectForm\']")
-        create_project_modal.fill("projectName", name)
+        create_project_modal.fill([("projectName", name)])
         if description:
-            create_project_modal.fill("projectDescription", description)
+            create_project_modal.fill([("projectDescription", description)])
         create_project_modal.submit(assert_closed=True, redirect=True)

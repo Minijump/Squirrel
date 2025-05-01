@@ -24,8 +24,8 @@ class TestProjectsTours:
         create_project_modal = tour.click_create_card(expected_visible="//form[@id=\'projectForm\']")
         create_project_modal.submit(assert_closed=False)
         # Add a name and confirm, pop up disappears
-        create_project_modal.fill("projectName", "dumb project name")
-        create_project_modal.submit(assert_closed=True)
+        create_project_modal.fill([("projectName", "dumb project name")])
+        create_project_modal.submit(assert_closed=True, redirect=True)
 
     @pytest.mark.slow
     def test_project_creation(self, server, browser, reset_projects):
@@ -41,7 +41,7 @@ class TestProjectsTours:
 
         # Check in project settings that the project has been created with the correct values
         tour.check_page(title="Tables", url=f"/tables/")
-        tour.navbar_click("Settings")
+        tour.navbar_click("Settings", check_over_effect=True)
         tour.check_page(title="Project Settings", url=f"/settings/")
         expected_settings_byids = [('projectName', project_name), ('projectDescription', project_description)]
         tour.check_elements(by_ids=expected_settings_byids)

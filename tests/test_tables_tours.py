@@ -16,8 +16,7 @@ class TestTablesTours:
 
         sidebar = tour.click_create_new_table()
         table_name = "test create new table"
-        sidebar.fill("new_table_name", table_name)
-        sidebar.fill("data_source", "Csv ordered")
+        sidebar.fill([("new_table_name", table_name), ("data_source", "Csv ordered")])
         sidebar.submit()
 
         tour.check_table_exists(table_name)
@@ -37,7 +36,7 @@ class TestTablesTours:
         # Sort descending
         col_modal = table.click_header_button(by_col_number=2)
         sidebar = col_modal.click_action_button("Sort")
-        sidebar.fill("sort_order", "Descending")
+        sidebar.fill([("sort_order", "Descending")])
         sidebar.submit()
         cell = table.get_cell(by_col_number=2, by_row_number=1)
         assert cell.text == "99"
@@ -45,7 +44,7 @@ class TestTablesTours:
         # Sort back to ascending
         col_modal = table.click_header_button(by_col_number=2)
         sidebar = col_modal.click_action_button("Sort")
-        sidebar.fill("sort_order", "Ascending")
+        sidebar.fill([("sort_order", "Ascending")])
         sidebar.submit()
         cell = table.get_cell(by_col_number=2, by_row_number=1)
         assert cell.text == "0"

@@ -13,7 +13,7 @@ class TestAppTours:
         tour = Tour(browser, "Test navbar")
 
         # Navigate to app settings
-        tour.navbar_click("Settings")
+        tour.navbar_click("Settings", check_over_effect=True)
         tour.check_page(title="App settings", url="/app/settings/")
 
         # Navigate back to projects
