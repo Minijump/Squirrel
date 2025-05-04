@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.remote.webelement import WebElement
 
+MOCK_PROJECT1_NAME = "UT Mock Project 1"
 
 class BaseElement:    
     def __init__(self, browser: WebDriver):
@@ -60,6 +61,9 @@ class BaseElement:
         element.click()
         element.clear()
         element.send_keys(value)
+
+    def click_confirm_button(self) -> None:
+        self.browser.find_element(By.CSS_SELECTOR, ".btn-primary").click()
 
 
 class App(BaseElement):    
@@ -154,6 +158,19 @@ class Grid(BaseElement):
             xpath=f"//div[@class=\'grid\']//h3[text()=\'{by_title}\']", 
             visible=visible, 
             message=f"Data source {by_title} should {'' if visible else 'not'} be displayed")
+        
+    def check_grid_cards_over_effect(self) -> None:
+        grid = self.browser.find_element(By.CSS_SELECTOR, ".grid")
+        cards = grid.find_elements(By.CSS_SELECTOR, ".card")
+        actions = ActionChains(self.browser)
+        
+        for card in cards:
+            original_transform = card.value_of_css_property("transform")
+            actions.move_to_element(card).perform()
+            hover_transform = card.value_of_css_property("transform")
+            
+            if hover_transform == original_transform:
+                assert False, f"Hover effect not working on card with title: {card.text}"
 
     def click_create_card(self, expected_visible:bool = False) -> Modal:
         self.browser.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()
@@ -206,9 +223,9 @@ class TablesScreen(BaseElement):
 
 
 class Tour(App, Navbar, Grid, TablesScreen):
-    def __init__(self, browser: WebDriver, tour_name: str = "Tour") -> None:
+    def __init__(self, browser: WebDriver, server: str) -> None:
         super().__init__(browser)
-        self.tour_name = tour_name
+        browser.get(f"{server}/projects/")
 
     def create_project(self, name: str, description: str = False):
         create_project_modal = self.click_create_card(expected_visible="//form[@id=\'projectForm\']")

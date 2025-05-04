@@ -14,8 +14,8 @@ class TestDataSourcesTours:
     @pytest.mark.slow
     def test_create_data_source_modal(self, server, browser, reset_projects):
         """Test create project modal appears and disappears correctly"""
-        browser.get(f"{server}/projects/")
-        tour = Tour(browser, "Test create data source modal")
+        
+        tour = Tour(browser, server)
 
         tour.create_project("test create data source modal")
 
@@ -26,8 +26,8 @@ class TestDataSourcesTours:
     @pytest.mark.slow
     def test_form_input_depends_data_source_type(self, server, browser, reset_projects):
         """Test that form changes when changing source type"""
-        browser.get(f"{server}/projects/")
-        tour = Tour(browser, "Test create data source modal")
+        
+        tour = Tour(browser, server)
 
         tour.create_project("test data source type")
 
@@ -48,8 +48,8 @@ class TestDataSourcesTours:
     @pytest.mark.slow
     def test_data_source_edit(self, server, browser, reset_projects):
         """Test edition of a data source's settings"""
-        browser.get(f"{server}/projects/")
-        tour = Tour(browser, "Test data source edit")
+        
+        tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
         tour.navbar_click("Data sources")
@@ -65,8 +65,8 @@ class TestDataSourcesTours:
     @pytest.mark.slow
     def test_create_yahoo_data_source(self, server, browser, reset_projects):
         """Test yahoo data source creation"""
-        browser.get(f"{server}/projects/")
-        tour = Tour(browser, "Test create yahoo data source")
+        
+        tour = Tour(browser, server)
 
         tour.create_project("test create yahoo data source")
         tour.navbar_click("Data sources")
@@ -88,8 +88,8 @@ class TestDataSourcesTours:
     @pytest.mark.slow
     def test_delete_data_source(self, server, browser, reset_projects):
         """Test data source deletion"""
-        browser.get(f"{server}/projects/")
-        tour = Tour(browser, "Test delete data source")
+        
+        tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
         tour.navbar_click("Data sources")

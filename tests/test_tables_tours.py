@@ -9,8 +9,8 @@ class TestTablesTours:
         """
         Check if the table is created correctly.
         """
-        browser.get(f"{server}/projects/")
-        tour = Tour(browser, "Test create table")
+        
+        tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
 
@@ -26,8 +26,8 @@ class TestTablesTours:
         """
         Check if the column is sorted correctly.
         """
-        browser.get(f"{server}/projects/")
-        tour = Tour(browser, "Test sort column")
+        
+        tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
 
