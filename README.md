@@ -126,6 +126,7 @@ In addition to these folders, you will find a folder named tests that contains t
 ### To do
 * Tours on everything (complete untested + pipeline) + imp tours (test only once: do not create a new project at each tour,...) (! test offline)
 * Reformat code (split css and js for table + code utils (factorize file manager ->use pathlib? | use PyO3 (rust)))
+* refactor tours after code reformat: imp widget uses in tours, ...
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))

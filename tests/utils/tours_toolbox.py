@@ -65,6 +65,9 @@ class BaseElement:
     def click_confirm_button(self) -> None:
         self.browser.find_element(By.CSS_SELECTOR, ".btn-primary").click()
 
+    def click_danger_button(self) -> None:
+        self.browser.find_element(By.CSS_SELECTOR, ".btn-danger").click()
+
 
 class App(BaseElement):    
     def check_page(self, title:str = False, url:str = False) -> None:
