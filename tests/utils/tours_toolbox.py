@@ -1,3 +1,5 @@
+import time
+
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -240,7 +242,36 @@ class TablesScreen(BaseElement):
             return Table(self.browser, by_name)
 
 
-class Tour(App, Navbar, Grid, TablesScreen):
+class PipelineScreen(BaseElement):
+    def check_pipeline_actions_hover_effect(self) -> None:
+        pipeline_actions = self.browser.find_elements(By.CSS_SELECTOR, ".action")
+        actions = ActionChains(self.browser)
+        for action in pipeline_actions:
+            original_style = action.value_of_css_property("transform")
+            actions.move_to_element(action).perform()
+            hover_style = action.value_of_css_property("transform")
+            
+            if hover_style == original_style:
+                assert False, f"Hover effect not working on action with text: {action.text}"
+
+    def get_pipeline_actions(self, wait_a_minute: bool = False) -> list:
+        if wait_a_minute:
+            time.sleep(0.5)
+        return self.browser.find_elements(By.CSS_SELECTOR, ".action")
+    
+    def move_action(self, action: WebElement, target: WebElement) -> None:
+        actions = ActionChains(self.browser)
+        actions.drag_and_drop(action, target)
+        actions.perform()
+
+    def click_edit_action(self, by_position: int) -> Modal:
+        self.browser.find_element(
+            By.XPATH,
+            f"//div[@id=\'pipeline\']//div[@class=\'action\'][{by_position}]//button[contains(@class, \'list-edit-btn\')]"
+        ).click()
+        return Modal(self.browser, expected_visible="//div[@id=\'editActionModal\']")
+
+class Tour(App, Navbar, Grid, TablesScreen, PipelineScreen):
     def __init__(self, browser: WebDriver, server: str) -> None:
         super().__init__(browser)
         browser.get(f"{server}/projects/")
