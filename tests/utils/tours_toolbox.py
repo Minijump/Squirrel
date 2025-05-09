@@ -151,7 +151,11 @@ class Modal(TransientElement):
         return RightSidebar(self.browser, expected_visible="//div[@id=\'ActionSidebar\']")
 
     def close(self, assert_closed: bool = True) -> None:
-        self.browser.find_element(By.ID, "cancelButton").click()
+        try:
+            close_button = self.browser.find_element(By.CSS_SELECTOR, ".close-btn")
+        except:
+            close_button = self.browser.find_element(By.ID, "cancelButton")
+        close_button.click()
         self.assert_visibility(visible=not assert_closed)
 
 
@@ -206,14 +210,25 @@ class Table(BaseElement):
     def get_cell(self, by_col_number: int, by_row_number: int) -> None:
         return self.browser.find_element(
             By.CSS_SELECTOR, f"#table-html-ordered tr:nth-child({by_row_number}) > td:nth-child({by_col_number})")
-        
+    
+    def check_displayed(self) -> None:
+        self.check_visibility(
+            xpath=f"//div[@id=\'{self.table_id}\']", 
+            visible=True, 
+            message=f"Table {self.table_name} should be displayed")
+
+    def next_page(self) -> None:
+        self.browser.find_element(By.XPATH, f"//div[@id=\'table-{self.table_name}\']//div[@id= \'next\']").click()
+    
+    def previous_page(self) -> None:
+        self.browser.find_element(By.XPATH, f"//div[@id=\'table-{self.table_name}\']//div[@id= \'prev\']").click()
 
 class TablesScreen(BaseElement):
     def click_create_new_table(self) -> None:
         self.browser.find_element(By.CSS_SELECTOR, "img").click()
         return RightSidebar(self.browser, expected_visible="//div[@id=\'CreateTable\']")
     
-    def check_table_visibility(self, table_name: str, visible: bool = True) -> None:
+    def check_table_select_button_visibility(self, table_name: str, visible: bool = True) -> None:
         self.check_visibility(
             xpath=f"//button[contains(.,\'{table_name}\')]",
             visible=visible,
@@ -221,7 +236,7 @@ class TablesScreen(BaseElement):
         
     def select_table(self, by_name: str = False) -> None:
         if by_name:
-            self.browser.find_element(By.CSS_SELECTOR, f"#table-html-{by_name}").click()
+            self.browser.find_element(By.XPATH, f"//button[contains(.,\'{by_name}\')]").click()
             return Table(self.browser, by_name)
 
 
