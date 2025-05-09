@@ -27,7 +27,7 @@
     background: var(--light-structure-color);
 }
 .table-select-btn.active {
-    background: transparent;
+    background: linear-gradient(to bottom, var(--structure-color), var(--light-structure-color));
     border-bottom: 0;
     border-right: solid 1px var(--first-secondary-color);
     border-left: solid 1px var(--first-secondary-color);
@@ -36,8 +36,6 @@
 .table-action-btn-div {
     display: flex;
     justify-content: left;
-    border-left: solid 20px var(--structure-color);
-    border-right: solid 20px var(--structure-color);
     padding: 5px;
 }
 .table-action-btn {
