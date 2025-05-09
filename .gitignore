@@ -1,4 +1,5 @@
 *.csv
+!tests/**/*.csv
 *.ipynb
 _projects/**
 !_projects/demo_project/
