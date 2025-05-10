@@ -1,8 +1,11 @@
-from fastapi import FastAPI
+import importlib.resources
+import os
+
 from fastapi import APIRouter
+from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -12,6 +15,15 @@ router = APIRouter()
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
     return FileResponse("app/utils/templates/static/img/favicon.ico")
+
+# Find the fontawesome package installation path + mount it (so that it works offline)
+try:
+    with importlib.resources.path('fontawesome-free', '') as path:
+        fontawesome_path = str(path)
+    
+    app.mount("/fontawesome-assets", StaticFiles(directory=os.path.join(fontawesome_path, 'static', 'fontawesome_free')), name="fontawesome")
+except ImportError:
+    print("Warning: fontawesome_free package not found")
 
 app.mount("/static/base", StaticFiles(directory="app/utils/templates/static"), name="base_static")
 app.mount("/static/projects", StaticFiles(directory="app/projects/templates/static"), name="projects_static")
