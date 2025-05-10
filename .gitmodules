@@ -1,0 +1,3 @@
+[submodule "app/utils/templates/static/js/swapy"]
+	path = app/utils/templates/static/js/swapy
+	url = https://github.com/TahaSh/swapy.git

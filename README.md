@@ -8,6 +8,7 @@ Create data analysis pipeline by generating python with a low-code interface.
     ```sh
     git clone https://github.com/Minijump/Squirrel.git
     cd Squirrel
+    git submodule update --init --recursive
     ```
 
 2. **Create a virtual environment (optional):**
@@ -124,12 +125,12 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Tours on everything (complete untested + pipeline) + imp tours (test only once: do not create a new project at each tour,...) (! test offline)
 * Reformat code (split css and js for table + code utils (factorize file manager ->use pathlib? | use PyO3 (rust)))
 * refactor tours after code reformat: imp widget uses in tours, ...
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
+* Empty line required in edit pipeline action (see TODO in pipeline unit test)
 
 ### To do MVP
 * Add actions + imp table design + imp pipeline (summary on top? foldable actions instead of pop up? Test before save?) ...
