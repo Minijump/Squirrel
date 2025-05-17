@@ -1,11 +1,10 @@
-from fastapi import Request
-from fastapi.responses import RedirectResponse
-from fastapi.responses import JSONResponse
-
-import os
 import json
-import traceback
+import os
 import shutil
+import traceback
+
+from fastapi import Request
+from fastapi.responses import RedirectResponse, JSONResponse
 
 from app import router, templates
 from app.data_sources.models import DATA_SOURCE_REGISTRY
@@ -13,13 +12,7 @@ from app.utils.error_handling import squirrel_error
 
 
 async def get_sources(project_dir):
-    """
-    Returns the list of data sources in the project
-
-    * project_dir(str): The project directory name
-    
-    => Returns the list of available data sources
-    """
+    """Returns the list of data sources in the project"""
     sources = []
     project_data_sources_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources")
     for source in os.listdir(project_data_sources_path):
@@ -31,41 +24,20 @@ async def get_sources(project_dir):
     return sources
 
 async def get_manifest(project_dir, source_dir):
-    """
-    Returns the manifest content
-
-    * project_dir(str): The project directory name
-    * source_dir(str): The source directory name
-    
-    => Returns the manifest of the source
-    """
+    """Returns the manifest content"""
     manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir, "__manifest__.json")
     with open(manifest_path, 'r') as file:
         return json.load(file)
     
 async def init_source_instance(manifest_data):
-    """
-    Initialize the source instance
-
-    * manifest_data(dict): The manifest data
-    
-    => Returns the source object
-    """
+    """Initialize the source instance"""
     SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
     return SourceClass(manifest_data)
 
 @router.get("/data_sources/")
 @squirrel_error
 async def data_sources(request: Request, project_dir: str):
-    """
-    This returns the data sources page
-    It displays all sources of contained in data_sources folder, 
-
-    * request
-    * project_dir(str): project directory
-
-    => Returns a TemplateResponse to display data_sources page
-    """
+    """Returns a TemplateResponse to display data_sources page"""
     sources = await get_sources(project_dir)
     return templates.TemplateResponse(request, "data_sources/templates/data_sources.html", 
         {   "project_dir": project_dir, 
@@ -75,13 +47,7 @@ async def data_sources(request: Request, project_dir: str):
 @router.post("/create_source/")
 @squirrel_error
 async def create_source(request: Request):
-    """
-    Create of a new data source
-
-    * request: contains the form data, required to create the source
-
-    => Returns a RedirectResponse to the data source page
-    """
+    """Create a new data source + returns a RedirectResponse to the data sources page"""
     form_data = await request.form()
     project_dir = form_data.get("project_dir")
     source_type = form_data.get("source_type")
@@ -96,15 +62,7 @@ async def create_source(request: Request):
 @router.get("/source/settings") 
 @squirrel_error   
 async def source_settings(request: Request, project_dir: str, source_dir: str):
-    """
-    This returns the data sources page
-    It displays all sources of contained in data_sources folder, 
-
-    * request
-    * project_dir(str): project directory
-
-    => Returns a TemplateResponse to display data_sources page
-    """
+    """Returns a TemplateResponse to display data_sources settings page"""
     source = await get_manifest(project_dir, source_dir)
     return templates.TemplateResponse(request, "data_sources/templates/data_source_settings.html",
         {"project_dir": project_dir, "source": source})
@@ -112,13 +70,7 @@ async def source_settings(request: Request, project_dir: str, source_dir: str):
 @router.post("/source/update_settings/")
 @squirrel_error
 async def update_source_settings(request: Request):
-    """
-    Update the settings of a data source
-
-    * request: contains the form data, required to update the source settings
-
-    => Returns a RedirectResponse to the source settings page
-    """
+    """Update the settings of a data source + Returns a RedirectResponse to the source settings page"""
     form_data = await request.form()
     project_dir = form_data.get("project_dir")
     source_dir = form_data.get("source_dir")
@@ -131,13 +83,7 @@ async def update_source_settings(request: Request):
     
 @router.post("/source/sync")
 async def sync_source(request: Request):
-    """
-    Sync the data source
-
-    * request: contains the project_dir and source_dir
-
-    =>
-    """
+    """Sync the data source + Returns a JSONResponse with the sync status"""
     try:
         form_data = await request.form()
         project_dir = form_data.get("project_dir")
@@ -154,13 +100,7 @@ async def sync_source(request: Request):
 @router.post("/source/delete/")
 @squirrel_error
 async def delete_source(request: Request):
-    """
-    Delete the data source
-
-    * request: contains the project_dir and source_dir
-
-    =>
-    """
+    """Delete the data source + Returns a RedirectResponse to the data sources page"""
     form_data = await request.form()
     project_dir = form_data.get("project_dir")
     source_dir = form_data.get("source_dir")

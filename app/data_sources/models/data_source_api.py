@@ -2,7 +2,7 @@ import os
 import datetime
 import json
 
-from app.data_sources.models.data_source import DataSource, data_source_type
+from app.data_sources.models.data_source import DataSource
 
 class DataSourceAPI(DataSource):
     short_name = "short_name"
@@ -21,9 +21,7 @@ class DataSourceAPI(DataSource):
         return manifest
     
     def create_table(self, form_data):
-        """
-        Return the code to create the table from the odoo API
-        """
+        """Return the code to create the table from the API connection data"""
         project_dir = form_data.get("project_dir")
         data_file_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', self.directory, 'data.pkl')
         data_file_path = os.path.relpath(data_file_path, os.getcwd())
@@ -31,9 +29,7 @@ class DataSourceAPI(DataSource):
         return f"""dfs['{table_name}'] = pd.read_pickle(r'{data_file_path}')  #sq_action:Create table {table_name} from {self.name}"""
     
     async def _get_data_from_api(self):
-        """
-        To be overriden by subclasses
-        """
+        """To be overriden by subclasses"""
         pass
 
     async def _create_data_file(self, form_data):
@@ -45,9 +41,7 @@ class DataSourceAPI(DataSource):
         await self.update_last_sync(form_data["project_dir"])
 
     async def update_last_sync(self, project_dir):
-        """
-        Update the last sync date
-        """
+        """Update the last sync date"""
         last_sync = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.last_sync = last_sync
 
@@ -61,7 +55,5 @@ class DataSourceAPI(DataSource):
             json.dump(manifest, file, indent=4)
 
     async def sync(self, project_dir):
-        """
-        Sync the data from the Odoo instance
-        """
+        """Sync the data"""
         await self._create_data_file({"project_dir": project_dir})

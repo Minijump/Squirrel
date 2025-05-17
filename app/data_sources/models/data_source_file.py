@@ -15,9 +15,6 @@ class DataSourceFile(DataSource):
 
     @classmethod
     def check_available_infos(cls, form_data):
-        """
-        Check if the required infos are available
-        """
         source_file = form_data.get("source_file")
 
         if not source_file:
@@ -29,13 +26,6 @@ class DataSourceFile(DataSource):
 
     @staticmethod
     def _generate_manifest(form_data):
-        """
-        Generates the manifest of the source
-
-        * form_data(dict): The form data
-
-        => Returns the manifest (dict)
-        """
         manifest = DataSource._generate_manifest(form_data)
         try:
             manifest["kwargs"] = ast.literal_eval(form_data["kwargs"])
@@ -44,17 +34,11 @@ class DataSourceFile(DataSource):
         return manifest
 
     async def _create_pickle_file(self, source_file_path):
-        """
-        To be implemented by the child class
-        """
+        """To be implemented by the child class"""
         pass
 
     async def _create_data_file(self, form_data, content=False):
-        """
-        Creates (copy) the data file for the source
-
-        * form_data(dict): The form data
-        """
+        """Creates (copy) the data file"""
         source_path = os.path.join(os.getcwd(), "_projects", form_data["project_dir"], "data_sources", self.directory)
         source_file_path = os.path.join(source_path, 'data.' + self.short_name)
         form_data_content = await form_data.get("source_file").read() if form_data.get("source_file") else False
@@ -70,14 +54,7 @@ class DataSourceFile(DataSource):
     
     @classmethod
     async def _update_source_settings(cls, source, updated_data):
-        """
-        Update the source's values with the updated data, replace the file if it's not empty
-
-        * source(dict): contains the current settings
-        * updated_data(dict): contains the new settings
-
-        => Returns the updated source
-        """
+        """Update the source's values with the updated data, replace the file if it's not empty"""
         old_kwargs = source.get("kwargs") or {}
 
         updated_source = await DataSource._update_source_settings(source, updated_data)
@@ -100,9 +77,7 @@ class DataSourceFile(DataSource):
         return updated_source
     
     def create_table(self, form_data):
-        """
-        Return the code to read data file
-        """
+        """Return the code to create the table from a file"""
         project_dir = form_data.get("project_dir")
         data_file_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', self.directory, 'data.pkl')
         data_file_path = os.path.relpath(data_file_path, os.getcwd())
@@ -116,11 +91,6 @@ class DataSourceCSV(DataSourceFile):
     icon = "csv_icon.png"
 
     async def _create_pickle_file(self, source_file_path):
-        """
-        Create a pickle file from the source file
-
-        * source_file_path(str): The source file path
-        """
         data = pd.read_csv(source_file_path, **self.kwargs)
         pickle_file_path = source_file_path.replace(f'.{self.short_name}', '.pkl')
         data.to_pickle(pickle_file_path)
@@ -144,11 +114,6 @@ class DataSourceXLSX(DataSourceFile):
     icon = "xlsx_icon.png"
 
     async def _create_pickle_file(self, source_file_path):
-        """
-        Create a pickle file from the source file
-
-        * source_file_path(str): The source file path
-        """
         data = pd.read_excel(source_file_path, **self.kwargs)
         pickle_file_path = source_file_path.replace(f'.{self.short_name}', '.pkl')
         data.to_pickle(pickle_file_path)
@@ -160,11 +125,6 @@ class DataSourceJSON(DataSourceFile):
     icon = "json_icon.png"
 
     async def _create_pickle_file(self, source_file_path):
-        """
-        Create a pickle file from the source file
-
-        * source_file_path(str): The source file path
-        """
         data = pd.read_json(source_file_path, **self.kwargs)
         pickle_file_path = source_file_path.replace(f'.{self.short_name}', '.pkl')
         data.to_pickle(pickle_file_path)

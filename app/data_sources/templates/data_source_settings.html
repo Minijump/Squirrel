@@ -7,50 +7,50 @@
     <link href="{{ url_for('data_sources_static', path='css/style.css') }}" rel="stylesheet">
 </head>
 <body>
-<div class="container">
-    <aside>
-        <div class="aside-title">
-            <a href="/"><i class="fas fa-home" style="color: white;"></i></a>
-            <h1 style="margin-left: 5px;">Source Settings</h1>
-        </div>
-        {% include 'utils/templates/project_nav_links.html' %}
-    </aside>
-    <main>
-        <h2>Source {{ source.name }}</h2>
-        <form id="sourceSettingsForm" method="post" action="/source/update_settings/" enctype="multipart/form-data" class="std-form">
-            <h3>General Settings</h3>
-            <input type="hidden" name="type" value="{{ source.type }}" id="sourceType">
-            <input type="hidden" name="project_dir" value="{{ project_dir }}">
-            <input type="hidden" name="source_dir" value="{{ source.directory }}">
-            <label for="sourceName">Name</label>
-            <input type="text" id="sourceName" name="name" value="{{ source.name }}" required>
-    
-            <label for="sourceDescription">Description</label>
-            <textarea id="sourceDescription" name="description">{{ source.description }}</textarea>
-
-            <div id="toggle-args">
+    <div class="container">
+        <aside>
+            <div class="aside-title">
+                <a href="/"><i class="fas fa-home" style="color: white;"></i></a>
+                <h1 style="margin-left: 5px;">Source Settings</h1>
             </div>
-    
-            <button type="submit" class="btn-primary">Save</button>
-        </form>
-        <form id="deleteSource" method="post" action="/source/delete/" class="std-form">
-            <h3>Danger zone</h3>
-            <input type="hidden" name="project_dir" value="{{ project_dir }}">
-            <input type="hidden" name="source_dir" value="{{ source.directory }}">
-            <div style="display: flex; align-items: center;">
-                <button type="submit" class="btn-danger">Delete Source</button>
-                <p style="margin-left: 10px; font-size: 12px;">Deleting a source is permanent, think twice before doing it</p>
-            </div>
-        </form>
-        <!-- Provide the optionals inputs for diffenrent data source types -->
-        <!-- Will be copied into the 'toggle-args' div -->
-        <div style="display: none">
-            {% include 'data_sources/templates/optional_args_settings.html' %}
-        </div>
+            {% include 'utils/templates/project_nav_links.html' %}
+        </aside>
+        <main>
+            <h2>Source {{ source.name }}</h2>
+            <form id="sourceSettingsForm" method="post" action="/source/update_settings/" enctype="multipart/form-data" class="std-form">
+                <h3>General Settings</h3>
+                <input type="hidden" name="type" value="{{ source.type }}" id="sourceType">
+                <input type="hidden" name="project_dir" value="{{ project_dir }}">
+                <input type="hidden" name="source_dir" value="{{ source.directory }}">
+                <label for="sourceName">Name</label>
+                <input type="text" id="sourceName" name="name" value="{{ source.name }}" required>
+        
+                <label for="sourceDescription">Description</label>
+                <textarea id="sourceDescription" name="description">{{ source.description }}</textarea>
 
-    </main>
-    <script src="{{ url_for('data_sources_static', path='js/script.js') }}"></script>
-    <script type="module" src="{{ url_for('base_static', path='js/scripts_base.js') }}"></script>
-</div>
+                <div id="toggle-args">
+                </div>
+        
+                <button type="submit" class="btn-primary">Save</button>
+            </form>
+            <form id="deleteSource" method="post" action="/source/delete/" class="std-form">
+                <h3>Danger zone</h3>
+                <input type="hidden" name="project_dir" value="{{ project_dir }}">
+                <input type="hidden" name="source_dir" value="{{ source.directory }}">
+                <div style="display: flex; align-items: center;">
+                    <button type="submit" class="btn-danger">Delete Source</button>
+                    <p style="margin-left: 10px; font-size: 12px;">Deleting a source is permanent, think twice before doing it</p>
+                </div>
+            </form>
+            <!-- Provide the optionals inputs for diffenrent data source types -->
+            <!-- Will be copied into the 'toggle-args' div -->
+            <div style="display: none">
+                {% include 'data_sources/templates/optional_args_settings.html' %}
+            </div>
+
+        </main>
+        <script src="{{ url_for('data_sources_static', path='js/script.js') }}"></script>
+        <script type="module" src="{{ url_for('base_static', path='js/scripts_base.js') }}"></script>
+    </div>
 </body>
 </html>

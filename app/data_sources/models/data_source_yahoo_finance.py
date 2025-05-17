@@ -1,6 +1,5 @@
 import ast
 import yfinance as yf
-import pandas as pd
 
 from app.data_sources.models.data_source import data_source_type
 from app.data_sources.models.data_source_api import DataSourceAPI
@@ -48,9 +47,6 @@ class DataSourceYahooFinance(DataSourceAPI):
 
     @classmethod
     async def _update_source_settings(cls, source, updated_data):
-        """
-        Update the source's values with the updated data, convert 'fields' and 'domain' to list
-        """
         updated_source = await DataSourceAPI._update_source_settings(source, updated_data)
 
         updated_source["tickers"] = ast.literal_eval(updated_source["tickers"])

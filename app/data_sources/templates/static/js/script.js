@@ -1,7 +1,5 @@
 // Create source Modal
 const createSourceModal = document.getElementById('createSourceModal');
-const cancelButton = document.getElementById('cancelButton');
-
 document.querySelectorAll('.card').forEach(card => {
     card.addEventListener('click', function() {
         if (card.classList.contains('card-new')) {
@@ -13,6 +11,9 @@ document.querySelectorAll('.card').forEach(card => {
         window.location.href = `/source/settings/?project_dir=${encodeURIComponent(projectDir)}&source_dir=${encodeURIComponent(sourceDir)}`;
     });
 });
+
+// Close createSourceModal
+const cancelButton = document.getElementById('cancelButton');
 if (cancelButton) {
     cancelButton.addEventListener('click', () => {
         createSourceModal.style.display = 'none';
@@ -84,7 +85,6 @@ function syncSource(sourceDir, projectDir, syncIconId) {
 }
 
 function syncAllSources(projectDir) {
-    // TODO make it parallel (here, not parallel in time, but work if error)
     const syncAllButton = document.getElementById('syncAllSourcesButton');
     syncAllButton.disabled = true;
     syncAllButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Syncing...';

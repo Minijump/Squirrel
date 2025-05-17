@@ -1,8 +1,7 @@
-import json
 import ast
-import xmlrpc.client
-
+import json
 import pandas as pd
+import xmlrpc.client
 
 from app.data_sources.models.data_source import data_source_type
 from app.data_sources.models.data_source_api import DataSourceAPI
@@ -27,27 +26,11 @@ class DataSourceOdoo(DataSourceAPI):
 
     @staticmethod
     def check_available_infos(form_data):
-        """
-        Check if the required infos are available
-
-        * - odoo_url: The URL of the Odoo instance
-          - db: The database name
-          - username: The username to connect to Odoo
-          - password: The password to connect to Odoo
-          - DataSourceAPI()'s ones
-        """
         required_fields = ["url", "db", "username", "key", "model", "fields"]
         DataSourceAPI.check_available_infos(form_data, required_fields)
 
     @staticmethod
     def _generate_manifest(form_data):
-        """
-        Generates the manifest of the source
-
-        * form_data(dict): The form data
-
-        => Returns the manifest (dict)
-        """
         manifest = DataSourceAPI._generate_manifest(form_data)
         manifest["url"] = form_data.get("url")
         manifest["db"] = form_data.get("db")
@@ -77,9 +60,6 @@ class DataSourceOdoo(DataSourceAPI):
 
     @classmethod
     async def _update_source_settings(cls, source, updated_data):
-        """
-        Update the source's values with the updated data, convert 'fields' and 'domain' to list
-        """
         updated_source = await DataSourceAPI._update_source_settings(source, updated_data)
 
         updated_source["fields"] = ast.literal_eval(updated_source["fields"])
