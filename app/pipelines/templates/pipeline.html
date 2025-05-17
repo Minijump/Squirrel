@@ -7,54 +7,51 @@
     <link href="{{ url_for('pipeline_static', path='css/style.css') }}" rel="stylesheet">
 </head>
 <body>
-<div class="container">
-    <aside>
-        <div class="aside-title">
-            <a href="/"><i class="fas fa-home" style="color: white;"></i></a>
-            <h1 style="margin-left: 5px;">Pipeline</h1>
-        </div>
-        {% include 'utils/templates/project_nav_links.html' %}
-    </aside>
-    <main class="pipeline-main">
-        <div style="margin-bottom: 10px;">
-            <button id="save-order" style="visibility: hidden;" onclick="{ confirmNewOrder('{{ project_dir}}'); }" class="btn-primary">
-                Save New Order
-            </button>
-        </div>
-        <div class="action-list dragndrop" id="pipeline">
-            {% for action in actions %}
-                <div data-swapy-slot="{{ action[0] }}-slot">
-                    <div class="action" data-swapy-item="{{ action[0] }}-item">
-                        {{ action[1] }}
-                        <div>
-                            <!-- Form is required to escape action[2] (= python code) -->
-                            <form style="display: inline-block;" 
-                                onsubmit="editPipelineActionOpenModal(
-                                    '{{ action[0] }}', 
-                                    this.elements['action_name'].value, 
-                                    this.elements['action_py'].value, 
-                                    '{{ project_dir }}'); return false;">
-                                    
-                                <input type="hidden" name="action_name" value="{{ action[1]|escape }}">
-                                <input type="hidden" name="action_py" value="{{ action[2]|escape }}">
-                                <button class="list-edit-btn" type="submit" style="width: 30px;">
-                                    &middot;&middot;&middot;
-                                </button>
-                            </form>
-                        </div> 
+    <div class="container">
+        <aside>
+            <div class="aside-title">
+                <a href="/"><i class="fas fa-home" style="color: white;"></i></a>
+                <h1 style="margin-left: 5px;">Pipeline</h1>
+            </div>
+            {% include 'utils/templates/project_nav_links.html' %}
+        </aside>
+        <main class="pipeline-main">
+            <div style="margin-bottom: 10px;">
+                <button id="save-order" style="visibility: hidden;" onclick="{ confirmNewOrder('{{ project_dir}}'); }" class="btn-primary">
+                    Save New Order
+                </button>
+            </div>
+            <div class="action-list dragndrop" id="pipeline">
+                {% for action in actions %}
+                    <div data-swapy-slot="{{ action[0] }}-slot">
+                        <div class="action" data-swapy-item="{{ action[0] }}-item">
+                            {{ action[1] }}
+                            <div>
+                                <!-- Form is required to escape action[2] (= python code) -->
+                                <form style="display: inline-block;" 
+                                    onsubmit="editPipelineActionOpenModal(
+                                        '{{ action[0] }}', 
+                                        this.elements['action_name'].value, 
+                                        this.elements['action_py'].value, 
+                                        '{{ project_dir }}'); return false;">
+                                        
+                                    <input type="hidden" name="action_name" value="{{ action[1]|escape }}">
+                                    <input type="hidden" name="action_py" value="{{ action[2]|escape }}">
+                                    <button class="list-edit-btn" type="submit" style="width: 30px;">
+                                        &middot;&middot;&middot;
+                                    </button>
+                                </form>
+                            </div> 
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
-    </main>
-    
-    <!-- Modals -->
-    <!-- Edit Action Modal -->
-    {% include 'pipelines/templates/modals.html' %}
+                {% endfor %}
+            </div>
+        </main>
+        
+        {% include 'pipelines/templates/modals.html' %}
 
-    <!-- JS scripts -->
-    <script src="{{ url_for('base_static', path='js/swapy/dist/swapy.min.js') }}"></script>
-    <script src="{{ url_for('pipeline_static', path='js/script.js') }}"></script>
-</div>
+        <script src="{{ url_for('base_static', path='js/swapy/dist/swapy.min.js') }}"></script>
+        <script src="{{ url_for('pipeline_static', path='js/script.js') }}"></script>
+    </div>
 </body>
 </html>

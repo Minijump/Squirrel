@@ -27,12 +27,7 @@ class Pipeline:
         return actions
     
     async def confirm_new_order(self, order: str):
-        """
-        Reorder the actions in the pipeline, edit the python file.
-
-        Args:
-            order (str): The new order of the actions as a string.
-        """
+        """Reorder the actions in the pipeline, edit the python file."""
         lines = await get_file_lines(self.pipeline_path)
 
         new_order = [int(action_str.split('-')[0]) for action_str in order.split(",")] # the old ids in the new order
@@ -52,13 +47,7 @@ class Pipeline:
             file.writelines(new_lines)
 
     async def edit_action(self, action_id: int, action_code: str):
-        """
-        Edit the code of an action in the pipeline.
-
-        Args:
-            action_id (int): The ID of the action to edit.
-            action_code (str): The new code of the action.
-        """
+        """Edit the code of an action in the pipeline."""
         lines = await get_file_lines(self.pipeline_path)
 
         new_lines = []
@@ -75,12 +64,7 @@ class Pipeline:
             file.writelines(new_lines)
 
     async def delete_action(self, delete_action_id: int):
-        """
-        Remove an action from the pipeline.
-
-        Args:
-            delete_action_id (int): The ID of the action to delete.
-        """
+        """Remove an action from the pipeline."""
         lines = await get_file_lines(self.pipeline_path)
 
         new_lines = []

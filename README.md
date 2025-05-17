@@ -134,6 +134,8 @@ In addition to these folders, you will find a folder named tests that contains t
 * Factorize data sources and actions; should use the same methods for args (optional,...) make them inherit a same class?
 * UI notification for JSONResponse ?
 * stop writing form_data = await ... for every controllers (method?,decorator?...?)
+* imp pipeline js code?
+* ...
 * refactor tours after code reformat: imp widget uses in tours, ... + add missing tours (test tables actions, ...)
 
 ### To Fix

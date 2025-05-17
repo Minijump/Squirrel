@@ -5,8 +5,6 @@ async def get_file_lines(file_path):
     """
     Returns the lines contained in the file at file_path
 
-    * file_path(str): The path to the file
-
     => Returns a list of lines; if the line(s) is an action, it is represented as a tuple (action_id, line)
     """
     lines = []
