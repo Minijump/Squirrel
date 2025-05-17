@@ -110,7 +110,7 @@
             </div>
             <a href="javascript:void(0)" class="close-btn" onclick="closeCustomActionModal()">&times;</a>
         </div>
-        <form action="/tables/execute_action/" method="post">
+        <form action="/tables/execute_action/" method="post" class="std-form">
             <input type="hidden" name="action_name" value="CustomAction">
             <input type="hidden" name="project_dir" value="{{ project_dir }}">
             <input type="hidden" name="default_table_name" id="default_table_name">

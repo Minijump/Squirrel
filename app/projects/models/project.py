@@ -18,27 +18,21 @@ class Project:
         self.misc = self.create_misc(manifest.get('misc', {}))
 
     def create_misc(self, misc):
-        """
-        Create the misc values for manifest
-        """
+        """Create the misc values of the manifest"""
         if "table_len" not in misc:
             misc["table_len"] = 10
 
         return misc
 
     async def create(self):
-        """
-        Creates a new project directory in the ./_projects directory, with the necessary files
-        """
+        """Creates a new project with the necessary files"""
         await self._create_project_directory()
         await self._create_manifest()
         await self._create_data_sources_directory()
         await self._create_pipeline_file()
        
     async def _create_project_directory(self):
-        """
-        Creates a new project directory in the ./_projects directory
-        """
+        """Creates a new project directory in the ./_projects directory"""
         project_dir = self.path
 
         if os.path.exists(project_dir):
@@ -53,9 +47,7 @@ class Project:
             raise Exception(f"Could not create a project with this name: {e}")
 
     async def _create_manifest(self):
-        """
-        Creates the manifest file
-        """
+        """Creates the manifest file"""
         manifest_path = os.path.join(self.path, "__manifest__.json")
         manifest_content = {
             "name": self.name,
@@ -68,23 +60,17 @@ class Project:
             json.dump(manifest_content, file, indent=4)
 
     async def _create_data_sources_directory(self):
-        """
-        Creates the data_sources directory
-        """
+        """Creates the data_sources directory"""
         os.makedirs(os.path.join(self.path, "data_sources"))
 
     async def _create_pipeline_file(self):
-        """
-        Creates the pipeline.py file
-        """
+        """Creates the pipeline file"""
         pipeline_path = os.path.join(self.path, "pipeline.py")
         with open(pipeline_path, 'w') as file:
             file.write(BASIC_PIPELINE)
 
     async def update_settings(self, updated_data):
-        """
-        Update the project settings
-        """
+        """Update the project settings"""
         manifest_path = os.path.join(self.path, "__manifest__.json")
         with open(manifest_path, 'r') as file:
             manifest_data = json.load(file)

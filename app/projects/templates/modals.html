@@ -1,8 +1,7 @@
-<!-- Create project modal -->
-<div class="modal" id="projectModal">
+<div class="modal" id="createProjectModal">
     <div class="modal-content">
         <h3>Create New Project</h3>
-        <form id="projectForm" method="post" action="/projects/create/" enctype="multipart/form-data">
+        <form id="projectForm" method="post" action="/projects/create/" enctype="multipart/form-data" class="std-form">
             <input type="hidden" name="project_dir" value="{{ project_dir }}">
             
             <label for="projectName">Name</label>

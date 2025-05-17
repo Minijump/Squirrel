@@ -15,9 +15,7 @@ async def projects(request: Request):
     The homepage of the application, displays all the 'project' in the ./_projects directory, 
     Informations about a project are read from their manifests
 
-    * request
-
-    => Returns a TemplateResponse to display homepage
+    => Returns a TemplateResponse to display the projects
     """
     projects = []
     projects_path = os.path.join(os.getcwd(), "_projects")
@@ -39,9 +37,7 @@ async def create_project(request: Request):
     """
     Creates a new project directory in the ./_projects directory, with the necessary files
 
-    * request contains form data
-
-    => Returns a RedirectResponse to the project page
+    => Returns a RedirectResponse to the created project page
     """
     form_data = await request.form()
     project_type = form_data.get("project_type", "std")
@@ -55,27 +51,14 @@ async def create_project(request: Request):
 @router.get("/projects/open/")
 @squirrel_error
 async def open_project(request: Request):
-    """ 
-    Function called when a user clicks on a project in the homepage, it redirects the correct project page
-
-    * request contains project diretory
-
-    => Returns a RedirectResponse to the project page
-    """
+    """ Return a RedirectResponse to the selected project page """
     project_dir = request.query_params.get("project_dir")
     return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)
 
 @router.get("/project/settings/")
 @squirrel_error
 async def project_settings(request: Request, project_dir: str):
-    """
-    Display and edit the project settings
-
-    * request
-    * project_dir(str): The project directory
-
-    => Returns a TemplateResponse to display project settings
-    """
+    """Returns a TemplateResponse to display the selected project's settings"""
     manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "__manifest__.json")
     with open(manifest_path, 'r') as file:
         manifest_data = json.load(file)
@@ -90,9 +73,7 @@ async def project_settings(request: Request, project_dir: str):
 @squirrel_error
 async def update_project_settings(request: Request):
     """
-    Update the project settings
-
-    * request: contains the form data
+    Update the project settings (contained in the __manifest__.json file)
 
     => Returns a JSONResponse indicating success or failure
     """

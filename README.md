@@ -126,20 +126,21 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To do
 * Reformat code (split css and js for table + code utils (factorize file manager ->use pathlib? | use PyO3 (rust)))
-* refactor tours after code reformat: imp widget uses in tours, ...
+* refactor tours after code reformat: imp widget uses in tours, ... + add missing tours (test tables actions, ...)
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
 * Empty line required in edit pipeline action (see TODO in pipeline unit test)
 
 ### To do MVP
-* Add actions + imp table design + imp pipeline (summary on top? foldable actions instead of pop up? Test before save?) ...
+* Add actions
 
 ### Feature ideas
 * Add dynamic doctrsing (expl: pd.Series.replace.__doc__)
 * Great-expectation unit test
 * 'Dynamic' data source: sync before running the pipeline. List of dynamics in project settings + sync file source?
 * See diff before doing an action/ at each actions in pipeline
+* Imp pipeline (test before save? summary with blocks on the top? ...?)
 * Multiple pipelines
 * basic graphs (chart.js, d3.js,...?)
 * Dashboards? (can be saved) (computed var)

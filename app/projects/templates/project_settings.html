@@ -7,36 +7,36 @@
     <link href="{{ url_for('projects_static', path='css/style.css') }}" rel="stylesheet">
 </head>
 <body>
-<div class="container">
-    <aside>
-        <div class="aside-title">
-            <a href="/"><i class="fas fa-home" style="color: white;"></i></a>
-            <h1 style="margin-left: 5px;">Project Settings</h1>
-        </div>
-        {% include 'utils/templates/project_nav_links.html' %}
-    </aside>
-    <main>
-        <form id="projectSettingsForm" method="post" action="/project/update_settings/" enctype="multipart/form-data" class="std-form">
-            <input type="hidden" name="project_dir" value="{{ project.directory }}">
-            <label for="projectName">Name</label>
-            <input type="text" id="projectName" name="name" value="{{ project.name }}" required>
-    
-            <label for="projectDescription">Description</label>
-            <textarea id="projectDescription" name="description">{{ project.description }}</textarea>
-
-            <label for="projectMisc">Misc</label>
-            <div class="info-note">
-                <i class="fas fa-info-circle"></i> 
-                If invalid, misc is reset to default.
+    <div class="container">
+        <aside>
+            <div class="aside-title">
+                <a href="/"><i class="fas fa-home" style="color: white;"></i></a>
+                <h1 style="margin-left: 5px;">Project Settings</h1>
             </div>
-            <textarea id="projectMisc" name="misc" widget="squirrel-dictionary" options='{"create":false, "remove":false}'>
-                {{ project.misc | default({}, true) | tojson }}
-            </textarea>
+            {% include 'utils/templates/project_nav_links.html' %}
+        </aside>
+        <main>
+            <form id="projectSettingsForm" method="post" action="/project/update_settings/" enctype="multipart/form-data" class="std-form">
+                <input type="hidden" name="project_dir" value="{{ project.directory }}">
+                <label for="projectName">Name</label>
+                <input type="text" id="projectName" name="name" value="{{ project.name }}" required>
+        
+                <label for="projectDescription">Description</label>
+                <textarea id="projectDescription" name="description">{{ project.description }}</textarea>
 
-            <button type="submit" class="btn-primary">Save</button>
-        </form>
-    </main>
-</div>
-<script type="module" src="{{ url_for('base_static', path='js/scripts_base.js') }}"></script>
+                <label for="projectMisc">Misc</label>
+                <div class="info-note">
+                    <i class="fas fa-info-circle"></i> 
+                    If invalid, misc is reset to default.
+                </div>
+                <textarea id="projectMisc" name="misc" widget="squirrel-dictionary" options='{"create":false, "remove":false}'>
+                    {{ project.misc | default({}, true) | tojson }}
+                </textarea>
+
+                <button type="submit" class="btn-primary">Save</button>
+            </form>
+        </main>
+    </div>
+    <script type="module" src="{{ url_for('base_static', path='js/scripts_base.js') }}"></script>
 </body>
 </html>

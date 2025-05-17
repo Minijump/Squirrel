@@ -1,10 +1,9 @@
-const projectModal = document.getElementById('projectModal');
-const cancelButton = document.getElementById('cancelButton');
-
+// Project card click (open selected project)
+const createProjectModal = document.getElementById('createProjectModal');
 document.querySelectorAll('.card').forEach(card => {
     card.addEventListener('click', function() {
         if (card.classList.contains('card-new')) {
-            projectModal.style.display = 'flex';
+            createProjectModal.style.display = 'flex';
             return;
         }
         const projectDir = this.getAttribute('data-project-dir');
@@ -12,6 +11,8 @@ document.querySelectorAll('.card').forEach(card => {
     });
 });
 
+// Close the create project modal
+const cancelButton = document.getElementById('cancelButton');
 cancelButton.addEventListener('click', () => {
-    projectModal.style.display = 'none';
+    createProjectModal.style.display = 'none';
 });

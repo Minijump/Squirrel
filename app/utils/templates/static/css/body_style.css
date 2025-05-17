@@ -1,3 +1,4 @@
+/* App structure */
 body, html {
   margin: 0;
   padding: 0;
@@ -12,6 +13,8 @@ body, html {
   display: flex;
   width: 100%;
 }
+
+/* Aside */
 aside {
   width: 250px;
   background: var(--structure-color);
@@ -22,7 +25,6 @@ aside {
 }
 aside h1 {
   font-size: 24px;
-  /* Color background because impossible to give gradient to a text */
   background: var(--secondary-gradient);
   -webkit-background-clip: text;
   background-clip: text;
@@ -56,6 +58,8 @@ aside nav ul li a i {
   display: flex; 
   align-items: center;
 }
+
+/* Main block */
 main {
   margin-left: 250px;
   padding: 40px;
@@ -66,33 +70,4 @@ main h2 {
   font-size: 24px;
   margin-bottom: 20px;
   font-weight: bold;
-}
-
-.std-form label {
-  color: var(--secondary-text-color);
-  display: block;
-  margin-left: 5px;
-}
-.std-form input, .std-form textarea, .std-form select {
-  width: 80%;
-  padding: 8px;
-  border-radius: 8px;
-  background: #4b5563;
-  color: var(--primary-text-color);;
-  border: none;
-  margin: 12px;
-}
-.std-form input:read-only {
-  pointer-events: none;
-  outline: none;
-  user-select: none;
-  background-color: #3b4351;
-}
-.std-form select option {
-  padding: 5px;
-  background-color: #4b5563;
-  color: var(--primary-text-color);
-}
-.std-form button {
-  display: block;
 }
