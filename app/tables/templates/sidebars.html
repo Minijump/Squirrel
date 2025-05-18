@@ -1,5 +1,5 @@
 <div id="sidebar-overlay" class="sidebar-overlay"></div>
-<div id="ActionSidebar" class="right-sidebar-form">
+<div id="ActionSidebar" class="right-sidebar">
     <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ActionSidebar')">&times;</a>
     
     <div class="sidebar-tabs">
@@ -8,7 +8,7 @@
     </div>
     
     <div id="basic-tab" class="tab-content active">
-        <form action="/tables/execute_action/" method="post">
+        <form action="/tables/execute_action/" method="post" class="std-form">
             <input type="hidden" name="action_name" required class="sync-action-name">
             <input type="hidden" name="project_dir" value="{{ project_dir }}">
             <input type="hidden" name="table_name" id="table_name" required class="sync-table-name">
@@ -20,7 +20,7 @@
     </div>
     
     <div id="advanced-tab" class="tab-content">
-        <form action="/tables/execute_action/" method="post" id="args-kwargs-form">
+        <form action="/tables/execute_action/" method="post" id="args-kwargs-form" class="std-form">
             <input type="hidden" name="action_name" required class="sync-action-name">
             <input type="hidden" name="project_dir" value="{{ project_dir }}">
             <input type="hidden" name="table_name" required class="sync-table-name">
@@ -35,10 +35,10 @@
     </div>
 </div>
 
-<div id="CreateTable" class="right-sidebar-form">
+<div id="CreateTable" class="right-sidebar">
     <!-- Can't use ActionSidebar because of input 'table_name'-->
     <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('CreateTable')">&times;</a>
-    <form action="/tables/execute_action/" method="post" onsubmit="saveSelectedTable(document.getElementById('new_table_name').value)">
+    <form action="/tables/execute_action/" method="post" onsubmit="saveSelectedTable(document.getElementById('new_table_name').value)" class="std-form">
         <input type="hidden" name="action_name" value="CreateTable">
         <input type="hidden" name="project_dir" value="{{ project_dir }}">
         <input type="hidden" name="action_name" value="CreateTable" required>
@@ -75,10 +75,10 @@
     </form>
 </div>
 
-<div id="ExportTable" class="right-sidebar-form">
+<div id="ExportTable" class="right-sidebar">
     <!-- Can't use ActionSidebar because it is not an action-->
     <a href="javascript:void(0)" class="close-btn" onclick="closeSidebarForm('ExportTable')">&times;</a>
-    <form action="/tables/export_table/" method="post">
+    <form action="/tables/export_table/" method="post" class="std-form">
         <input name="project_dir" value="{{ project_dir }}" required type="hidden">
         <input id="table_name" name="table_name" required type="hidden"> 
 

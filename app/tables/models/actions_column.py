@@ -1,7 +1,7 @@
 import ast
 import pandas as pd
 
-from .actions_utils import table_action_type, _get_method_sig, isnt_str, convert_col_idx
+from .actions_utils import table_action_type, _get_method_sig, convert_col_idx
 from .actions import Action
 
 

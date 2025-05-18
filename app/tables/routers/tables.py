@@ -14,13 +14,7 @@ from app.tables.models.actions_utils import action, TABLE_ACTION_REGISTRY
 from app.utils.error_handling import squirrel_error
 
 def load_pipeline_module(project_dir):
-    """
-    Loads and returns the python pipeline module for the project
-
-    * project_dir(str): The project directory name
-    
-    => Returns the pipeline module
-    """
+    """Loads and returns the python pipeline"""
     pipeline_path = os.path.join( os.getcwd(), "_projects", project_dir, "pipeline.py")
     spec = importlib.util.spec_from_file_location("pipeline", pipeline_path)
     pipeline = importlib.util.module_from_spec(spec)
@@ -28,6 +22,7 @@ def load_pipeline_module(project_dir):
     return pipeline
 
 def to_html_with_idx(df):
+    """Convert a dataframe to HTML with custom 'data-columnidx'"""
     html = df.to_html(classes='df-table', index=False)
     
     header_html = ""
@@ -47,14 +42,7 @@ def to_html_with_idx(df):
 @router.get("/tables/")
 @squirrel_error
 async def tables(request: Request, project_dir: str):
-    """
-    Run the pipeline contained in the project directory and display the result
-
-    * project_dir(str): The project directory name
-    * request 
-
-    => Returns a TemplateResponse to display project
-    """
+    """Run the pipeline contained in the project directory and Returns a TemplateResponse to display the tables"""
     exception = False
     dfs = {}
     try:
@@ -91,16 +79,7 @@ async def tables(request: Request, project_dir: str):
 @router.get("/tables/pager/")
 @squirrel_error
 async def tables_pager(request: Request, project_dir: str, table_name: str, page: int, n: int):
-    """
-    Fetch a specific page of the dataframe
-
-    * project_dir(str): The project directory name
-    * table_name(str): The name of the dataframe
-    * page(int): The page number
-    * n(int): Number of rows per page
-
-    => Returns HTML for the specified page of the dataframe
-    """
+    """Fetch a specific page of the dataframe and returns an HTML table"""
     data_tables_path = os.path.join( os.getcwd(), "_projects", project_dir, "data_tables.pkl")
     if os.path.exists(data_tables_path):
         with open(data_tables_path, 'rb') as f:
@@ -117,6 +96,10 @@ async def tables_pager(request: Request, project_dir: str, table_name: str, page
 @router.post("/tables/execute_action/")
 @action.add
 async def execute_action(request: Request):
+    """ 
+    Execute the selected action selected by the user. 
+    The function returns the corresponding code, which is added in the python pipeline file via the decorator
+    """
     form_data = await request.form()
     action_name = form_data.get("action_name")
     ActionClass = TABLE_ACTION_REGISTRY.get(action_name)
@@ -133,6 +116,7 @@ async def execute_action(request: Request):
 
 @router.get("/tables/get_action_args/")
 async def get_action_args(request: Request, action_name: str):
+    """Returns the arguments of the action selected by the user"""
     ActionClass = TABLE_ACTION_REGISTRY.get(action_name)
     if not ActionClass:
         raise ValueError(f"Action {action_name} not found")
@@ -143,6 +127,7 @@ async def get_action_args(request: Request, action_name: str):
 
 @router.get("/tables/get_action_kwargs/")
 async def get_action_kwargs(request: Request, action_name: str):
+    """Returns the keyword arguments of the action selected by the user"""
     ActionClass = TABLE_ACTION_REGISTRY.get(action_name)
     if not ActionClass:
         raise ValueError(f"Action {action_name} not found")
@@ -154,17 +139,7 @@ async def get_action_kwargs(request: Request, action_name: str):
 @router.get("/tables/column_infos/")
 @squirrel_error
 async def get_col_infos(request: Request, project_dir: str, table: str, column_name: str, column_idx: str):
-    """
-    Get the column 'column' from table 'tables' informations
-
-    * request: The request object
-    * project_dir(str): The project directory name
-    * tables(str): The name of the dataframe
-    * column_name(str): The name of the column
-    * column_idx(str): The column idx. i.e. "('col1', 'col2')" or "('col1')
-    
-    => Returns the column informations (dict)
-    """
+    """Returns the column informations (dict)"""
     data_tables_path = os.path.join( os.getcwd(), "_projects", project_dir, "data_tables.pkl")
     if os.path.exists(data_tables_path):
         with open(data_tables_path, 'rb') as f:
@@ -198,13 +173,7 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
 @router.post("/tables/export_table/")
 @squirrel_error
 async def export_table(request: Request):
-    """
-    Export the table in the specified format
-
-    * request contains: table_name, export_type, project_dir
-    
-    => Returns a FileResponse to download the exported file
-    """
+    """ Returns a FileResponse to export the selected file"""
     form_data = await request.form()
     table_name = form_data.get("table_name")
     export_type = form_data.get("export_type")

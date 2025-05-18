@@ -20,31 +20,20 @@
             <div id="col_null"  class="info"> (<span></span> missing)</div>
         </div>
         <div class="btn-div">
-            <button class="table-action-btn" onclick="
-                closeInfoColModal();
-                openSidebarActionForm('HandleMissingValues', getColumnInfo())">
-                Missing vals.
-            </button>
-            <button class="table-action-btn" onclick="
-                closeInfoColModal();
-                openSidebarActionForm('ReplaceVals', getColumnInfo())">
-                Replace vals.
-            </button>
-            <button class="table-action-btn" onclick="
-                closeInfoColModal();
-                openSidebarActionForm('ChangeType', getColumnInfo())">
-                Change type
-            </button>
-            <button class="table-action-btn" onclick="
-                closeInfoColModal();
-                openSidebarActionForm('SortColumn', getColumnInfo())">
-                Sort
-            </button>
-            <button class="table-action-btn" onclick="
-                closeInfoColModal();
-                openSidebarActionForm('ApplyFunction', getColumnInfo())">
-                Apply Function
-            </button>
+            {% set action_buttons = [
+                {'action': 'HandleMissingValues', 'label': 'Missing vals.'},
+                {'action': 'ReplaceVals', 'label': 'Replace vals.'},
+                {'action': 'ChangeType', 'label': 'Change type'},
+                {'action': 'SortColumn', 'label': 'Sort'},
+                {'action': 'ApplyFunction', 'label': 'Apply Function'}
+            ] %}
+            {% for btn in action_buttons %}
+                <button class="table-action-btn" onclick="
+                    closeInfoColModal();
+                    openSidebarActionForm('{{ btn.action }}', getColumnInfo())">
+                    {{ btn.label }}
+                </button>
+            {% endfor %}
         </div>
         <div class="infos-div numeric-only">
             <div id="col_min"  class="info" style="margin-right: 8px;">Min: <span></span></div>
@@ -56,39 +45,21 @@
             <div id="col_std"  class="info">σ: <span></span>)</div>
         </div> 
         <div class="btn-div numeric-only">
-            <button class="table-action-btn" onclick="
-                closeInfoColModal();
-                openSidebarActionForm('NormalizeColumn', getColumnInfo())">
-                Normalize
-            </button>
-            <button class="table-action-btn" onclick="
-                closeInfoColModal();
-                openSidebarActionForm('RemoveUnderOver', getColumnInfo({
-                    'lower_bound': document.querySelector('#col_min span').innerText,
-                    'upper_bound': document.querySelector('#col_max span').innerText,
-                }))">
-                Remove under/over
-            </button>
-            <button class="table-action-btn" onclick="
-                closeInfoColModal();
-                openSidebarActionForm('CutValues', getColumnInfo())">
-                Cut
-            </button>
-            <button class="table-action-btn" onclick="
-                closeInfoColModal();
-                openSidebarActionForm('NLargest', getColumnInfo())">
-                Keep N largest
-            </button>
-            <button class="table-action-btn" onclick="
-                closeInfoColModal();
-                openSidebarActionForm('NSmallest', getColumnInfo())">
-                Keep N smallest
-            </button>
-            <button class="table-action-btn" onclick="
-                closeInfoColModal();
-                openSidebarActionForm('ColDiff', getColumnInfo())">
-                Diff
-            </button>
+            {% set numeric_action_buttons = [
+                {'action': 'NormalizeColumn', 'label': 'Normalize'},
+                {'action': 'RemoveUnderOver', 'label': 'Remove under/over'},
+                {'action': 'CutValues', 'label': 'Cut'},
+                {'action': 'NLargest', 'label': 'Keep N largest'},
+                {'action': 'NSmallest', 'label': 'Keep N smallest'},
+                {'action': 'ColDiff', 'label': 'Diff'}
+            ] %}
+            {% for btn in numeric_action_buttons %}
+                <button class="table-action-btn" onclick="
+                    closeInfoColModal();
+                    openSidebarActionForm('{{ btn.action }}', getColumnInfo())">
+                    {{ btn.label }}
+                </button>
+            {% endfor %}
         </div>
 
         <form action="/tables/execute_action/" method="post">

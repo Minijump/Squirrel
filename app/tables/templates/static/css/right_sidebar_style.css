@@ -1,0 +1,87 @@
+@import url('/static/base/css/style.css');
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 999;
+}
+
+.right-sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: var(--structure-color);
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    box-sizing: border-box;
+    z-index: 1000;
+}
+.right-sidebar a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+.right-sidebar a:hover {
+    color: #f1f1f1;
+}
+.right-sidebar .close-btn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+.sidebar-tabs {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.tab-button {
+    flex: 1;
+    background: transparent;
+    color: white;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    outline: none;
+    cursor: pointer;
+    padding: 10px;
+    transition: 0.3s;
+}
+.tab-button:hover {
+    filter: brightness(1.2);
+}
+.tab-button.active {
+    border: 1px solid #ccc;
+    border-bottom: 0;
+}
+.tab-button.n-l-border {
+    border-left: 0;
+}
+.tab-button.n-r-border {
+    border-right: 0;
+}
+
+.tab-content {
+    display: none;
+    padding: 10px 0;
+    max-height: calc(100vh - 150px); 
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+.tab-content.active {
+    display: block;
+    overflow-y: auto;
+}

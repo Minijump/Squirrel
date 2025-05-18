@@ -78,9 +78,7 @@ def convert_sq_action_to_python(code, actual_table_name=None, is_sq_action=True)
     return code
 
 def isnt_str(val):
-    """
-    Checks whether val should be considered as a string (return False) or not (return True)
-    """
+    """Checks whether val should be considered as a string (return False) or not (return True)"""
     if val in ['True', 'False']:
         return True
     elif val == 'None':
@@ -117,9 +115,7 @@ def _get_method_sig(function, keep=False, remove=False):
     return args_dict
 
 def convert_col_idx(col_idx):
-    """
-    Returns the idx of a pandas dataframe column
-    """
+    """Returns the idx of a pandas dataframe column"""
     if col_idx[0] != '(':
         col_idx = f"'{col_idx}'"
     return col_idx

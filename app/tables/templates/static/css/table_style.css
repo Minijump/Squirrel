@@ -1,0 +1,189 @@
+@import url('/static/base/css/style.css');
+
+.table-main {
+    padding: 0 !important;
+    background-color: var(--light-structure-color) !important;
+}
+.table-container {
+    height: 85vh;
+}
+
+/* --- Select Table button --- */
+.table-select-btn-div {
+    display: flex;
+    justify-content: left;
+}
+.table-select-btn {
+    background-color: var(--structure-color);
+    color: white;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 12px;
+    transition: 0.3s;
+    flex: 1;
+    border-bottom: solid 1px var(--first-secondary-color);
+}
+.table-select-btn:hover {
+    background: var(--light-structure-color);
+}
+.table-select-btn.active {
+    background: linear-gradient(to bottom, var(--structure-color), var(--light-structure-color));
+    border-bottom: 0;
+    border-right: solid 1px var(--first-secondary-color);
+    border-left: solid 1px var(--first-secondary-color);
+}
+
+/* --- Actions button --- */
+.table-action-btn-div {
+    display: flex;
+    justify-content: left;
+    padding: 5px;
+}
+.table-action-btn {
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-left: 1px solid white;
+    border-right: 1px solid white;     
+    cursor: pointer;
+    padding: 3px;
+    transition: 0.3s;
+    flex: 1;
+}
+.table-action-btn:first-child {
+    border-left: none;
+}
+.table-action-btn:last-child {
+    border-right: none;
+}
+.table-action-btn:hover {
+    background-color: color-mix(in srgb, var(--light-structure-color), white 20%);
+}
+
+/* Dropdown styles */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+}
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+.dropdown-content.show {
+    display: block;
+}
+
+.dropdown-toggle::after {
+    content: " ▼";
+    font-size: 0.7em;
+    vertical-align: middle;
+}
+
+/* --- Table --- */
+.table-header-btn {
+    border: 0;
+    background-color: var(--structure-color);
+    color: var(--primary-text-color);
+    cursor: pointer;
+    float: right;
+    font-size: 15px;
+}
+
+.table-html {
+    overflow-y: auto;
+    max-height: 95%;
+    border-bottom: 1px solid var(--structure-color);
+}
+
+.df-table{
+    border-collapse: collapse;
+    font-size: 0.9em;
+    width: 100%;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+.df-table thead {
+    position: sticky;
+    top: 0;
+}
+.df-table thead tr {
+    background-color: var(--structure-color);
+    color: var(--primary-text-color);
+    font-weight: bold;
+}
+.df-table thead tr th{
+    border-bottom: 0;
+}
+.df-table th, .df-table td {
+    padding: 12px 15px;
+    text-align: left;
+    white-space: nowrap;
+    border-top: 0;
+    border-left: 0;
+}
+.df-table th:last-of-type, .df-table td:last-of-type {
+    border-right: 0;
+}
+.df-table tbody tr:nth-of-type(even) {
+    background-color: color-mix(in srgb, var(--light-structure-color), black 20%);
+}
+.df-table tbody tr:last-of-type, .df-table tbody tr:last-of-type td {
+    border-bottom: 0;
+}
+
+/* --- Pager --- */
+.pager {
+    display: flex;
+    justify-content: center;
+}
+.pager-btn {
+    border: 1px solid var(--primary-text-color);
+    border-radius: 5px;
+    background-color: transparent;
+    color: var(--primary-text-color);
+    margin: 5px;
+    padding: 3px;
+    cursor: pointer;
+}
+.pager-info {
+    display:flex; 
+    align-items: center;
+}
+
+/* --- Page bottom --- */
+.table-bottom-bar {
+    display: flex;
+    padding: 5px;
+    position: fixed; 
+    width:100%; 
+    bottom: 0; 
+    background-color: var(--structure-color); 
+    color: white;
+    font-size: 10px;
+}
+
+.export-btn {
+    color: white;
+    border: none;
+    background-color: transparent;
+    font-size: 10px;
+}
