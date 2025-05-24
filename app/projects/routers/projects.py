@@ -1,4 +1,3 @@
-import json
 import os
 
 from fastapi import Request
@@ -7,6 +6,7 @@ from fastapi.responses import RedirectResponse
 from app import router, templates
 from app.projects.models import PROJECT_TYPE_REGISTRY
 from app.utils.error_handling import squirrel_error
+from app.utils.file_manager import FileManager as fm
 
 @router.get("/projects/")
 @squirrel_error
@@ -22,9 +22,8 @@ async def projects(request: Request):
 
     for project in os.listdir(projects_path):
         manifest_path = os.path.join(projects_path, project, "__manifest__.json")
-        with open(manifest_path, 'r') as file:
-            manifest_data = json.load(file)
-            projects.append(manifest_data)
+        manifest_data = await fm.load_file_json(manifest_path)
+        projects.append(manifest_data)
 
     return templates.TemplateResponse(
         request, 
@@ -60,8 +59,7 @@ async def open_project(request: Request):
 async def project_settings(request: Request, project_dir: str):
     """Returns a TemplateResponse to display the selected project's settings"""
     manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "__manifest__.json")
-    with open(manifest_path, 'r') as file:
-        manifest_data = json.load(file)
+    manifest_data = await fm.load_file_json(manifest_path)
 
     return templates.TemplateResponse(
         request, 
@@ -81,8 +79,7 @@ async def update_project_settings(request: Request):
     project_dir = form_data.get("project_dir")
 
     manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "__manifest__.json")
-    with open(manifest_path, 'r') as file:
-        manifest_data = json.load(file)
+    manifest_data = await fm.load_file_json(manifest_path)
     
     ProjectClass = PROJECT_TYPE_REGISTRY[manifest_data['project_type']]
     project = ProjectClass(manifest_data)

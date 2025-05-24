@@ -2,10 +2,11 @@ import os
 import json
 
 from app.projects.models import project_type, BASIC_PIPELINE
+from app.utils.file_manager import FileObject
 
 
 @project_type
-class Project:
+class Project(FileObject):
     short_name = "std"
     display_name = "Standard"
 
@@ -16,6 +17,7 @@ class Project:
         self.path = os.path.join(os.getcwd(), "_projects", self.directory)
         self.project_type = self.short_name,
         self.misc = self.create_misc(manifest.get('misc', {}))
+        self.manifest_path = os.path.join(self.path, "__manifest__.json")
 
     def create_misc(self, misc):
         """Create the misc values of the manifest"""
@@ -48,7 +50,6 @@ class Project:
 
     async def _create_manifest(self):
         """Creates the manifest file"""
-        manifest_path = os.path.join(self.path, "__manifest__.json")
         manifest_content = {
             "name": self.name,
             "description": self.description,
@@ -56,8 +57,7 @@ class Project:
             "project_type": self.project_type[0],
             "misc": self.misc
         }
-        with open(manifest_path, 'w') as file:
-            json.dump(manifest_content, file, indent=4)
+        await self.write_manifest(manifest_content)
 
     async def _create_data_sources_directory(self):
         """Creates the data_sources directory"""
@@ -71,18 +71,15 @@ class Project:
 
     async def update_settings(self, updated_data):
         """Update the project settings"""
-        manifest_path = os.path.join(self.path, "__manifest__.json")
-        with open(manifest_path, 'r') as file:
-            manifest_data = json.load(file)
+        async def write_file_manifest(manifest, updated_data):
+            for key, value in updated_data.items():
+                if key in ('misc'):
+                    try:
+                        value = json.loads(value)
+                    except:
+                        value = self.create_misc({})
+                if key in manifest:
+                    manifest[key] = value
 
-        for key, value in updated_data.items():
-            if key in ('misc'):
-                try:
-                    value = json.loads(value)
-                except:
-                    value = self.create_misc({})
-            if key in manifest_data:
-                manifest_data[key] = value
+        await self.update_manifest(lambda manifest: write_file_manifest(manifest, updated_data))
 
-        with open(manifest_path, 'w') as file:
-            json.dump(manifest_data, file, indent=4)

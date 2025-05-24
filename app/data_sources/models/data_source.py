@@ -1,5 +1,6 @@
 import os
-import json
+
+from app.utils.file_manager import FileObject
 
 
 DATA_SOURCE_REGISTRY = {}
@@ -8,7 +9,7 @@ def data_source_type(cls):
     DATA_SOURCE_REGISTRY[cls.short_name] = cls
     return cls
 
-class DataSource:
+class DataSource(FileObject):
     short_name = "short_name"
     display_name = "Display name"
     icon = ""
@@ -18,6 +19,8 @@ class DataSource:
         self.name = manifest['name']
         self.description = manifest.get('description')
         self.directory = manifest['directory']
+        self.project_dir = manifest.get('project_dir')
+        self.manifest_path = os.path.join(os.getcwd(), "_projects", self.project_dir, "data_sources", self.directory, "__manifest__.json")
 
     @staticmethod
     def check_available_infos(form_data, additional_required_fields=False):
@@ -45,7 +48,8 @@ class DataSource:
             "name": source_name,
             "type": form_data.get("source_type"),
             "description": form_data.get("source_description"),
-            "directory": source_name.replace(" ", "_")
+            "directory": source_name.replace(" ", "_"),
+            "project_dir": form_data.get("project_dir"),
         }
         return manifest
 
@@ -55,10 +59,10 @@ class DataSource:
         project_dir = form_data.get("project_dir")
         source_dir = form_data.get("source_name").replace(" ", "_")
         source_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir)
-
         os.makedirs(source_path)
-        with open(os.path.join(source_path, "__manifest__.json"), 'w') as file:
-            json.dump(manifest, file, indent=4)
+        manifest_path = os.path.join(source_path, "__manifest__.json")
+
+        await FileObject(manifest_path).write_manifest(manifest)
 
     @classmethod
     async def _create_source(cls, form_data):
@@ -88,24 +92,17 @@ class DataSource:
         """To be implemented by subclasses (mandatory)"""
         pass
 
-    async def sync(self, project_dir):
+    async def sync(self):
         """To be implemented by subclasses (optional)"""
         pass
 
-    async def update_last_sync(self, project_dir):
+    async def update_last_sync(self):
         """To be implemented by subclasses (optional)"""
         pass
 
     async def update_source_settings(self, updated_data):
         """Update the settings of a data source in the manifest"""
-        manifest_path = os.path.join(os.getcwd(), "_projects", updated_data["project_dir"], "data_sources", self.directory, "__manifest__.json")
-        with open(manifest_path, 'r') as file:
-            source = json.load(file)
-
-        updated_source = await self.__class__._update_source_settings(source, updated_data)
-
-        with open(manifest_path, 'w') as file:
-            json.dump(updated_source, file, indent=4)
+        await self.update_manifest(lambda manifest: self._update_source_settings(manifest, updated_data))
 
     @classmethod
     async def _update_source_settings(cls, source, updated_data):

@@ -3,5 +3,6 @@
     "type": "csv",
     "description": "a csv data source, with ordered date",
     "directory": "Csv_ordered",
-    "kwargs": {}
+    "kwargs": {},
+    "project_dir": "ut_mock_project_1"
 }

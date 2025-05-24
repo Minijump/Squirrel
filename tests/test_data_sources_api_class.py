@@ -27,6 +27,7 @@ def test_instance_from_manifest():
         "directory": "mock_directory",
         "type": "API",
         "last_sync": "2021-01-01 00:00:00",
+        "project_dir": "mock_project",
     }
     source = DataSourceAPI(manifest)
     assert source.name == "Mock source"
@@ -41,7 +42,6 @@ def test_subclass_get_data_from_api_implemented():
         if issubclass(SourceClass, DataSourceAPI):
             assert SourceClass._get_data_from_api != DataSourceAPI._get_data_from_api, f"{SourceClass.__name__} should implement _create_data_file"
 
-
 def test_create_table():
     """
     Test the create_table method of DataSourceFile
@@ -51,6 +51,7 @@ def test_create_table():
         "type": 'csv',
         "kwargs": '{"delimiter": ";"}',
         "directory": 'mock_directory',
+        "project_dir": 'mock_project',
     }
     source = DataSourceAPI(form_data)
     table_form_data = {
