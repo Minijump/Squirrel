@@ -20,7 +20,10 @@ class Pipeline:
         for line in lines:
             if isinstance(line, tuple):
                 if "#sq_action:" in line[1]:
-                    actions.append((line[0], line[1].split("#sq_action:")[1].strip(), line[1]))
+                    id = line[0]
+                    action_name = line[1].split("#sq_action:")[1].strip()
+                    full_line = line[1].replace("\n", "") # Removes the \n, else an empty line is added on the pop up
+                    actions.append((id, action_name, full_line))
                 else:
                     actions.append(line)
 

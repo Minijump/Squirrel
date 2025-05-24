@@ -34,7 +34,7 @@ async def edit_action(request: Request):
     """Edit the code of an action in the pipeline and RedirectResponse to the pipeline"""
     form_data = await request.form()
     action_id = int(form_data["action_id"])
-    action_code = form_data["action_code"].replace("\r\n", "\n") # Temp fix (for windows?), avoid a new empty line
+    action_code = form_data["action_code"] + "\n"
     project_dir = form_data["project_dir"]
 
     pipeline = Pipeline(project_dir)

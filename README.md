@@ -139,7 +139,7 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
-* Empty line required in edit pipeline action (see TODO in pipeline unit test)
+* Can't see the last action in pipeline !! hidden because pipeline takes too much place? Add a margin?
 
 ### To do MVP
 * Add actions
