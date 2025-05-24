@@ -125,7 +125,6 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Create file manager util
 * Refactor dict widget
 * =>Create modal component
 * -Refactor modals' js/css (open and close should be factorized,...)
@@ -139,6 +138,7 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
+* Can not open file explorer for creating/editing data source
 
 ### To do MVP
 * Add actions
