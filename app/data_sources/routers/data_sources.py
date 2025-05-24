@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 import traceback
@@ -8,7 +9,6 @@ from fastapi.responses import RedirectResponse, JSONResponse
 from app import router, templates
 from app.data_sources.models import DATA_SOURCE_REGISTRY
 from app.utils.error_handling import squirrel_error
-from app.utils.file_manager import FileManager as fm
 
 
 async def get_sources(project_dir):
@@ -18,13 +18,16 @@ async def get_sources(project_dir):
     for source in os.listdir(project_data_sources_path):
         manifest_path = os.path.join(project_data_sources_path, source, "__manifest__.json")
         if os.path.isfile(manifest_path):
-            manifest_data = await fm.load_file_json(manifest_path)
-            sources.append(manifest_data)
+            with open(manifest_path, 'r') as file:
+                manifest_data = json.load(file)
+                sources.append(manifest_data)
     return sources
 
 async def get_manifest(project_dir, source_dir):
     """Returns the manifest content"""
-    return await fm.load_file_json(os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir, "__manifest__.json"))
+    manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir, "__manifest__.json")
+    with open(manifest_path, 'r') as file:
+        return json.load(file)
     
 async def init_source_instance(manifest_data):
     """Initialize the source instance"""
@@ -88,7 +91,7 @@ async def sync_source(request: Request):
 
         manifest_data = await get_manifest(project_dir, source_dir)
         source = await init_source_instance(manifest_data)
-        await source.sync()
+        await source.sync(project_dir)
 
     except Exception as e:
         traceback.print_exc()

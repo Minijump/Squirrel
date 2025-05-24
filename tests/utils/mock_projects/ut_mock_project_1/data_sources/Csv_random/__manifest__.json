@@ -3,6 +3,5 @@
     "type": "csv",
     "description": "a csv with random data",
     "directory": "Csv_random",
-    "kwargs": {},
-    "project_dir": "ut_mock_project_1"
+    "kwargs": {}
 }

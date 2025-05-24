@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import os
 import pandas as pd
 import pickle
@@ -11,7 +12,6 @@ from app.data_sources.routers.data_sources import get_sources
 from app.tables.models.actions_column import convert_col_idx
 from app.tables.models.actions_utils import action, TABLE_ACTION_REGISTRY
 from app.utils.error_handling import squirrel_error
-from app.utils.file_manager import FileManager as fm
 
 def load_pipeline_module(project_dir):
     """Loads and returns the python pipeline"""
@@ -61,7 +61,8 @@ async def tables(request: Request, project_dir: str):
         for name, df in dfs.items():
             if not exception and isinstance(df, pd.DataFrame):
                 manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "__manifest__.json")
-                manifest_data = await fm.load_file_json(manifest_path)
+                with open(manifest_path, 'r') as file:
+                    manifest_data = json.load(file)
                 display_len = manifest_data.get('misc', {}).get("table_len", 10)
                 table_html[name] = to_html_with_idx(df.head(display_len))
                 table_len_infos[name] = {'total_len': len(df.index), 'display_len': display_len}

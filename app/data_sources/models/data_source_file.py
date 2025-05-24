@@ -78,7 +78,8 @@ class DataSourceFile(DataSource):
     
     def create_table(self, form_data):
         """Return the code to create the table from a file"""
-        data_file_path = os.path.join(os.getcwd(), '_projects', self.project_dir, 'data_sources', self.directory, 'data.pkl')
+        project_dir = form_data.get("project_dir")
+        data_file_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', self.directory, 'data.pkl')
         data_file_path = os.path.relpath(data_file_path, os.getcwd())
         table_name = form_data.get("table_name")
         return f"dfs['{table_name}'] = pd.read_pickle(r'{data_file_path}')  #sq_action:Create table {table_name} from {self.name}"

@@ -47,8 +47,7 @@ async def test_init_source_instance(temp_project_dir_fixture):
         "type": "csv",
         "description": "a csv data source, with ordered date",
         "directory": "Csv_ordered",
-        "kwargs": {},
-        "project_dir": MOCK_PROJECT
+        "kwargs": {}
     }
     source_instance = await init_source_instance(manifest_data)
     assert isinstance(source_instance, DATA_SOURCE_REGISTRY["csv"]), "Expected source instance to be of type 'csv'"
@@ -68,8 +67,7 @@ def test_access_data_sources(temp_project_dir_fixture):
         "type": "csv",
         "description": "a csv data source, with ordered date",
         "directory": "Csv_ordered",
-        "kwargs": {},
-        "project_dir": MOCK_PROJECT
+        "kwargs": {}
     }
     assert expected_source in response.context.get("sources"), "Expected one mock source csv"
 
@@ -96,8 +94,7 @@ def test_create_data_source(temp_project_dir_fixture):
         'type': 'csv', 
         'description': 'a mock csv source, to test creation', 
         'directory': 'test_create_source', 
-        'kwargs': {},
-        'project_dir': MOCK_PROJECT}
+        'kwargs': {}}
     assert expected_source in response.context.get("sources"), "Expected one test create source"
 
 def test_access_source_settings(temp_project_dir_fixture): 
@@ -113,8 +110,7 @@ def test_access_source_settings(temp_project_dir_fixture):
         "type": "csv",
         "description": "a csv data source, with ordered date",
         "directory": "Csv_ordered",
-        "kwargs": {},
-        "project_dir": MOCK_PROJECT
+        "kwargs": {}
     }
     assert response.context.get("source") == expected_source, "Expected one mock source csv"
 

@@ -102,8 +102,7 @@ def test_init_data_source_from_manifest():
             "name": "Mock source",
             "type": source_type,
             "description": "a mock source",
-            "directory": "mock_source",
-            "project_dir": MOCK_PROJECT
+            "directory": "mock_source"
         }
         try:
             source = DataSource(manifest)

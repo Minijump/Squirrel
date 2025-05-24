@@ -1,10 +1,10 @@
 import ast
 import os
+import json
 import pandas as pd
 
 from .actions_utils import table_action_type, convert_sq_action_to_python, _get_method_sig, isnt_str
 from app.data_sources.models.data_source import DATA_SOURCE_REGISTRY
-from app.utils.file_manager import FileManager as fm
 
 class Action:
     def __init__(self, request):
@@ -102,7 +102,8 @@ class CreateTable(Action):
                 os.getcwd())
 
             manifest_path = os.path.join(data_source_path, "__manifest__.json")
-            manifest_data = await fm.load_file_json(manifest_path)
+            with open(manifest_path, 'r') as file:
+                manifest_data = json.load(file)
 
             SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
             source = SourceClass(manifest_data)

@@ -139,7 +139,7 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To Fix
 * Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
-* Can not create a new file data source: can nor chose a file
+
 ### To do MVP
 * Add actions
 

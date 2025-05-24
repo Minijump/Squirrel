@@ -45,8 +45,7 @@ def test_instance_from_manifest():
         "name": "Mock source",
         "directory": "mock_directory",
         "type": "csv",
-        "kwargs": {},
-        "project_dir": "mock_project",
+        "kwargs": {}
     }
     source = DataSourceFile(manifest)
     assert source.name == "Mock source"
@@ -69,7 +68,6 @@ def test_create_table():
         "type": 'csv',
         "kwargs": '{"delimiter": ";"}',
         "directory": 'mock_directory',
-        "project_dir": 'mock_project',
     }
     source = DataSourceFile(form_data)
     table_form_data = {
