@@ -1,7 +1,6 @@
 import ast
-import json
+import aiohttp
 import pandas as pd
-import xmlrpc.client
 
 from app.data_sources.models.data_source import data_source_type
 from app.data_sources.models.data_source_api import DataSourceAPI
@@ -42,20 +41,50 @@ class DataSourceOdoo(DataSourceAPI):
         manifest["kwargs"] = ast.literal_eval(form_data.get("kwargs")) if form_data.get("kwargs") else {}
 
         return manifest
-    
+
     async def _get_data_from_api(self):
-        common = xmlrpc.client.ServerProxy('{}/xmlrpc/2/common'.format(self.url))
-        uid = common.authenticate(self.db, self.username, self.key, {})
+        """ Uses the jsonrpc protocol, because it is easier to use with aiohttp. Standard XML-RPC is not working async """
+        async with aiohttp.ClientSession() as session:
+            auth_url = f"{self.url}/jsonrpc"
+            auth_payload = {
+                "jsonrpc": "2.0",
+                "method": "call",
+                "params": {
+                    "service": "common",
+                    "method": "authenticate",
+                    "args": [self.db, self.username, self.key, {}]
+                },
+                "id": 1
+            }
+            async with session.post(auth_url, json=auth_payload) as auth_response:
+                auth_data = await auth_response.json()
+                uid = auth_data.get("result")
+                if not uid:
+                    raise ValueError("Authentication failed. Check your credentials.")
 
-        models = xmlrpc.client.ServerProxy('{}/xmlrpc/2/object'.format(self.url))
-        table = models.execute_kw(self.db, uid, self.key, self.model, 'search_read', [], 
-            {
-                **{'domain': self.domain, 'fields': self.fields}, 
-                **self.kwargs
-            })
+            object_url = f"{self.url}/jsonrpc"
+            data_payload = {
+                "jsonrpc": "2.0",
+                "method": "call",
+                "params": {
+                    "service": "object",
+                    "method": "execute_kw",
+                    "args": [
+                        self.db, uid, self.key, self.model, "search_read", [],
+                        {
+                            "domain": self.domain,
+                            "fields": self.fields,
+                            **self.kwargs
+                        }
+                    ]
+                },
+                "id": 2
+            }
+            async with session.post(object_url, json=data_payload) as data_response:
+                data = await data_response.json()
+                table = data.get("result", [])
 
-        data = pd.read_json(json.dumps(table))
-
+        data = pd.DataFrame(table)
         return data
 
     @classmethod

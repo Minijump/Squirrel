@@ -137,7 +137,7 @@ In addition to these folders, you will find a folder named tests that contains t
 * complete readme
 
 ### To Fix
-* Make data source sync parallel (looks like problem occurs in _get_data_from_api method (of odoo?))
+* yahoo finance api not working anymore
 
 ### To do MVP
 * Add actions
