@@ -8,11 +8,11 @@
   padding: 8px;
   border-radius: 8px;
   background: #4b5563;
-  color: var(--primary-text-color);;
+  color: var(--primary-text-color);
   border: none;
   margin: 12px;
 }
-.std-form input:read-only {
+.std-form input:not([type="file"]):read-only {
   pointer-events: none;
   outline: none;
   user-select: none;
