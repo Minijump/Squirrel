@@ -137,7 +137,6 @@ In addition to these folders, you will find a folder named tests that contains t
 * complete readme
 
 ### To Fix
-* yahoo finance api not working anymore
 
 ### To do MVP
 * Add actions
