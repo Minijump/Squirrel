@@ -6,7 +6,7 @@ from fastapi.responses import RedirectResponse
 
 from app import router, templates
 from app.projects.models import PROJECT_TYPE_REGISTRY
-from app.utils.error_handling import squirrel_error
+from app.utils.form_utils import squirrel_error
 
 @router.get("/projects/")
 @squirrel_error

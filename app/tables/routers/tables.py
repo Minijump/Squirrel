@@ -11,7 +11,7 @@ from app import router, templates
 from app.data_sources.routers.data_sources import get_sources
 from app.tables.models.actions_column import convert_col_idx
 from app.tables.models.actions_utils import action, TABLE_ACTION_REGISTRY
-from app.utils.error_handling import squirrel_error
+from app.utils.form_utils import squirrel_error, _get_form_data_info
 
 def load_pipeline_module(project_dir):
     """Loads and returns the python pipeline"""
@@ -174,10 +174,7 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
 @squirrel_error
 async def export_table(request: Request):
     """ Returns a FileResponse to export the selected file"""
-    form_data = await request.form()
-    table_name = form_data.get("table_name")
-    export_type = form_data.get("export_type")
-    project_dir = form_data.get("project_dir")
+    table_name, export_type, project_dir = await _get_form_data_info(request, ["table_name", "export_type", "project_dir"])
 
     pipeline = load_pipeline_module(project_dir)
     dfs = pipeline.run_pipeline()

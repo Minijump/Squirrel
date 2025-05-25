@@ -2,8 +2,8 @@ from fastapi import Request
 from fastapi.responses import JSONResponse, RedirectResponse
 
 from app import router, templates
-from app.utils.error_handling import squirrel_error
 from app.pipelines.models.pipeline import Pipeline
+from app.utils.form_utils import squirrel_error, _get_form_data_info
 
 
 @router.get("/pipeline/")
@@ -32,10 +32,9 @@ async def confirm_new_order(request: Request, project_dir: str, order: str):
 @squirrel_error
 async def edit_action(request: Request):
     """Edit the code of an action in the pipeline and RedirectResponse to the pipeline"""
-    form_data = await request.form()
-    action_id = int(form_data["action_id"])
-    action_code = form_data["action_code"] + "\n"
-    project_dir = form_data["project_dir"]
+    action_id, action_code, project_dir = await _get_form_data_info(request, ["action_id", "action_code", "project_dir"])
+    action_id = int(action_id)
+    action_code += "\n"
 
     pipeline = Pipeline(project_dir)
     await pipeline.edit_action(action_id, action_code)

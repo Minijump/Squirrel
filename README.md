@@ -130,7 +130,6 @@ In addition to these folders, you will find a folder named tests that contains t
 * -Refactor modals' js/css (open and close should be factorized,...)
 * -Factorize create source/project modals js code?
 * Factorize data sources and actions; should use the same methods for args (optional,...) make them inherit a same class? + create a js component?
-* stop writing form_data = await ... for every controllers (method?,decorator?...?)
 * imp all js code?
 * ...
 * refactor tours after code reformat: imp widget uses in tours, ... + add missing tours (test tables actions, ...)

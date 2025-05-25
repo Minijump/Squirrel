@@ -2,7 +2,7 @@ from fastapi import Request
 from fastapi.responses import RedirectResponse
 
 from app import app, templates
-from app.utils.error_handling import squirrel_error
+from app.utils.form_utils import squirrel_error
 
 
 @app.get("/")

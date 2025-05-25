@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 from fastapi.routing import APIRoute
 
 from app.main import app
-from app.utils.error_handling import SQUIRREL_ERROR_DECORATED
+from app.utils.form_utils import SQUIRREL_ERROR_DECORATED
 
 
 client = TestClient(app)

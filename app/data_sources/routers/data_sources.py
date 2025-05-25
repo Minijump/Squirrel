@@ -8,7 +8,7 @@ from fastapi.responses import RedirectResponse, JSONResponse
 
 from app import router, templates
 from app.data_sources.models import DATA_SOURCE_REGISTRY
-from app.utils.error_handling import squirrel_error
+from app.utils.form_utils import squirrel_error, _get_form_data_info
 
 
 async def get_sources(project_dir):
@@ -49,8 +49,7 @@ async def data_sources(request: Request, project_dir: str):
 async def create_source(request: Request):
     """Create a new data source + returns a RedirectResponse to the data sources page"""
     form_data = await request.form()
-    project_dir = form_data.get("project_dir")
-    source_type = form_data.get("source_type")
+    project_dir, source_type = await _get_form_data_info(request, ["project_dir", "source_type"])
 
     SourceClass = DATA_SOURCE_REGISTRY[source_type]
     SourceClass.check_available_infos(form_data)
@@ -72,8 +71,7 @@ async def source_settings(request: Request, project_dir: str, source_dir: str):
 async def update_source_settings(request: Request):
     """Update the settings of a data source + Returns a RedirectResponse to the source settings page"""
     form_data = await request.form()
-    project_dir = form_data.get("project_dir")
-    source_dir = form_data.get("source_dir")
+    project_dir, source_dir = await _get_form_data_info(request, ["project_dir", "source_dir"])
 
     manifest_data = await get_manifest(project_dir, source_dir)
     source = await init_source_instance(manifest_data)
@@ -85,9 +83,7 @@ async def update_source_settings(request: Request):
 async def sync_source(request: Request):
     """Sync the data source + Returns a JSONResponse with the sync status"""
     try:
-        form_data = await request.form()
-        project_dir = form_data.get("project_dir")
-        source_dir = form_data.get("source_dir")
+        project_dir, source_dir = await _get_form_data_info(request, ["project_dir", "source_dir"])
 
         manifest_data = await get_manifest(project_dir, source_dir)
         source = await init_source_instance(manifest_data)
@@ -101,9 +97,7 @@ async def sync_source(request: Request):
 @squirrel_error
 async def delete_source(request: Request):
     """Delete the data source + Returns a RedirectResponse to the data sources page"""
-    form_data = await request.form()
-    project_dir = form_data.get("project_dir")
-    source_dir = form_data.get("source_dir")
+    project_dir, source_dir = await _get_form_data_info(request, ["project_dir", "source_dir"])
 
     source_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir)
     shutil.rmtree(source_path)

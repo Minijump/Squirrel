@@ -32,3 +32,7 @@ def squirrel_error(func):
                     "utils/templates/projects_error.html", 
                     {"exception": str(e)})
     return wrapper
+
+async def _get_form_data_info(request: Request, args_list: list):
+    form_data = await request.form()
+    return (form_data.get(arg) for arg in args_list)
