@@ -1,9 +1,9 @@
-class SquirrelDictionary {
+import { SquirrelWidget } from './widget.js';
+
+export class SquirrelDictionary extends SquirrelWidget {
     constructor(element) {
-        if (!element || element.tagName !== 'TEXTAREA') {
-            throw new Error('SquirrelDictionary requires a textarea element');
-        }
-        this.textarea = element;
+        super(element, ['TEXTAREA']);
+
         this.defaultOptions = {
             create: true,
             remove: true,
@@ -17,18 +17,8 @@ class SquirrelDictionary {
         this.initialize();
     }
 
-    parseOptions() {
-        const userOptions = this.textarea.getAttribute('options');
-        try {
-            return userOptions ? { ...this.defaultOptions, ...JSON.parse(userOptions) } : this.defaultOptions;
-        } catch (error) {
-            console.warn('Invalid options JSON, using defaults:', error);
-            return this.defaultOptions;
-        }
-    }
-
     parseInitialData() {
-        const value = this.textarea.value.trim();
+        const value = this.element.value.trim();
         if (!value) return {};
         
         try {
@@ -48,8 +38,8 @@ class SquirrelDictionary {
     createWrapper() {
         this.wrapper = document.createElement('div');
         this.wrapper.className = 'squirrel-dict-widget';
-        this.textarea.parentNode.insertBefore(this.wrapper, this.textarea);
-        this.textarea.style.display = 'none';
+        this.element.parentNode.insertBefore(this.wrapper, this.element);
+        this.element.style.display = 'none';
     }
 
     createTable() {
@@ -150,8 +140,8 @@ class SquirrelDictionary {
                 data[key] = this.parseValue(value);
             }
         });
-        this.textarea.value = JSON.stringify(data);
-        this.textarea.dispatchEvent(new Event('change'));
+        this.element.value = JSON.stringify(data);
+        this.element.dispatchEvent(new Event('change'));
     }
 
     parseValue(value) {

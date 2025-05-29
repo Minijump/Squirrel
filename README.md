@@ -125,7 +125,6 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Refactor dict widget
 * =>Create modal component
 * -Refactor modals' js/css (open and close should be factorized,...)
 * -Factorize create source/project modals js code?

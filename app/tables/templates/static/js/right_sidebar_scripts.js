@@ -1,3 +1,5 @@
+import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js';
+
 // Sidebar ---------------------------------------------------------------
 function closeSidebarForm(id) {
     document.getElementById(id).style.width = "0";
@@ -245,3 +247,12 @@ function sourceCreationTypeToggle() {
 }
 document.getElementById('source_creation_type').addEventListener('change', sourceCreationTypeToggle);
 document.addEventListener('DOMContentLoaded', function() { sourceCreationTypeToggle(); });
+
+// Make functions available in templates 
+// (Required because we are in a module; cfr import)
+window.closeSidebarForm = closeSidebarForm;
+window.openSidebarForm = openSidebarForm;
+window.openSidebarActionForm = openSidebarActionForm;
+window.switchTab = switchTab;
+window.syncFormValues = syncFormValues;
+window.sourceCreationTypeToggle = sourceCreationTypeToggle;
