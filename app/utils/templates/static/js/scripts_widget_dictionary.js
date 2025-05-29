@@ -1,81 +1,143 @@
 class SquirrelDictionary {
     constructor(element) {
+        if (!element || element.tagName !== 'TEXTAREA') {
+            throw new Error('SquirrelDictionary requires a textarea element');
+        }
         this.textarea = element;
-        const defaultOptions = {
+        this.defaultOptions = {
             create: true,
-            remove: true
+            remove: true,
+            placeholder: {
+                key: 'Key',
+                value: 'Value'
+            }
         };
-        const userOptions = element.getAttribute('options');
-        this.options = userOptions ? { ...defaultOptions, ...JSON.parse(userOptions) } : defaultOptions;
+        this.options = this.parseOptions();
+        this.data = this.parseInitialData();
         this.initialize();
     }
 
+    parseOptions() {
+        const userOptions = this.textarea.getAttribute('options');
+        try {
+            return userOptions ? { ...this.defaultOptions, ...JSON.parse(userOptions) } : this.defaultOptions;
+        } catch (error) {
+            console.warn('Invalid options JSON, using defaults:', error);
+            return this.defaultOptions;
+        }
+    }
+
+    parseInitialData() {
+        const value = this.textarea.value.trim();
+        if (!value) return {};
+        
+        try {
+            return JSON.parse(value);
+        } catch (error) {
+            console.warn('Invalid JSON in textarea, starting with empty object:', error);
+            return {};
+        }
+    }
+
     initialize() {
+        this.createWrapper();
+        this.createTable();
+        this.loadData();
+    }
+
+    createWrapper() {
         this.wrapper = document.createElement('div');
         this.wrapper.className = 'squirrel-dict-widget';
         this.textarea.parentNode.insertBefore(this.wrapper, this.textarea);
         this.textarea.style.display = 'none';
-        
-        this.table = document.createElement('table');
-        this.table.innerHTML = `
-            <tbody></tbody>
-            ${this.options.create ? '<tfoot><tr><td></td><td></td><td><button type="button" class="btn-add-line">+</button></td></tr></tfoot>' : ''}
-        `;
-        this.wrapper.appendChild(this.table);
+    }
 
+    createTable() {
+        this.table = document.createElement('table');
+        this.table.className = 'squirrel-dict-table';
+        
+        const tbody = document.createElement('tbody');
+        this.table.appendChild(tbody);
+        
+        if (this.options.create) {
+            const footer = this.createTableFooter();
+            this.table.appendChild(footer);
+        }
+        
+        this.wrapper.appendChild(this.table);
+        this.bindFooterEvent();
+    }
+
+    createTableFooter() {
+        const tfoot = document.createElement('tfoot');
+        tfoot.innerHTML = `
+            <tr>
+                <td colspan="2"></td>
+                <td><button type="button" class="btn-add-line" title="Add row">+</button></td>
+            </tr>
+        `;
+        return tfoot;
+    }
+
+    bindFooterEvent() {
         if (this.options.create) {
             const addBtn = this.table.querySelector('.btn-add-line');
-            addBtn.onclick = (event) => {
-                event.preventDefault();
-                this.addRow();
-            };
+            if (addBtn) {
+                addBtn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    this.addRow();
+                });
+            }
         }
-
-        this.loadData();
     }
 
     loadData() {
-        if (!this.textarea.value.trim()) {
-            return;
-        }
-        const data = JSON.parse(this.textarea.value || '{}');
-        Object.entries(data).forEach(([key, value]) => {
-            this.addDefaultRow(key, value);
+        Object.entries(this.data).forEach(([key, value]) => {
+            this.addRow(key, value, true);
         });
     }
 
-    addDefaultRow(key = '', value = '') {
-        this.addRow(key, value, true);
+    addRow(key = '', value = '', isDefault = false) {
+        const row = document.createElement('tr');
+        const isKeyReadOnly = isDefault && this.options.remove === false;
+
+        row.innerHTML = this.createRowHTML(key, value, isKeyReadOnly);
+        this.addRemoveButton(row, isDefault);
+        this.table.querySelector('tbody').appendChild(row);
+
+        this.updateTextarea();
     }
 
-    addRow(key = '', value = '', default_row = false) {
-        const row = document.createElement('tr');
-        const isKeyReadOnly = default_row && this.options.remove === false;
-
-        row.innerHTML = `
-            <td><input type="text" value="${key}" ${isKeyReadOnly ? 'readonly' : ''}></td>
-            <td><input type="text" value="${value}"></td>
+    createRowHTML(key, value, isKeyReadOnly) {
+        const keyInput = isKeyReadOnly ? 'readonly' : '';
+        return `
+            <td><input type="text" value="${this.escapeHtml(key)}" ${keyInput} placeholder="${this.options.placeholder.key}"></td>
+            <td><input type="text" value="${this.escapeHtml(value)}" placeholder="${this.options.placeholder.value}"></td>
             <td></td>
         `;
-        if (this.options.remove !== false || !default_row) {
-            row.querySelector('td:last-child').innerHTML = '<button class="btn-remove-line"><i class="fas fa-times"></i></button>';
-        }
-            
+    }
 
-        const removeBtn = row.querySelector('button');
+    addRemoveButton(row, isDefault) {
+        if (this.options.remove !== false || !isDefault) {
+            const actionCell = row.querySelector('td:last-child');
+            actionCell.innerHTML = '<button type="button" class="btn-remove-line" title="Remove row"><i class="fas fa-times"></i></button>';
+        }
+        this.bindRemoveButtonEvent(row);
+    }
+
+    bindRemoveButtonEvent(row) {
+        const removeBtn = row.querySelector('.btn-remove-line');
         if (removeBtn) {
-            removeBtn.onclick = () => {
+            removeBtn.addEventListener('click', () => {
                 row.remove();
                 this.updateTextarea();
-            };
+            });
         }
 
         row.querySelectorAll('input').forEach(input => {
-            input.onchange = () => this.updateTextarea();
+            input.addEventListener('change', () => this.updateTextarea());
+            input.addEventListener('input', () => this.updateTextarea());
         });
-
-        this.table.querySelector('tbody').appendChild(row);
-        this.updateTextarea();
     }
 
     updateTextarea() {
@@ -85,15 +147,30 @@ class SquirrelDictionary {
             const key = inputs[0].value.trim();
             if (key) {
                 const value = inputs[1].value;
-                const numValue = Number(value);
-                data[key] = !isNaN(numValue) && value.trim() !== '' ? numValue : value;
+                data[key] = this.parseValue(value);
             }
         });
         this.textarea.value = JSON.stringify(data);
+        this.textarea.dispatchEvent(new Event('change'));
+    }
+
+    parseValue(value) {
+        const trimmedValue = value.trim();
+        if (trimmedValue === '') return '';
+        
+        const numValue = Number(trimmedValue);
+        return !isNaN(numValue) && isFinite(numValue) ? numValue : value;
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 }
 
-// Initialize widgets when DOM is loaded
+// Initialize widgets when DOM is loaded 
+// Needs to do it manually for widgets added dynamically (js) after dom is loaded
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('textarea[widget="squirrel-dictionary"]').forEach(elem => {
         new SquirrelDictionary(elem);
