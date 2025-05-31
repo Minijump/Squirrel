@@ -16,9 +16,7 @@
         <h2>Your Projects</h2>
         <div class="grid" id="projectGrid">
           <div class="card card-new" id="addProjectButton">
-            <p>
-              Create New
-            </p>
+            <p>Create New</p>
           </div>
           {% for project in projects %}
             <div class="card" data-project-dir="{{ project.directory }}">
@@ -37,6 +35,6 @@
 
     {% include 'projects/templates/modals.html' %}
 
-    <script src="{{ url_for('projects_static', path='js/scripts_projects.js') }}"></script>
+    <script type="module" src="{{ url_for('projects_static', path='js/scripts_projects.js') }}"></script>
   </body>
 </html>

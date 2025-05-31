@@ -1,24 +1,20 @@
-<div class="modal" id="createProjectModal">
-    <div class="modal-content">
-        <h3>Create New Project</h3>
-        <form id="projectForm" method="post" action="/projects/create/" enctype="multipart/form-data" class="std-form">
-            <input type="hidden" name="project_dir" value="{{ project_dir }}">
-            
-            <label for="projectName">Name</label>
-            <input type="text" id="projectName" name="name" required>
-    
-            <label for="projectDescription">Description</label>
-            <textarea id="projectDescription" name="description"></textarea>
+<div id="createProjectModal" style="display: none;">
+    <form id="createProjectModalForm" method="post" action="/projects/create/" enctype="multipart/form-data" class="std-form">
+        <input type="hidden" name="project_dir" value="{{ project_dir }}">
+        
+        <label for="projectName">Name</label>
+        <input type="text" id="projectName" name="name" required>
 
-            <label for="ProjectType">Project Type</label>
-            <select id="ProjectType" name="project_type" required>
-                {% for short_name, cls in PROJECT_TYPE_REGISTRY.items() %}
-                    <option value="{{ short_name }}">{{ cls.display_name }}</option>
-                {% endfor %}
-            </select>
-    
-            <button type="submit" class="btn-primary">Create</button>
-            <button type="button" class="btn-secondary" id="cancelButton">Cancel</button>
-        </form>
-    </div>
+        <label for="projectDescription">Description</label>
+        <textarea id="projectDescription" name="description"></textarea>
+
+        <label for="ProjectType">Project Type</label>
+        <select id="ProjectType" name="project_type" required>
+            {% for short_name, cls in PROJECT_TYPE_REGISTRY.items() %}
+                <option value="{{ short_name }}">{{ cls.display_name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn-primary">Create</button>
+    </form>
 </div>

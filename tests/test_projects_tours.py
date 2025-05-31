@@ -9,7 +9,8 @@ class TestProjectsTours:
         tour = Tour(browser, server)
 
         tour.check_grid_cards_over_effect()
-        create_project_modal = tour.click_create_card(expected_visible="//form[@id=\'projectForm\']")
+        create_project_modal = tour.click_create_card(
+            expected_visible="//div[contains(@class,'modal-content')]//form[@id='createProjectModalForm']")
         create_project_modal.close()
         tour.check_grid_cards_over_effect()
 
@@ -19,7 +20,8 @@ class TestProjectsTours:
         tour = Tour(browser, server)
 
         # Try to confirm with no name, pop up does not disappear
-        create_project_modal = tour.click_create_card(expected_visible="//form[@id=\'projectForm\']")
+        create_project_modal = tour.click_create_card(
+            expected_visible="//div[contains(@class,'modal-content')]//form[@id='createProjectModalForm']")
         create_project_modal.submit(assert_closed=False)
         # Add a name and confirm, pop up disappears
         create_project_modal.fill([("projectName", "dumb project name")])

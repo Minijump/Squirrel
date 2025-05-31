@@ -47,13 +47,15 @@ class BaseElement:
             element = self.browser.find_element(By.CSS_SELECTOR, css_selector)
             check_element(element, expected_value)
 
-    def fill_element(self, by_id: str = False, by_css_selector: str = False, value: str = False) -> None:
+    def fill_element(self, by_id: str = False, by_css_selector: str = False, by_xpath: str = False, value: str = False) -> None:
         if by_id:
             element = self.browser.find_element(By.ID, by_id)
         elif by_css_selector:
             element = self.browser.find_element(By.CSS_SELECTOR, by_css_selector)
+        elif by_xpath:
+            element = self.browser.find_element(By.XPATH, by_xpath)
         else:
-            raise ValueError("Either 'by_id' or 'by_css_selector' must be provided.")
+            raise ValueError("Either 'by_id', 'by_css_selector' or 'by_xpath' must be provided.")
 
         if element.tag_name.lower() == 'select':
             select = Select(element)
@@ -122,7 +124,8 @@ class TransientElement(BaseElement):
     def fill(self, values: list) -> None:
         """ Fill the form with the given values, where values is a list of tuples (by_id, value) """
         for value in values:
-            self.fill_element(by_id=value[0], value=value[1])
+            xpath = f"{self.expected_visible}//*[@id='{value[0]}']"
+            self.fill_element(by_xpath=xpath, value=value[1])
 
     def submit(self, assert_closed: bool = True) -> None:
         self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[contains(@class, 'btn-primary')]").click()
@@ -277,7 +280,8 @@ class Tour(App, Navbar, Grid, TablesScreen, PipelineScreen):
         browser.get(f"{server}/projects/")
 
     def create_project(self, name: str, description: str = False):
-        create_project_modal = self.click_create_card(expected_visible="//form[@id=\'projectForm\']")
+        create_project_modal = self.click_create_card(
+            expected_visible="//div[contains(@class,'modal-content')]//form[@id='createProjectModalForm']")
         create_project_modal.fill([("projectName", name)])
         if description:
             create_project_modal.fill([("projectDescription", description)])
