@@ -1,6 +1,8 @@
+import { AutocompleteForm } from './form.js';
+
 export class Modal {
     constructor(options = {}) {
-        this.id = options.id || 'modal-' + Math.random().toString(36).substr(2, 9);
+        this.id = options.id || 'modal-' + Math.random().toString(36).substring(2, 11);
         this.title = options.title || 'Modal';
         this.content = options.content || '';
         this.width = options.width || '500px';
@@ -9,8 +11,6 @@ export class Modal {
         this.backdrop = options.backdrop || true;
         this.onOpen = options.onOpen || null;
         this.onClose = options.onClose || null;
-        this.onConfirm = options.onConfirm || null;
-        this.buttons = options.buttons || [];
         this.className = options.className || '';
         this.element = null;
         this.isOpen = false;
@@ -42,22 +42,8 @@ export class Modal {
             content.appendChild(this.content);
         }
         
-        // Footer should be added in FormModal class?? To be created. Same for stuffs like buttons, onConfirm, ...
-        const footer = document.createElement('div');
-        footer.className = 'modal-footer';
-        this.buttons.forEach(button => {
-            const btn = document.createElement('button');
-            btn.className = button.className || 'btn-secondary';
-            btn.textContent = button.text;
-            btn.onclick = button.onClick || (() => this.close());
-            footer.appendChild(btn);
-        });
-        
         modalContent.appendChild(header);
         modalContent.appendChild(content);
-        if (this.buttons.length > 0) {
-            modalContent.appendChild(footer);
-        }
         this.element.appendChild(modalContent);
         document.body.appendChild(this.element);
         
@@ -119,5 +105,20 @@ export class Modal {
         if (this.element && this.element.parentNode) {
             this.element.parentNode.removeChild(this.element);
         }
+    }
+}
+
+export class FormModal extends Modal {
+    constructor(options = {}) {
+        const formOptions = {
+            'id': options.formId || {},
+            'inputs': options.inputs || {},
+            'submitRoute': options.submitRoute || '',
+            'cancelButtonOnClick': options.cancelButtonOnClick || null,
+            'data': options.data || {},
+        }
+        const content = new AutocompleteForm(formOptions);
+        options.content = content.formCode;
+        super(options);
     }
 }

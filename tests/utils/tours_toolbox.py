@@ -282,7 +282,7 @@ class Tour(App, Navbar, Grid, TablesScreen, PipelineScreen):
     def create_project(self, name: str, description: str = False):
         create_project_modal = self.click_create_card(
             expected_visible="//div[contains(@class,'modal-content')]//form[@id='createProjectModalForm']")
-        create_project_modal.fill([("projectName", name)])
+        create_project_modal.fill([("name", name)])
         if description:
-            create_project_modal.fill([("projectDescription", description)])
+            create_project_modal.fill([("description", description)])
         create_project_modal.submit(assert_closed=True)

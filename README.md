@@ -125,13 +125,13 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* =>Create modal component
-* -Refactor modals' js/css (open and close should be factorized,...)
-* -Factorize create source/project modals js code?
+* use modal component 'everywhere'
+* Factorize create source/project modals js code?
 * Factorize data sources and actions; should use the same methods for args (optional,...) make them inherit a same class? + create a js component?
 * imp all js code?
 * ...
 * refactor tours after code reformat: imp widget uses in tours, ... + add missing tours (test tables actions, ...)
+* investigate to stop using dfs ?
 * complete readme
 
 ### To Fix

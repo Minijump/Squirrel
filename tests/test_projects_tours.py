@@ -24,7 +24,7 @@ class TestProjectsTours:
             expected_visible="//div[contains(@class,'modal-content')]//form[@id='createProjectModalForm']")
         create_project_modal.submit(assert_closed=False)
         # Add a name and confirm, pop up disappears
-        create_project_modal.fill([("projectName", "dumb project name")])
+        create_project_modal.fill([("name", "dumb project name")])
         create_project_modal.submit(assert_closed=True)
 
     @pytest.mark.slow
