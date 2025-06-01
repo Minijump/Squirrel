@@ -1,9 +1,9 @@
 export class AutocompleteForm {
+    // TODO doc on diff inputs info
     constructor(options = {}) {
         this.id = options.id || 'form-' + Math.random().toString(36).substring(2, 11);
         this.inputs = options.inputs || {};
         this.submitRoute = options.submitRoute || '';
-        this.cancelButtonOnClick = options.cancelButtonOnClick || null;
         this.data = options.data || {};
         this.formCode = null;
         this.create();
@@ -43,12 +43,6 @@ export class AutocompleteForm {
 
         const submitButton = this.createSubmitButton();
         form.appendChild(submitButton);
-        if (this.cancelButtonOnClick) {
-            cancelButton = this.createCancelButton();
-            if (cancelButton) {
-                form.appendChild(cancelButton);
-            }
-        }
 
         this.formCode = form.outerHTML;
     }
@@ -134,22 +128,6 @@ export class AutocompleteForm {
         return submitButton;
     }
 
-    createCancelButton() {
-        const cancelButton = document.createElement('button');
-        cancelButton.type = 'button';
-        cancelButton.className = 'btn-secondary';
-        cancelButton.textContent = 'Cancel';
-        try{
-            cancelButton.onclick = () => {
-                this.cancelButtonOnClick();
-            };
-            return cancelButton;
-        } catch (error) {
-            console.error('Error creating cancel button:', error);
-            return null;
-        }
-    }
-
     completeInputs(form, data={}) {
         for (const key in data) {
             if (data.hasOwnProperty(key)) {
@@ -176,15 +154,4 @@ export class AutocompleteForm {
             }
         });
     }
-
-    defaultFocus() {
-        const inputs = document.querySelectorAll('input, textarea');
-        for (const input of inputs) {
-            if (input.offsetParent !== null) { // Check if the element is visible
-                input.focus();
-                break;
-            }
-        }
-    }
-
 }

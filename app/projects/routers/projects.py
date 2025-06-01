@@ -2,11 +2,18 @@ import json
 import os
 
 from fastapi import Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, JSONResponse
 
 from app import router, templates
 from app.projects.models import PROJECT_TYPE_REGISTRY
 from app.utils.form_utils import squirrel_error
+
+
+@router.get("/projects/get_type_options/")
+async def project_type_options(request: Request):
+    """Returns a JSONResponse with the different project types"""
+    options = [(key, value.display_name) for key, value in PROJECT_TYPE_REGISTRY.items()]
+    return JSONResponse(content={"options": options}, status_code=200)
 
 @router.get("/projects/")
 @squirrel_error

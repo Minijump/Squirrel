@@ -15,11 +15,11 @@
       <main>
         <h2>Your Projects</h2>
         <div class="grid" id="projectGrid">
-          <div class="card card-new" id="addProjectButton">
+          <div class="card card-new" id="addProjectButton" onclick="onProjectCardClick(this)">
             <p>Create New</p>
           </div>
           {% for project in projects %}
-            <div class="card" data-project-dir="{{ project.directory }}">
+            <div class="card" data-project-dir="{{ project.directory }}" onclick="onProjectCardClick(this)">
                 <div class="card-content">
                   <div>
                     <h3 class="card-title">{{ project.name }}</h3>
