@@ -1,39 +1,41 @@
-<div id="headerInfoColModal" class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
-    <div>
-        <h3 id="modalTitle" style="display: inline">Column Infos</h3>
-        <div id="col_dtype" class="info" style="font-style: italic">(<span></span>)</div>
-        <button id="editBtn" class="edit-btn">
-            <i class="fas fa-edit"></i>
-        </button>
+<div style="display: none;">
+    <div id="headerInfoColModal" class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h3 id="modalTitle" style="display: inline">Column Infos</h3>
+            <div id="col_dtype" class="info" style="font-style: italic">(<span></span>)</div>
+            <button id="editBtn" class="edit-btn">
+                <i class="fas fa-edit"></i>
+            </button>
+        </div>
+        <a href="javascript:void(0)" class="close-btn">&times;</a>
     </div>
-    <a href="javascript:void(0)" class="close-btn">&times;</a>
-</div>
 
-<div id="infoColModalBody">
-    <h3 id="error_infos_computation" style="color: red"></h3>
-    <div class="infos-div">
-        <div id="col_count"  class="info"><span></span> lines</div> 
-        <div id="col_unique"  class="info"> with <span></span> unique values</div>
-        <div id="col_null"  class="info"> (<span></span> missing)</div>
+    <div id="infoColModalBody">
+        <h3 id="error_infos_computation" style="color: red"></h3>
+        <div class="infos-div">
+            <div id="col_count"  class="info"><span></span> lines</div> 
+            <div id="col_unique"  class="info"> with <span></span> unique values</div>
+            <div id="col_null"  class="info"> (<span></span> missing)</div>
+        </div>
+        <div class="btn-div"></div>
+        <div class="infos-div numeric-only">
+            <div id="col_min"  class="info" style="margin-right: 8px;">Min: <span></span></div>
+            <div id="col_25"  class="info" style="margin-right: 8px;">25%: <span></span></div>
+            <div id="col_50"  class="info" style="margin-right: 8px;">50%: <span></span></div>
+            <div id="col_75"  class="info" style="margin-right: 8px;">75%: <span></span></div>
+            <div id="col_max"  class="info" style="margin-right: 8px;">Max: <span></span></div>
+            <div id="col_mean"  class="info">(μ: <span></span>, </div>
+            <div id="col_std"  class="info">σ: <span></span>)</div>
+        </div> 
+        <div class="btn-div numeric-only"></div>
+
+        <form action="/tables/execute_action/" method="post">
+            <input type="hidden" name="action_name" value="DropColumn">
+            <input type="hidden" name="project_dir" value="{{ project_dir }}">
+            <input id="table_name" name="table_name" type="hidden" required>
+            <input id="col_name" name="col_name" type="hidden" required>
+            <input id="col_idx" name="col_idx" type="hidden" required>
+            <button type="submit" class="btn-danger" style="margin-top: 20px;">Delete Column</button>
+        </form>
     </div>
-    <div class="btn-div"></div>
-    <div class="infos-div numeric-only">
-        <div id="col_min"  class="info" style="margin-right: 8px;">Min: <span></span></div>
-        <div id="col_25"  class="info" style="margin-right: 8px;">25%: <span></span></div>
-        <div id="col_50"  class="info" style="margin-right: 8px;">50%: <span></span></div>
-        <div id="col_75"  class="info" style="margin-right: 8px;">75%: <span></span></div>
-        <div id="col_max"  class="info" style="margin-right: 8px;">Max: <span></span></div>
-        <div id="col_mean"  class="info">(μ: <span></span>, </div>
-        <div id="col_std"  class="info">σ: <span></span>)</div>
-    </div> 
-    <div class="btn-div numeric-only"></div>
-
-    <form action="/tables/execute_action/" method="post">
-        <input type="hidden" name="action_name" value="DropColumn">
-        <input type="hidden" name="project_dir" value="{{ project_dir }}">
-        <input id="table_name" name="table_name" type="hidden" required>
-        <input id="col_name" name="col_name" type="hidden" required>
-        <input id="col_idx" name="col_idx" type="hidden" required>
-        <button type="submit" class="btn-danger" style="margin-top: 20px;">Delete Column</button>
-    </form>
 </div>
