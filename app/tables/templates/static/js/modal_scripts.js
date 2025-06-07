@@ -65,15 +65,6 @@ function closeInfoColModal() {
     document.getElementById('InfoColModal').style.display = "none";
 }
 
-// CustomActionModal ---------------------------------------------------------------
-function openCustomActionModal(tableName='') {
-    document.getElementById('CustomActionModal').style.display = "flex";
-    document.querySelector('#CustomActionModal input[name="default_table_name"]').value = tableName;
-}
-function closeCustomActionModal() {
-    document.getElementById('CustomActionModal').style.display = "none";
-}
-
 // Add info buttons to the table headers ---------------------------------------------------------------
 function addInfoButtons() {
     document.querySelectorAll('.df-table thead').forEach(function(thead) {

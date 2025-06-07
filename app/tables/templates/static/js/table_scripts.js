@@ -1,3 +1,6 @@
+import { openCustomActionModal } from './custom_action_modal.js';
+
+
 // Table selection
 function saveSelectedTable(tableName) {
     localStorage.setItem('selectedTable', tableName);
@@ -102,3 +105,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+
+window.openCustomActionModal = openCustomActionModal;
+window.saveSelectedTable = saveSelectedTable;
+window.getSelectedTable = getSelectedTable;
+window.showTable = showTable;
