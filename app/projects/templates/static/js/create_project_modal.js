@@ -37,6 +37,7 @@ export async function openCreateProjectModal() {
     const formInputs = await generateFormInputs();
     const modal = new FormModal({
         title: 'Create New Project',
+        id: 'createProjectModal',
         formId: 'createProjectModalForm',
         formInputs: formInputs,
         formSubmitRoute: '/projects/create/',

@@ -135,6 +135,7 @@ In addition to these folders, you will find a folder named tests that contains t
 * complete readme
 
 ### To Fix
+* Glitch when closing infocolmodal/action sidebar (we see a red button for few moment) (glitch appeared when making the infocol modal a component)
 
 ### To do MVP
 * Add actions

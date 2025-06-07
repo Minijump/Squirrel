@@ -1,74 +1,39 @@
-<div id="InfoColModal" class="modal">
-    <div class="modal-content" style="width: 600px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <h3 id="modalTitle" style="display: inline">Column Infos</h3>
-                <div id="col_dtype" class="info" style="font-style: italic">(<span></span>)</div>
-                <button class="edit-btn" onclick="
-                    closeInfoColModal();
-                    openSidebarActionForm('RenameColumn', getColumnInfo())">
-                    <i class="fas fa-edit"></i>
-                </button>
-            </div>
-            <a href="javascript:void(0)" class="close-btn" onclick="closeInfoColModal()">&times;</a>
-        </div>
-
-        <h3 id="error_infos_computation" style="color: red"></h3>
-        <div class="infos-div">
-            <div id="col_count"  class="info"><span></span> lines</div> 
-            <div id="col_unique"  class="info"> with <span></span> unique values</div>
-            <div id="col_null"  class="info"> (<span></span> missing)</div>
-        </div>
-        <div class="btn-div">
-            {% set action_buttons = [
-                {'action': 'HandleMissingValues', 'label': 'Missing vals.'},
-                {'action': 'ReplaceVals', 'label': 'Replace vals.'},
-                {'action': 'ChangeType', 'label': 'Change type'},
-                {'action': 'SortColumn', 'label': 'Sort'},
-                {'action': 'ApplyFunction', 'label': 'Apply Function'}
-            ] %}
-            {% for btn in action_buttons %}
-                <button class="table-action-btn" onclick="
-                    closeInfoColModal();
-                    openSidebarActionForm('{{ btn.action }}', getColumnInfo())">
-                    {{ btn.label }}
-                </button>
-            {% endfor %}
-        </div>
-        <div class="infos-div numeric-only">
-            <div id="col_min"  class="info" style="margin-right: 8px;">Min: <span></span></div>
-            <div id="col_25"  class="info" style="margin-right: 8px;">25%: <span></span></div>
-            <div id="col_50"  class="info" style="margin-right: 8px;">50%: <span></span></div>
-            <div id="col_75"  class="info" style="margin-right: 8px;">75%: <span></span></div>
-            <div id="col_max"  class="info" style="margin-right: 8px;">Max: <span></span></div>
-            <div id="col_mean"  class="info">(μ: <span></span>, </div>
-            <div id="col_std"  class="info">σ: <span></span>)</div>
-        </div> 
-        <div class="btn-div numeric-only">
-            {% set numeric_action_buttons = [
-                {'action': 'NormalizeColumn', 'label': 'Normalize'},
-                {'action': 'RemoveUnderOver', 'label': 'Remove under/over'},
-                {'action': 'CutValues', 'label': 'Cut'},
-                {'action': 'NLargest', 'label': 'Keep N largest'},
-                {'action': 'NSmallest', 'label': 'Keep N smallest'},
-                {'action': 'ColDiff', 'label': 'Diff'}
-            ] %}
-            {% for btn in numeric_action_buttons %}
-                <button class="table-action-btn" onclick="
-                    closeInfoColModal();
-                    openSidebarActionForm('{{ btn.action }}', getColumnInfo())">
-                    {{ btn.label }}
-                </button>
-            {% endfor %}
-        </div>
-
-        <form action="/tables/execute_action/" method="post">
-            <input type="hidden" name="action_name" value="DropColumn">
-            <input type="hidden" name="project_dir" value="{{ project_dir }}">
-            <input id="table_name" name="table_name" type="hidden" required>
-            <input id="col_name" name="col_name" type="hidden" required>
-            <input id="col_idx" name="col_idx" type="hidden" required>
-            <button type="submit" class="btn-danger" style="margin-top: 20px;">Delete Column</button>
-        </form>
+<div id="headerInfoColModal" class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h3 id="modalTitle" style="display: inline">Column Infos</h3>
+        <div id="col_dtype" class="info" style="font-style: italic">(<span></span>)</div>
+        <button id="editBtn" class="edit-btn">
+            <i class="fas fa-edit"></i>
+        </button>
     </div>
+    <a href="javascript:void(0)" class="close-btn">&times;</a>
+</div>
+
+<div id="infoColModalBody">
+    <h3 id="error_infos_computation" style="color: red"></h3>
+    <div class="infos-div">
+        <div id="col_count"  class="info"><span></span> lines</div> 
+        <div id="col_unique"  class="info"> with <span></span> unique values</div>
+        <div id="col_null"  class="info"> (<span></span> missing)</div>
+    </div>
+    <div class="btn-div"></div>
+    <div class="infos-div numeric-only">
+        <div id="col_min"  class="info" style="margin-right: 8px;">Min: <span></span></div>
+        <div id="col_25"  class="info" style="margin-right: 8px;">25%: <span></span></div>
+        <div id="col_50"  class="info" style="margin-right: 8px;">50%: <span></span></div>
+        <div id="col_75"  class="info" style="margin-right: 8px;">75%: <span></span></div>
+        <div id="col_max"  class="info" style="margin-right: 8px;">Max: <span></span></div>
+        <div id="col_mean"  class="info">(μ: <span></span>, </div>
+        <div id="col_std"  class="info">σ: <span></span>)</div>
+    </div> 
+    <div class="btn-div numeric-only"></div>
+
+    <form action="/tables/execute_action/" method="post">
+        <input type="hidden" name="action_name" value="DropColumn">
+        <input type="hidden" name="project_dir" value="{{ project_dir }}">
+        <input id="table_name" name="table_name" type="hidden" required>
+        <input id="col_name" name="col_name" type="hidden" required>
+        <input id="col_idx" name="col_idx" type="hidden" required>
+        <button type="submit" class="btn-danger" style="margin-top: 20px;">Delete Column</button>
+    </form>
 </div>

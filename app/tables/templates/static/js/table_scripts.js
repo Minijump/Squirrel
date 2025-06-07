@@ -1,4 +1,5 @@
 import { openCustomActionModal } from './custom_action_modal.js';
+import { InfoColModal } from './info_col_modal.js';
 
 
 // Table selection
@@ -105,6 +106,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+function addInfoButtons() {
+    document.querySelectorAll('.df-table thead').forEach(function(thead) {
+        const lastTr = thead.querySelector('tr:last-child');
+        lastTr.querySelectorAll('th').forEach(function(th) {
+            const colName = th.textContent.trim();
+            const colIdx = th.dataset.columnidx;
+            const infoColButton = document.createElement('button');
+            infoColButton.className = 'table-header-btn';
+            infoColButton.innerHTML = '&middot;&middot;&middot;';
+            const tableName = th.closest('.table-container').id.split('-')[1];
+            infoColButton.onclick = function() {
+                const infoColModal = new InfoColModal(colName, colIdx, tableName, {});
+                infoColModal.open();
+            };
+            if (!th.querySelector('.table-header-btn')) {
+                th.appendChild(infoColButton);
+            }
+        });
+    });
+}
+document.addEventListener('DOMContentLoaded', function() { addInfoButtons(); });
 
 
 window.openCustomActionModal = openCustomActionModal;

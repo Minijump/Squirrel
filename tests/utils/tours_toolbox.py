@@ -157,9 +157,12 @@ class Modal(TransientElement):
 
     def close(self, assert_closed: bool = True) -> None:
         try:
-            close_button = self.browser.find_element(By.CSS_SELECTOR, ".close-btn")
+            modal = self.browser.find_element(By.XPATH, self.expected_visible)
+            close_button = modal.find_element(By.CSS_SELECTOR, ".close-btn")
         except:
-            close_button = self.browser.find_element(By.ID, "cancelButton")
+            modal = self.browser.find_element(By.XPATH, self.expected_visible)
+            close_button = modal.find_element(By.ID, "cancelButton")
+
         close_button.click()
         self.assert_visibility(visible=not assert_closed)
 
@@ -210,7 +213,7 @@ class Table(BaseElement):
         if by_col_number:
             self.browser.find_element(By.CSS_SELECTOR, f"#{self.table_id} th:nth-child({by_col_number}) > .table-header-btn").click()
 
-        return Modal(self.browser, expected_visible=f"//div[@id='InfoColModal']")
+        return Modal(self.browser, expected_visible=f"//div[@id='InfoColModal']//div[@class='modal-content']")
     
     def get_cell(self, by_col_number: int, by_row_number: int) -> None:
         return self.browser.find_element(

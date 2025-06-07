@@ -10,7 +10,7 @@ class TestProjectsTours:
 
         tour.check_grid_cards_over_effect()
         create_project_modal = tour.click_create_card(
-            expected_visible="//div[contains(@class,'modal-content')]//form[@id='createProjectModalForm']")
+            expected_visible="//div[@id='createProjectModal']")
         create_project_modal.close()
         tour.check_grid_cards_over_effect()
 

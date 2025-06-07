@@ -20,13 +20,27 @@ export class Modal {
         const modalContent = document.createElement('div');
         modalContent.className = 'modal-content';
         
+        const header = this.createHeader();
+        const content = this.createContent();
+        
+        modalContent.appendChild(header);
+        modalContent.appendChild(content);
+        this.element.appendChild(modalContent);
+        document.body.appendChild(this.element); 
+        this.bindEvents();
+    }
+
+    createHeader() {
         const header = document.createElement('div');
         header.className = 'modal-header';
         header.innerHTML = `
             <h3 class="modal-title">${this.title}</h3>
             <a href="javascript:void(0)" class="close-btn">&times;</a>
         `;
-        
+        return header;
+    }
+
+    createContent() {
         const content = document.createElement('div');
         content.className = 'modal-body';
         if (typeof this.bodyContent === 'string') {
@@ -34,12 +48,7 @@ export class Modal {
         } else if (this.bodyContent instanceof HTMLElement) {
             content.appendChild(this.bodyContent);
         }
-        
-        modalContent.appendChild(header);
-        modalContent.appendChild(content);
-        this.element.appendChild(modalContent);
-        document.body.appendChild(this.element); 
-        this.bindEvents();
+        return content;
     }
 
     bindEvents() {
@@ -89,6 +98,14 @@ export class Modal {
         this.element.style.display = 'none';
         this.isOpen = false;
         document.removeEventListener('keydown', this.escapeHandler);
+        this.destroy();
+    }
+
+    destroy() {
+        if (this.element) {
+            this.element.remove();
+            this.element = null;
+        }
     }
 }
 
