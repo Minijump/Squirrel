@@ -126,8 +126,8 @@ In addition to these folders, you will find a folder named tests that contains t
 
 ### To do
 * use modal component 'everywhere'
-* Factorize create source/project modals js code?
-* Factorize data sources and actions; should use the same methods for args (optional,...) make them inherit a same class? + create a js component?
+* Factorize data sources and actions; should use the same methods for args (optional,...) make them inherit a same python class?
+* make right sidebar a js component
 * imp all js code?
 * ...
 * refactor tours after code reformat: imp widget uses in tours, ... + add missing tours (test tables actions, ...)
@@ -135,6 +135,8 @@ In addition to these folders, you will find a folder named tests that contains t
 * complete readme
 
 ### To Fix
+* Right sidebar sort custom is not working
+* column rename not working for multi column table
 
 ### To do MVP
 * Add actions

@@ -84,6 +84,12 @@ export class InfoColModal extends Modal {
     }
 
     async fillData() {
+        // Add column name
+        const modalTitle = this.element.querySelector('#modalTitle');
+        if (modalTitle) {
+            modalTitle.innerText = this.colName;
+        }
+
         // Fill 'delete column' form
         this.element.querySelector('#col_name').innerText = this.colName;
         this.element.querySelector('#col_idx').innerText = this.colIdx;

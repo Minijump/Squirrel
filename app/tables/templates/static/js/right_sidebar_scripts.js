@@ -248,8 +248,7 @@ function sourceCreationTypeToggle() {
 document.getElementById('source_creation_type').addEventListener('change', sourceCreationTypeToggle);
 document.addEventListener('DOMContentLoaded', function() { sourceCreationTypeToggle(); });
 
-// Make functions available in templates 
-// (Required because we are in a module; cfr import)
+
 window.closeSidebarForm = closeSidebarForm;
 window.openSidebarForm = openSidebarForm;
 window.openSidebarActionForm = openSidebarActionForm;

@@ -17,16 +17,6 @@
     margin-bottom: 15px;
     margin-left: 10px;
 }
-.btn-div button {
-    margin-bottom: 5px;
-}
-
-.modal-content .close-btn {
-    font-size: 36px;
-    margin: 5px;
-    color: var(--primary-text-color);
-    text-decoration: none;
-}
 
 .edit-btn {
     background: none;
