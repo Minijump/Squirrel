@@ -73,6 +73,7 @@ export class Modal {
     }
 
     open() {
+        this.fillData();
         if (this.isOpen) return;
         
         this.element.style.display = 'flex';
@@ -80,6 +81,10 @@ export class Modal {
         document.addEventListener('keydown', this.escapeHandler);
         
         this.defaultFocus();
+    }
+
+    fillData() {
+        return;
     }
 
     defaultFocus() {

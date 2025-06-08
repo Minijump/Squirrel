@@ -136,7 +136,9 @@ In addition to these folders, you will find a folder named tests that contains t
 * complete readme
 
 ### To Fix
+* Fix pipeline UTs
 * column rename not working for multi column table
+* delete column not working (project_dir?)
 
 ### To do MVP
 * Add actions

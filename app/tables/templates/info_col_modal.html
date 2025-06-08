@@ -31,7 +31,7 @@
 
         <form action="/tables/execute_action/" method="post">
             <input type="hidden" name="action_name" value="DropColumn">
-            <input type="hidden" name="project_dir" value="{{ project_dir }}">
+            <input type="hidden" name="project_dir" id="project_dir" required>
             <input id="table_name" name="table_name" type="hidden" required>
             <input id="col_name" name="col_name" type="hidden" required>
             <input id="col_idx" name="col_idx" type="hidden" required>
