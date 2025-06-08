@@ -1,5 +1,6 @@
 import { Modal } from '/static/base/js/components/modal.js';
 
+
 export class EditActionModal extends Modal {
     constructor(actionId, actionName, actionCode, options = {}) {
         options['content'] = document.getElementById('editActionModalBody').innerHTML;

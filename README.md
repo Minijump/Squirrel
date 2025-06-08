@@ -125,7 +125,6 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* refactor modal components (see infocol and edit action => add fillData to Modal class + this.fillData() in open fct?)
 * use modal component 'everywhere'
 * Factorize data sources and actions; should use the same methods for args (optional,...) make them inherit a same python class?
 * make right sidebar a js component

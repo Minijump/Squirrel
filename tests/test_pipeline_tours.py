@@ -100,7 +100,6 @@ class TestPipelineTours:
         tour.click_card(by_position=2)
         tour.navbar_click("Pipeline")
         
-        # TODO: with actual code, a white line must end the input (else next action will be on same line), fix that
         new_action_code = "print('Hello world')  #sq_action:a simple print"
         new_action_code_input = f"""
 {new_action_code}
