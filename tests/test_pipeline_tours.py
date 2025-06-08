@@ -70,7 +70,7 @@ class TestPipelineTours:
         new_action_elements = tour.get_pipeline_actions(wait_a_minute=True)
         new_number_of_actions = len(new_action_elements)
         assert new_number_of_actions == original_number_of_actions - 1, "Action was not deleted"
-        
+    
     @pytest.mark.slow
     def test_cancel_delete_action(self, server, browser, reset_projects):
         """Test canceling delete action in the pipeline."""
@@ -107,7 +107,7 @@ class TestPipelineTours:
 """
 
         edit_action_modal = tour.click_edit_action(1)
-        edit_action_modal.fill_element(by_id="action_code", value=new_action_code_input)
+        edit_action_modal.fill([("action_code", new_action_code_input)])
         edit_action_modal.submit()
         
         new_action_elements = tour.get_pipeline_actions(wait_a_minute=True)

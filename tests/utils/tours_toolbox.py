@@ -131,6 +131,8 @@ class TransientElement(BaseElement):
         self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[contains(@class, 'btn-primary')]").click()
         self.assert_visibility(visible=not assert_closed)
 
+    def click_danger_button(self) -> None:
+        self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[contains(@class, 'btn-danger')]").click()
 
 class RightSidebar(TransientElement):
     def assert_visibility(self, visible: bool = True) -> None:
