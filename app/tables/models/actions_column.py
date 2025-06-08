@@ -112,7 +112,11 @@ class RenameColumn(ActionColumn):
 
     async def execute(self):
         table_name, col_name, new_col_name, col_idx = await self._get(["table_name", "col_name", "new_col_name", "col_idx"])
-        new_code = f"""dfs['{table_name}'].rename(columns={{{col_idx}: '{new_col_name}'}}, inplace=True)  #sq_action:Rename column {col_name} to {new_col_name} in table {table_name}"""
+        if col_idx.startswith('(') and col_idx.endswith(')'):
+            new_code = f"""new_cols = [(val1, val2 if (val1, val2) != {col_idx} else '{new_col_name}') for val1, val2 in dfs['{table_name}'].columns.tolist()]
+dfs['{table_name}'].columns = pd.MultiIndex.from_tuples(new_cols) #sq_action:Rename column {col_name} of {col_idx} to {new_col_name} in table {table_name}"""
+        else:
+            new_code = f"""dfs['{table_name}'].rename(columns={{{col_idx}: '{new_col_name}'}}, inplace=True)  #sq_action:Rename column {col_name} to {new_col_name} in table {table_name}"""
         return new_code
 
 @table_action_type
