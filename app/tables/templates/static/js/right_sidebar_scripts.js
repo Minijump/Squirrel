@@ -252,6 +252,7 @@ document.addEventListener('DOMContentLoaded', function() { sourceCreationTypeTog
 window.closeSidebarForm = closeSidebarForm;
 window.openSidebarForm = openSidebarForm;
 window.openSidebarActionForm = openSidebarActionForm;
+window.toggleSelect = toggleSelect;
 window.switchTab = switchTab;
 window.syncFormValues = syncFormValues;
 window.sourceCreationTypeToggle = sourceCreationTypeToggle;

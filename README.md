@@ -135,7 +135,6 @@ In addition to these folders, you will find a folder named tests that contains t
 * complete readme
 
 ### To Fix
-* Right sidebar sort custom is not working
 * column rename not working for multi column table
 
 ### To do MVP
