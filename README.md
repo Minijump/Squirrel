@@ -125,12 +125,13 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* use modal component 'everywhere'
-* Factorize data sources and actions; should use the same methods for args (optional,...) make them inherit a same python class?
-* make right sidebar a js component
+* Factorize data sources and actions; (use modal component)
+=> Use modal component for create source
+=> Add 2 new fields to DataSource class (create and setting args) used in create modal and source settings
+=> Use those new info to complete a dynamic form
+* make right sidebar a js component (using dynamic form)
 * imp all js code?
-* ...
-* refactor tours after code reformat: imp widget uses in tours, ... + add missing tours (test tables actions, ...)
+* refactor tours after code reformat: imp widget uses in tours, ... + add missing tours (test tables actions, ...) + remove tests on controllers (replaced by tours: will test backend info too => add methods in toolbox to check table in backend + check if tavle displayed is the same than table in backend + ...)
 * investigate to stop using dfs ?
 * complete readme
 
