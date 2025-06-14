@@ -11,7 +11,8 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
  *   - 'number': number input
  *   - 'select': dropdown select
  *   - 'file': file input
- *   - TODO: password, date
+ *   - 'password': password input (text with type 'password')
+ *   - 'date': date input
  * @property {string} [label] - Input label text
  * @property {string} [info] - Info text displayed above input (supports HTML)
  * @property {string} [placeholder] - Placeholder text for input and textarea
@@ -26,12 +27,9 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
  *   username: {
  *     type: 'text',
  *     label: 'Username',
- *     required: true
- *   },
- *   description: {
- *     type: 'textarea',
- *     label: 'Description',
- *     info: 'Enter a detailed description'
+ *     required: true,
+ *     placeholder: 'Enter your username',
+ *     info: 'This will be your login name'
  *   },
  *   category: {
  *     type: 'select',
@@ -116,6 +114,15 @@ export class AutocompleteForm {
             if (input.placeholder) {
                 formInput.placeholder = input.placeholder;
             }
+        }
+        if (input.type === 'password') {
+            formInput.type = 'password';
+            if (input.placeholder) {
+                formInput.placeholder = input.placeholder;
+            }
+        }
+        if (input.type === 'date') {
+            formInput.type = 'date';
         }
         if (input.type === 'textarea') {
             formInput = document.createElement('textarea');

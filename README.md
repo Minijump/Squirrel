@@ -125,7 +125,9 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Imp Form/ModalForm components (see TODOs, create Field component, ...)
+* Use form instead of copying form content in modal
+* Create field component
+* Imp Field/Form/modal/... components
 * Use Form component for data sources settings
 * make right sidebar a js component (using dynamic form)
 * imp all js code?

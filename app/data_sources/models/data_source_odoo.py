@@ -31,7 +31,7 @@ class DataSourceOdoo(DataSourceAPI):
                 "required": True,
             },
             "key": {
-                "type": "text",
+                "type": "password",
                 "label": "Key",
                 "required": True,
             },
