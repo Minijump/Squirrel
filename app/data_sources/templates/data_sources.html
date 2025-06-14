@@ -23,13 +23,13 @@
               <i class="fas fa-sync-alt card-sync-btn" style="margin-right: 10px;"></i>Sync All Sources
           </button>
           <div class="grid" id="dataSourceGrid">
-            <div class="card card-new" id="addDataSourceButton">
+            <div class="card card-new" id="addDataSourceButton" onclick="onSourceCardClick(this)">
               <p>
                 Create New
               </p>
             </div>
             {% for source in sources %}
-              <div class="card" data-project-dir="{{ project_dir }}" data-source-dir="{{ source.directory }}">
+              <div class="card" data-project-dir="{{ project_dir }}" data-source-dir="{{ source.directory }}" onclick="onSourceCardClick(this)">
                   <div class="card-content">
                     <div>
                       <h3 class="card-title">{{ source.name }}</h3>
@@ -57,9 +57,7 @@
           </div>
       </main>
 
-      {% include 'data_sources/templates/modals.html' %}
-
-      <script src="{{ url_for('data_sources_static', path='js/script.js') }}"></script>
+      <script type="module" src="{{ url_for('data_sources_static', path='js/script.js') }}"></script>
       <script type="module" src="{{ url_for('base_static', path='js/widgets/dictionary_widget.js') }}"></script>
   </div>
 </body>

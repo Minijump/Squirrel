@@ -125,10 +125,8 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Factorize data sources and actions; (use modal component)
-=> Use modal component for create source
-=> Add 2 new fields to DataSource class (create and setting args) used in create modal and source settings
-=> Use those new info to complete a dynamic form
+* Imp Form/ModalForm components (see TODOs, create Field component, ...)
+* Use Form component for data sources settings
 * make right sidebar a js component (using dynamic form)
 * imp all js code?
 * refactor tours after code reformat: imp widget uses in tours, ... + add missing tours (test tables actions, ...) + remove tests on controllers (replaced by tours: will test backend info too => add methods in toolbox to check table in backend + check if tavle displayed is the same than table in backend + ...)

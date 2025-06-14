@@ -9,6 +9,23 @@ class DataSourceFile(DataSource):
     display_name = "File Type name"
     icon = ""
 
+    @classmethod
+    def get_source_specific_creation_args(cls):
+        return {
+            "source_file" : {
+                "type": "file",
+                "string": "Source file",
+                "required": True,
+                "accept": f".{cls.short_name}",
+            },
+            "kwargs": {
+                "type": "dict",
+                "options": {'create': True, 'remove': True},
+                "string": "Kwargs",
+                "required": False,
+            }
+        }
+
     def __init__(self, manifest):
         super().__init__(manifest)
         self.kwargs = manifest.get("kwargs") or {}

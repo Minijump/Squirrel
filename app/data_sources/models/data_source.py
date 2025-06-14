@@ -13,6 +13,10 @@ class DataSource:
     display_name = "Display name"
     icon = ""
 
+    @classmethod
+    def get_source_specific_creation_args(cls):
+        return {}
+
     def __init__(self, manifest):
         self.type = manifest['type']
         self.name = manifest['name']

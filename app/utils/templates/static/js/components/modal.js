@@ -122,8 +122,10 @@ export class FormModal extends Modal {
             'submitRoute': options.formSubmitRoute || '',
             'data': options.formData || {},
         }
-        const content = new AutocompleteForm(formOptions);
-        options.content = content.formCode;
+        const form = new AutocompleteForm(formOptions);
+        // TODO, we should not copy AutocompleteForm content, but use the entire object (to be able to access methods, add new inputs, etc.)
+        options.content = form.formCode;
         super(options);
+        this.form = form;
     }
 }

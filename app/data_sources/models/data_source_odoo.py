@@ -12,6 +12,55 @@ class DataSourceOdoo(DataSourceAPI):
     display_name = "Odoo"
     icon = "odoo_icon.png"
 
+    @classmethod
+    def get_source_specific_creation_args(cls):
+        return {
+            "url": {
+                "type": "str",
+                "string": "URL",
+                "required": True,
+            },
+            "db": {
+                "type": "str",
+                "string": "Database",
+                "required": True,
+            },
+            "username": {
+                "type": "str",
+                "string": "User",
+                "required": True,
+            },
+            "key": {
+                "type": "str",
+                "string": "Key",
+                "required": True,
+            },
+            "model": {
+                "type": "str",
+                "string": "Model",
+                "required": True,
+                "info": "E.g. res.partner",
+            },
+            "fields": {
+                "type": "str",
+                "string": "Fields",
+                "required": True,
+                "info": "With format: ['field_name1', 'field_name2', ...]",
+            },
+            "domain": {
+                "type": "text",
+                "string": "Domain",
+                "required": False,
+                "info": "With format: [('field1', '=', x), ('field2', '!=', y), ...] No domain=[]",
+            },
+            'kwargs': {
+                'type': 'dict',
+                'options': {'create': True, 'remove': True},
+                'string': 'Kwargs',
+                'required': False,
+            }
+        }
+
     def __init__(self, manifest):
         super().__init__(manifest)
         self.username = manifest.get("username")

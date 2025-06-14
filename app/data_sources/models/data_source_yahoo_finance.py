@@ -11,6 +11,33 @@ class DataSourceYahooFinance(DataSourceAPI):
     display_name = "Yahoo Finance"
     icon = "yahoo_finance_icon.png"
 
+    @classmethod
+    def get_source_specific_creation_args(cls):
+        return {
+            "tickers": {
+                "type": "str",
+                "string": "Tickers",
+                "required": True,
+                "info": "With format: ['ticker1', 'ticker2', ...]",
+            },
+            "start_date": {
+                "type": "date",
+                "string": "Start Date",
+                "required": True,
+            },
+            "end_date": {
+                "type": "date",
+                "string": "End Date",
+                "required": True,
+            },
+            "interval": {
+                "type": "select",
+                "string": "Interval",
+                "required": True,
+                "options": [("1d", "1 Day"), ("1wk", "1 Week"), ("1mo", "1 Month")],
+            },
+        }
+
     def __init__(self, manifest):
         super().__init__(manifest)
         self.tickers = manifest.get("tickers")

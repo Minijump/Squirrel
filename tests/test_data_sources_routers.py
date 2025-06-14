@@ -79,7 +79,7 @@ def test_create_data_source(temp_project_dir_fixture):
         file_content = f.read()
 
     response = client.post(
-        "/create_source/",
+        "/source/create/",
         files={"source_file": ("demo_random_data.csv", file_content, "text/csv")},
         data={
             "project_dir": MOCK_PROJECT,
@@ -154,7 +154,7 @@ def test_delete_source(temp_project_dir_fixture):
     with open("tests/utils/mock_datas/demo_random_data.csv", "rb") as f:
         file_content = f.read()
     response = client.post(
-        "/create_source/",
+        "/source/create/",
         files={"source_file": ("demo_random_data.csv", file_content, "text/csv")},
         data={
             "project_dir": MOCK_PROJECT,

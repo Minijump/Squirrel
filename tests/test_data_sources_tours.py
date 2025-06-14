@@ -30,19 +30,19 @@ class TestDataSourcesTours:
         tour.click_card(by_title=MOCK_PROJECT1_NAME)
         tour.navbar_click("Data sources")
         create_source_modal = tour.click_create_card(expected_visible="//div[@class=\'modal-content\']")
-        tour.check_elements(by_ids=[("sourceName", ""), ("sourceDescription", ""), ("sourceType", "csv"), ("sourceFile", "")])
+        tour.check_elements(by_ids=[("source_name", ""), ("source_description", ""), ("source_type", "csv"), ("source_file", "")])
 
-        create_source_modal.fill([("sourceType", "Odoo")])
+        create_source_modal.fill([("source_type", "Odoo")])
         tour.check_elements(by_ids=[
-            ("odooUrl", ""), ("odooDb", ""),
-            ("odooKey", ""), ("odooUser", ""),
-            ("odooModel", ""), ("odooFields", ""), ("odooDomain", "")])
+            ("url", ""), ("db", ""),
+            ("key", ""), ("username", ""),
+            ("model", ""), ("fields", ""), ("domain", "")])
 
-        create_source_modal.fill([("sourceType", "Yahoo Finance")])
+        create_source_modal.fill([("source_type", "Yahoo Finance")])
         tour.check_elements(by_ids=[("start_date", ""), ("end_date", ""), ("tickers", ""), ("interval", "1d")])
 
-        create_source_modal.fill([("sourceType", "Pickle")])
-        tour.check_elements(by_ids=[("sourceFile", "")])
+        create_source_modal.fill([("source_type", "Pickle")])
+        tour.check_elements(by_ids=[("source_file", "")])
 
     @pytest.mark.slow
     def test_data_source_edit(self, server, browser, reset_projects):
@@ -70,9 +70,9 @@ class TestDataSourcesTours:
 
         create_source_modal = tour.click_create_card(expected_visible="//div[@class=\'modal-content\']")
         create_source_modal.fill([
-            ("sourceName", "test yahoo"),
-            ("sourceDescription", "a simple test for yahoo data source"),
-            ("sourceType", "Yahoo Finance"),
+            ("source_name", "test yahoo"),
+            ("source_description", "a simple test for yahoo data source"),
+            ("source_type", "Yahoo Finance"),
             ("tickers", "[\'AU\']"),
             ("start_date", "2025-03-03"),
             ("end_date", "2025-03-21")

@@ -34,6 +34,19 @@ async def init_source_instance(manifest_data):
     SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
     return SourceClass(manifest_data)
 
+@router.get("/data_sources/get_available_data_sources_type/")
+async def get_available_data_sources_type(request: Request):
+    """Returns a JSONResponse with the available data sources types"""
+    available_types = [(key, value.display_name) for key, value in DATA_SOURCE_REGISTRY.items()]
+    return JSONResponse(content={"available_types": available_types}, status_code=200)
+
+@router.get("/data_sources/get_source_creation_specific_args/{source_type}")
+async def get_source_creation_specific_args(source_type):
+    """Returns the source creation specific args for the given source type"""
+    SourceClass = DATA_SOURCE_REGISTRY[source_type]
+    specific_args = SourceClass.get_source_specific_creation_args()
+    return JSONResponse(content=specific_args, status_code=200)
+
 @router.get("/data_sources/")
 @squirrel_error
 async def data_sources(request: Request, project_dir: str):
@@ -44,7 +57,7 @@ async def data_sources(request: Request, project_dir: str):
             "sources": sources,
             "DATA_SOURCE_REGISTRY": DATA_SOURCE_REGISTRY})
 
-@router.post("/create_source/")
+@router.post("/source/create/")
 @squirrel_error
 async def create_source(request: Request):
     """Create a new data source + returns a RedirectResponse to the data sources page"""
