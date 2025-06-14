@@ -38,7 +38,7 @@ class ReplaceVals(ActionColumn):
         self.kwargs = _get_method_sig(pd.Series.replace, remove=['inplace', 'limit', 'method'])
         self.args.update({
             "replace_vals": {"type": "dict", 
-                             "string": "Replace Domain:", 
+                             "label": "Replace Domain:", 
                              "info": "With format {'to_replace1': 'replacing1', 'to_replace2': 'replacing2', ...}",
                              "options": {'create': True, 'remove': True}},
         })
@@ -59,8 +59,8 @@ class RemoveUnderOver(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
         self.args.update({
-            "lower_bound": {"type": "number", "string": "Lower Bound"},
-            "upper_bound": {"type": "number", "string": "Upper Bound"},
+            "lower_bound": {"type": "number", "label": "Lower Bound"},
+            "upper_bound": {"type": "number", "label": "Upper Bound"},
         })
 
     async def execute(self):
@@ -73,8 +73,8 @@ class NLargest(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
         self.args.update({
-            "n": {"type": "number", "string": "N"},
-            "keep": {"type": "select", "string": "Keep",
+            "n": {"type": "number", "label": "N"},
+            "keep": {"type": "select", "label": "Keep",
                      "options": [("first", "First"), ("last", "Last"), ("all", "All")],
                      "info": "If some lines have similar values:<br/> -'First' will keep the first one<br/> -'Last' will keep the last one<br/> -'All' will keep all of them (even if the number of elements is bigger than expected).", 
 },
@@ -90,8 +90,8 @@ class NSmallest(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
         self.args.update({
-            "n": {"type": "number", "string": "N"},
-            "keep": {"type": "select", "string": "Keep",
+            "n": {"type": "number", "label": "N"},
+            "keep": {"type": "select", "label": "Keep",
                      "options": [("first", "First"), ("last", "Last"), ("all", "All")],
                      "info": "If some lines have similar values:<br/> -'First' will keep the first one<br/> -'Last' will keep the last one<br/> -'All' will keep all of them (even if the number of elements is bigger than expected).", 
 },
@@ -107,7 +107,7 @@ class RenameColumn(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
         self.args.update({
-            "new_col_name": {"type": "text", "string": "New Col. Name"},
+            "new_col_name": {"type": "text", "label": "New Col. Name"},
         })
 
     async def execute(self):
@@ -125,8 +125,8 @@ class CutValues(ActionColumn):
         super().__init__(request)
         self.kwargs = _get_method_sig(pd.cut, remove=['x', 'retbins', 'duplicates'])
         self.args.update({
-            "cut_values": {"type": "text", "string": "Cut Values", "info": "Comma separated. E.g. 0,10,20,30"},
-            "cut_labels": {"type": "text", "string": "Cut Labels", "info": "Comma separated. E.g. low,middle,high'"},
+            "cut_values": {"type": "text", "label": "Cut Values", "info": "Comma separated. E.g. 0,10,20,30"},
+            "cut_labels": {"type": "text", "label": "Cut Labels", "info": "Comma separated. E.g. low,middle,high'"},
         })
 
     async def execute(self):
@@ -148,10 +148,10 @@ class SortColumn(ActionColumn):
         super().__init__(request)
         self.kwargs = _get_method_sig(pd.DataFrame.sort_values, remove=['by', 'inplace', 'ignore_index', 'axis'])
         self.args.update({
-            "sort_order": {"type": "select", "string": "Sort Order", 
+            "sort_order": {"type": "select", "label": "Sort Order", 
                            "options": [("ascending", "Ascending"), ("descending", "Descending"), ("custom", "Custom")], 
                            "onchange": "toggleSelect()"},
-            "sort_key": {"type": "textarea", "string": "Sort Key", 
+            "sort_key": {"type": "textarea", "label": "Sort Key", 
                          "info": "Key must be python code with x as the col values. E.g. x.str.len(), x**2, ... (in practice this will execute: key=lambda x: ...your_input...).", 
                          "required": False, "select_onchange": "custom"},
         })
@@ -181,7 +181,7 @@ class ChangeType(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
         self.args.update({
-            "new_type": {"type": "select", "string": "New Type", 
+            "new_type": {"type": "select", "label": "New Type", 
                          "options": [("int", "Integer"), ("float", "Float"), 
                                      ("string", "String"), ("bool", "Boolean"), ("category", "Category"), 
                                      ("datetime", "Datetime")]},
@@ -202,7 +202,7 @@ class NormalizeColumn(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
         self.args.update({
-            "method": {"type": "select", "string": "Method", 
+            "method": {"type": "select", "label": "Method", 
                        "options": [("min_max", "Min-Max"), ("z_score", "Z Score")]}
         })
 
@@ -221,11 +221,11 @@ class HandleMissingValues(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
         self.args.update({
-            "action": {"type": "select", "string": "Action", 
+            "action": {"type": "select", "label": "Action", 
                        "options": [("delete", "Delete"), ("replace", "Replace"), ("interpolate", "Interpolate")],
                        "onchange": "toggleSelect()",
                        "info": "Interpolate will only work for numeric columns."},
-            "replace_value": {"type": "textarea", "string": "Replace Value", 
+            "replace_value": {"type": "textarea", "label": "Replace Value", 
                               "required": False, "select_onchange": "replace"},
         })
 
@@ -247,7 +247,7 @@ class ApplyFunction(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
         self.args.update({
-            "function": {"type": "textarea", "string": "Function", 
+            "function": {"type": "textarea", "label": "Function", 
                          "info": "Function must be python code with 'row['Col_name']' as the col values. E.g. row['Col_name'].str.len(), row['Col_name'] * -1 if row['Col_name'] < 0 else row['Col_name'], ...",},
         })
 
@@ -262,7 +262,7 @@ class ColDiff(ActionColumn):
         super().__init__(request)
         self.kwargs = _get_method_sig(pd.DataFrame.diff, remove=['axis'])
         self.args.update({
-            "periods": {"type": "number", "string": "Periods"},
+            "periods": {"type": "number", "label": "Periods"},
         })
 
     async def execute(self):

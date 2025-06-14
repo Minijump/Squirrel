@@ -12,7 +12,7 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
  *   - 'select': dropdown select
  *   - 'file': file input
  *   - TODO: password, date
- * @property {string} [string] - Input label text TODO: rename to 'label'
+ * @property {string} [label] - Input label text
  * @property {string} [info] - Info text displayed above input (supports HTML)
  * @property {string} [placeholder] - Placeholder text for input and textarea
  * @property {boolean} [required=true] - Whether the input is required
@@ -27,22 +27,22 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
  * const formInputs = {
  *   username: {
  *     type: 'text',
- *     string: 'Username',
+ *     label: 'Username',
  *     required: true
  *   },
  *   description: {
  *     type: 'textarea',
- *     string: 'Description',
+ *     label: 'Description',
  *     info: 'Enter a detailed description'
  *   },
  *   category: {
  *     type: 'select',
- *     string: 'Category',
+ *     label: 'Category',
  *     options: [['cat1', 'Category 1'], ['cat2', 'Category 2']]
  *   },
  *  fileUpload: {
  *    type: 'file',
- *    string: 'Upload File',
+ *    label: 'Upload File',
  *    accept: '.txt,.csv',
  * };
  */
@@ -161,7 +161,7 @@ export class AutocompleteForm {
 
     createLabel(input) {
         const label = document.createElement('label');
-        label.innerHTML = input.string;
+        label.innerHTML = input.label;
         if (input.select_onchange) {
             label.classList.add('select-onchange');
             label.classList.add(input.select_onchange);

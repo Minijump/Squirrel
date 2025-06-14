@@ -18,19 +18,19 @@ const FORMINPUTS = {
         'invisible': true,
     },
     'custom_action_type': {
-        'string': 'Action Type',
+        'label': 'Action Type',
         'type': 'select',
         'required': true,
         "options": [["sq_action", "Squirrel Action"], ["python", "Python Code"]],
     },
     'custom_action_code': {
-        'string': 'Action Code',
+        'label': 'Action Code',
         'type': 'textarea',
         'required': true,
         'info': "Your tables are available in a dictionnary called dfs, to edit it use dfs['table_name']<br>i.e.: dfs['table_name']['col_name'] = dfs['table_name']['col_name'] * 2",
     },
     'custom_action_name': {
-        'string': 'Action Name',
+        'label': 'Action Name',
         'type': 'text',
         'required': true,
         'info': 'Name used in the pipeline',

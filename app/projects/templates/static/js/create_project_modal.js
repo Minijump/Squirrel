@@ -12,19 +12,19 @@ async function generateFormInputs() {
     }
     const formInputs = {
         'name': {
-            'string': 'Project Name',
+            'label': 'Project Name',
             'type': 'text',
             'required': true,
             'placeholder': 'Enter project name',
         },
         'description': {
-            'string': 'Project Description',
+            'label': 'Project Description',
             'type': 'textarea',
             'required': false,
             'placeholder': 'Enter project description',
         },
         'project_type': {
-            'string': 'Project Type',
+            'label': 'Project Type',
             'type': 'select',
             'required': true,
             "options": projectTypeOptions,

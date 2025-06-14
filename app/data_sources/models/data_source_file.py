@@ -14,14 +14,14 @@ class DataSourceFile(DataSource):
         return {
             "source_file" : {
                 "type": "file",
-                "string": "Source file",
+                "label": "Source file",
                 "required": True,
                 "accept": f".{cls.short_name}",
             },
             "kwargs": {
                 "type": "dict",
                 "options": {'create': True, 'remove': True},
-                "string": "Kwargs",
+                "label": "Kwargs",
                 "required": False,
             }
         }

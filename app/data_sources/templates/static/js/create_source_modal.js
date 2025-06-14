@@ -12,25 +12,25 @@ async function generateFormInputs() {
     }
     const formInputs = {
         'project_dir': {
-            'string': 'Project Directory',
+            'label': 'Project Directory',
             'type': 'text',
             'required': true,
             'invisible': true,
         },
         'source_name': {
-            'string': 'Source Name',
+            'label': 'Source Name',
             'type': 'text',
             'required': true,
             'placeholder': 'Enter source name',
         },
         'source_description': {
-            'string': 'Source Description',
+            'label': 'Source Description',
             'type': 'textarea',
             'required': false,
             'placeholder': 'Enter source description',
         },
         'source_type': {
-            'string': 'Source Type',
+            'label': 'Source Type',
             'type': 'select',
             'required': true,
             'options': availableDataSourcesType,

@@ -16,23 +16,23 @@ class DataSourceYahooFinance(DataSourceAPI):
         return {
             "tickers": {
                 "type": "text",
-                "string": "Tickers",
+                "label": "Tickers",
                 "required": True,
                 "info": "With format: ['ticker1', 'ticker2', ...]",
             },
             "start_date": {
                 "type": "date",
-                "string": "Start Date",
+                "label": "Start Date",
                 "required": True,
             },
             "end_date": {
                 "type": "date",
-                "string": "End Date",
+                "label": "End Date",
                 "required": True,
             },
             "interval": {
                 "type": "select",
-                "string": "Interval",
+                "label": "Interval",
                 "required": True,
                 "options": [("1d", "1 Day"), ("1wk", "1 Week"), ("1mo", "1 Month")],
             },

@@ -17,46 +17,46 @@ class DataSourceOdoo(DataSourceAPI):
         return {
             "url": {
                 "type": "text",
-                "string": "URL",
+                "label": "URL",
                 "required": True,
             },
             "db": {
                 "type": "text",
-                "string": "Database",
+                "label": "Database",
                 "required": True,
             },
             "username": {
                 "type": "text",
-                "string": "User",
+                "label": "User",
                 "required": True,
             },
             "key": {
                 "type": "text",
-                "string": "Key",
+                "label": "Key",
                 "required": True,
             },
             "model": {
                 "type": "text",
-                "string": "Model",
+                "label": "Model",
                 "required": True,
                 "info": "E.g. res.partner",
             },
             "fields": {
                 "type": "text",
-                "string": "Fields",
+                "label": "Fields",
                 "required": True,
                 "info": "With format: ['field_name1', 'field_name2', ...]",
             },
             "domain": {
                 "type": "text",
-                "string": "Domain",
+                "label": "Domain",
                 "required": False,
                 "info": "With format: [('field1', '=', x), ('field2', '!=', y), ...] No domain=[]",
             },
             'kwargs': {
                 'type': 'dict',
                 'options': {'create': True, 'remove': True},
-                'string': 'Kwargs',
+                'label': 'Kwargs',
                 'required': False,
             }
         }
