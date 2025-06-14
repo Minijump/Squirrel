@@ -27,7 +27,7 @@ async function generateFormInputs() {
             'label': 'Project Type',
             'type': 'select',
             'required': true,
-            "options": projectTypeOptions,
+            "select_options": projectTypeOptions,
         },
     };
     return formInputs;

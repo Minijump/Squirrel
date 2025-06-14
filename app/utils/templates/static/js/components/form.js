@@ -17,10 +17,8 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
  * @property {string} [placeholder] - Placeholder text for input and textarea
  * @property {boolean} [required=true] - Whether the input is required
  * @property {boolean} [invisible=false] - Whether the input is hidden
- * @property {Array<Array<string>>|Object} [options] - Configuration options:
- *   - For 'select' type: [['value1', 'Label 1'], ['value2', 'Label 2'], ...]
- *   - For 'dict' type: {create: boolean, remove: boolean} (default: {create: true, remove: true})
- *   TODO: differentiate options in: select_options, dict_options
+ * @property {Array<Array<string>>|Object} [select_options] - Set select input options: [['value1', 'Label 1'], ['value2', 'Label 2'], ...]
+ * @property {Object} [dict_options] - Set dict input options: {create: boolean, remove: boolean} (default: {create: true, remove: true})
  * @property {string} [accept] - File input accept attribute (e.g., '.txt,.csv')
  *  
  * @example
@@ -38,7 +36,7 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
  *   category: {
  *     type: 'select',
  *     label: 'Category',
- *     options: [['cat1', 'Category 1'], ['cat2', 'Category 2']]
+ *     select_options: [['cat1', 'Category 1'], ['cat2', 'Category 2']]
  *   },
  *  fileUpload: {
  *    type: 'file',
@@ -128,8 +126,8 @@ export class AutocompleteForm {
         if (input.type === 'dict') {
             formInput = document.createElement('textarea');
             formInput.setAttribute('widget', 'squirrel-dictionary');
-            if (input.options) {
-                const options = input.options ;
+            if (input.dict_options) {
+                const options = input.dict_options ;
                 const str_options = JSON.stringify(options);
                 formInput.setAttribute('options', str_options);
             }
@@ -144,7 +142,7 @@ export class AutocompleteForm {
         }
         if (input.type === 'select') {
             formInput = document.createElement('select');
-            input.options.forEach(option => {
+            input.select_options.forEach(option => {
                 const optionElement = document.createElement('option');
                 optionElement.value = option[0];
                 optionElement.text = option[1];

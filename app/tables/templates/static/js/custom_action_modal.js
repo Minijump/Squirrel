@@ -21,7 +21,7 @@ const FORMINPUTS = {
         'label': 'Action Type',
         'type': 'select',
         'required': true,
-        "options": [["sq_action", "Squirrel Action"], ["python", "Python Code"]],
+        "select_options": [["sq_action", "Squirrel Action"], ["python", "Python Code"]],
     },
     'custom_action_code': {
         'label': 'Action Code',

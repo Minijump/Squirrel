@@ -34,7 +34,7 @@ class DataSourceYahooFinance(DataSourceAPI):
                 "type": "select",
                 "label": "Interval",
                 "required": True,
-                "options": [("1d", "1 Day"), ("1wk", "1 Week"), ("1mo", "1 Month")],
+                "select_options": [("1d", "1 Day"), ("1wk", "1 Week"), ("1mo", "1 Month")],
             },
         }
 

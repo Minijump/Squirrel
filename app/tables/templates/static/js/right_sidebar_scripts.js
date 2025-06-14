@@ -58,7 +58,7 @@ function createInput(arg) {
         input = document.createElement('textarea');
         input.setAttribute('widget', 'squirrel-dictionary');
         defaultOptions = {create:true, remove:true};
-        const userOptions = arg.options;
+        const userOptions = arg.dict_options;
         const options = userOptions ? { ...defaultOptions, ...userOptions } : defaultOptions;
         const str_options = JSON.stringify(options);
         input.setAttribute('options', str_options);
@@ -70,7 +70,7 @@ function createInput(arg) {
     }
     if (arg.type === 'select') {
         input = document.createElement('select');
-        arg.options.forEach(option => {
+        arg.select_options.forEach(option => {
             const optionElement = document.createElement('option');
             optionElement.value = option[0];
             optionElement.text = option[1];

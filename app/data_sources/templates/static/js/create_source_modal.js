@@ -33,7 +33,7 @@ async function generateFormInputs() {
             'label': 'Source Type',
             'type': 'select',
             'required': true,
-            'options': availableDataSourcesType,
+            'select_options': availableDataSourcesType,
         },
     };
     return formInputs;

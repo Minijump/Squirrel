@@ -40,7 +40,7 @@ class ReplaceVals(ActionColumn):
             "replace_vals": {"type": "dict", 
                              "label": "Replace Domain:", 
                              "info": "With format {'to_replace1': 'replacing1', 'to_replace2': 'replacing2', ...}",
-                             "options": {'create': True, 'remove': True}},
+                             "dict_options": {'create': True, 'remove': True}},
         })
 
     async def execute(self):
@@ -75,7 +75,7 @@ class NLargest(ActionColumn):
         self.args.update({
             "n": {"type": "number", "label": "N"},
             "keep": {"type": "select", "label": "Keep",
-                     "options": [("first", "First"), ("last", "Last"), ("all", "All")],
+                     "select_options": [("first", "First"), ("last", "Last"), ("all", "All")],
                      "info": "If some lines have similar values:<br/> -'First' will keep the first one<br/> -'Last' will keep the last one<br/> -'All' will keep all of them (even if the number of elements is bigger than expected).", 
 },
         })
@@ -92,7 +92,7 @@ class NSmallest(ActionColumn):
         self.args.update({
             "n": {"type": "number", "label": "N"},
             "keep": {"type": "select", "label": "Keep",
-                     "options": [("first", "First"), ("last", "Last"), ("all", "All")],
+                     "select_options": [("first", "First"), ("last", "Last"), ("all", "All")],
                      "info": "If some lines have similar values:<br/> -'First' will keep the first one<br/> -'Last' will keep the last one<br/> -'All' will keep all of them (even if the number of elements is bigger than expected).", 
 },
         })
@@ -149,7 +149,7 @@ class SortColumn(ActionColumn):
         self.kwargs = _get_method_sig(pd.DataFrame.sort_values, remove=['by', 'inplace', 'ignore_index', 'axis'])
         self.args.update({
             "sort_order": {"type": "select", "label": "Sort Order", 
-                           "options": [("ascending", "Ascending"), ("descending", "Descending"), ("custom", "Custom")], 
+                           "select_options": [("ascending", "Ascending"), ("descending", "Descending"), ("custom", "Custom")], 
                            "onchange": "toggleSelect()"},
             "sort_key": {"type": "textarea", "label": "Sort Key", 
                          "info": "Key must be python code with x as the col values. E.g. x.str.len(), x**2, ... (in practice this will execute: key=lambda x: ...your_input...).", 
@@ -182,7 +182,7 @@ class ChangeType(ActionColumn):
         super().__init__(request)
         self.args.update({
             "new_type": {"type": "select", "label": "New Type", 
-                         "options": [("int", "Integer"), ("float", "Float"), 
+                         "select_options": [("int", "Integer"), ("float", "Float"), 
                                      ("string", "String"), ("bool", "Boolean"), ("category", "Category"), 
                                      ("datetime", "Datetime")]},
                 })
@@ -203,7 +203,7 @@ class NormalizeColumn(ActionColumn):
         super().__init__(request)
         self.args.update({
             "method": {"type": "select", "label": "Method", 
-                       "options": [("min_max", "Min-Max"), ("z_score", "Z Score")]}
+                       "select_options": [("min_max", "Min-Max"), ("z_score", "Z Score")]}
         })
 
     async def execute(self):
@@ -222,7 +222,7 @@ class HandleMissingValues(ActionColumn):
         super().__init__(request)
         self.args.update({
             "action": {"type": "select", "label": "Action", 
-                       "options": [("delete", "Delete"), ("replace", "Replace"), ("interpolate", "Interpolate")],
+                       "select_options": [("delete", "Delete"), ("replace", "Replace"), ("interpolate", "Interpolate")],
                        "onchange": "toggleSelect()",
                        "info": "Interpolate will only work for numeric columns."},
             "replace_value": {"type": "textarea", "label": "Replace Value", 

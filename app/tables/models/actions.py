@@ -37,7 +37,7 @@ class AddColumn(Action):
         self.args = {
             "col_name": {"type": "text", "label": "Col. Name"},
             "value_type": {"type": "select", "label": "Value Type", 
-                           "options": [("sq_action", "Squirrel action"), ("python", "Python")]},
+                           "select_options": [("sq_action", "Squirrel action"), ("python", "Python")]},
             "col_value": {"type": "textarea", "label": "Col. Value"},
         }
 
@@ -123,7 +123,7 @@ class CustomAction(Action):
         super().__init__(request)
         self.args = {
             "custom_action_type": {"type": "select", "label": "Value Type", 
-                           "options": [("sq_action", "Squirrel action"), ("python", "Python")]},
+            "select_options": [("sq_action", "Squirrel action"), ("python", "Python")]},
             "custom_action_code": {"type": "textarea", "label": "Python"},
             "custom_action_name": {"type": "text", "label": "Action Name"},
         }
@@ -144,7 +144,7 @@ class MergeTables(Action):
             "table2": {"type": "text", "label": "Table to merge"},
             "on": {"type": "text", "label": "On", "info": "Column name (must be in both tables)"},
             "how": {"type": "select", "label": "How", 
-                    "options": [("inner", "Inner"), ("outer", "Outer"), ("left", "Left"), ("right", "Right")],
+                    "select_options": [("inner", "Inner"), ("outer", "Outer"), ("left", "Left"), ("right", "Right")],
                     "info": "Type of merge, see pandas merge doc (similar to SQL JOIN)"},
         }
 

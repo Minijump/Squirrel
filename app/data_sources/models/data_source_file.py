@@ -20,7 +20,7 @@ class DataSourceFile(DataSource):
             },
             "kwargs": {
                 "type": "dict",
-                "options": {'create': True, 'remove': True},
+                "dict_options": {'create': True, 'remove': True},
                 "label": "Kwargs",
                 "required": False,
             }
