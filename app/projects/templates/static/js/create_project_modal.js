@@ -13,7 +13,7 @@ async function generateFormInputs() {
     const formInputs = {
         'name': {
             'string': 'Project Name',
-            'type': 'str',
+            'type': 'text',
             'required': true,
             'placeholder': 'Enter project name',
         },

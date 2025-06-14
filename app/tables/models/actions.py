@@ -35,7 +35,7 @@ class AddColumn(Action):
     def __init__(self, request):
         super().__init__(request)
         self.args = {
-            "col_name": {"type": "str", "string": "Col. Name"},
+            "col_name": {"type": "text", "string": "Col. Name"},
             "value_type": {"type": "select", "string": "Value Type", 
                            "options": [("sq_action", "Squirrel action"), ("python", "Python")]},
             "col_value": {"type": "txt", "string": "Col. Value"},
@@ -125,7 +125,7 @@ class CustomAction(Action):
             "custom_action_type": {"type": "select", "string": "Value Type", 
                            "options": [("sq_action", "Squirrel action"), ("python", "Python")]},
             "custom_action_code": {"type": "txt", "string": "Python"},
-            "custom_action_name": {"type": "str", "string": "Action Name"},
+            "custom_action_name": {"type": "text", "string": "Action Name"},
         }
 
     async def execute(self):
@@ -141,8 +141,8 @@ class MergeTables(Action):
         self.kwargs = _get_method_sig(pd.merge, remove=['left', 'left_index', 'right_index', 'copy', 'indicator'])
         self.kwargs['suffixes'] = str(self.kwargs['suffixes']) # convert tuple to str, else parenthesis are removed in frontend
         self.args = {
-            "table2": {"type": "str", "string": "Table to merge"},
-            "on": {"type": "str", "string": "On", "info": "Column name (must be in both tables)"},
+            "table2": {"type": "text", "string": "Table to merge"},
+            "on": {"type": "text", "string": "On", "info": "Column name (must be in both tables)"},
             "how": {"type": "select", "string": "How", 
                     "options": [("inner", "Inner"), ("outer", "Outer"), ("left", "Left"), ("right", "Right")],
                     "info": "Type of merge, see pandas merge doc (similar to SQL JOIN)"},
@@ -166,7 +166,7 @@ class ConcatenateTables(Action):
     def __init__(self, request):
         super().__init__(request)
         self.args = {
-            "table": {"type": "str", "string": "Table to concat", "info": "Table name to concatenate (SQL UNION) into actual table"},
+            "table": {"type": "text", "string": "Table to concat", "info": "Table name to concatenate (SQL UNION) into actual table"},
         }
 
     async def execute(self):

@@ -4,8 +4,8 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
 /**
  * // Structure for options.inputs parameter:
  * 
- * @property {'str'|'txt'|'dict'|'number'|'select'|'file'} type - Input type
- *   - 'str': string input TODO: rename to 'text'
+ * @property {string} type - Input type
+ *   - 'text': string input
  *   - 'txt': textarea TODO: rename to 'textarea'
  *   - 'dict': squirrel dict
  *   - 'number': number input
@@ -26,7 +26,7 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
  * @example
  * const formInputs = {
  *   username: {
- *     type: 'str',
+ *     type: 'text',
  *     string: 'Username',
  *     required: true
  *   },
@@ -114,7 +114,7 @@ export class AutocompleteForm {
 
     createInput(input) {
         let formInput = document.createElement('input');
-        if (input.type === 'str') {
+        if (input.type === 'text') {
             if (input.placeholder) {
                 formInput.placeholder = input.placeholder;
             }

@@ -9,8 +9,8 @@ class ActionColumn(Action):
     def __init__(self, request):
         super().__init__(request)
         self.args.update({
-            "col_name": {"type": "str", "invisible": True},
-            "col_idx": {"type": "str", "invisible": True},
+            "col_name": {"type": "text", "invisible": True},
+            "col_idx": {"type": "text", "invisible": True},
         })
 
     async def _get(self, args_list):
@@ -107,7 +107,7 @@ class RenameColumn(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
         self.args.update({
-            "new_col_name": {"type": "str", "string": "New Col. Name"},
+            "new_col_name": {"type": "text", "string": "New Col. Name"},
         })
 
     async def execute(self):
@@ -125,8 +125,8 @@ class CutValues(ActionColumn):
         super().__init__(request)
         self.kwargs = _get_method_sig(pd.cut, remove=['x', 'retbins', 'duplicates'])
         self.args.update({
-            "cut_values": {"type": "str", "string": "Cut Values", "info": "Comma separated. E.g. 0,10,20,30"},
-            "cut_labels": {"type": "str", "string": "Cut Labels", "info": "Comma separated. E.g. low,middle,high'"},
+            "cut_values": {"type": "text", "string": "Cut Values", "info": "Comma separated. E.g. 0,10,20,30"},
+            "cut_labels": {"type": "text", "string": "Cut Labels", "info": "Comma separated. E.g. low,middle,high'"},
         })
 
     async def execute(self):

@@ -3,17 +3,17 @@ import { FormModal } from '/static/base/js/components/modal.js';
 
 const FORMINPUTS = {
     'action_name': {
-        'type': 'str',
+        'type': 'text',
         'required': true,
         'invisible': true,
     },
     'project_dir': {
-        'type': 'str',
+        'type': 'text',
         'required': true,
         'invisible': true,
     },
     'default_table_name': {
-        'type': 'str',
+        'type': 'text',
         'required': true,
         'invisible': true,
     },
@@ -31,7 +31,7 @@ const FORMINPUTS = {
     },
     'custom_action_name': {
         'string': 'Action Name',
-        'type': 'str',
+        'type': 'text',
         'required': true,
         'info': 'Name used in the pipeline',
     },

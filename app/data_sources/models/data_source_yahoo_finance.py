@@ -15,7 +15,7 @@ class DataSourceYahooFinance(DataSourceAPI):
     def get_source_specific_creation_args(cls):
         return {
             "tickers": {
-                "type": "str",
+                "type": "text",
                 "string": "Tickers",
                 "required": True,
                 "info": "With format: ['ticker1', 'ticker2', ...]",

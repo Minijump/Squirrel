@@ -16,33 +16,33 @@ class DataSourceOdoo(DataSourceAPI):
     def get_source_specific_creation_args(cls):
         return {
             "url": {
-                "type": "str",
+                "type": "text",
                 "string": "URL",
                 "required": True,
             },
             "db": {
-                "type": "str",
+                "type": "text",
                 "string": "Database",
                 "required": True,
             },
             "username": {
-                "type": "str",
+                "type": "text",
                 "string": "User",
                 "required": True,
             },
             "key": {
-                "type": "str",
+                "type": "text",
                 "string": "Key",
                 "required": True,
             },
             "model": {
-                "type": "str",
+                "type": "text",
                 "string": "Model",
                 "required": True,
                 "info": "E.g. res.partner",
             },
             "fields": {
-                "type": "str",
+                "type": "text",
                 "string": "Fields",
                 "required": True,
                 "info": "With format: ['field_name1', 'field_name2', ...]",

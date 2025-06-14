@@ -13,13 +13,13 @@ async function generateFormInputs() {
     const formInputs = {
         'project_dir': {
             'string': 'Project Directory',
-            'type': 'str',
+            'type': 'text',
             'required': true,
             'invisible': true,
         },
         'source_name': {
             'string': 'Source Name',
-            'type': 'str',
+            'type': 'text',
             'required': true,
             'placeholder': 'Enter source name',
         },
