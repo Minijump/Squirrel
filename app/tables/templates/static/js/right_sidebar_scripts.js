@@ -51,7 +51,7 @@ function addLabel(argsDiv, arg) {
 }
 function createInput(arg) {
     let input = document.createElement('input');
-    if (arg.type === 'txt') {
+    if (arg.type === 'textarea') {
         input = document.createElement('textarea');
     }
     if (arg.type === 'dict') {

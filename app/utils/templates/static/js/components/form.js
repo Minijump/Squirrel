@@ -6,7 +6,7 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
  * 
  * @property {string} type - Input type
  *   - 'text': string input
- *   - 'txt': textarea TODO: rename to 'textarea'
+ *   - 'textarea': textarea input
  *   - 'dict': squirrel dict
  *   - 'number': number input
  *   - 'select': dropdown select
@@ -31,7 +31,7 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
  *     required: true
  *   },
  *   description: {
- *     type: 'txt',
+ *     type: 'textarea',
  *     string: 'Description',
  *     info: 'Enter a detailed description'
  *   },
@@ -119,7 +119,7 @@ export class AutocompleteForm {
                 formInput.placeholder = input.placeholder;
             }
         }
-        if (input.type === 'txt') {
+        if (input.type === 'textarea') {
             formInput = document.createElement('textarea');
             if (input.placeholder) {
                 formInput.placeholder = input.placeholder;

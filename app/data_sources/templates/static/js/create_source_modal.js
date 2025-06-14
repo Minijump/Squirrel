@@ -25,7 +25,7 @@ async function generateFormInputs() {
         },
         'source_description': {
             'string': 'Source Description',
-            'type': 'txt',
+            'type': 'textarea',
             'required': false,
             'placeholder': 'Enter source description',
         },

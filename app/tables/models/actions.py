@@ -38,7 +38,7 @@ class AddColumn(Action):
             "col_name": {"type": "text", "string": "Col. Name"},
             "value_type": {"type": "select", "string": "Value Type", 
                            "options": [("sq_action", "Squirrel action"), ("python", "Python")]},
-            "col_value": {"type": "txt", "string": "Col. Value"},
+            "col_value": {"type": "textarea", "string": "Col. Value"},
         }
 
     async def execute(self):
@@ -53,7 +53,7 @@ class AddRow(Action):
         super().__init__(request)
         self.args = {
             "new_rows": {
-                "type": "txt", 
+                "type": "textarea", 
                 "string": "New rows", 
                 "info": """With format<br/> [<br/>{'Col1': Value1, 'Col2': Value2, ...},<br/> {'Col1': Value3 ...<br/>]"""},
         }
@@ -69,7 +69,7 @@ class DeleteRow(Action):
     def __init__(self, request):
         super().__init__(request)
         self.args = {
-            "delete_domain": {"type": "txt", "string": "Domain", "info": "With format Col1 &lt; Col2, Colx == 'Value',...."},
+            "delete_domain": {"type": "textarea", "string": "Domain", "info": "With format Col1 &lt; Col2, Colx == 'Value',...."},
         }
 
     async def execute(self):
@@ -82,7 +82,7 @@ class KeepRow(Action):
     def __init__(self, request):
         super().__init__(request)
         self.args = {
-            "keep_domain": {"type": "txt", "string": "Domain", "info": "With format Col1 &lt; Col2, Colx == 'Value',...."},
+            "keep_domain": {"type": "textarea", "string": "Domain", "info": "With format Col1 &lt; Col2, Colx == 'Value',...."},
         }
 
     async def execute(self):
@@ -124,7 +124,7 @@ class CustomAction(Action):
         self.args = {
             "custom_action_type": {"type": "select", "string": "Value Type", 
                            "options": [("sq_action", "Squirrel action"), ("python", "Python")]},
-            "custom_action_code": {"type": "txt", "string": "Python"},
+            "custom_action_code": {"type": "textarea", "string": "Python"},
             "custom_action_name": {"type": "text", "string": "Action Name"},
         }
 
@@ -180,7 +180,7 @@ class GroupBy(Action):
         super().__init__(request)
         # agg is mandatory, without agg it returns a dfGroupBy object whiwh can not be displayed yet
         self.args = {
-            "groupby": {"type": "txt", "string": "Group by", 
+            "groupby": {"type": "textarea", "string": "Group by", 
                         "info": "Column name or list of column names </br> i.e. col1 or ['col1', 'col2']"},
             "agg": {"type": "dict", "string": "Aggregation",
                     "info": "Aggregation functions to apply to each group </br> i.e. sum or {'col1': 'sum', 'col2': 'mean'}"},

@@ -151,7 +151,7 @@ class SortColumn(ActionColumn):
             "sort_order": {"type": "select", "string": "Sort Order", 
                            "options": [("ascending", "Ascending"), ("descending", "Descending"), ("custom", "Custom")], 
                            "onchange": "toggleSelect()"},
-            "sort_key": {"type": "txt", "string": "Sort Key", 
+            "sort_key": {"type": "textarea", "string": "Sort Key", 
                          "info": "Key must be python code with x as the col values. E.g. x.str.len(), x**2, ... (in practice this will execute: key=lambda x: ...your_input...).", 
                          "required": False, "select_onchange": "custom"},
         })
@@ -225,7 +225,7 @@ class HandleMissingValues(ActionColumn):
                        "options": [("delete", "Delete"), ("replace", "Replace"), ("interpolate", "Interpolate")],
                        "onchange": "toggleSelect()",
                        "info": "Interpolate will only work for numeric columns."},
-            "replace_value": {"type": "txt", "string": "Replace Value", 
+            "replace_value": {"type": "textarea", "string": "Replace Value", 
                               "required": False, "select_onchange": "replace"},
         })
 
@@ -247,7 +247,7 @@ class ApplyFunction(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
         self.args.update({
-            "function": {"type": "txt", "string": "Function", 
+            "function": {"type": "textarea", "string": "Function", 
                          "info": "Function must be python code with 'row['Col_name']' as the col values. E.g. row['Col_name'].str.len(), row['Col_name'] * -1 if row['Col_name'] < 0 else row['Col_name'], ...",},
         })
 

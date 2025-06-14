@@ -19,7 +19,7 @@ async function generateFormInputs() {
         },
         'description': {
             'string': 'Project Description',
-            'type': 'txt',
+            'type': 'textarea',
             'required': false,
             'placeholder': 'Enter project description',
         },
