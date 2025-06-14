@@ -1,4 +1,5 @@
 import { FormModal } from '/static/base/js/components/modal.js';
+import { Field } from '/static/base/js/components/field.js';
 
 
 async function generateFormInputs() {
@@ -75,8 +76,8 @@ export class CreateSourceModal extends FormModal {
         const sourceTypeSpecificArgsDiv = document.querySelector('#sourceTypeSpecificArgs');
         sourceTypeSpecificArgsDiv.innerHTML = '';
         Object.keys(specificSourceArgs).forEach(key => {
-            const inputDiv = this.form.generateInputdiv(specificSourceArgs[key], key);
-            sourceTypeSpecificArgsDiv.appendChild(inputDiv);
+            const input = new Field(key, specificSourceArgs[key]);
+            sourceTypeSpecificArgsDiv.appendChild(input.inputDiv);
         });
         return;
     }

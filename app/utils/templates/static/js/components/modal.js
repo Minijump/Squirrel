@@ -123,7 +123,6 @@ export class FormModal extends Modal {
             'data': options.formData || {},
         }
         const form = new AutocompleteForm(formOptions);
-        // TODO, we should not copy AutocompleteForm content, but use the entire object (to be able to access methods, add new inputs, etc.)
         options.content = form.formCode;
         super(options);
         this.form = form;
