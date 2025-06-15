@@ -17,11 +17,8 @@ export class AutocompleteForm {
             const input = new Field(key, this.inputs[key]);
             form.appendChild(input.inputDiv);
         });
-        
+        form.appendChild(this.createSubmitButton());
         this.completeInputs(form, this.data);
-
-        const submitButton = this.createSubmitButton();
-        form.appendChild(submitButton);
 
         this.formCode = form.outerHTML;
     }
@@ -45,16 +42,11 @@ export class AutocompleteForm {
     }
 
     completeInputs(form, data={}) {
-        for (const key in data) {
-            if (data.hasOwnProperty(key)) {
-                const inputElement = form.querySelector(`#${key}`);
-                if (inputElement) {
-                    inputElement.value = data[key];
-                } else {
-                    console.warn(`Element with id ${key} not found in the form.`);
-                }
-            }
-        }
+        Object.keys(data).forEach(key => {
+            const inputElement = form.querySelector(`#${key}`);
+            if (inputElement) inputElement.value = data[key];
+            else console.warn(`Element with id ${key} not found in the form.`);
+        });
     }
 
     // TODO: add an easy way to bind events to inputs? (or in Field class)
