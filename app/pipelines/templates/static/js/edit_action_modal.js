@@ -28,10 +28,10 @@ export class EditActionModal extends Modal {
     }
 
     async fillData() {
-        this.element.querySelector('strong[id="modal-action-name"]').textContent = this.actionName;
-        this.element.querySelector('input[name="project_dir"]').value = this.projectDir;
-        this.element.querySelector('input[name="action_id"]').value = this.actionId;
-        this.element.querySelector('textarea[name="action_code"]').value = this.actionCode;
+        this.modalHtml.querySelector('strong[id="modal-action-name"]').textContent = this.actionName;
+        this.modalHtml.querySelector('input[name="project_dir"]').value = this.projectDir;
+        this.modalHtml.querySelector('input[name="action_id"]').value = this.actionId;
+        this.modalHtml.querySelector('textarea[name="action_code"]').value = this.actionCode;
     }
 
     deletePipelineAction() {

@@ -77,7 +77,7 @@ export class CreateSourceModal extends FormModal {
         sourceTypeSpecificArgsDiv.innerHTML = '';
         Object.keys(specificSourceArgs).forEach(key => {
             const input = new Field(key, specificSourceArgs[key]);
-            sourceTypeSpecificArgsDiv.appendChild(input.inputDiv);
+            sourceTypeSpecificArgsDiv.appendChild(input.inputDivHTML);
         });
         return;
     }

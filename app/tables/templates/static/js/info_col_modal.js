@@ -73,11 +73,11 @@ export class InfoColModal extends Modal {
     async fillData() {
         const projectDir = new URLSearchParams(window.location.search).get('project_dir');
 
-        this.element.querySelector('#modalTitle').innerText = this.colName;
-        this.element.querySelector('#col_name').value = this.colName;
-        this.element.querySelector('#col_idx').value = this.colIdx;
-        this.element.querySelector('#table_name').value = this.tableName;
-        this.element.querySelector('#project_dir').value = projectDir;
+        this.modalHtml.querySelector('#modalTitle').innerText = this.colName;
+        this.modalHtml.querySelector('#col_name').value = this.colName;
+        this.modalHtml.querySelector('#col_idx').value = this.colIdx;
+        this.modalHtml.querySelector('#table_name').value = this.tableName;
+        this.modalHtml.querySelector('#project_dir').value = projectDir;
                 
         try {
             const response = await fetch(`/tables/column_infos/?project_dir=${projectDir}&table=${this.tableName}&column_name=${this.colName}&column_idx=${this.colIdx}`);
@@ -89,13 +89,13 @@ export class InfoColModal extends Modal {
             
             fields.forEach(field => {
                 if (field === 'is_numeric') {
-                    this.element.querySelectorAll('.numeric-only').forEach(div => 
+                    this.modalHtml.querySelectorAll('.numeric-only').forEach(div => 
                         div.style.display = data[field] ? 'flex' : 'none'
                     );
                     return;
                 }
                 
-                const element = this.element.querySelector(`#col_${field}`);
+                const element = this.modalHtml.querySelector(`#col_${field}`);
                 if (element) {
                     element.style.display = data[field] !== undefined ? 'inline' : 'none';
                     if (data[field] !== undefined) {
@@ -105,7 +105,7 @@ export class InfoColModal extends Modal {
             });
         } catch (error) {
             console.error('Error:', error);
-            this.element.querySelector('#error_infos_computation').innerHTML = 
+            this.modalHtml.querySelector('#error_infos_computation').innerHTML = 
                 `Error computing informations: ${error.message}`;
         }
     }

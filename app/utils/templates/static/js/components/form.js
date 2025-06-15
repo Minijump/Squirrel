@@ -7,7 +7,7 @@ export class AutocompleteForm {
         this.inputs = options.inputs || {};
         this.submitRoute = options.submitRoute || '';
         this.data = options.data || {};
-        this.formCode = null;
+        this.formHTML = null;
         this.create();
     }
 
@@ -15,12 +15,12 @@ export class AutocompleteForm {
         const form = this.createForm();
         Object.keys(this.inputs).forEach(key => {
             const input = new Field(key, this.inputs[key]);
-            form.appendChild(input.inputDiv);
+            form.appendChild(input.inputDivHTML);
         });
         form.appendChild(this.createSubmitButton());
         this.completeInputs(form, this.data);
 
-        this.formCode = form.outerHTML;
+        this.formHTML = form;
     }
 
     createForm() {

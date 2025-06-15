@@ -46,11 +46,11 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
 export class Field {
     constructor(inputId, inputInfo) {
         this.id = 'field-' + Math.random().toString(36).substring(2, 11);
-        this.inputDiv = this.generateInputdiv(inputInfo, inputId);
+        this.inputDivHTML = this.generateInputdiv(inputInfo, inputId);
     }
 
     generateInputdiv(inputInfo, inputId) {
-        const inputDiv = document.createElement('div');
+        const inputDivHTML = document.createElement('div');
         
         const input = this.createInput(inputInfo);
         input.name = input.id = inputId;
@@ -59,14 +59,14 @@ export class Field {
         if (inputInfo.invisible) input.type = 'hidden';
         else{
             const label = this.createLabel(inputInfo);
-            label && inputDiv.appendChild(label);
+            label && inputDivHTML.appendChild(label);
             const infoNote = this.createInfoNote(inputInfo);
-            infoNote && inputDiv.appendChild(infoNote);
+            infoNote && inputDivHTML.appendChild(infoNote);
         }
 
-        inputDiv.appendChild(input);
+        inputDivHTML.appendChild(input);
         if (inputInfo.type === 'dict') new SquirrelDictionary(input);
-        return inputDiv;
+        return inputDivHTML;
     }
 
     createInput(input) {

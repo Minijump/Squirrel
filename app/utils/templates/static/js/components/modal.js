@@ -4,18 +4,16 @@ export class Modal {
     constructor(options = {}) {
         this.id = options.id || 'modal-' + Math.random().toString(36).substring(2, 11);
         this.title = options.title || 'Modal';
-        this.className = options.className || '';
-        this.backdrop = options.backdrop || true;
         this.bodyContent = options.content || '';
-        this.element = null;
+        this.modalHtml = null;
         this.isOpen = false;
         this.create();
     }
 
     create() {
-        this.element = document.createElement('div');
-        this.element.className = `modal ${this.className}`;
-        this.element.id = this.id;
+        this.modalHtml = document.createElement('div');
+        this.modalHtml.className = `modal`;
+        this.modalHtml.id = this.id;
         
         const modalContent = document.createElement('div');
         modalContent.className = 'modal-content';
@@ -25,8 +23,8 @@ export class Modal {
         
         modalContent.appendChild(header);
         modalContent.appendChild(content);
-        this.element.appendChild(modalContent);
-        document.body.appendChild(this.element); 
+        this.modalHtml.appendChild(modalContent);
+        document.body.appendChild(this.modalHtml); 
         this.bindEvents();
     }
 
@@ -43,44 +41,33 @@ export class Modal {
     createContent() {
         const content = document.createElement('div');
         content.className = 'modal-body';
-        if (typeof this.bodyContent === 'string') {
-            content.innerHTML = this.bodyContent;
-        } else if (this.bodyContent instanceof HTMLElement) {
-            content.appendChild(this.bodyContent);
-        }
+        if (typeof this.bodyContent === 'string') content.innerHTML = this.bodyContent;
+        else if (this.bodyContent instanceof HTMLElement) content.appendChild(this.bodyContent);
+        else if (this.bodyContent instanceof AutocompleteForm) content.appendChild(this.bodyContent.formHTML);
+        else console.warn('Modal body expects string, HTMLElement or AutocompleteForm');
         return content;
     }
 
     bindEvents() {
-        const closeBtn = this.element.querySelector('.close-btn');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => this.close());
-        }
+        const closeBtn = this.modalHtml.querySelector('.close-btn');
+        if (closeBtn) closeBtn.addEventListener('click', () => this.close());
         
-        if (this.backdrop) {
-            this.element.addEventListener('click', (e) => {
-                if (e.target === this.element) {
-                    this.close();
-                }
-            });
-        }
-        
+        this.modalHtml.addEventListener('click', (e) => {
+            if (e.target === this.modalHtml) this.close();
+        });
         this.escapeHandler = (e) => {
-            if (e.key === 'Escape' && this.isOpen) {
-                this.close();
-            }
+            if (e.key === 'Escape' && this.isOpen) this.close();
         };
     }
 
     open() {
-        this.fillData();
         if (this.isOpen) return;
-        
-        this.element.style.display = 'flex';
+
+        this.fillData();
+        this.modalHtml.style.display = 'flex';
         this.isOpen = true;
         document.addEventListener('keydown', this.escapeHandler);
-        
-        this.defaultFocus();
+        this.defaultFocus();  
     }
 
     fillData() {
@@ -88,29 +75,23 @@ export class Modal {
     }
 
     defaultFocus() {
-        const inputs = document.querySelectorAll('input, textarea');
-        for (const input of inputs) {
-            if (input.offsetParent !== null) { // Check if the element is visible
-                input.focus();
-                break;
-            }
-        }
+        Array.from(document.querySelectorAll('input, textarea'))
+            .find(input => input.offsetParent !== null) // find 1st visible element
+            ?.focus();
     }
 
     close() {
         if (!this.isOpen) return;
-        
-        this.element.style.display = 'none';
+
+        this.modalHtml.style.display = 'none';
         this.isOpen = false;
         document.removeEventListener('keydown', this.escapeHandler);
         this.destroy();
     }
 
     destroy() {
-        if (this.element) {
-            this.element.remove();
-            this.element = null;
-        }
+        this.modalHtml?.remove();
+        this.modalHtml = null;
     }
 }
 
@@ -122,9 +103,7 @@ export class FormModal extends Modal {
             'submitRoute': options.formSubmitRoute || '',
             'data': options.formData || {},
         }
-        const form = new AutocompleteForm(formOptions);
-        options.content = form.formCode;
+        options.content = new AutocompleteForm(formOptions);
         super(options);
-        this.form = form;
     }
 }
