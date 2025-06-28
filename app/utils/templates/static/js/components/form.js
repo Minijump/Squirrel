@@ -1,7 +1,7 @@
 import { Field } from './field.js';
 
 
-export class AutocompleteForm {
+export class Form {
     constructor(options = {}) {
         this.id = options.id || 'form-' + Math.random().toString(36).substring(2, 11);
         this.inputs = options.inputs || {};

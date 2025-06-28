@@ -1,4 +1,4 @@
-import { AutocompleteForm } from './form.js';
+import { Form } from './form.js';
 
 export class Modal {
     constructor(options = {}) {
@@ -43,8 +43,8 @@ export class Modal {
         content.className = 'modal-body';
         if (typeof this.bodyContent === 'string') content.innerHTML = this.bodyContent;
         else if (this.bodyContent instanceof HTMLElement) content.appendChild(this.bodyContent);
-        else if (this.bodyContent instanceof AutocompleteForm) content.appendChild(this.bodyContent.formHTML);
-        else console.warn('Modal body expects string, HTMLElement or AutocompleteForm');
+        else if (this.bodyContent instanceof Form) content.appendChild(this.bodyContent.formHTML);
+        else console.warn('Modal body expects string, HTMLElement or Form');
         return content;
     }
 
@@ -103,7 +103,7 @@ export class FormModal extends Modal {
             'submitRoute': options.formSubmitRoute || '',
             'data': options.formData || {},
         }
-        options.content = new AutocompleteForm(formOptions);
+        options.content = new Form(formOptions);
         super(options);
     }
 }
