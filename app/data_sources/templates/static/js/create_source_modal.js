@@ -3,14 +3,9 @@ import { Field } from '/static/base/js/components/field.js';
 
 
 async function generateFormInputs() {
-    let availableDataSourcesType = [];
-    try {
-        const response = await fetch('/data_sources/get_available_data_sources_type/');
-        const data = await response.json();
-        availableDataSourcesType = data.available_types;
-    } catch (error) {
-        console.error('Error fetching data source type options:', error);
-    }
+    const response = await fetch('/data_sources/get_available_data_sources_type/');
+    const data = await response.json();
+    const availableDataSourcesType = data.available_types || [];
     const formInputs = {
         'project_dir': {
             'label': 'Project Directory',
@@ -83,18 +78,14 @@ export class CreateSourceModal extends FormModal {
     }
 
     async getSourceTypeSpecificArgs(sourceType) {
-        try {
-            const response = await fetch(`/data_sources/get_source_creation_specific_args/${sourceType}/`);
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error('Error fetching source type specific args:', error);
-        }
+        const response = await fetch(`/data_sources/get_source_creation_specific_args/${sourceType}/`);
+        return response.json();
     }
     
     fillData() {
         const sourceTypeSelect = document.querySelector('#createSourceModalForm select[name="source_type"]');
         if (sourceTypeSelect) {
+            // Required for when the modal opens
             sourceTypeSelect.dispatchEvent(new Event('change'));
         }
     }
