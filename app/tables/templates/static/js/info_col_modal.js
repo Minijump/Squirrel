@@ -5,22 +5,19 @@ export class InfoColModal extends Modal {
         options['content'] = document.getElementById('infoColModalBody').innerHTML;
         options['id'] = 'InfoColModal';
         super(options);
-        this.colName = colName;
-        this.colIdx = colIdx;
-        this.tableName = tableName;
+        Object.assign(this, {colName, colIdx, tableName});
     }
 
     createHeader() {
         const headerTemplate = document.getElementById('headerInfoColModal');
-        const header = headerTemplate.cloneNode(true);
+        const header = headerTemplate.cloneNode(true)
         header.removeAttribute('id');
         
         const editBtn = header.querySelector('#editBtn');
-        const modalInstance = this;
         if (editBtn) {
             editBtn.onclick = () => {
-                modalInstance.close();
-                openSidebarActionForm('RenameColumn', modalInstance.getColumnInfo());
+                this.close();
+                openSidebarActionForm('RenameColumn', this.getColumnInfo());
             };
         }
         
@@ -62,10 +59,9 @@ export class InfoColModal extends Modal {
         const button = document.createElement('button');
         button.className = 'table-action-btn';
         button.textContent = btn.label;
-        const modalInstance = this;
-        button.onclick = function() {
-            modalInstance.close();
-            openSidebarActionForm(btn.action, modalInstance.getColumnInfo());
+        button.onclick = () => {
+            this.close();
+            openSidebarActionForm(btn.action, this.getColumnInfo());
         };
         return button;
     }
@@ -82,31 +78,24 @@ export class InfoColModal extends Modal {
         try {
             const response = await fetch(`/tables/column_infos/?project_dir=${projectDir}&table=${this.tableName}&column_name=${this.colName}&column_idx=${this.colIdx}`);
             if (!response.ok) throw new Error(`Error in response ${response.status}`);
-            
             const data = await response.json();
+
+            this.modalHtml.querySelectorAll('.numeric-only').forEach(div => 
+                div.style.display = data['is_numeric'] ? 'flex' : 'none'
+            );
+
             const fields = ['dtype', 'count', 'unique', 'null',
-                            'is_numeric', 'mean', 'std', 'min', '25', '50', '75', 'max'];
-            
-            fields.forEach(field => {
-                if (field === 'is_numeric') {
-                    this.modalHtml.querySelectorAll('.numeric-only').forEach(div => 
-                        div.style.display = data[field] ? 'flex' : 'none'
-                    );
-                    return;
-                }
-                
+                            'mean', 'std', 'min', '25', '50', '75', 'max'];    
+            fields.forEach(field => {       
                 const element = this.modalHtml.querySelector(`#col_${field}`);
                 if (element) {
-                    element.style.display = data[field] !== undefined ? 'inline' : 'none';
-                    if (data[field] !== undefined) {
-                        element.querySelector('span').innerText = this.formatNumber(data[field]);
-                    }
+                    const hasValue = data[field] !== undefined;
+                    element.style.display = hasValue ? 'inline' : 'none';
+                    element.querySelector('span').innerText = hasValue ? this.formatNumber(data[field]) : 'N/A';
                 }
             });
         } catch (error) {
-            console.error('Error:', error);
-            this.modalHtml.querySelector('#error_infos_computation').innerHTML = 
-                `Error computing informations: ${error.message}`;
+            this.modalHtml.querySelector('#error_infos_computation').innerHTML = `Error computing informations: ${error.message}`;
         }
     }
 
