@@ -2,32 +2,29 @@ import { Modal } from '/static/base/js/components/modal.js';
 
 
 export class EditActionModal extends Modal {
+    // Does not extends FormModal because we need to add a delete button (TODO?)
     constructor(actionId, actionName, actionCode, options = {}) {
         options['content'] = document.getElementById('editActionModalBody').innerHTML;
         options['id'] = 'editActionModal';
         options['title'] = 'Edit Action';
         super(options);
-        this.actionId = actionId ;
-        this.actionName = actionName;
-        this.actionCode = actionCode;
+        Object.assign(this, { actionId, actionName, actionCode });
         this.projectDir = new URLSearchParams(window.location.search).get('project_dir');
     }
 
     createContent() {
         const content = super.createContent();
 
-        const deleteBtn = content.querySelector('#deleteButton');
-        deleteBtn.onclick = () => {
+        content.querySelector('#deleteButton').onclick = () => {
             if (confirm('Are you sure you want to delete this action?')) {
-                const modalInstance = this; 
-                modalInstance.deletePipelineAction();
+                this.deletePipelineAction();
             }
-        }
+        };
 
         return content;
     }
 
-    async fillData() {
+    fillData() {
         this.modalHtml.querySelector('strong[id="modal-action-name"]').textContent = this.actionName;
         this.modalHtml.querySelector('input[name="project_dir"]').value = this.projectDir;
         this.modalHtml.querySelector('input[name="action_id"]').value = this.actionId;
