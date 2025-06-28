@@ -49,5 +49,5 @@ export class AutocompleteForm {
         });
     }
 
-    // TODO: add an easy way to bind events to inputs? (or in Field class)
+    // TODO: add an easy way to bind events to inputs? (or in Field class) + fill data in input?
 }

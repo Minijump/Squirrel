@@ -10,12 +10,12 @@ class DataSourceFile(DataSource):
     icon = ""
 
     @classmethod
-    def get_source_specific_creation_args(cls):
+    def get_source_specific_args(cls, is_settings=False):
         return {
             "source_file" : {
                 "type": "file",
                 "label": "Source file",
-                "required": True,
+                "required": False if is_settings else True,
                 "accept": f".{cls.short_name}",
             },
             "kwargs": {

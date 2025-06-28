@@ -41,10 +41,12 @@ async def get_available_data_sources_type(request: Request):
     return JSONResponse(content={"available_types": available_types}, status_code=200)
 
 @router.get("/data_sources/get_source_creation_specific_args/{source_type}")
-async def get_source_creation_specific_args(source_type):
-    """Returns the source creation specific args for the given source type"""
+@router.get("/data_sources/get_source_settings_specific_args/{source_type}")
+async def get_source_specific_args(request: Request, source_type):
+    """Returns the source specific args for the given source type"""
+    is_settings = "settings" in str(request.url.path)
     SourceClass = DATA_SOURCE_REGISTRY[source_type]
-    specific_args = SourceClass.get_source_specific_creation_args()
+    specific_args = SourceClass.get_source_specific_args(is_settings=is_settings)
     return JSONResponse(content=specific_args, status_code=200)
 
 @router.get("/data_sources/")

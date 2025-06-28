@@ -14,7 +14,7 @@ class DataSource:
     icon = ""
 
     @classmethod
-    def get_source_specific_creation_args(cls):
+    def get_source_specific_args(cls, is_settings=False):
         return {}
 
     def __init__(self, manifest):

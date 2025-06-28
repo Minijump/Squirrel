@@ -13,7 +13,7 @@ class DataSourceOdoo(DataSourceAPI):
     icon = "odoo_icon.png"
 
     @classmethod
-    def get_source_specific_creation_args(cls):
+    def get_source_specific_args(cls, is_settings=False):
         return {
             "url": {
                 "type": "text",

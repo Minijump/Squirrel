@@ -12,7 +12,7 @@ class DataSourceYahooFinance(DataSourceAPI):
     icon = "yahoo_finance_icon.png"
 
     @classmethod
-    def get_source_specific_creation_args(cls):
+    def get_source_specific_args(cls, is_settings=False):
         return {
             "tickers": {
                 "type": "text",
