@@ -1,4 +1,5 @@
 import { Modal } from '/static/base/js/components/modal.js';
+import { openSidebarActionForm } from './sidebar_scripts.js';
 
 export class InfoColModal extends Modal {
     constructor(colName, colIdx, tableName, options = {}) {

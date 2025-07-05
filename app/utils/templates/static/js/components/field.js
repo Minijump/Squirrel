@@ -23,6 +23,9 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
  * @property {Object} [dict_default={}] - Default value for the dictionnary input
  * @property {string} [accept] - File input accept attribute (e.g., '.txt,.csv')
  * @property {string} [step='any'] - Step attribute for number inputs
+ * @property {string} [className] - CSS class name(s) to add to the input element
+ * @property {string} [onchange] - JavaScript code to execute on change event
+ * @property {string} [select_onchange] - CSS class for conditional display logic
  *  
  * @example
  *   username: {
@@ -55,6 +58,12 @@ export class Field {
         const input = this.createInput(inputInfo);
         input.name = input.id = inputId;
         input.required = (inputInfo.required !== undefined) ? inputInfo.required : true;
+
+        // Add select_onchange classes to the container div
+        if (inputInfo.select_onchange) {
+            inputDivHTML.className += ' select-onchange ';
+            inputDivHTML.className += inputInfo.select_onchange;
+        }
 
         if (inputInfo.invisible) input.type = 'hidden';
         else{
@@ -94,6 +103,16 @@ export class Field {
 
         if (['text', 'password', 'textarea', 'number'].includes(input.type) && input.placeholder) {
             formInput.placeholder = input.placeholder;
+        }
+
+        // Add support for onchange attribute
+        if (input.onchange) {
+            formInput.setAttribute('onchange', input.onchange);
+        }
+
+        // Add support for custom CSS classes
+        if (input.className) {
+            formInput.className = input.className;
         }
 
         return formInput;

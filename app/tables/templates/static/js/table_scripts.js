@@ -1,5 +1,6 @@
 import { openCustomActionModal } from './custom_action_modal.js';
 import { InfoColModal } from './info_col_modal.js';
+import { openSidebarActionForm, openSidebarForm } from './sidebar_scripts.js';
 
 
 // Table selection
@@ -131,6 +132,6 @@ document.addEventListener('DOMContentLoaded', function() { addInfoButtons(); });
 
 
 window.openCustomActionModal = openCustomActionModal;
-window.saveSelectedTable = saveSelectedTable;
-window.getSelectedTable = getSelectedTable;
 window.showTable = showTable;
+window.openSidebarActionForm = openSidebarActionForm;
+window.openSidebarForm = openSidebarForm;
