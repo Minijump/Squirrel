@@ -5,7 +5,7 @@ export class Sidebar {
         this.id = options.id || 'sidebar-' + Math.random().toString(36).substring(2, 11);
         this.title = options.title || 'Sidebar';
         this.bodyContent = options.content || '';
-        this.width = options.width || '300px';
+        this.width = options.width || '320px';
         this.position = options.position || 'right';
         this.hasOverlay = options.hasOverlay !== false;
         this.overlayId = options.overlayId || 'sidebar-overlay';

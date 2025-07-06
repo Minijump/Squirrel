@@ -125,7 +125,7 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* Imp/factorize right sidebar (see this commit): look at ActionSidebar, look at ConditionalFieldManager, look at select_onchange and class system of Field
+* look at ActionSidebar, look at ConditionalFieldManager, look at select_onchange and class system of Field
 * Factorize sidebar with modal (create TransiantComponent Class!!, use ConditionalFieldManager more, ...)
 * Look at sidebar style: either change it or make it general (new colors,...)
 * imp all js code?

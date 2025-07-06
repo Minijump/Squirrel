@@ -5,7 +5,6 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
 
 export class ActionSidebar extends FormSidebar {
     constructor(options = {}) {
-        options.width = options.width || '320px';
         options.hasOverlay = options.hasOverlay !== false;
         super(options);
         
@@ -15,12 +14,10 @@ export class ActionSidebar extends FormSidebar {
         this.hasAdvancedTab = false;
         this.conditionalManager = null;
         
-        // Remove the default form content and create tabs
         this.createTabbedContent();
     }
 
     createContent() {
-        // Return a plain div that will be added directly to the sidebar
         const content = document.createElement('div');
         return content;
     }
@@ -29,136 +26,51 @@ export class ActionSidebar extends FormSidebar {
         const sidebarContent = this.sidebarHtml.querySelector('div');
         sidebarContent.innerHTML = '';
 
-        // Create tabs
+        // Create tabs container
         const tabsContainer = document.createElement('div');
         tabsContainer.className = 'sidebar-tabs';
-        
-        const basicTab = document.createElement('button');
-        basicTab.className = 'tab-button active n-l-border n-r-border';
-        basicTab.textContent = 'Basic';
-        basicTab.onclick = (evt) => this.switchTab(evt, 'basic-tab');
-        
-        const advancedTab = document.createElement('button');
-        advancedTab.id = 'kwargs-btn';
-        advancedTab.className = 'tab-button n-r-border';
-        advancedTab.textContent = 'Advanced';
-        advancedTab.style.display = 'none'; // Hidden by default
-        advancedTab.onclick = (evt) => this.switchTab(evt, 'advanced-tab');
-        
-        tabsContainer.appendChild(basicTab);
-        tabsContainer.appendChild(advancedTab);
+        tabsContainer.innerHTML = `
+            <button class="tab-button active n-l-border n-r-border">Basic</button>
+            <button id="kwargs-btn" class="tab-button n-r-border" style="display: none;">Advanced</button>
+        `;
+        const basicTabBtn = tabsContainer.querySelector('.tab-button');
+        const advancedTabBtn = tabsContainer.querySelector('#kwargs-btn');
+        basicTabBtn.onclick = (evt) => this.switchTab(evt, 'basic-tab');
+        advancedTabBtn.onclick = (evt) => this.switchTab(evt, 'advanced-tab');
         sidebarContent.appendChild(tabsContainer);
 
         // Create basic tab content
         const basicTabContent = document.createElement('div');
         basicTabContent.id = 'basic-tab';
         basicTabContent.className = 'tab-content active';
-        
-        const basicForm = document.createElement('form');
-        basicForm.action = '/tables/execute_action/';
-        basicForm.method = 'post';
-        basicForm.className = 'std-form';
-        
-        // Hidden inputs
-        const actionNameInput = document.createElement('input');
-        actionNameInput.type = 'hidden';
-        actionNameInput.name = 'action_name';
-        actionNameInput.className = 'sync-action-name';
-        actionNameInput.required = true;
-        
-        const projectDirInput = document.createElement('input');
-        projectDirInput.type = 'hidden';
-        projectDirInput.name = 'project_dir';
-        projectDirInput.value = this.projectDir;
-        
-        const tableNameInput = document.createElement('input');
-        tableNameInput.type = 'hidden';
-        tableNameInput.name = 'table_name';
-        tableNameInput.id = 'table_name';
-        tableNameInput.className = 'sync-table-name';
-        tableNameInput.required = true;
-        
-        const argsDiv = document.createElement('div');
-        argsDiv.id = 'args';
-        
-        const submitBtn = document.createElement('button');
-        submitBtn.type = 'submit';
-        submitBtn.className = 'btn-primary';
-        submitBtn.textContent = 'Confirm';
-        submitBtn.style.marginTop = '10px';
-        
-        basicForm.appendChild(actionNameInput);
-        basicForm.appendChild(projectDirInput);
-        basicForm.appendChild(tableNameInput);
-        basicForm.appendChild(argsDiv);
-        basicForm.appendChild(submitBtn);
-        
-        basicTabContent.appendChild(basicForm);
+        basicTabContent.innerHTML = `
+            <form action="/tables/execute_action/" method="post" class="std-form">
+                <input type="hidden" name="action_name" class="sync-action-name" required>
+                <input type="hidden" name="project_dir" value="${this.projectDir}"> 
+                <input type="hidden" name="table_name" class="sync-table-name" required>
+                <div id="args" style="padding-left: 8px;"></div>
+                <button type="submit" class="btn-primary" style="margin-top: 10px;">Confirm</button>
+            </form>
+        `;
         sidebarContent.appendChild(basicTabContent);
 
         // Create advanced tab content
         const advancedTabContent = document.createElement('div');
         advancedTabContent.id = 'advanced-tab';
         advancedTabContent.className = 'tab-content';
-        
-        const advancedForm = document.createElement('form');
-        advancedForm.action = '/tables/execute_action/';
-        advancedForm.method = 'post';
-        advancedForm.id = 'args-kwargs-form';
-        advancedForm.className = 'std-form';
-        
-        // Hidden inputs for advanced form
-        const advActionNameInput = actionNameInput.cloneNode();
-        advActionNameInput.className = 'sync-action-name';
-        
-        const advProjectDirInput = projectDirInput.cloneNode();
-        
-        const advTableNameInput = tableNameInput.cloneNode();
-        advTableNameInput.className = 'sync-table-name';
-        
-        const colNameInput = document.createElement('input');
-        colNameInput.type = 'hidden';
-        colNameInput.name = 'col_name';
-        colNameInput.id = 'col_name';
-        colNameInput.required = true;
-        
-        const colIdxInput = document.createElement('input');
-        colIdxInput.type = 'hidden';
-        colIdxInput.name = 'col_idx';
-        colIdxInput.id = 'col_idx';
-        colIdxInput.required = true;
-        
-        const advancedInput = document.createElement('input');
-        advancedInput.type = 'hidden';
-        advancedInput.name = 'advanced';
-        advancedInput.value = 'true';
-        
-        const argsKwargsDiv = document.createElement('div');
-        argsKwargsDiv.id = 'args-kwargs';
-        argsKwargsDiv.style.paddingLeft = '8px';
-        
-        const advSubmitBtn = submitBtn.cloneNode(true);
-        
-        advancedForm.appendChild(advActionNameInput);
-        advancedForm.appendChild(advProjectDirInput);
-        advancedForm.appendChild(advTableNameInput);
-        advancedForm.appendChild(colNameInput);
-        advancedForm.appendChild(colIdxInput);
-        advancedForm.appendChild(advancedInput);
-        advancedForm.appendChild(argsKwargsDiv);
-        advancedForm.appendChild(advSubmitBtn);
-        
-        advancedTabContent.appendChild(advancedForm);
+        advancedTabContent.innerHTML = `
+            <form action="/tables/execute_action/" method="post" id="args-kwargs-form" class="std-form">
+                <input type="hidden" name="action_name" class="sync-action-name" required>
+                <input type="hidden" name="project_dir" value="${this.projectDir}">
+                <input type="hidden" name="table_name" class="sync-table-name" required>
+                <input type="hidden" name="col_name" id="col_name" required>
+                <input type="hidden" name="col_idx" id="col_idx" required>
+                <input type="hidden" name="advanced" value="true">
+                <div id="args-kwargs" style="padding-left: 8px;"></div>
+                <button type="submit" class="btn-primary" style="margin-top: 10px;">Confirm</button>
+            </form>
+        `;
         sidebarContent.appendChild(advancedTabContent);
-    }
-
-    open() {
-        super.open();
-        
-        // Store reference to sidebar instance for external access
-        if (this.sidebarHtml) {
-            this.sidebarHtml.sidebarInstance = this;
-        }
     }
 
     async openForAction(actionName, data = {}) {
