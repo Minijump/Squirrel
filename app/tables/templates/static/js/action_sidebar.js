@@ -39,7 +39,7 @@ export class ActionSidebar extends FormSidebar {
             <form action="/tables/execute_action/" method="post" class="std-form">
                 <input type="hidden" name="action_name" class="sync-action-name" required>
                 <input type="hidden" name="project_dir" value="${projectDir}"> 
-                <input type="hidden" name="table_name" class="sync-table-name" required>
+                <input type="hidden" name="table_name" required>
                 <div id="args" style="padding-left: 8px;"></div>
                 <button type="submit" class="btn-primary" style="margin-top: 10px;">Confirm</button>
             </form>
@@ -54,7 +54,7 @@ export class ActionSidebar extends FormSidebar {
             <form action="/tables/execute_action/" method="post" id="args-kwargs-form" class="std-form">
                 <input type="hidden" name="action_name" class="sync-action-name" required>
                 <input type="hidden" name="project_dir" value="${projectDir}">
-                <input type="hidden" name="table_name" class="sync-table-name" required>
+                <input type="hidden" name="table_name" required>
                 <input type="hidden" name="col_name" id="col_name" required>
                 <input type="hidden" name="col_idx" id="col_idx" required>
                 <input type="hidden" name="advanced" value="true">
@@ -108,12 +108,9 @@ export class ActionSidebar extends FormSidebar {
                 kwargsBtn.style.display = 'none';
                 return;
             }
-            
             kwargsForm.style.display = 'block';
             kwargsBtn.style.display = 'block';
-            
-            kwargsForm.querySelector('input[name="action_name"]').value = this.actionName;
-            
+                        
             const kwargsDiv = this.sidebarHtml.querySelector('#args-kwargs');
             kwargsDiv.innerHTML = '';
             
@@ -140,61 +137,25 @@ export class ActionSidebar extends FormSidebar {
     }
 
     fillData() {
-        const data = this.actionData || {};
-        // Set action name in both forms
-        const actionNameInputs = this.sidebarHtml.querySelectorAll('.sync-action-name');
-        actionNameInputs.forEach(input => input.value = this.actionName);
-        
-        // Set table name in both forms
-        const tableNameInputs = this.sidebarHtml.querySelectorAll('.sync-table-name');
-        tableNameInputs.forEach(input => {
-            if (data.table_name) input.value = data.table_name;
-        });
-        
-        // Fill other data
-        for (const key in data) {
-            if (data.hasOwnProperty(key)) {
-                const inputElement = this.sidebarHtml.querySelector(`#${key}`);
-                if (inputElement) {
-                    inputElement.value = data[key];
-                } else {
-                    console.warn(`Element with id ${key} not found in the form.`);
-                }
+        let data = this.actionData || {};
+        // table_name, col_name and coll_idx already in data (see getColumnInfo or infos provided in openSidebarActionForm)
+        const hiddenInputs = {'action_name': this.actionName, 'project_dir': this.projectDir};
+        data = {...data, ...hiddenInputs};
+
+        Object.keys(data).forEach(key => {
+            const inputElements = this.sidebarHtml.querySelectorAll(`[name="${key}"], #${key}`);
+            if (inputElements.length > 0) {
+                inputElements.forEach(element => {
+                    element.value = data[key];
+                });
             }
-        }
+            else console.warn(`Element with id ${key} not found in the form.`);
+        });
     }
 
     switchTab(evt, tabId) {
-        const tabContents = this.sidebarHtml.querySelectorAll(".tab-content");
-        tabContents.forEach(function(tab) {
-            tab.classList.remove("active");
-        });
-        
-        const tabButtons = this.sidebarHtml.querySelectorAll(".tab-button");
-        tabButtons.forEach(function(btn) {
-            btn.classList.remove("active");
-        });
-        
+        this.sidebarHtml.querySelectorAll(".tab-content, .tab-button").forEach(el => el.classList.remove("active"));
         this.sidebarHtml.querySelector(`#${tabId}`).classList.add("active");
         evt.currentTarget.classList.add("active");
-        
-        this.syncFormValues();
-    }
-
-    syncFormValues() {
-        // Sync hidden input values between forms
-        const basicForm = this.sidebarHtml.querySelector('#basic-tab form');
-        const advancedForm = this.sidebarHtml.querySelector('#advanced-tab form');
-        
-        if (basicForm && advancedForm) {
-            const hiddenInputs = ['action_name', 'project_dir', 'table_name'];
-            hiddenInputs.forEach(name => {
-                const basicInput = basicForm.querySelector(`input[name="${name}"]`);
-                const advancedInput = advancedForm.querySelector(`input[name="${name}"]`);
-                if (basicInput && advancedInput) {
-                    advancedInput.value = basicInput.value;
-                }
-            });
-        }
     }
 }
