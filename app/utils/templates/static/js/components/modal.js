@@ -1,30 +1,32 @@
 import { Form } from './form.js';
+import { TransientComponent } from './transient_component.js';
 
-export class Modal {
+
+export class Modal extends TransientComponent {
     constructor(options = {}) {
+        super(options);
         this.id = options.id || 'modal-' + Math.random().toString(36).substring(2, 11);
         this.title = options.title || 'Modal';
-        this.bodyContent = options.content || '';
-        this.modalHtml = null;
-        this.isOpen = false;
+        this.componentHtml = null;
+        this.overlayId = this.id || 'modal-overlay';
         this.create();
     }
 
     create() {
-        this.modalHtml = document.createElement('div');
-        this.modalHtml.className = `modal`;
-        this.modalHtml.id = this.id;
+        this.componentHtml = this.getOrCreateOverlay();
+        this.componentHtml.classList.add('modal');
         
         const modalContent = document.createElement('div');
         modalContent.className = 'modal-content';
         
         const header = this.createHeader();
         const content = this.createContent();
+        content.className = 'modal-body';
         
         modalContent.appendChild(header);
         modalContent.appendChild(content);
-        this.modalHtml.appendChild(modalContent);
-        document.body.appendChild(this.modalHtml); 
+        this.componentHtml.appendChild(modalContent);
+        document.body.appendChild(this.componentHtml); 
         this.bindEvents();
     }
 
@@ -38,60 +40,12 @@ export class Modal {
         return header;
     }
 
-    createContent() {
-        const content = document.createElement('div');
-        content.className = 'modal-body';
-        if (typeof this.bodyContent === 'string') content.innerHTML = this.bodyContent;
-        else if (this.bodyContent instanceof HTMLElement) content.appendChild(this.bodyContent);
-        else if (this.bodyContent instanceof Form) content.appendChild(this.bodyContent.formHTML);
-        else console.warn('Modal body expects string, HTMLElement or Form');
-        return content;
+    componentOpen() {
+        this.componentHtml.style.display = 'flex';
     }
 
-    bindEvents() {
-        const closeBtn = this.modalHtml.querySelector('.close-btn');
-        if (closeBtn) closeBtn.addEventListener('click', () => this.close());
-        
-        this.modalHtml.addEventListener('click', (e) => {
-            if (e.target === this.modalHtml) this.close();
-        });
-        this.escapeHandler = (e) => {
-            if (e.key === 'Escape' && this.isOpen) this.close();
-        };
-    }
-
-    open() {
-        if (this.isOpen) return;
-
-        this.fillData();
-        this.modalHtml.style.display = 'flex';
-        this.isOpen = true;
-        document.addEventListener('keydown', this.escapeHandler);
-        this.defaultFocus();  
-    }
-
-    fillData() {
-        return;
-    }
-
-    defaultFocus() {
-        Array.from(document.querySelectorAll('input, textarea'))
-            .find(input => input.offsetParent !== null) // find 1st visible element
-            ?.focus();
-    }
-
-    close() {
-        if (!this.isOpen) return;
-
-        this.modalHtml.style.display = 'none';
-        this.isOpen = false;
-        document.removeEventListener('keydown', this.escapeHandler);
-        this.destroy();
-    }
-
-    destroy() {
-        this.modalHtml?.remove();
-        this.modalHtml = null;
+    componentClose() {
+        this.componentHtml.style.display = 'none';
     }
 }
 

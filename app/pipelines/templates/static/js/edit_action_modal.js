@@ -25,10 +25,10 @@ export class EditActionModal extends Modal {
     }
 
     fillData() {
-        this.modalHtml.querySelector('strong[id="modal-action-name"]').textContent = this.actionName;
-        this.modalHtml.querySelector('input[name="project_dir"]').value = this.projectDir;
-        this.modalHtml.querySelector('input[name="action_id"]').value = this.actionId;
-        this.modalHtml.querySelector('textarea[name="action_code"]').value = this.actionCode;
+        this.componentHtml.querySelector('strong[id="modal-action-name"]').textContent = this.actionName;
+        this.componentHtml.querySelector('input[name="project_dir"]').value = this.projectDir;
+        this.componentHtml.querySelector('input[name="action_id"]').value = this.actionId;
+        this.componentHtml.querySelector('textarea[name="action_code"]').value = this.actionCode;
     }
 
     deletePipelineAction() {

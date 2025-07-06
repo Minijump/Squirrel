@@ -70,25 +70,25 @@ export class InfoColModal extends Modal {
     async fillData() {
         const projectDir = new URLSearchParams(window.location.search).get('project_dir');
 
-        this.modalHtml.querySelector('#modalTitle').innerText = this.colName;
-        this.modalHtml.querySelector('#col_name').value = this.colName;
-        this.modalHtml.querySelector('#col_idx').value = this.colIdx;
-        this.modalHtml.querySelector('#table_name').value = this.tableName;
-        this.modalHtml.querySelector('#project_dir').value = projectDir;
+        this.componentHtml.querySelector('#modalTitle').innerText = this.colName;
+        this.componentHtml.querySelector('#col_name').value = this.colName;
+        this.componentHtml.querySelector('#col_idx').value = this.colIdx;
+        this.componentHtml.querySelector('#table_name').value = this.tableName;
+        this.componentHtml.querySelector('#project_dir').value = projectDir;
                 
         try {
             const response = await fetch(`/tables/column_infos/?project_dir=${projectDir}&table=${this.tableName}&column_name=${this.colName}&column_idx=${this.colIdx}`);
             if (!response.ok) throw new Error(`Error in response ${response.status}`);
             const data = await response.json();
 
-            this.modalHtml.querySelectorAll('.numeric-only').forEach(div => 
+            this.componentHtml.querySelectorAll('.numeric-only').forEach(div => 
                 div.style.display = data['is_numeric'] ? 'flex' : 'none'
             );
 
             const fields = ['dtype', 'count', 'unique', 'null',
                             'mean', 'std', 'min', '25', '50', '75', 'max'];    
             fields.forEach(field => {       
-                const element = this.modalHtml.querySelector(`#col_${field}`);
+                const element = this.componentHtml.querySelector(`#col_${field}`);
                 if (element) {
                     const hasValue = data[field] !== undefined;
                     element.style.display = hasValue ? 'inline' : 'none';
@@ -96,7 +96,7 @@ export class InfoColModal extends Modal {
                 }
             });
         } catch (error) {
-            this.modalHtml.querySelector('#error_infos_computation').innerHTML = `Error computing informations: ${error.message}`;
+            this.componentHtml.querySelector('#error_infos_computation').innerHTML = `Error computing informations: ${error.message}`;
         }
     }
 

@@ -60,7 +60,7 @@ export class ActionSidebar extends FormSidebar {
             const response = await fetch(`/tables/get_action_args/?action_name=${this.actionName}`);
             const args = await response.json();
             
-            const argsDiv = this.sidebarHtml.querySelector('#args');
+            const argsDiv = this.componentHtml.querySelector('#args');
             argsDiv.innerHTML = '';
             Object.keys(args).forEach(key => {
                 const field = new Field(key, args[key]);
@@ -76,9 +76,9 @@ export class ActionSidebar extends FormSidebar {
             const response = await fetch(`/tables/get_action_kwargs/?action_name=${this.actionName}`);
             const kwargs = await response.json();
             
-            const kwargsForm = this.sidebarHtml.querySelector('#args-kwargs-form');
-            const kwargsBtn = this.sidebarHtml.querySelector('#kwargs-btn');
-            const kwargsDiv = this.sidebarHtml.querySelector('#args-kwargs');
+            const kwargsForm = this.componentHtml.querySelector('#args-kwargs-form');
+            const kwargsBtn = this.componentHtml.querySelector('#kwargs-btn');
+            const kwargsDiv = this.componentHtml.querySelector('#args-kwargs');
             
             const hasKwargs = Object.keys(kwargs).length > 0;
             kwargsForm.style.display = hasKwargs ? 'block' : 'none';
@@ -110,7 +110,7 @@ export class ActionSidebar extends FormSidebar {
         data = {...data, ...hiddenInputs};
 
         Object.keys(data).forEach(key => {
-            const inputElements = this.sidebarHtml.querySelectorAll(`[name="${key}"], #${key}`);
+            const inputElements = this.componentHtml.querySelectorAll(`[name="${key}"], #${key}`);
             if (inputElements.length > 0) {
                 inputElements.forEach(element => {
                     element.value = data[key];
@@ -121,8 +121,8 @@ export class ActionSidebar extends FormSidebar {
     }
 
     switchTab(evt, tabId) {
-        this.sidebarHtml.querySelectorAll(".tab-content, .tab-button").forEach(el => el.classList.remove("active"));
-        this.sidebarHtml.querySelector(`#${tabId}`).classList.add("active");
+        this.componentHtml.querySelectorAll(".tab-content, .tab-button").forEach(el => el.classList.remove("active"));
+        this.componentHtml.querySelector(`#${tabId}`).classList.add("active");
         evt.currentTarget.classList.add("active");
     }
 }
