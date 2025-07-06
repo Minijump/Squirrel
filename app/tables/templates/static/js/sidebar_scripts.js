@@ -4,13 +4,9 @@ import { openExportTableSidebar } from './export_table_sidebar.js';
 
 
 export async function openSidebarActionForm(actionName, data = {}) {
-    const actionSidebar = new ActionSidebar({
-        title: `Action: ${actionName}`,
-        id: 'ActionSidebar',
-        projectDir: data.project_dir || new URLSearchParams(window.location.search).get('project_dir')
-    });
-    
-    await actionSidebar.openForAction(actionName, data);
+    const projectDir = new URLSearchParams(window.location.search).get('project_dir')
+    const actionSidebar = new ActionSidebar(actionName, data, projectDir, {});
+    await actionSidebar.openForAction();
 }
 
 export function openSidebarForm(sidebarType, options = {}) {

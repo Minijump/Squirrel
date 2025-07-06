@@ -3,27 +3,19 @@ import { Field } from '/static/base/js/components/field.js';
 import { ConditionalFieldManager } from '/static/base/js/components/conditional_field_manager.js';
 import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js';
 
+
 export class ActionSidebar extends FormSidebar {
-    constructor(options = {}) {
-        options.hasOverlay = options.hasOverlay !== false;
+    constructor(actionName, actionData, projectDir, options = {}) {
+        options.title = `Action: ${actionName}`;
+        options.id = `ActionSidebar-${actionName}-${Math.random().toString(36).substring(2, 11)}`;
         super(options);
-        
-        this.actionName = options.actionName || '';
-        this.actionData = options.actionData || {};
-        this.projectDir = options.projectDir || new URLSearchParams(window.location.search).get('project_dir');
-        this.hasAdvancedTab = false;
+        Object.assign(this, {actionName, actionData, projectDir});
         this.conditionalManager = null;
-        
-        this.createTabbedContent();
     }
 
     createContent() {
-        const content = document.createElement('div');
-        return content;
-    }
-
-    createTabbedContent() {
-        const sidebarContent = this.sidebarHtml.querySelector('div');
+        const projectDir = new URLSearchParams(window.location.search).get('project_dir')
+        const sidebarContent = document.createElement('div')
         sidebarContent.innerHTML = '';
 
         // Create tabs container
@@ -46,7 +38,7 @@ export class ActionSidebar extends FormSidebar {
         basicTabContent.innerHTML = `
             <form action="/tables/execute_action/" method="post" class="std-form">
                 <input type="hidden" name="action_name" class="sync-action-name" required>
-                <input type="hidden" name="project_dir" value="${this.projectDir}"> 
+                <input type="hidden" name="project_dir" value="${projectDir}"> 
                 <input type="hidden" name="table_name" class="sync-table-name" required>
                 <div id="args" style="padding-left: 8px;"></div>
                 <button type="submit" class="btn-primary" style="margin-top: 10px;">Confirm</button>
@@ -61,7 +53,7 @@ export class ActionSidebar extends FormSidebar {
         advancedTabContent.innerHTML = `
             <form action="/tables/execute_action/" method="post" id="args-kwargs-form" class="std-form">
                 <input type="hidden" name="action_name" class="sync-action-name" required>
-                <input type="hidden" name="project_dir" value="${this.projectDir}">
+                <input type="hidden" name="project_dir" value="${projectDir}">
                 <input type="hidden" name="table_name" class="sync-table-name" required>
                 <input type="hidden" name="col_name" id="col_name" required>
                 <input type="hidden" name="col_idx" id="col_idx" required>
@@ -71,15 +63,14 @@ export class ActionSidebar extends FormSidebar {
             </form>
         `;
         sidebarContent.appendChild(advancedTabContent);
+
+        return sidebarContent;
     }
 
-    async openForAction(actionName, data = {}) {
-        this.actionName = actionName;
-        this.actionData = data;
-        
+    async openForAction() {
         await this.addInputs();
         await this.addKwargs();
-        this.completeInputs(data);
+        this.completeInputs(this.actionData);
         
         // Update conditional fields after all data is populated
         if (this.conditionalManager) {
@@ -141,13 +132,11 @@ export class ActionSidebar extends FormSidebar {
             if (Object.keys(kwargs).length === 0) {
                 kwargsForm.style.display = 'none';
                 kwargsBtn.style.display = 'none';
-                this.hasAdvancedTab = false;
                 return;
             }
             
             kwargsForm.style.display = 'block';
             kwargsBtn.style.display = 'block';
-            this.hasAdvancedTab = true;
             
             kwargsForm.querySelector('input[name="action_name"]').value = this.actionName;
             
