@@ -48,6 +48,4 @@ export class Form {
             else console.warn(`Element with id ${key} not found in the form.`);
         });
     }
-
-    // TODO: add an easy way to bind events to inputs? (or in Field class) (use conditionalManager here?)+ fill data in input?
 }

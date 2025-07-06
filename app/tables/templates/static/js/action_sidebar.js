@@ -1,6 +1,5 @@
 import { FormSidebar } from '/static/base/js/components/sidebar.js';
 import { Field } from '/static/base/js/components/field.js';
-import { ConditionalFieldManager } from '/static/base/js/components/conditional_field_manager.js';
 import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js';
 
 
@@ -10,7 +9,6 @@ export class ActionSidebar extends FormSidebar {
         options.id = `ActionSidebar-${actionName}-${Math.random().toString(36).substring(2, 11)}`;
         super(options);
         Object.assign(this, {actionName, actionData, projectDir});
-        this.conditionalManager = null;
     }
 
     createContent() {
@@ -53,11 +51,8 @@ export class ActionSidebar extends FormSidebar {
 
     async open() {
         await this.addInputs();
-        await this.addKwargs();
-        
+        await this.addKwargs(); 
         super.open();
-
-        if (this.conditionalManager) this.conditionalManager.updateAll(); 
     }
 
     async addInputs() {
@@ -71,8 +66,6 @@ export class ActionSidebar extends FormSidebar {
                 const field = new Field(key, args[key]);
                 argsDiv.appendChild(field.inputDivHTML);
             });
-            
-            this.conditionalManager = new ConditionalFieldManager(this.sidebarHtml);
         } catch (error) {
             console.error('Error loading action arguments:', error);
         }

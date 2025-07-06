@@ -125,8 +125,7 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* look at ConditionalFieldManager, look at select_onchange and class system of Field
-* Factorize sidebar with modal (create TransiantComponent Class!!, use ConditionalFieldManager more, ...)
+* Factorize sidebar with modal (create TransiantComponent Class!!, use std onchange feature when possible, ...)
 * Look at sidebar style: either change it or make it general (new colors,...)
 * imp all js code?
 * refactor tours after code reformat: imp widget uses in tours, ... + add missing tours (test tables actions, ...) + test backend info in tours(add methods in toolbox to check table in backend, ...)

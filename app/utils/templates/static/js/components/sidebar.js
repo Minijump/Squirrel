@@ -76,6 +76,14 @@ export class Sidebar {
         this.isOpen = true;
         document.addEventListener('keydown', this.escapeHandler);
         this.defaultFocus();
+        this.triggerAllOnchangeVisibility();
+    }
+
+    triggerAllOnchangeVisibility() {
+        const fields = this.sidebarHtml.querySelectorAll('.onchange-trigger');
+        fields.forEach(field => {
+            field.dispatchEvent(new Event('change'));
+        });
     }
 
     fillData() {

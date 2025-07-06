@@ -25,7 +25,7 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
  * @property {string} [step='any'] - Step attribute for number inputs
  * @property {string} [className] - CSS class name(s) to add to the input element
  * @property {string} [onchange] - JavaScript code to execute on change event
- * @property {string} [select_onchange] - CSS class for conditional display logic
+ * @property {Array} [onchange_visibility] - [onchange_id, value where the input should be visible]
  *  
  * @example
  *   username: {
@@ -59,10 +59,11 @@ export class Field {
         input.name = input.id = inputId;
         input.required = (inputInfo.required !== undefined) ? inputInfo.required : true;
 
-        // Add select_onchange classes to the container div
-        if (inputInfo.select_onchange) {
-            inputDivHTML.className += ' select-onchange ';
-            inputDivHTML.className += inputInfo.select_onchange;
+        if (inputInfo.onchange_visibility) {
+            inputDivHTML.classList.add('onchange-visibility');
+            const [triggerField, triggerValue] = inputInfo.onchange_visibility;
+            inputDivHTML.dataset.visibilitytrigger = triggerField;
+            inputDivHTML.dataset.visibilityvalue = triggerValue;
         }
 
         if (inputInfo.invisible) input.type = 'hidden';
@@ -100,20 +101,15 @@ export class Field {
                 formInput.appendChild(optionElement);
             });
         }
-
         if (['text', 'password', 'textarea', 'number'].includes(input.type) && input.placeholder) {
             formInput.placeholder = input.placeholder;
         }
 
-        // Add support for onchange attribute
-        if (input.onchange) {
+        if (input.onchange){
             formInput.setAttribute('onchange', input.onchange);
+            formInput.classList.add('onchange-trigger');
         }
-
-        // Add support for custom CSS classes
-        if (input.className) {
-            formInput.className = input.className;
-        }
+        if (input.className) formInput.className = input.className;
 
         return formInput;
     }
@@ -134,7 +130,18 @@ export class Field {
         infoNote.innerHTML = `<i class="fas fa-info-circle"></i> ${input.info}`;
         return infoNote;
     }
-
-    // TODO: add an easy way to bind events to inputs? (or in Form class?)
-    // TODO: add a way to 'sanitize' data (create a new class Input, so we can we it in dict widget?)
+    // TODO: add a way to 'sanitize' data (create a new class Input? so we can we it in dict widget)
 }
+
+function onchangeFormValue(onchangeId, event) {
+    const fields = document.querySelectorAll('.onchange-visibility');
+    fields.forEach(field => {
+        const triggerOnchageId = field.dataset.visibilitytrigger;
+        const triggerValue = field.dataset.visibilityvalue;
+        const inputElement = event.target
+
+        if (triggerOnchageId === onchangeId && inputElement.value === triggerValue) field.style.display = 'block';
+        else field.style.display = 'none';
+    });
+};
+window.onchangeFormValue = onchangeFormValue;

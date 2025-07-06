@@ -1,34 +1,5 @@
 import { FormSidebar } from '/static/base/js/components/sidebar.js';
 
-
-export class CreateTableSidebar extends FormSidebar {
-    bindEvents() {
-        super.bindEvents();
-        
-        const sourceTypeSelect = this.sidebarHtml.querySelector('#source_creation_type');
-        if (sourceTypeSelect) {
-            sourceTypeSelect.addEventListener('change', () => {
-                this.toggleSourceElements();
-            });
-            this.toggleSourceElements();
-        }
-    }
-
-    toggleSourceElements() {
-        const select = this.sidebarHtml.querySelector('#source_creation_type');
-        if (!select) return;
-        
-        const dataSourceDiv = this.sidebarHtml.querySelector('#data_source_dir').closest('div');
-        const tableDiv = this.sidebarHtml.querySelector('#table_df').closest('div');
-        
-        const isDataSourceSelected = select.value === 'data_source';
-        dataSourceDiv.style.display = isDataSourceSelected ? 'block' : 'none';
-        tableDiv.style.display = isDataSourceSelected ? 'none' : 'block';
-        this.sidebarHtml.querySelector('#data_source_dir').required = isDataSourceSelected;
-        this.sidebarHtml.querySelector('#table_df').required = !isDataSourceSelected;
-    }
-}
-
 export function openCreateTableSidebar() {
     const formInputs = getCreateTableFormInputs();
     const formData = {
@@ -36,10 +7,7 @@ export function openCreateTableSidebar() {
         project_dir: new URLSearchParams(window.location.search).get('project_dir')
     };
     
-    // TODO: Everything is set up here and not in the sidebar constructor
-    // This is because the goal is to implement a reusable way to change depending of a select field (and then use FormSidebar only)
-    // see ConditionalFieldManager?
-    const sidebar = new CreateTableSidebar({
+    const sidebar = new FormSidebar({
         id: 'CreateTableSidebar',
         title: 'Create Table',
         formInputs: formInputs,
@@ -68,19 +36,22 @@ function getCreateTableFormInputs() {
             select_options: [
                 ['data_source', 'Data Sources'],
                 ['other_tables', 'Other Tables']
-            ]
+            ],
+            onchange: "onchangeFormValue('TableCreation_source_creation_type', event)"
         },
         data_source_dir: {
             label: 'Data Source:',
             type: 'select',
             required: false,
-            select_options: getAvailableDataSources()
+            select_options: getAvailableDataSources(),
+            onchange_visibility: ["TableCreation_source_creation_type", "data_source"]
         },
         table_df: {
             label: 'Table:',
             type: 'select',
             required: false,
-            select_options: getAvailableTables()
+            select_options: getAvailableTables(),
+            onchange_visibility: ["TableCreation_source_creation_type", "other_tables"]
         }
     };
 }

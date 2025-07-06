@@ -150,10 +150,10 @@ class SortColumn(ActionColumn):
         self.args.update({
             "sort_order": {"type": "select", "label": "Sort Order", 
                            "select_options": [("ascending", "Ascending"), ("descending", "Descending"), ("custom", "Custom")], 
-                           "onchange": "toggleSelect()"},
+                           "onchange": "onchangeFormValue('SortColumn_sort_order', event)",},
             "sort_key": {"type": "textarea", "label": "Sort Key", 
                          "info": "Key must be python code with x as the col values. E.g. x.str.len(), x**2, ... (in practice this will execute: key=lambda x: ...your_input...).", 
-                         "required": False, "select_onchange": "custom"},
+                         "required": False, "onchange_visibility": ["SortColumn_sort_order", "custom"]},
         })
 
     async def execute(self):
@@ -223,10 +223,10 @@ class HandleMissingValues(ActionColumn):
         self.args.update({
             "action": {"type": "select", "label": "Action", 
                        "select_options": [("delete", "Delete"), ("replace", "Replace"), ("interpolate", "Interpolate")],
-                       "onchange": "toggleSelect()",
+                       "onchange": "onchangeFormValue('HandleMissingValues_action', event)",
                        "info": "Interpolate will only work for numeric columns."},
             "replace_value": {"type": "textarea", "label": "Replace Value", 
-                              "required": False, "select_onchange": "replace"},
+                              "required": False, "onchange_visibility": ["HandleMissingValues_action", "replace"]},
         })
 
     async def execute(self):
