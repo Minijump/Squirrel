@@ -121,11 +121,4 @@ export class FormSidebar extends Sidebar {
         super(options);
         this.form = options.content;
     }
-
-    completeInputs(data = {}) {
-        if (this.form && this.form.completeInputs) {
-            const form = this.sidebarHtml.querySelector('form');
-            this.form.completeInputs(form, data);
-        }
-    }
 }

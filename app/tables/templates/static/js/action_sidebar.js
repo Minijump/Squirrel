@@ -236,15 +236,6 @@ export class ActionSidebar extends FormSidebar {
         }
     }
 
-    /**
-     * Legacy method for backward compatibility - now delegates to ConditionalFieldManager
-     */
-    toggleSelect() {
-        if (this.conditionalManager) {
-            this.conditionalManager.updateAll();
-        }
-    }
-
     switchTab(evt, tabId) {
         const tabContents = this.sidebarHtml.querySelectorAll(".tab-content");
         tabContents.forEach(function(tab) {
@@ -276,16 +267,6 @@ export class ActionSidebar extends FormSidebar {
                     advancedInput.value = basicInput.value;
                 }
             });
-        }
-    }
-
-    defaultFocus() {
-        // Focus on first visible input in active tab
-        const activeTab = this.sidebarHtml.querySelector('.tab-content.active');
-        if (activeTab) {
-            Array.from(activeTab.querySelectorAll('input, textarea, select'))
-                .find(input => input.offsetParent !== null && !input.disabled && input.type !== 'hidden')
-                ?.focus();
         }
     }
 }
