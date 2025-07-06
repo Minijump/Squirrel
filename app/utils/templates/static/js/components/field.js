@@ -136,4 +136,5 @@ export class Field {
     }
 
     // TODO: add an easy way to bind events to inputs? (or in Form class?)
+    // TODO: add a way to 'sanitize' data (create a new class Input, so we can we it in dict widget?)
 }
