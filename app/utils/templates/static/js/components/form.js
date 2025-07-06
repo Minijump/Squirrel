@@ -49,5 +49,5 @@ export class Form {
         });
     }
 
-    // TODO: add an easy way to bind events to inputs? (or in Field class) + fill data in input?
+    // TODO: add an easy way to bind events to inputs? (or in Field class) (use conditionalManager here?)+ fill data in input?
 }

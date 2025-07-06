@@ -134,8 +134,7 @@ In addition to these folders, you will find a folder named tests that contains t
 * complete readme
 
 ### To Fix
-* Replace Vals sidebar has 2 dictionarries?
-
+* Fiw warning/error in action rightsidebar: 1 warning when opening sidebar (table_name not found) + 1 error on sort action, when changing select field 'toggle_select is not defined'
 ### To do MVP
 * Add actions
 

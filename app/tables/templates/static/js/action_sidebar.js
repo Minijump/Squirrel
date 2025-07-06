@@ -67,17 +67,13 @@ export class ActionSidebar extends FormSidebar {
         return sidebarContent;
     }
 
-    async openForAction() {
+    async open() {
         await this.addInputs();
         await this.addKwargs();
-        this.completeInputs(this.actionData);
         
-        // Update conditional fields after all data is populated
-        if (this.conditionalManager) {
-            this.conditionalManager.updateAll();
-        }
-        
-        this.open();
+        super.open();
+
+        if (this.conditionalManager) this.conditionalManager.updateAll(); 
     }
 
     async addInputs() {
@@ -89,32 +85,10 @@ export class ActionSidebar extends FormSidebar {
             argsDiv.innerHTML = '';
             
             Object.keys(args).forEach(key => {
-                if (args[key].invisible) {
-                    // For invisible inputs, create them directly without Field wrapper
-                    const input = this.createInput(args[key]);
-                    input.type = 'hidden';
-                    input.name = key;
-                    input.id = key;
-                    argsDiv.appendChild(input);
-                } else {
-                    // Use Field component for visible inputs
-                    const field = new Field(key, args[key]);
-                    argsDiv.appendChild(field.inputDivHTML);
-                    
-                    // Add the right-sidebar-select class specifically for sidebar selects
-                    const selectElement = field.inputDivHTML.querySelector('select');
-                    if (selectElement) {
-                        selectElement.classList.add('right-sidebar-select');
-                    }
-                    
-                    if (args[key].type === 'dict') {
-                        const input = field.inputDivHTML.querySelector('textarea');
-                        new SquirrelDictionary(input);
-                    }
-                }
+                const field = new Field(key, args[key]);
+                argsDiv.appendChild(field.inputDivHTML);
             });
             
-            // Initialize conditional field manager after all inputs are added
             this.conditionalManager = new ConditionalFieldManager(this.sidebarHtml);
         } catch (error) {
             console.error('Error loading action arguments:', error);
@@ -165,43 +139,8 @@ export class ActionSidebar extends FormSidebar {
         }
     }
 
-    // Helper method for backward compatibility with hidden inputs
-    createInput(arg) {
-        let input = document.createElement('input');
-        
-        if (arg.type === 'textarea') {
-            input = document.createElement('textarea');
-        }
-        
-        if (arg.type === 'dict') {
-            input = document.createElement('textarea');
-            input.setAttribute('widget', 'squirrel-dictionary');
-            const defaultOptions = {create: true, remove: true};
-            const userOptions = arg.dict_options;
-            const options = userOptions ? {...defaultOptions, ...userOptions} : defaultOptions;
-            input.setAttribute('options', JSON.stringify(options));
-            input.value = JSON.stringify(arg.default || {});
-        }
-        
-        if (arg.type === 'number') {
-            input.type = 'number';
-            input.step = arg.step || 'any';
-        }
-        
-        if (arg.type === 'select') {
-            input = document.createElement('select');
-            arg.select_options.forEach(option => {
-                const optionElement = document.createElement('option');
-                optionElement.value = option[0];
-                optionElement.text = option[1];
-                input.appendChild(optionElement);
-            });
-        }
-        
-        return input;
-    }
-
-    completeInputs(data = {}) {
+    fillData() {
+        const data = this.actionData || {};
         // Set action name in both forms
         const actionNameInputs = this.sidebarHtml.querySelectorAll('.sync-action-name');
         actionNameInputs.forEach(input => input.value = this.actionName);
