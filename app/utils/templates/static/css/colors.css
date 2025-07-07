@@ -14,13 +14,13 @@
 
 /* Light theme */
 [data-theme="light"] {
-    --structure-color: #cbd5e1;
-    --light-structure-color: #e2e8f0;
+    --structure-color: #e2e8f0;
+    --light-structure-color: white;
     --primary-gradient: linear-gradient(to top right, var(--structure-color), var(--light-structure-color));
     --first-secondary-color: #3b82f6;
     --second-secondary-color: #8b5cf6;
     --secondary-gradient: linear-gradient(to bottom right, var(--first-secondary-color), var(--second-secondary-color));
-    --primary-text-color: #1e293b;
+    --primary-text-color: black;
     --secondary-text-color: #475569;
     --border-color: #94a3b8;
     --hover-overlay: rgba(0, 0, 0, 0.08);

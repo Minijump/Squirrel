@@ -11,14 +11,14 @@
 }
 .btn-secondary {
     background: var(--primary-text-color);
-    color: black;
+    color: var(--structure-color);
     border: none;
     padding: 8px 16px;
     border-radius: 8px;
     cursor: pointer;
 }
 .btn-secondary:hover {
-    background: #929bad;
+    background: var(--secondary-text-color);
 }
 .btn-danger {
     background: #ef4444;

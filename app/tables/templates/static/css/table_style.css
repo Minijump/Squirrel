@@ -144,7 +144,7 @@
     border-right: 0;
 }
 .df-table tbody tr:nth-of-type(even) {
-    background-color: color-mix(in srgb, var(--light-structure-color), black 20%);
+    background-color: color-mix(in srgb, var(--light-structure-color), var(--primary-text-color) 5%);
 }
 .df-table tbody tr:last-of-type, .df-table tbody tr:last-of-type td {
     border-bottom: 0;

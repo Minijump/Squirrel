@@ -131,7 +131,7 @@ In addition to these folders, you will find a folder named tests that contains t
 * complete readme
 
 ### To Fix
-* Fix error in action rightsidebar: on sort action, when changing select field 'toggle_select is not defined'
+* Fix unit tests
 
 ### To do MVP
 * Add actions
@@ -140,8 +140,9 @@ In addition to these folders, you will find a folder named tests that contains t
 * Better UI: factorize classes/colors/...
 * UI notification for JSONResponse ?
 * UI confirm button (for deleting an action in pipeline)
-* Imp white theme
-* Fix misc UI bugs: sidebar without tabs, some modals,...
+* Imp modal/modal's form style
+* Imp home button
+* Fix misc UI bugs: sidebar without tabs
 
 ### Feature ideas
 * Add dynamic doctrsing (expl: pd.Series.replace.__doc__)
