@@ -38,7 +38,6 @@ const FORMINPUTS = {
 };
 
 export async function openCustomActionModal(tableName='') {
-    console.log(tableName)
     const modal = new FormModal({
         title: 'Custom Action',
         formId: 'customActionModalForm',

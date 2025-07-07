@@ -25,7 +25,7 @@ export class TransientComponent {
         if (!overlay) {
             overlay = document.createElement('div');
             overlay.id = this.overlayId;
-            overlay.className = 'sidebar-overlay';
+            overlay.className = 'transient-overlay';
             overlay.style.display = 'none';
             document.body.appendChild(overlay);
         }

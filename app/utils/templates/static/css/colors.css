@@ -7,10 +7,4 @@
     --secondary-gradient: linear-gradient(to bottom right, var(--first-secondary-color), var(--second-secondary-color));
     --primary-text-color: #f0f0f0;
     --secondary-text-color: #9ca3af;
-    /* under: Created bor sidebar */
-    --border-color: #374151;
-    --input-background: #374151;
-    --primary-color: #3b82f6;
-    --primary-color-rgb: 59, 130, 246;
-    --hover-color: rgba(255, 255, 255, 0.1);
 }

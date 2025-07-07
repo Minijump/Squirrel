@@ -1,14 +1,4 @@
-.sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: none;
-    z-index: 999;
-}
-
+/* Sidebar struct */
 .right-sidebar, .left-sidebar {
     height: 100%;
     width: 0;
@@ -21,15 +11,14 @@
     box-sizing: border-box;
     z-index: 1000;
 }
-
 .right-sidebar {
     right: 0;
 }
-
 .left-sidebar {
     left: 0;
 }
 
+/* Sidebar close btn */
 .right-sidebar a, .left-sidebar a {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
@@ -38,11 +27,9 @@
     display: block;
     transition: 0.3s;
 }
-
 .right-sidebar a:hover, .left-sidebar a:hover {
     color: #f1f1f1;
 }
-
 .right-sidebar .close-btn, .left-sidebar .close-btn {
     position: absolute;
     top: 0;
@@ -50,13 +37,12 @@
     font-size: 36px;
     margin-left: 50px;
 }
-
 .left-sidebar .close-btn {
     right: auto;
     left: 25px;
 }
 
-/* Sidebar tabs styles - keep original styling */
+/* Sidebar Tabs */
 .sidebar-tabs {
     display: flex;
     margin-bottom: 15px;
@@ -74,24 +60,21 @@
     padding: 10px;
     transition: 0.3s;
 }
-
 .tab-button:hover {
     filter: brightness(1.2);
 }
-
 .tab-button.active {
     border: 1px solid #ccc;
     border-bottom: 0;
 }
-
 .tab-button.n-l-border {
     border-left: 0;
 }
-
 .tab-button.n-r-border {
     border-right: 0;
 }
 
+/* Sidebar content */
 .tab-content {
     display: none;
     padding: 10px 0;
@@ -99,13 +82,12 @@
     overflow-y: hidden;
     overflow-x: hidden;
 }
-
 .tab-content.active {
     display: block;
     overflow-y: auto;
 }
 
-/* Form styling within sidebars */
+/* Sidebar form */
 .right-sidebar .std-form, .left-sidebar .std-form {
     padding: 0 15px;
 }
@@ -123,7 +105,6 @@
 .left-sidebar .std-form input,
 .left-sidebar .std-form textarea,
 .left-sidebar .std-form select {
-    width: 100%;
     margin-bottom: 15px;
     padding: 8px 12px;
     border: 1px solid #4a5568;
@@ -132,14 +113,12 @@
     color: var(--primary-text-color);
     box-sizing: border-box;
 }
-
 .right-sidebar .std-form button[type="submit"],
 .left-sidebar .std-form button[type="submit"] {
     width: calc(100% - 30px);
     margin: 10px 15px;
 }
 
-/* Info notes styling */
 .info-note {
     font-size: 12px;
     color: #9ca3af;
@@ -147,7 +126,6 @@
     line-height: 1.4;
     padding: 5px 0;
 }
-
 .info-note i {
     margin-right: 5px;
     color: #60a5fa;
