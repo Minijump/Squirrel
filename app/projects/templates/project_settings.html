@@ -16,25 +16,40 @@
             {% include 'utils/templates/project_nav_links.html' %}
         </aside>
         <main>
-            <form id="projectSettingsForm" method="post" action="/project/update_settings/" enctype="multipart/form-data" class="std-form">
-                <input type="hidden" name="project_dir" value="{{ project.directory }}">
-                <label for="projectName">Name</label>
-                <input type="text" id="projectName" name="name" value="{{ project.name }}" required>
-        
-                <label for="projectDescription">Description</label>
-                <textarea id="projectDescription" name="description">{{ project.description }}</textarea>
+            <h2>Project Settings</h2>
 
-                <label for="projectMisc">Misc</label>
-                <div class="info-note">
-                    <i class="fas fa-info-circle"></i> 
-                    If invalid, misc is reset to default.
-                </div>
-                <textarea id="projectMisc" name="misc" widget="squirrel-dictionary" options='{"create":false, "remove":false}'>
-                    {{ project.misc | default({}, true) | tojson }}
-                </textarea>
+            <div class="settings-section">
+                <h3>General Information</h3>
+                <form id="projectSettingsForm" method="post" action="/project/update_settings/" enctype="multipart/form-data" class="std-form">
+                    <input type="hidden" name="project_dir" value="{{ project.directory }}">
+                    
+                    <div class="setting-item">
+                        <label for="projectName">Name</label>
+                        <input type="text" id="projectName" name="name" value="{{ project.name }}" required>
+                        <p class="setting-description">The display name for your project.</p>
+                    </div>
 
-                <button type="submit" class="btn-primary">Save</button>
-            </form>
+                    <div class="setting-item">
+                        <label for="projectDescription">Description</label>
+                        <textarea id="projectDescription" name="description">{{ project.description }}</textarea>
+                        <p class="setting-description">A brief description of what this project does.</p>
+                    </div>
+
+                    <div class="setting-item">
+                        <label for="projectMisc">Misc</label>
+                        <div class="info-note">
+                            <i class="fas fa-info-circle"></i> 
+                            If invalid, misc is reset to default.
+                        </div>
+                        <textarea id="projectMisc" name="misc" widget="squirrel-dictionary" options='{"create":false, "remove":false}'>
+                            {{ project.misc | default({}, true) | tojson }}
+                        </textarea>
+                        <p class="setting-description">Additional project configuration in JSON format.</p>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Save Settings</button>
+                </form>
+            </div>
         </main>
     </div>
     <script type="module" src="{{ url_for('base_static', path='js/theme.js') }}"></script>

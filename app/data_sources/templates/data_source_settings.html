@@ -16,34 +16,49 @@
             {% include 'utils/templates/project_nav_links.html' %}
         </aside>
         <main>
-            <h2>Source {{ source.name }}</h2>
+            <h2>Source Settings</h2>
 
-            <form id="sourceSettingsForm" method="post" action="/source/update_settings/" enctype="multipart/form-data" class="std-form">
-                <h3>General Settings</h3>
-                <input type="hidden" name="type" value="{{ source.type }}" id="sourceType">
-                <input type="hidden" name="project_dir" value="{{ project_dir }}">
-                <input type="hidden" name="source_dir" value="{{ source.directory }}">
+                <form id="sourceSettingsForm" method="post" action="/source/update_settings/" enctype="multipart/form-data" class="std-form">
+                    <div class="settings-section">
+                        <h3>General Settings</h3>
+                        <input type="hidden" name="type" value="{{ source.type }}" id="sourceType">
+                        <input type="hidden" name="project_dir" value="{{ project_dir }}">
+                        <input type="hidden" name="source_dir" value="{{ source.directory }}">
 
-                <label for="sourceName">Name</label>
-                <input type="text" id="sourceName" name="name" value="{{ source.name }}" required>
+                        <div class="setting-item">
+                            <label for="sourceName">Name</label>
+                            <input type="text" id="sourceName" name="name" value="{{ source.name }}" required>
+                            <p class="setting-description">The display name for your data source.</p>
+                        </div>
 
-                <label for="sourceDescription">Description</label>
-                <textarea id="sourceDescription" name="description">{{ source.description }}</textarea>
-                
-                <h3>Source Type Specific Settings</h3>
-                <div id="sourceSettingsAdditionalArgsDiv" data-source='{{ source | tojson }}'></div>
-        
-                <button type="submit" class="btn-primary">Save</button>
-            </form>
-            <form id="deleteSource" method="post" action="/source/delete/" class="std-form">
-                <h3>Danger zone</h3>
-                <input type="hidden" name="project_dir" value="{{ project_dir }}">
-                <input type="hidden" name="source_dir" value="{{ source.directory }}">
-                <div style="display: flex; align-items: center;">
-                    <button type="submit" class="btn-danger">Delete Source</button>
-                    <p style="margin-left: 10px; font-size: 12px;">Deleting a source is permanent, think twice before doing it</p>
-                </div>
-            </form>
+                        <div class="setting-item">
+                            <label for="sourceDescription">Description</label>
+                            <textarea id="sourceDescription" name="description">{{ source.description }}</textarea>
+                            <p class="setting-description">A brief description of what this data source provides.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Source Type Specific Settings</h3>
+                        <div id="sourceSettingsAdditionalArgsDiv" data-source='{{ source | tojson }}'></div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="margin-bottom: 20px;">Save Settings</button>
+                </form>
+
+            <div class="settings-section">
+                <h3>Danger Zone</h3>
+                <form id="deleteSource" method="post" action="/source/delete/" class="std-form">
+                    <input type="hidden" name="project_dir" value="{{ project_dir }}">
+                    <input type="hidden" name="source_dir" value="{{ source.directory }}">
+                    <div class="setting-item">
+                        <div style="display: flex; align-items: center;">
+                            <button type="submit" class="btn-danger">Delete Source</button>
+                            <p class="setting-description" style="margin-left: 10px;">Deleting a source is permanent, think twice before doing it</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </main>
         <script type="module" src="{{ url_for('base_static', path='js/theme.js') }}"></script>
     <script type="module" src="{{ url_for('data_sources_static', path='js/source_settings_scripts.js') }}"></script>

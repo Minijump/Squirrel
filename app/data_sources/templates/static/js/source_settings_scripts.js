@@ -23,6 +23,7 @@ async function generateAdditionalArgs(sourceType) {
     sourceTypeSpecificArgsDiv.innerHTML = '';
     Object.keys(specificSourceArgs).forEach(key => {
         const input = new Field(key, specificSourceArgs[key]);
+        input.inputDivHTML.classList.add('setting-item');
         sourceTypeSpecificArgsDiv.appendChild(input.inputDivHTML);
         fillInput(sourceTypeSpecificArgsDiv, key, input);
     });

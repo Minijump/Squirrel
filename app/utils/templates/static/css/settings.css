@@ -1,0 +1,153 @@
+.settings-section {
+    background: var(--light-structure-color);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    overflow: hidden; /* Prevent content from spilling out */
+}
+
+.settings-section h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--primary-text-color);
+    font-size: 18px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+.setting-item {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.setting-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.setting-item label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--primary-text-color);
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* Form inputs within settings sections */
+.settings-section input,
+.settings-section input[type="text"],
+.settings-section input[type="email"],
+.settings-section input[type="password"],
+.settings-section input[type="number"],
+.settings-section input[type="url"],
+.settings-section select,
+.settings-section textarea {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: var(--structure-color); /* Different from section background for contrast */
+    color: var(--primary-text-color);
+    border: 1px solid var(--border-color);
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical; /* For textareas */
+    overflow: hidden; /* Prevent horizontal overflow */
+}
+
+.settings-section input[type="text"]:focus,
+.settings-section input[type="email"]:focus,
+.settings-section input[type="password"]:focus,
+.settings-section input[type="number"]:focus,
+.settings-section input[type="url"]:focus,
+.settings-section select:focus,
+.settings-section textarea:focus {
+    outline: none;
+    border-color: var(--first-secondary-color);
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+}
+
+/* Special styling for textarea to ensure proper sizing */
+.settings-section textarea {
+    min-height: 80px;
+    max-height: 300px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Ensure buttons stay within bounds */
+.settings-section button {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Fix for dynamic content in data source settings */
+.settings-section #sourceSettingsAdditionalArgsDiv {
+    width: 100%;
+    overflow: hidden;
+}
+
+.settings-section #sourceSettingsAdditionalArgsDiv input,
+.settings-section #sourceSettingsAdditionalArgsDiv select,
+.settings-section #sourceSettingsAdditionalArgsDiv textarea {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+/* Info notes styling */
+.settings-section .info-note {
+    background: var(--structure-color);
+    padding: 8px 12px;
+    border-radius: 4px;
+    border-left: 3px solid var(--first-secondary-color);
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--secondary-text-color);
+}
+
+.settings-section .info-note i {
+    margin-right: 6px;
+    color: var(--first-secondary-color);
+}
+
+.setting-description {
+    margin-top: 8px;
+    margin-bottom: 0;
+    color: var(--secondary-text-color);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.theme-selector {
+    width: 200px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: var(--structure-color);
+    color: var(--primary-text-color);
+    border: 1px solid var(--border-color);
+    font-size: 14px;
+}
+
+.theme-selector:focus {
+    outline: none;
+    border-color: var(--first-secondary-color);
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+}
+
+.external-link {
+    color: var(--first-secondary-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.external-link:hover {
+    color: var(--second-secondary-color);
+    text-decoration: underline;
+}

@@ -137,7 +137,6 @@ In addition to these folders, you will find a folder named tests that contains t
 * Add actions
 
 ### To do UX
-* Use app settings style for every settings
 * Better UI: factorize classes/colors/...
 * UI notification for JSONResponse ?
 * UI confirm button (for deleting an action in pipeline)
