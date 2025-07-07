@@ -96,6 +96,7 @@
             
             <script type="application/json" id="sources-data">{{ sources | tojson }}</script>
             <script type="application/json" id="tables-data">{{ table | tojson }}</script>
+            <script type="module" src="{{ url_for('base_static', path='js/theme.js') }}"></script>
             <script type="module" src="{{ url_for('tables_static', path='js/table_scripts.js') }}"></script>
         </main>
     </div>

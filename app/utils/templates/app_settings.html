@@ -13,9 +13,33 @@
             {% include 'utils/templates/app_nav_links.html' %}
         </aside>
         <main>
-            <h2>Thank you for using Squirrel!</h2>
-            <p>Need some infos on how to use or customize the app? <a style="color: white" href="https://github.com/Minijump/Squirrel" target="_blank">https://github.com/Minijump/Squirrel</a></p> 
+            <h2>Application Settings</h2>
+
+            <div class="settings-section">
+                <h3>About</h3>
+                <p>Thank you for using Squirrel!</p>
+                <p>Need some infos on how to use or customize the app? 
+                   <a href="https://github.com/Minijump/Squirrel" target="_blank" class="external-link">
+                       https://github.com/Minijump/Squirrel
+                   </a>
+                </p> 
+            </div>
+
+            <div class="settings-section">
+                <h3>Appearance</h3>
+                <div class="setting-item">
+                    <label for="themeSelect">Theme:</label>
+                    <select id="themeSelect" data-theme-select class="theme-selector">
+                        <option value="dark">Dark Mode</option>
+                        <option value="light">Light Mode</option>
+                    </select>
+                    <p class="setting-description">Choose between dark and light theme for the application.</p>
+                </div>
+            </div>
         </main>
     </div>
+    
+    <script type="module" src="{{ url_for('base_static', path='js/theme.js') }}"></script>
+    <script type="module" src="{{ url_for('base_static', path='js/app-settings.js') }}"></script>
 </body>
 </html>

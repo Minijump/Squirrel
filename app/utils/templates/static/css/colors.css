@@ -1,3 +1,4 @@
+/* Dark theme (default) */
 :root {
     --structure-color: #1a202c;
     --light-structure-color: #2d3748;
@@ -7,4 +8,20 @@
     --secondary-gradient: linear-gradient(to bottom right, var(--first-secondary-color), var(--second-secondary-color));
     --primary-text-color: #f0f0f0;
     --secondary-text-color: #9ca3af;
+    --border-color: #4a5568;
+    --hover-overlay: rgba(255, 255, 255, 0.1);
+}
+
+/* Light theme */
+[data-theme="light"] {
+    --structure-color: #cbd5e1;
+    --light-structure-color: #e2e8f0;
+    --primary-gradient: linear-gradient(to top right, var(--structure-color), var(--light-structure-color));
+    --first-secondary-color: #3b82f6;
+    --second-secondary-color: #8b5cf6;
+    --secondary-gradient: linear-gradient(to bottom right, var(--first-secondary-color), var(--second-secondary-color));
+    --primary-text-color: #1e293b;
+    --secondary-text-color: #475569;
+    --border-color: #94a3b8;
+    --hover-overlay: rgba(0, 0, 0, 0.08);
 }

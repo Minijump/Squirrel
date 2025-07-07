@@ -15,7 +15,7 @@
 }
 .table-select-btn {
     background-color: var(--structure-color);
-    color: white;
+    color: var(--primary-text-color);
     border: none;
     outline: none;
     cursor: pointer;
@@ -42,10 +42,10 @@
 }
 .table-action-btn {
     background-color: transparent;
-    color: white;
+    color: var(--primary-text-color);
     border: none;
-    border-left: 1px solid white;
-    border-right: 1px solid white;     
+    border-left: 1px solid var(--primary-text-color);
+    border-right: 1px solid var(--primary-text-color);     
     cursor: pointer;
     padding: 3px;
     transition: 0.3s;
@@ -58,7 +58,7 @@
     border-right: none;
 }
 .table-action-btn:hover {
-    background-color: color-mix(in srgb, var(--light-structure-color), white 20%);
+    background-color: var(--hover-overlay);
 }
 
 /* Dropdown styles */
@@ -70,21 +70,21 @@
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f9f9f9;
+    background-color: var(--light-structure-color);
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
     border-radius: 4px;
 }
 .dropdown-content a {
-    color: black;
+    color: var(--primary-text-color);
     padding: 12px 16px;
     text-decoration: none;
     display: block;
     text-align: left;
 }
 .dropdown-content a:hover {
-    background-color: #f1f1f1;
+    background-color: var(--structure-color);
 }
 .dropdown-content.show {
     display: block;
@@ -177,12 +177,12 @@
     width:100%; 
     bottom: 0; 
     background-color: var(--structure-color); 
-    color: white;
+    color: var(--primary-text-color);
     font-size: 10px;
 }
 
 .export-btn {
-    color: white;
+    color: var(--primary-text-color);
     border: none;
     background-color: transparent;
     font-size: 10px;

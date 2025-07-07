@@ -7,20 +7,20 @@
   width: 100%;
   padding: 8px;
   border-radius: 8px;
-  background: #4b5563;
+  background: var(--light-structure-color);
   color: var(--primary-text-color);
-  border: none;
+  border: 1px solid var(--structure-color);
   margin: 12px;
 }
 .std-form input:not([type="file"]):read-only {
   pointer-events: none;
   outline: none;
   user-select: none;
-  background-color: #3b4351;
+  background-color: var(--structure-color);
 }
 .std-form select option {
   padding: 5px;
-  background-color: #4b5563;
+  background-color: var(--light-structure-color);
   color: var(--primary-text-color);
 }
 

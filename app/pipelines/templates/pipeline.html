@@ -50,6 +50,7 @@
         
         {% include 'pipelines/templates/edit_action_modal.html' %}
 
+        <script type="module" src="{{ url_for('base_static', path='js/theme.js') }}"></script>
         <script src="{{ url_for('base_static', path='js/swapy/dist/swapy.min.js') }}"></script>
         <script type="module" src="{{ url_for('pipeline_static', path='js/pipeline_scripts.js') }}"></script>
     </div>
