@@ -141,7 +141,6 @@ In addition to these folders, you will find a folder named tests that contains t
 * UI notification for JSONResponse ?
 * UI confirm button (for deleting an action in pipeline)
 * Imp modal/modal's form style
-* Imp home button
 * Fix misc UI bugs: sidebar without tabs
 
 ### Feature ideas

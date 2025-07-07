@@ -24,13 +24,56 @@ aside {
   height: 100vh;
 }
 aside h1 {
-  font-size: 24px;
   background: var(--secondary-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   font-weight: bold;
 }
+
+.aside-title {
+  margin-bottom: 25px;
+  padding-bottom: 5px;
+  border-bottom: 2px solid var(--border-color);
+}
+.aside-title-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.aside-title .home-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: var(--first-secondary-color);
+  border-radius: 8px;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+.aside-title .home-link:hover {
+  background: var(--second-secondary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+}
+.aside-title .title-separator {
+  color: var(--border-color);
+  font-size: 18px;
+  font-weight: 300;
+}
+.aside-title h3 {
+  margin: 0;
+  font-weight: 600;
+  background: var(--secondary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+}
+
 aside nav ul {
   list-style: none;
   padding: 0;
