@@ -30,7 +30,7 @@ def test_squirrel_error_decorator_usage():
             decorated_routes.append(route.path)
     
     app_routes = ['/', '/app/settings/']
-    projects_routes = ['/projects/', '/projects/open/', '/projects/create/', '/project/settings/', '/project/update_settings/']
+    projects_routes = ['/projects/', '/projects/open/', '/projects/create/', '/project/settings/', '/project/update_settings/', '/project/delete/']
     data_sources_routes = ['/data_sources/', '/source/create/', '/source/settings', '/source/update_settings/', '/source/delete/']
     table_routes = ['/tables/', '/tables/pager/', '/tables/execute_action/', '/tables/column_infos/', '/tables/export_table/']
     pipeline_routes = ['/pipeline/', '/pipeline/confirm_new_order/', '/pipeline/delete_action/', '/pipeline/edit_action/']
