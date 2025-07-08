@@ -60,9 +60,14 @@ export class EditActionModal extends FormModal {
     deletePipelineAction() {
         const url = `/pipeline/delete_action?project_dir=${this.projectDir}&delete_action_id=${this.actionId}`;  
         fetch(url, { method: 'POST' })
-            .then(response => response.ok 
-                ? window.location.href = `/pipeline/?project_dir=${this.projectDir}`
-                : console.error('Error:', response.statusText))
+            .then(async response => {
+                if (response.ok) {
+                    await window.handleRedirectNotification(response);
+                    window.location.href = `/pipeline/?project_dir=${this.projectDir}`;
+                } else {
+                    console.error('Error:', response.statusText);
+                }
+            })
             .catch(error => console.error('Error:', error));
     }
 }
