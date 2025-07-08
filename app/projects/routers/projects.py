@@ -1,12 +1,13 @@
 import json
 import os
+import shutil
 
 from fastapi import Request
 from fastapi.responses import RedirectResponse, JSONResponse
 
 from app import router, templates
 from app.projects.models import PROJECT_TYPE_REGISTRY
-from app.utils.form_utils import squirrel_error
+from app.utils.form_utils import squirrel_error, _get_form_data_info
 
 
 @router.get("/projects/get_type_options/")
@@ -95,4 +96,15 @@ async def update_project_settings(request: Request):
     project = ProjectClass(manifest_data)
     await project.update_settings(form_data)
 
-    return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303) 
+    return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)
+
+@router.post("/project/delete/")
+@squirrel_error
+async def delete_project(request: Request):
+    """Delete the project + Returns a RedirectResponse to the projects page"""
+    project_dir, = await _get_form_data_info(request, ["project_dir"])
+
+    project_path = os.path.join(os.getcwd(), "_projects", project_dir)
+    shutil.rmtree(project_path)
+
+    return RedirectResponse(url="/projects/", status_code=303)

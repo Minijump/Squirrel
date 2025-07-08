@@ -166,7 +166,7 @@ class Grid(BaseElement):
         self.check_visibility(
             xpath=f"//div[@class=\'grid\']//h3[text()=\'{by_title}\']", 
             visible=visible, 
-            message=f"Data source {by_title} should {'' if visible else 'not'} be displayed")
+            message=f"Card {by_title} should {'' if visible else 'not'} be displayed")
         
     def check_grid_cards_over_effect(self) -> None:
         grid = self.browser.find_element(By.CSS_SELECTOR, ".grid")

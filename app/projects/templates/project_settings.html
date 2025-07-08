@@ -55,6 +55,19 @@
                     <button type="submit" class="btn-primary">Save Settings</button>
                 </form>
             </div>
+
+            <div class="settings-section">
+                <h3>Danger Zone</h3>
+                <form id="deleteProject" method="post" action="/project/delete/" class="std-form">
+                    <input type="hidden" name="project_dir" value="{{ project.directory }}">
+                    <div class="setting-item">
+                        <div style="display: flex; align-items: center;">
+                            <button type="submit" class="btn-danger">Delete Project</button>
+                            <p class="setting-description" style="margin-left: 10px;">Deleting a project is permanent, think twice before doing it</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </main>
     </div>
     <script type="module" src="{{ url_for('base_static', path='js/theme.js') }}"></script>

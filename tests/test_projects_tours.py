@@ -106,3 +106,17 @@ class TestProjectsTours:
         tour.click_card(by_title=new_name)
         tour.navbar_click("Settings")
         tour.check_elements(by_ids=[('projectName', new_name)])
+
+    @pytest.mark.slow
+    def test_delete_project(self, server, browser, reset_projects):
+        """Test project deletion"""
+        tour = Tour(browser, server)
+
+        project_name = "test_project_to_delete"
+        tour.create_project(project_name)
+        
+        tour.navbar_click("Settings")
+        tour.click_danger_button()
+        
+        tour.check_page(title="ProjectHub", url="/projects/")
+        tour.assert_card_visibility(visible=False, by_title=project_name)
