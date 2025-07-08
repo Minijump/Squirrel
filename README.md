@@ -137,11 +137,11 @@ In addition to these folders, you will find a folder named tests that contains t
 * Add actions
 
 ### To do UX
-* Better UI: factorize classes/colors/...
+* Factorize classes/colors/... ?
 * UI notification for JSONResponse ?
 * UI confirm button (for deleting an action in pipeline)
 * Imp modal/modal's form style
-* Fix misc UI bugs: sidebar without tabs
+* Fix misc UI bugs: sidebar to create table,...
 
 ### Feature ideas
 * Add dynamic doctrsing (expl: pd.Series.replace.__doc__)
