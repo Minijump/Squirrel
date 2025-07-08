@@ -14,12 +14,12 @@ class TestTablesTours:
         sidebar = tour.click_create_new_table()
 
         sidebar.fill([("source_creation_type", "Other Tables")])
-        sidebar.check_visibility("//div[@class='data_source_type_onchange other_tables']", visible=True)
-        sidebar.check_visibility("//div[@class='data_source_type_onchange data_source']", visible=False)
+        sidebar.check_visibility("//select[@id='table_df']", visible=True)
+        sidebar.check_visibility("//select[@id='data_source_dir']", visible=False)
 
         sidebar.fill([("source_creation_type", "Data Sources")])
-        sidebar.check_visibility("//div[@class='data_source_type_onchange other_tables']", visible=False)
-        sidebar.check_visibility("//div[@class='data_source_type_onchange data_source']", visible=True)
+        sidebar.check_visibility("//select[@id='table_df']", visible=False)
+        sidebar.check_visibility("//select[@id='data_source_dir']", visible=True)
 
     @pytest.mark.slow
     def test_create_table_from_data_source(self, server, browser, reset_projects):
@@ -30,7 +30,7 @@ class TestTablesTours:
 
         sidebar = tour.click_create_new_table()
         table_name = "test create new table"
-        sidebar.fill([("new_table_name", table_name), ("data_source", "Csv ordered")])
+        sidebar.fill([("table_name", table_name), ("data_source_dir", "Csv ordered")])
         sidebar.submit()
 
         tour.check_table_select_button_visibility(table_name)
@@ -44,7 +44,7 @@ class TestTablesTours:
 
         sidebar = tour.click_create_new_table()
         table_name = "test create new table"
-        sidebar.fill([("new_table_name", table_name), ("source_creation_type", "Other Tables")])
+        sidebar.fill([("table_name", table_name), ("source_creation_type", "Other Tables")])
         sidebar.fill([("table_df", "random")])
         sidebar.submit()
 

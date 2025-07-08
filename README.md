@@ -132,7 +132,6 @@ In addition to these folders, you will find a folder named tests that contains t
 * Add a function to add a value to an Field component? Should check and 'sanitize' data. (should also work on an input that was already created (outside class?)) (create an Input component?)
 
 ### To Fix
-* Fix unit tests
 
 ### To do MVP
 * Add actions

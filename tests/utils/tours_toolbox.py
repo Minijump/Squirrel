@@ -76,7 +76,7 @@ class BaseElement:
 class App(BaseElement):    
     def check_page(self, title:str = False, url:str = False) -> None:
         if title:
-            actual_title = self.browser.find_element(By.CSS_SELECTOR, "h1").text
+            actual_title = self.browser.find_element(By.CSS_SELECTOR, "h1, h3").text
             assert actual_title == title, f"Expected title: {title}, but got: {actual_title}"
         if url:
             actual_url = self.browser.current_url
@@ -110,16 +110,17 @@ class Navbar(BaseElement):
 
 
 class TransientElement(BaseElement):
-    def __init__(self, browser: WebDriver, expected_visible: str) -> None:
+    def __init__(self, browser: WebDriver, expected_visible: str, transient_element_name: str = "Transient Element") -> None:
         super().__init__(browser)
         self.expected_visible = expected_visible
+        self.transient_element_name = transient_element_name
         self.assert_visibility(visible=True)
 
     def assert_visibility(self, visible: bool = True) -> None:
         self.check_visibility(
             xpath=self.expected_visible, 
             visible=visible, 
-            message=f"Transient element did not {'appear' if visible else 'closed'} as expected.")
+            message=f"{self.transient_element_name} did not {'appear' if visible else 'closed'} as expected.")
 
     def fill(self, values: list) -> None:
         """ Fill the form with the given values, where values is a list of tuples (by_id, value) """
@@ -135,17 +136,8 @@ class TransientElement(BaseElement):
         self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[contains(@class, 'btn-danger')]").click()
 
 class RightSidebar(TransientElement):
-    def assert_visibility(self, visible: bool = True) -> None:
-        sidebar_style = self.browser.find_element(By.XPATH, self.expected_visible).get_attribute("style")
-        if visible:
-             WebDriverWait(self.browser, 1, poll_frequency=0.1).until(
-                lambda driver: "width: 300px" in sidebar_style,
-                message="Sidebar did not appear as expected.")
-        else:
-             WebDriverWait(self.browser, 0.2, poll_frequency=0.1).until(
-                lambda driver: "width: 0" in sidebar_style or "width: 0px" in sidebar_style or not sidebar_style,
-                message="Sidebar did not close as expected.")
-
+    def __init__(self, browser: WebDriver, expected_visible: str) -> None:
+        super().__init__(browser, expected_visible, transient_element_name="Right Sidebar")
 
 class Modal(TransientElement):
     def click_button(self, by_button_text: str) -> None:
@@ -155,7 +147,7 @@ class Modal(TransientElement):
 
     def click_action_button(self, by_button_text: str) -> None:
         self.click_button(by_button_text)
-        return RightSidebar(self.browser, expected_visible="//div[@id=\'ActionSidebar\']")
+        return RightSidebar(self.browser, expected_visible="//div[starts-with(@id, 'ActionSidebar')]")
 
     def close(self, assert_closed: bool = True) -> None:
         try:
@@ -236,7 +228,7 @@ class Table(BaseElement):
 class TablesScreen(BaseElement):
     def click_create_new_table(self) -> None:
         self.browser.find_element(By.CSS_SELECTOR, "img").click()
-        return RightSidebar(self.browser, expected_visible="//div[@id=\'CreateTable\']")
+        return RightSidebar(self.browser, expected_visible="//div[@id=\'CreateTableSidebar\']")
     
     def check_table_select_button_visibility(self, table_name: str, visible: bool = True) -> None:
         self.check_visibility(
