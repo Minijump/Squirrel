@@ -112,7 +112,6 @@ class TestTablesTours:
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
-
         table = tour.select_table(by_name="ordered")
 
         # Sort descending
@@ -131,4 +130,29 @@ class TestTablesTours:
         cell = table.get_cell(by_col_number=2, by_row_number=1)
         assert cell.text == "0"
 
-# TODO test all actions: wait for a toolbox for the widget squirrel dict: wait squirrel dict refactor
+    @pytest.mark.slow
+    def test_sort_column_advanced(self, server, browser, reset_projects):
+        """Test sorting a column using the advanced tab with dictionary widget."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        # Sort descending
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Sort")
+        sidebar.switch_to_advanced_tab()
+        sidebar.edit_dictionary("kwargs", "ascending", "False")     
+        sidebar.submit()
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert cell.text == "99"
+
+        # Sort back to ascending (by removing and adding back the key)
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Sort")
+        sidebar.switch_to_advanced_tab()
+        sidebar.remove_from_dictionary("kwargs", "ascending")
+        sidebar.add_to_dictionary("kwargs", "ascending", "True")
+        sidebar.submit()
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert cell.text == "0"

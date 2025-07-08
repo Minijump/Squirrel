@@ -125,7 +125,6 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* refactor tours after code reformat: imp widget uses in tours + add missing tours in table
 * investigate to stop using dfs ?
 * complete readme
 * In dictionnary/dictionnary of advanced tab of action sidebar: use Field component.
@@ -136,7 +135,7 @@ In addition to these folders, you will find a folder named tests that contains t
 ### To Fix
 
 ### To do MVP
-* Add actions
+* Add actions + tours on actions
 
 ### To do UX
 * Factorize classes/colors/... ?
