@@ -4,15 +4,14 @@ import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js
 
 
 export class ActionSidebar extends FormSidebar {
-    constructor(actionName, actionData, projectDir, options = {}) {
+    constructor(actionName, actionData, options = {}) {
         options.title = `Action: ${actionName}`;
         options.id = `ActionSidebar-${actionName}-${Math.random().toString(36).substring(2, 11)}`;
         super(options);
-        Object.assign(this, {actionName, actionData, projectDir});
+        Object.assign(this, {actionName, actionData});
     }
 
     createContent() {
-        const projectDir = new URLSearchParams(window.location.search).get('project_dir')
         const sidebarContent = document.createElement('div')
         sidebarContent.innerHTML = `
             <div class="sidebar-tabs">
@@ -22,7 +21,7 @@ export class ActionSidebar extends FormSidebar {
             <div id="basic-tab" class="tab-content active">
                 <form action="/tables/execute_action/" method="post" class="std-form">
                     <input type="hidden" name="action_name" class="sync-action-name" required>
-                    <input type="hidden" name="project_dir" value="${projectDir}">
+                    <input type="hidden" name="project_dir" value="${this.projectDir}">
                     <input type="hidden" name="table_name" required>
                     <div id="args" style="padding-left: 8px;"></div>
                     <button type="submit" class="btn-primary" style="margin-top: 10px;">Confirm</button>
@@ -31,7 +30,7 @@ export class ActionSidebar extends FormSidebar {
             <div id="advanced-tab" class="tab-content">
                 <form action="/tables/execute_action/" method="post" id="args-kwargs-form" class="std-form">
                     <input type="hidden" name="action_name" class="sync-action-name" required>
-                    <input type="hidden" name="project_dir" value="${projectDir}">
+                    <input type="hidden" name="project_dir" value="${this.projectDir}">
                     <input type="hidden" name="table_name" required>
                     <input type="hidden" name="col_name" id="col_name" required>
                     <input type="hidden" name="col_idx" id="col_idx" required>
@@ -105,7 +104,8 @@ export class ActionSidebar extends FormSidebar {
 
     fillData() {
         let data = this.actionData || {};
-        // table_name, col_name and coll_idx already in data (see getColumnInfo or infos provided in openSidebarActionForm)
+        // table_name, col_name and coll_idx already in data 
+        // (see getColumnInfo or infos provided in openSidebarActionForm)
         const hiddenInputs = {'action_name': this.actionName, 'project_dir': this.projectDir};
         data = {...data, ...hiddenInputs};
 

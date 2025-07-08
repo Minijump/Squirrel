@@ -43,7 +43,6 @@ export class CreateSourceModal extends FormModal {
         options['formId'] = 'createSourceModalForm';
         options['formSubmitRoute'] = '/source/create/';
         super(options);
-        this.projectDir = new URLSearchParams(window.location.search).get('project_dir');
     }
 
     createContent() {

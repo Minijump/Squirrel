@@ -9,6 +9,7 @@ export class TransientComponent {
         this.hasOverlay = options.hasOverlay !== false;
         this.overlayId = options.overlayId || 'transiant-overlay';
         this.overlayHtml = null;
+        this.projectDir = options.projectDir || new URLSearchParams(window.location.search).get('project_dir');
     }
 
     createContent() {

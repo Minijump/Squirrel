@@ -68,16 +68,14 @@ export class InfoColModal extends Modal {
     }
 
     async fillData() {
-        const projectDir = new URLSearchParams(window.location.search).get('project_dir');
-
         this.componentHtml.querySelector('#modalTitle').innerText = this.colName;
         this.componentHtml.querySelector('#col_name').value = this.colName;
         this.componentHtml.querySelector('#col_idx').value = this.colIdx;
         this.componentHtml.querySelector('#table_name').value = this.tableName;
-        this.componentHtml.querySelector('#project_dir').value = projectDir;
+        this.componentHtml.querySelector('#project_dir').value = this.projectDir;
                 
         try {
-            const response = await fetch(`/tables/column_infos/?project_dir=${projectDir}&table=${this.tableName}&column_name=${this.colName}&column_idx=${this.colIdx}`);
+            const response = await fetch(`/tables/column_infos/?project_dir=${this.projectDir}&table=${this.tableName}&column_name=${this.colName}&column_idx=${this.colIdx}`);
             if (!response.ok) throw new Error(`Error in response ${response.status}`);
             const data = await response.json();
 

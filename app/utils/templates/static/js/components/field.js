@@ -130,7 +130,6 @@ export class Field {
         infoNote.innerHTML = `<i class="fas fa-info-circle"></i> ${input.info}`;
         return infoNote;
     }
-    // TODO: add a way to 'sanitize' data (create a new class Input? so we can we it in dict widget)
 }
 
 function onchangeFormValue(onchangeId, event) {

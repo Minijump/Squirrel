@@ -99,9 +99,9 @@ export class SquirrelDictionary extends SquirrelWidget {
     }
 
     createRowHTML(key, value, isKeyReadOnly) {
-        const keyInput = isKeyReadOnly ? 'readonly' : '';
+        const keyInputReadonly = isKeyReadOnly ? 'readonly' : '';
         return `
-            <td><input type="text" value="${this.escapeHtml(key)}" ${keyInput} placeholder="${this.options.placeholder.key}"></td>
+            <td><input type="text" value="${this.escapeHtml(key)}" ${keyInputReadonly} placeholder="${this.options.placeholder.key}"></td>
             <td><input type="text" value="${this.escapeHtml(value)}" placeholder="${this.options.placeholder.value}"></td>
             <td></td>
         `;

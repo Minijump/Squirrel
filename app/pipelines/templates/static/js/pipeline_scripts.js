@@ -30,7 +30,6 @@ function saveNewOrderVisibility() {
 }
 
 function confirmNewOrder(project_dir) {
-    // Call endpoint to edit pipeline with the new order
     const order = getOrder()
     const url = new URL('/pipeline/confirm_new_order', window.location.origin);
     url.searchParams.append('project_dir', project_dir);

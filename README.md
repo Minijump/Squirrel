@@ -125,10 +125,11 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* imp all js code?
 * refactor tours after code reformat: imp widget uses in tours, ... + add missing tours (test tables actions, ...) + test backend info in tours(add methods in toolbox to check table in backend, ...)
 * investigate to stop using dfs ?
 * complete readme
+* In dictionnary/dictionnary of advanced tab of action sidebar: use Field component.
+* Add a function to add a value to an Field component? Should check and 'sanitize' data. (should also work on an input that was already created (outside class?)) (create an Input component?)
 
 ### To Fix
 * Fix unit tests
