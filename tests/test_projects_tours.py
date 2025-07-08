@@ -34,7 +34,7 @@ class TestProjectsTours:
 
         tour.click_card(by_title=MOCK_PROJECT1_NAME)
         tour.check_page(title="Tables", url=f"/tables/")
-        tour.navbar_click("Data sources")
+        tour.navbar_click("Data sources", check_over_effect=True)
         tour.check_page(title="Data Sources", url=f"/data_sources/")
         tour.navbar_click("Pipeline")
         tour.check_page(title="Pipeline", url=f"/pipeline/")
