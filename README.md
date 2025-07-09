@@ -59,47 +59,49 @@ Create data analysis pipeline by generating python with a low-code interface.
 
 Squirrel enables you to create new projects or work on existing ones. These projects are stored in a simple folder, allowing you to share the folder with others for collaboration. You can even convert it into a Git repository for those of you with a more technical background.
 
-![Homepage](app/utils/templates/static/img/squirrel_homepage.png)
+![Homepage](app/utils/templates/static/img/homepage.png)
 
-Once the project opened, you have acces to 4 pages
+For those who prefers white theme, you can go in the app settings to change your app preference, else the dark one is set by default.
+
+<div style="display: flex; gap: 10px;">
+  <img src="app/utils/templates/static/img/dark_settings.png" alt="Dark settings" style="width: 48%;">
+  <img src="app/utils/templates/static/img/white_settings.png" alt="White settings" style="width: 48%;">
+</div>
 
 __The project settings:__
 
-This page allows you to modify the settings of your project. In the current version of Squirrel, you can update the project's name, its description, and the number of lines displayed per table.
+Once you open a project, you can go in its settings. This page allows you to modify the settings of your project. You can update the project's name, its description, and the number of lines displayed per table.
 
-![Project Settings](app/utils/templates/static/img/project_settings.png)
+![Project Settings](app/utils/templates/static/img/projects_settings.png)
 
 __The data sources:__
 
-The data source page allows you to add new data sources (logic). Without creating a data source, you won't be able to create a table. The available data source types include CSV, XLSX, and Pickle, as well as Odoo and Yahoo Finance. The last two are API connections, which require additional information during source creation (such as credentials for Odoo). Once set up, the API request will be executed automatically, generating a file that can be used in the tables. If you suspect that new data is available online, you can synchronize the source (or all sources), and the file will be updated automatically.
+The data source page allows you to add new data sources (logic). Without creating a data source, you won't be able to create a table. The available data source types include CSV, XLSX, JSON and Pickle, as well as Odoo and Yahoo Finance. The last two are API connections, which require additional information during source creation (such as credentials for Odoo). Once set up, the API request will be executed automatically, generating a file that can be used in the tables. If you suspect that new data is available online, you can synchronize the source (or all sources), and the file will be updated automatically.
 
-![Data Sources](app/utils/templates/static/img/data_sources.png)
+![Data Sources](app/utils/templates/static/img/data_sources_grid.png)
 
 __The tables:__
 
-The tables page is where the action happens. On this page, you can create new tables (from existing data sources), add new columns, or delete rows from those tables. You can also "inspect" the columns and perform various actions on them.
+The tables page is where the action happens. On this page, you can create new tables, add new columns, ... You can also "inspect" the columns and perform various actions on them.
 
-![Tables Page](app/utils/templates/static/img/tables_page.png)
+![Tables Page](app/utils/templates/static/img/tables.png)
 
 __The pipeline:__
 
 Every time you perform an action on a table, it is stored in the pipeline. The pipeline page provides an overview of these actions, allowing you to reorder them, edit the Python code executed by the actions, or delete them.
 
-![Pipeline Page](app/utils/templates/static/img/pipeline_page.png)
+![Pipeline Page](app/utils/templates/static/img/pipeline.png)
 
 ## Develoment
-
 ### Customize
 
 The project structure can be somewhat strange to those accustomed to well-structured projects. Here is a brief summary of its organization:
 
 There are 3 main folders:
 
-* app: this folder contains the endpoints and the class used by the project
-* templates: this folder contains the html templates and the statics (img, css, js) used by the project
+* app: this folder contains every code required to run the app: endpoints, templates, classes, js, ...
 * _projects: this is the folder that stores the user's projects. Each projects must contains a manifest, a folder data_source and a pipeline.py file
-
-In addition to these folders, you will find a folder named tests that contains the unit tests.
+* tests: this is where the unit tests and the tours lays
 
 ### Running Tests
 
@@ -125,7 +127,6 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* complete readme
 * In dictionnary/dictionnary of advanced tab of action sidebar: use Field component.
 * Add a function to add a value to an Field component? Should check and 'sanitize' data. (should also work on an input that was already created (outside class?)) (create an Input component?)
 * imp notification manager: enable to have a feature where a json response does not create a notification (boolean in json response) + look at all JSONResponse in code (look if we need a notif, if it is working or need to use handleRedirectNotification, if error notifs are implemented (try except))
