@@ -11,6 +11,20 @@ async function onSourceCardClick(card) {
     window.location.href = `/source/settings/?project_dir=${encodeURIComponent(projectDir)}&source_dir=${encodeURIComponent(sourceDir)}`;
 }
 
+function syncOneSource(sourceDir, projectDir, syncIconId) {
+    syncSource(sourceDir, projectDir, syncIconId)
+        .then(() => {
+            storeNotification('Source synced successfully', 'success');
+        })
+        .catch(error => {
+            storeNotification(`Failed to sync source: ${error}`, 'error');
+        })
+        .finally(() => {
+            location.reload();
+        });
+}
+
+
 function syncSource(sourceDir, projectDir, syncIconId) {
     return new Promise((resolve, reject) => {
         console.log(`Starting sync for source: ${sourceDir}`);
@@ -31,12 +45,12 @@ function syncSource(sourceDir, projectDir, syncIconId) {
             if (response.ok) {
                 syncIcon.classList.remove('fa-spinner', 'fa-spin');
                 syncIcon.classList.add('fa-check');
-                console.log(`Completed sync for source: ${sourceDir}`);
+                console.log(`Sync completed successfully for source: ${sourceDir}`);
                 resolve();
-                location.reload();
             } else {
                 syncIcon.classList.remove('fa-spinner', 'fa-spin');
                 syncIcon.classList.add('fa-times');
+                console.error(`Error syncing source: ${response.status} ${response.statusText}`);
                 reject(`Error syncing source: ${response.status} ${response.statusText}`);
             }
         })
@@ -68,18 +82,19 @@ function syncAllSources(projectDir) {
 
     Promise.all(syncPromises)
         .then(() => {
-            syncAllButton.disabled = false;
-            syncAllButton.innerHTML = 'Sync All Sources';
+            storeNotification('All sources synced successfully', 'success');
         })
         .catch(error => {
-            console.error('Error:', error);
-            alert('Error syncing all sources');
+            storeNotification(`Some sources failed to sync: ${error}`, 'error');
+        })
+        .finally(() => {
             syncAllButton.disabled = false;
             syncAllButton.innerHTML = 'Sync All Sources';
-        });
+            location.reload();
+        })
 }
 
 
 window.onSourceCardClick = onSourceCardClick;
-window.syncSource = syncSource;
+window.syncOneSource = syncOneSource;
 window.syncAllSources = syncAllSources;

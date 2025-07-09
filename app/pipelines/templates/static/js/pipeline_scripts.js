@@ -38,12 +38,8 @@ function confirmNewOrder(project_dir) {
         method: 'POST',
     })
     .then(async response => {
-        if (response.ok) {
-            await window.handleRedirectNotification(response);
-            window.location.href = `/pipeline/?project_dir=${project_dir}`;
-        } else {
-            console.error('Error:', response.statusText);
-        }
+        await window.handleRedirectNotification(response);
+        window.location.href = `/pipeline/?project_dir=${project_dir}`;
     })
 }
 
@@ -56,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     swapy.onSwap((event) => {
         saveNewOrderVisibility()
-        })
+    })
 });
 
 
