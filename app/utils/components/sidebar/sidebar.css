@@ -8,6 +8,7 @@
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
+    padding-right: 15px;
     box-sizing: border-box;
     z-index: 1000;
 }

@@ -137,7 +137,6 @@ There are 3 main folders:
 ### To do UX
 * Factorize classes/colors/... ?
 * Imp modal/modal's form style
-* Fix misc UI bugs: sidebar to create table,...
 
 ### Feature ideas
 * Add dynamic doctrsing (expl: pd.Series.replace.__doc__)
