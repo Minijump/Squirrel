@@ -1,4 +1,4 @@
-import { FormModal } from '/static/base/js/components/modal.js';
+import { FormModal } from '/static/utils/components/modal/modal.js';
 
 
 export class EditActionModal extends FormModal {

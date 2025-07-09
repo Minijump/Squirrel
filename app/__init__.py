@@ -25,11 +25,13 @@ try:
 except ImportError:
     print("Warning: fontawesome_free package not found")
 
+app.mount("/static/utils", StaticFiles(directory="app/utils"), name="utils_static")
 app.mount("/static/base", StaticFiles(directory="app/utils/templates/static"), name="base_static")
 app.mount("/static/projects", StaticFiles(directory="app/projects/templates/static"), name="projects_static")
 app.mount("/static/data_sources", StaticFiles(directory="app/data_sources/templates/static"), name="data_sources_static")
 app.mount("/static/tables", StaticFiles(directory="app/tables/templates/static"), name="tables_static")
 app.mount("/static/pipeline", StaticFiles(directory="app/pipelines/templates/static"), name="pipeline_static")
+app.mount("/static/app_settings", StaticFiles(directory="app/app_settings/templates/static"), name="app_settings_static")
 templates = Jinja2Templates(directory="app")
 
 
@@ -37,7 +39,9 @@ from app.projects import projects
 from app.tables import tables
 from app.data_sources import data_sources
 from app.pipelines import pipelines
+from app.app_settings.routers import app_settings_router
 app.include_router(projects.router, tags=["projects"])
 app.include_router(tables.router, tags=["tables"])
 app.include_router(data_sources.router, tags=["data_sources"])
 app.include_router(pipelines.router, tags=["pipelines"])
+app.include_router(app_settings_router.router, tags=["app_settings"])

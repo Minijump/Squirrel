@@ -1,4 +1,4 @@
-import { Field } from '/static/base/js/components/field.js';
+import { Field } from '/static/utils/components/field/field.js';
 
 
 async function getSourceTypeSpecificArgs(sourceType) {

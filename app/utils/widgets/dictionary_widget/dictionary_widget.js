@@ -1,4 +1,4 @@
-import { SquirrelWidget } from './widget.js';
+import { SquirrelWidget } from '/static/utils/widgets/widget/widget.js';
 
 export class SquirrelDictionary extends SquirrelWidget {
     constructor(element) {

@@ -1,5 +1,5 @@
-import { FormModal } from '/static/base/js/components/modal.js';
-import { Field } from '/static/base/js/components/field.js';
+import { FormModal } from '/static/utils/components/modal/modal.js';
+import { Field } from '/static/utils/components/field/field.js';
 
 
 async function generateFormInputs() {

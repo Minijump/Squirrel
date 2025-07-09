@@ -101,8 +101,8 @@
             
             <script type="application/json" id="sources-data">{{ sources | tojson }}</script>
             <script type="application/json" id="tables-data">{{ table | tojson }}</script>
-            <script type="module" src="{{ url_for('base_static', path='js/theme.js') }}"></script>
-            <script type="module" src="{{ url_for('base_static', path='js/notification.js') }}"></script>
+            <script type="module" src="{{ url_for('utils_static', path='ui_manager/theme_manager/theme.js') }}"></script>
+            <script type="module" src="{{ url_for('utils_static', path='ui_manager/notification_manager/notification.js') }}"></script>
             <script type="module" src="{{ url_for('tables_static', path='js/table_scripts.js') }}"></script>
         </main>
     </div>

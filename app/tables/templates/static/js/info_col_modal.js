@@ -1,4 +1,4 @@
-import { Modal } from '/static/base/js/components/modal.js';
+import { Modal } from '/static/utils/components/modal/modal.js';
 import { openSidebarActionForm } from './sidebar_scripts.js';
 
 export class InfoColModal extends Modal {

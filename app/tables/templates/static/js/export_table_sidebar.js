@@ -1,4 +1,4 @@
-import { FormSidebar } from '/static/base/js/components/sidebar.js';
+import { FormSidebar } from '/static/utils/components/sidebar/sidebar.js';
 
 
 export function openExportTableSidebar(options = {}) {

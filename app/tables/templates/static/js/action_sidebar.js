@@ -1,6 +1,6 @@
-import { FormSidebar } from '/static/base/js/components/sidebar.js';
-import { Field } from '/static/base/js/components/field.js';
-import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js';
+import { FormSidebar } from '/static/utils/components/sidebar/sidebar.js';
+import { Field } from '/static/utils/components/field/field.js';
+import { SquirrelDictionary } from '/static/utils/widgets/dictionary_widget/dictionary_widget.js';
 
 
 export class ActionSidebar extends FormSidebar {

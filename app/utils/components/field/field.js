@@ -1,4 +1,4 @@
-import { SquirrelDictionary } from '/static/base/js/widgets/dictionary_widget.js';
+import { SquirrelDictionary } from '/static/utils/widgets/dictionary_widget/dictionary_widget.js';
 
 
 /**

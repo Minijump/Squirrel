@@ -1,4 +1,4 @@
-import { Form } from './form.js';
+import { Form } from '/static/utils/components/form/form.js';
 
 
 export class TransientComponent {

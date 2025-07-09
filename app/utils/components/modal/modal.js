@@ -1,5 +1,5 @@
-import { Form } from './form.js';
-import { TransientComponent } from './transient_component.js';
+import { Form } from '/static/utils/components/form/form.js';
+import { TransientComponent } from '/static/utils/components/transient_component/transient_component.js';
 
 
 export class Modal extends TransientComponent {

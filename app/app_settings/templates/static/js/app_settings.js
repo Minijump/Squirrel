@@ -1,4 +1,4 @@
-import { ThemeManager } from './theme.js';
+import { ThemeManager } from '/static/utils/ui_manager/theme_manager/theme.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const themeManager = ThemeManager.getInstance();

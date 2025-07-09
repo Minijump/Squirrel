@@ -1,4 +1,4 @@
-import { Field } from './field.js';
+import { Field } from '/static/utils/components/field/field.js';
 
 
 export class Form {

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>App Settings</title>
     <link href="{{ url_for('projects_static', path='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('app_settings_static', path='css/settings.css') }}" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -38,9 +39,8 @@
             </div>
         </main>
     </div>
-    
-    <script type="module" src="{{ url_for('base_static', path='js/theme.js') }}"></script>
-    <script type="module" src="{{ url_for('base_static', path='js/notification.js') }}"></script>
-    <script type="module" src="{{ url_for('base_static', path='js/app-settings.js') }}"></script>
+    <script type="module" src="{{ url_for('utils_static', path='ui_manager/theme_manager/theme.js') }}"></script>
+    <script type="module" src="{{ url_for('utils_static', path='ui_manager/notification_manager/notification.js') }}"></script>
+    <script type="module" src="{{ url_for('app_settings_static', path='js/app_settings.js') }}"></script>
 </body>
 </html>
