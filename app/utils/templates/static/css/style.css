@@ -6,7 +6,7 @@
 @import url('btn_style.css');
 @import url('scrollbar.css');
 @import url('errors.css');
-@import url('/static/utils/widgets/widget/widget.css');
+@import url('/static/utils/widgets/dictionary_widget/dictionary_widget.css');
 @import url('/static/utils/components/transient_component/transient_component.css');
 @import url('/static/utils/components/modal/modal.css');
 @import url('/static/utils/components/sidebar/sidebar.css');
