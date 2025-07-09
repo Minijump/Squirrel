@@ -44,7 +44,7 @@ class AddColumn(Action):
     async def execute(self):
         table_name, col_name, col_value, value_type = await self._get(["table_name", "col_name", "col_value", "value_type"])
         code = convert_sq_action_to_python(col_value, actual_table_name=table_name, is_sq_action=(value_type == "sq_action"))
-        new_code = f"""dfs['{table_name}']['{col_name}'] = {code}  #sq_action:Add column {col_name} on table {table_name}"""
+        new_code = f"""tables['{table_name}']['{col_name}'] = {code}  #sq_action:Add column {col_name} on table {table_name}"""
         return new_code
 
 @table_action_type
@@ -61,7 +61,7 @@ class AddRow(Action):
     async def execute(self):
         table_name, new_rows = await self._get(["table_name", "new_rows"])
         new_rows = f"pd.DataFrame({new_rows})" if new_rows else "pd.DataFrame()"
-        new_code = f"""dfs['{table_name}'] = pd.concat([dfs['{table_name}'], {new_rows}], ignore_index=True)  #sq_action:Add rows in table {table_name}"""
+        new_code = f"""tables['{table_name}'] = pd.concat([tables['{table_name}'], {new_rows}], ignore_index=True)  #sq_action:Add rows in table {table_name}"""
         return new_code
 
 @table_action_type
@@ -74,7 +74,7 @@ class DeleteRow(Action):
 
     async def execute(self):
         table_name, delete_domain = await self._get(["table_name", "delete_domain"])
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].query("not ({delete_domain})")  #sq_action:Delete rows in table {table_name}"""
+        new_code = f"""tables['{table_name}'] = tables['{table_name}'].query("not ({delete_domain})")  #sq_action:Delete rows in table {table_name}"""
         return new_code
     
 @table_action_type
@@ -87,7 +87,7 @@ class KeepRow(Action):
 
     async def execute(self):
         table_name, keep_domain = await self._get(["table_name", "keep_domain"])
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].query("({keep_domain})")  #sq_action:Keep rows in table {table_name}"""
+        new_code = f"""tables['{table_name}'] = tables['{table_name}'].query("({keep_domain})")  #sq_action:Keep rows in table {table_name}"""
         return new_code
 
 @table_action_type
@@ -110,7 +110,7 @@ class CreateTable(Action):
             new_code = source.create_table(await self.request.form())
 
         elif source_creation_type == "other_tables":
-            new_code = f"dfs['{table_name}'] = dfs['{table_df}']  #sq_action:Create table {table_name}"
+            new_code = f"tables['{table_name}'] = tables['{table_df}']  #sq_action:Create table {table_name}"
 
         else:
             raise ValueError("Invalid source_creation_type")
@@ -150,7 +150,7 @@ class MergeTables(Action):
 
     async def execute(self):
         table_name, table2, on, how = await self._get(["table_name", "table2", "on", "how"])
-        new_code = f"""dfs['{table_name}'] = pd.merge(dfs['{table_name}'], dfs['{table2}'], on='{on}', how='{how}')  #sq_action:Merge {table_name} with {table2}"""
+        new_code = f"""tables['{table_name}'] = pd.merge(tables['{table_name}'], tables['{table2}'], on='{on}', how='{how}')  #sq_action:Merge {table_name} with {table2}"""
         return new_code
     
     async def execute_advanced(self):
@@ -158,7 +158,7 @@ class MergeTables(Action):
         kwargs = ast.literal_eval(kwargs)
         table2_name = kwargs.pop("right")
         kwargs_str = await self._get_kwargs_str(kwargs)
-        new_code = f"""dfs['{table_name}'] = pd.merge(dfs['{table_name}'], dfs['{table2_name}'], {kwargs_str})  #sq_action:Merge {table_name}"""
+        new_code = f"""tables['{table_name}'] = pd.merge(tables['{table_name}'], tables['{table2_name}'], {kwargs_str})  #sq_action:Merge {table_name}"""
         return new_code
 
 @table_action_type
@@ -171,7 +171,7 @@ class ConcatenateTables(Action):
 
     async def execute(self):
         table_name, table = await self._get(["table_name", "table"])
-        new_code = f"""dfs['{table_name}'] = pd.concat([dfs['{table_name}'], dfs['{table}']], ignore_index=True)  #sq_action:Concatenate tables {table_name} and {table}"""
+        new_code = f"""tables['{table_name}'] = pd.concat([tables['{table_name}'], tables['{table}']], ignore_index=True)  #sq_action:Concatenate tables {table_name} and {table}"""
         return new_code
 
 @table_action_type
@@ -192,5 +192,5 @@ class GroupBy(Action):
         groupby_str = groupby if groupby.startswith('[') else f"'{groupby}'"
         agg_str = f".agg({agg})" if agg.startswith('{') else f".agg('{agg}')"
 
-        new_code = f"""dfs['{table_name}'] = dfs['{table_name}'].groupby({groupby_str}){agg_str if agg else ''}.reset_index()  #sq_action:Group by {groupby} {('aggr' + agg) if agg else ''} table {table_name}"""
+        new_code = f"""tables['{table_name}'] = tables['{table_name}'].groupby({groupby_str}){agg_str if agg else ''}.reset_index()  #sq_action:Group by {groupby} {('aggr' + agg) if agg else ''} table {table_name}"""
         return new_code

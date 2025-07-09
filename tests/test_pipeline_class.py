@@ -47,7 +47,7 @@ async def test_get_actions(temp_project_dir_fixture):
     assert len(actions[0]) == 3, "Actions should be a tuple with following structure: (action_id, action_name, action_line(s)))"
     assert actions[0][0] == 0, "First action should have id 0"
     assert "Create table ordered from Csv ordered" in actions[0][1], "First action name is not the expected one"
-    assert "dfs['ordered'] = pd.read_pickle" in actions[0][2], "First action code is not the expected one"
+    assert "tables['ordered'] = pd.read_pickle" in actions[0][2], "First action code is not the expected one"
 
 @pytest.mark.asyncio
 async def test_confirm_new_order(temp_project_dir_fixture):

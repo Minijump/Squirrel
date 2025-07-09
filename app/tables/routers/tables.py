@@ -44,21 +44,21 @@ def to_html_with_idx(df):
 async def tables(request: Request, project_dir: str):
     """Run the pipeline contained in the project directory and Returns a TemplateResponse to display the tables"""
     exception = False
-    dfs = {}
+    tables = {}
     try:
         pipeline = load_pipeline_module(project_dir)
-        dfs = pipeline.run_pipeline()
+        tables = pipeline.run_pipeline()
     except Exception as e:
         exception = e
     finally:
-        # save dfs as a pickle file (will increase speed of things that does not read the whole pipeline to be run)
+        # save tables as a pickle file (will increase speed of things that does not read the whole pipeline to be run)
         datatables_path = os.path.join( os.getcwd(), "_projects", project_dir, "data_tables.pkl")
         with open(datatables_path, 'wb') as f:
-            pickle.dump(dfs, f)
+            pickle.dump(tables, f)
         # Convert them to html (first lines)
         table_html = {}
         table_len_infos = {}
-        for name, df in dfs.items():
+        for name, df in tables.items():
             if not exception and isinstance(df, pd.DataFrame):
                 manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "__manifest__.json")
                 with open(manifest_path, 'r') as file:
@@ -83,11 +83,11 @@ async def tables_pager(request: Request, project_dir: str, table_name: str, page
     data_tables_path = os.path.join( os.getcwd(), "_projects", project_dir, "data_tables.pkl")
     if os.path.exists(data_tables_path):
         with open(data_tables_path, 'rb') as f:
-            dfs = pickle.load(f)
+            tables = pickle.load(f)
     else:
         pipeline = load_pipeline_module(project_dir)
-        dfs = pipeline.run_pipeline()
-    df = dfs[table_name]
+        tables = pipeline.run_pipeline()
+    df = tables[table_name]
     start = page * n
     end = start + n
     table_html = to_html_with_idx(df.iloc[start:end])
@@ -143,8 +143,8 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
     data_tables_path = os.path.join( os.getcwd(), "_projects", project_dir, "data_tables.pkl")
     if os.path.exists(data_tables_path):
         with open(data_tables_path, 'rb') as f:
-            dfs = pickle.load(f)
-            df = dfs[table]
+            tables = pickle.load(f)
+            df = tables[table]
     else:
         pipeline = load_pipeline_module(project_dir)
         df = pipeline.run_pipeline()[table]
@@ -177,8 +177,8 @@ async def export_table(request: Request):
     table_name, export_type, project_dir = await _get_form_data_info(request, ["table_name", "export_type", "project_dir"])
 
     pipeline = load_pipeline_module(project_dir)
-    dfs = pipeline.run_pipeline()
-    df = dfs[table_name]
+    tables = pipeline.run_pipeline()
+    df = tables[table_name]
 
     export_dir = os.path.join(os.getcwd(), "_projects", project_dir, "exports")
     os.makedirs(export_dir, exist_ok=True)

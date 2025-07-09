@@ -125,12 +125,12 @@ In addition to these folders, you will find a folder named tests that contains t
 5. **Create a new Pull Request**
 
 ### To do
-* investigate to stop using dfs ?
 * complete readme
 * In dictionnary/dictionnary of advanced tab of action sidebar: use Field component.
 * Add a function to add a value to an Field component? Should check and 'sanitize' data. (should also work on an input that was already created (outside class?)) (create an Input component?)
 * We need to be able to call thememanager, notifmanager,... in html templates with only one line
 * imp notification manager: enable to have a feature where a json response does not create a notification (boolean in json response) + look at all JSONResponse in code (look if we need a notif, if it is working or need to use handleRedirectNotification, if error notifs are implemented (try except))
+* Failing test regarding hover effect should trigger warning instead of error.
 
 ### To Fix
 

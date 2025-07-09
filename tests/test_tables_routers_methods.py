@@ -17,10 +17,10 @@ def test_load_pipeline_module(temp_project_dir_fixture):
     from app.tables.routers.tables import load_pipeline_module
     pipeline = load_pipeline_module(MOCK_PROJECT_CWD_INDEPENDENT)
     try:
-        dfs = pipeline.run_pipeline()
+        tables = pipeline.run_pipeline()
     except Exception as e:
         raise AssertionError("Not able to run 'run_pipeline' from pipeline") from e
-    assert isinstance(dfs, dict) and isinstance(dfs['df'], pd.DataFrame), "'run_pipeline' response should be a dictionary"
+    assert isinstance(tables, dict) and isinstance(tables['df'], pd.DataFrame), "'run_pipeline' response should be a dictionary"
 
 def test_to_html_with_idx():
     """

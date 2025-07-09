@@ -27,7 +27,7 @@ const FORMINPUTS = {
         'label': 'Action Code',
         'type': 'textarea',
         'required': true,
-        'info': "Your tables are available in a dictionnary called dfs, to edit it use dfs['table_name']<br>i.e.: dfs['table_name']['col_name'] = dfs['table_name']['col_name'] * 2",
+        'info': "Your tables are available in a dictionnary called tables, to edit it use tables['table_name']<br>i.e.: tables['table_name']['col_name'] = tables['table_name']['col_name'] * 2",
     },
     'custom_action_name': {
         'label': 'Action Name',

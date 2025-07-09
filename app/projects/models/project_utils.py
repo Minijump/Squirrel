@@ -6,13 +6,13 @@ BASIC_PIPELINE = """
 import pandas as pd
 
 def run_pipeline():
-    dfs = {}
+    tables = {}
     
     %s
     %s
     %s
 
-    return dfs
+    return tables
 """ % (PIPELINE_START_TAG, NEW_CODE_TAG, PIPELINE_END_TAG)
 
 PROJECT_TYPE_REGISTRY = {}

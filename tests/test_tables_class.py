@@ -36,23 +36,23 @@ def test_convert_sq_action_to_python():
     
     # Test t[table]c[column] pattern
     code = "t[users]c[name]"
-    expected = "dfs[users][name]"
+    expected = "tables[users][name]"
     assert convert_sq_action_to_python(code, "users") == expected, f"Code should be converted to {expected}"
     assert convert_sq_action_to_python(code) == expected, f"Code should be converted to {expected}"
     
     # Test c[column] pattern with actual_table_name
     code = "c[age]"
-    expected = "dfs['users'][age]"
+    expected = "tables['users'][age]"
     assert convert_sq_action_to_python(code, "users") == expected, f"Code should be converted to {expected}"
     
     # Test t[table] pattern
     code = "t[users]"
-    expected = "dfs[users]"
+    expected = "tables[users]"
     assert convert_sq_action_to_python(code, "users") == expected, f"Code should be converted to {expected}"
     
     # Test complex example with multiple patterns
     code = "t[users]c[name] + ' is ' + str(c[age]) + ' years old from ' + t[cities]c[name]"
-    expected = "dfs[users][name] + ' is ' + str(dfs['users'][age]) + ' years old from ' + dfs[cities][name]"
+    expected = "tables[users][name] + ' is ' + str(tables['users'][age]) + ' years old from ' + tables[cities][name]"
     assert convert_sq_action_to_python(code, "users") == expected, f"Code should be converted to {expected}"
 
 def test_isnt_str():
