@@ -1,3 +1,4 @@
+import { Input } from '/static/utils/components/input/input.js';
 import { SquirrelDictionary } from '/static/utils/widgets/dictionary_widget/dictionary_widget.js';
 
 
@@ -80,36 +81,19 @@ export class Field {
     }
 
     createInput(input) {
-        let formInput = document.createElement('input');
-        if (['password', 'date', 'number', 'file'].includes(input.type)) formInput.type = input.type;
-
-        if (input.type === 'number') formInput.step = input.step || 'any';
-        if (input.type === 'file' && input.accept) formInput.accept = input.accept;
-        if (input.type === 'textarea') formInput = document.createElement('textarea');
-        if (input.type === 'dict') {
-            formInput = document.createElement('textarea');
-            formInput.setAttribute('widget', 'squirrel-dictionary');
-            input.dict_options && formInput.setAttribute('options', JSON.stringify(input.dict_options));
-            formInput.value = JSON.stringify(input.dict_default || {});
-        }
-        if (input.type === 'select') {
-            formInput = document.createElement('select');
-            input.select_options.forEach(option => {
-                const optionElement = document.createElement('option');
-                optionElement.value = option[0];
-                optionElement.text = option[1];
-                formInput.appendChild(optionElement);
-            });
-        }
-        if (['text', 'password', 'textarea', 'number'].includes(input.type) && input.placeholder) {
-            formInput.placeholder = input.placeholder;
-        }
-
-        if (input.onchange){
-            formInput.setAttribute('onchange', input.onchange);
-            formInput.classList.add('onchange-trigger');
-        }
-        if (input.className) formInput.className = input.className;
+        let formInput;
+        
+        const inputOptions = {
+            placeholder: input.placeholder,
+            className: input.className,
+            onchange: input.onchange,
+            step: input.step,
+            accept: input.accept,
+            selectOptions: input.select_options,
+            dictOptions: input.dict_options,
+            dictDefault: input.dict_default
+        };
+        formInput = Input.createInput(input.type, inputOptions);
 
         return formInput;
     }

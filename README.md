@@ -127,8 +127,7 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
-* In dictionnary/dictionnary of advanced tab of action sidebar: use Field component.
-* Add a function to add a value to an Field component? Should check and 'sanitize' data. (should also work on an input that was already created (outside class?)) (create an Input component?)
+* Move 'create' out of transient components' constructor (add it in open?) (to be able to access 'this' in subclasses)
 
 ### To Fix
 

@@ -1,4 +1,5 @@
 import { SquirrelWidget } from '/static/utils/widgets/widget/widget.js';
+import { Input } from '/static/utils/components/input/input.js';
 
 export class SquirrelDictionary extends SquirrelWidget {
     constructor(element) {
@@ -91,20 +92,35 @@ export class SquirrelDictionary extends SquirrelWidget {
         const row = document.createElement('tr');
         const isKeyReadOnly = isDefault && this.options.remove === false;
 
-        row.innerHTML = this.createRowHTML(key, value, isKeyReadOnly);
+        this.createRowElements(row, key, value, isKeyReadOnly);
         this.addRemoveButton(row, isDefault);
         this.table.querySelector('tbody').appendChild(row);
 
         this.updateTextarea();
     }
 
-    createRowHTML(key, value, isKeyReadOnly) {
-        const keyInputReadonly = isKeyReadOnly ? 'readonly' : '';
-        return `
-            <td><input type="text" value="${this.escapeHtml(key)}" ${keyInputReadonly} placeholder="${this.options.placeholder.key}"></td>
-            <td><input type="text" value="${this.escapeHtml(value)}" placeholder="${this.options.placeholder.value}"></td>
-            <td></td>
-        `;
+    createRowElements(row, key, value, isKeyReadOnly) {
+        const keyCell = document.createElement('td');
+        const valueCell = document.createElement('td');
+        const actionCell = document.createElement('td');
+
+        const keyInput = Input.createInput('text', {
+            value: key,
+            placeholder: this.options.placeholder.key,
+            readonly: isKeyReadOnly
+        });
+
+        const valueInput = Input.createInput('text', {
+            value: value,
+            placeholder: this.options.placeholder.value
+        });
+
+        keyCell.appendChild(keyInput);
+        valueCell.appendChild(valueInput);
+
+        row.appendChild(keyCell);
+        row.appendChild(valueCell);
+        row.appendChild(actionCell);
     }
 
     addRemoveButton(row, isDefault) {
@@ -150,12 +166,6 @@ export class SquirrelDictionary extends SquirrelWidget {
         
         const numValue = Number(trimmedValue);
         return !isNaN(numValue) && isFinite(numValue) ? numValue : value;
-    }
-
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
     }
 }
 
