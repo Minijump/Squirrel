@@ -1,4 +1,5 @@
 import { FormModal } from '/static/utils/components/modal/modal.js';
+import { ConfirmationModal } from '/static/utils/components/modal/confirmation_modal.js';
 
 
 export class EditActionModal extends FormModal {
@@ -40,7 +41,7 @@ export class EditActionModal extends FormModal {
             className: 'btn-danger',
             textContent: 'Delete Action',
             style: 'margin-left: 10px; height: 100%;',
-            onclick: () => confirm('Are you sure you want to delete this action?') && this.deletePipelineAction()
+            onclick: () => this.showDeleteConfirmation()
         });
         const submitButton = form.querySelector('button[type="submit"]');
         submitButton.parentNode.insertBefore(deleteButton, submitButton.nextSibling);
@@ -55,6 +56,19 @@ export class EditActionModal extends FormModal {
     fillData() {
         const actionNameDisplay = this.componentHtml.querySelector('strong');
         if (actionNameDisplay) actionNameDisplay.textContent = this.actionName;
+    }
+
+    showDeleteConfirmation() {
+        const confirmationModal = new ConfirmationModal({
+            title: 'Delete Action',
+            message: `Are you sure you want to delete this action ?`,
+            confirmText: 'Delete',
+            cancelText: 'Cancel',
+            confirmClass: 'btn-danger',
+            cancelClass: 'btn-secondary',
+            onConfirm: () => this.deletePipelineAction()
+        });
+        confirmationModal.open();
     }
 
     deletePipelineAction() {

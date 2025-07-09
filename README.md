@@ -137,7 +137,6 @@ There are 3 main folders:
 
 ### To do UX
 * Factorize classes/colors/... ?
-* UI confirm button (for deleting an action in pipeline)
 * Imp modal/modal's form style
 * Fix misc UI bugs: sidebar to create table,...
 
