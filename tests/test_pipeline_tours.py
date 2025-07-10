@@ -62,10 +62,7 @@ class TestPipelineTours:
         
         edit_action_modal = tour.click_edit_action(1)
         edit_action_modal.click_danger_button()  
-        # Handle the alert
-        alert = browser.switch_to.alert
-        assert alert.text == "Are you sure you want to delete this action?", "Unexpected alert text"
-        alert.accept()
+        tour.confirmation_modal(confirm=True)
         
         new_action_elements = tour.get_pipeline_actions(wait_a_minute=True)
         new_number_of_actions = len(new_action_elements)
@@ -84,9 +81,7 @@ class TestPipelineTours:
         
         edit_action_modal = tour.click_edit_action(1)
         edit_action_modal.click_danger_button()
-        # Handle the alert but cancel
-        alert = browser.switch_to.alert
-        alert.dismiss()
+        tour.confirmation_modal(confirm=False)
         
         edit_action_modal.close()
         new_action_elements = tour.get_pipeline_actions(wait_a_minute=True)

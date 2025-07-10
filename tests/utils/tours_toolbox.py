@@ -210,8 +210,13 @@ class RightSidebar(TransientElement):
 
 
 class Modal(TransientElement):
-    def click_button(self, by_button_text: str) -> None:
-        button = self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[contains(text(), '{by_button_text}')]")
+    def click_button(self, by_button_text: str = False, by_id:str = False) -> None:
+        if by_id:
+            button = self.browser.find_element(By.ID, by_id)
+        elif by_button_text:
+            button = self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[contains(text(), '{by_button_text}')]")
+        else:
+            raise ValueError("Either 'by_button_text' or 'by_id' must be provided.")
         button.click()
         self.assert_visibility(visible=False)
 
@@ -353,3 +358,9 @@ class Tour(App, Navbar, Grid, TablesScreen, PipelineScreen):
         if description:
             create_project_modal.fill([("description", description)])
         create_project_modal.submit(assert_closed=True)
+
+    def confirmation_modal(self, confirm: bool = True) -> Modal:
+        """ Handle the confirmation modal """
+        modal = Modal(self.browser, expected_visible="//div[starts-with(@id,'confirmation-modal')]")
+        button_id = "confirm-btn" if confirm else "cancel-btn"
+        modal.click_button(by_id=button_id)
