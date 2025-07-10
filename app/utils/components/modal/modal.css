@@ -4,7 +4,6 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
     display: none;
     align-items: center;
     justify-content: center;
@@ -12,9 +11,9 @@
 }
 
 .modal-content {
-    background: var(--light-structure-color);
+    background-color: var(--structure-color);
     border-radius: 12px;
-    min-width: 400px;
+    min-width: 600px;
     max-height: 500px;
     overflow-y: auto;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);

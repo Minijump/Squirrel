@@ -10,6 +10,7 @@
     --secondary-text-color: #9ca3af;
     --border-color: #4a5568;
     --hover-overlay: rgba(255, 255, 255, 0.1);
+    --transient-overlay-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Light theme */
@@ -24,4 +25,5 @@
     --secondary-text-color: #475569;
     --border-color: #94a3b8;
     --hover-overlay: rgba(0, 0, 0, 0.08);
+    --transient-overlay-color: rgba(0, 0, 0, 0.5);
 }
