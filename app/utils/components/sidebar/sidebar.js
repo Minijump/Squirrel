@@ -15,7 +15,7 @@ export class Sidebar extends TransientComponent {
 
     create() {
         this.componentHtml = Object.assign(document.createElement('div'), {
-            className: `${this.position}-sidebar`,
+            className: `${this.position}-sidebar transient-component`,
             id: this.id
         });
         this.componentHtml.innerHTML = `<a href="javascript:void(0)" class="close-btn">&times;</a>`;

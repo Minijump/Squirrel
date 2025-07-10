@@ -14,7 +14,7 @@ export class Modal extends TransientComponent {
 
     create() {
         this.componentHtml = this.getOrCreateOverlay();
-        this.componentHtml.classList.add('modal');
+        this.componentHtml.classList.add('modal', 'transient-component');
         
         const modalContent = document.createElement('div');
         modalContent.className = 'modal-content';

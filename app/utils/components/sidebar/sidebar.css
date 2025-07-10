@@ -10,7 +10,7 @@
     padding-top: 60px;
     padding-right: 15px;
     box-sizing: border-box;
-    z-index: 1000;
+    z-index: var(--transient-z-index);
 }
 .right-sidebar {
     right: 0;
@@ -31,6 +31,7 @@
 .right-sidebar a:hover, .left-sidebar a:hover {
     color: var(--primary-text-color);
 }
+/* Sidebar specific close btn positioning */
 .right-sidebar .close-btn, .left-sidebar .close-btn {
     position: absolute;
     top: 0;
@@ -88,32 +89,11 @@
     overflow-y: auto;
 }
 
-/* Sidebar form */
+/* Sidebar specific form styles */
 .right-sidebar .std-form, .left-sidebar .std-form {
     padding: 0 15px;
 }
 
-.right-sidebar .std-form label, .left-sidebar .std-form label {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--primary-text-color);
-    font-weight: 500;
-}
-
-.right-sidebar .std-form input,
-.right-sidebar .std-form textarea,
-.right-sidebar .std-form select,
-.left-sidebar .std-form input,
-.left-sidebar .std-form textarea,
-.left-sidebar .std-form select {
-    margin-bottom: 15px;
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background: var(--light-structure-color);
-    color: var(--primary-text-color);
-    box-sizing: border-box;
-}
 .right-sidebar .std-form button[type="submit"],
 .left-sidebar .std-form button[type="submit"] {
     width: calc(100% - 30px);
