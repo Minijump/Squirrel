@@ -25,6 +25,7 @@ export class Modal extends TransientComponent {
         
         modalContent.appendChild(header);
         modalContent.appendChild(content);
+
         this.componentHtml.appendChild(modalContent);
         document.body.appendChild(this.componentHtml); 
         this.bindEvents();
