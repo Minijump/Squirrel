@@ -48,6 +48,13 @@ export class Modal extends TransientComponent {
     componentClose() {
         this.componentHtml.style.display = 'none';
     }
+
+    bindEvents() {
+        super.bindEvents();
+        this.componentHtml.addEventListener('click', (e) => {
+            if (e.target === this.componentHtml) this.close();
+        });
+    }
 }
 
 export class FormModal extends Modal {
