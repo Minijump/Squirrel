@@ -1,0 +1,88 @@
+:root {
+    --nav-collapsed-width: 50px;
+    --nav-expanded-width: 250px;
+}
+
+.project-page aside {
+    width: var(--nav-collapsed-width);
+    transition: width 0.3s ease;
+    overflow: hidden;
+    padding: 2px;
+    padding-top: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    z-index: 1000;
+}
+.project-page aside:hover {
+    width: var(--nav-expanded-width);
+    padding: 20px;
+}
+
+.project-page main {
+    margin-left: var(--nav-collapsed-width);
+}
+
+/* Hide text when collapsed */
+.project-page aside nav ul li a {
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.project-page aside:not(:hover) nav ul li a i {
+    margin-right: 0;
+    transition: margin-right 0.3s ease;
+}
+
+.project-page aside:hover nav ul li a i {
+    margin-right: 5px;
+    transition: margin-right 0.3s ease;
+}
+
+.project-page aside:not(:hover) .aside-title .title-separator {
+    color: transparent;
+}
+
+.project-page aside:not(:hover) .aside-title .home-link {
+    margin: 0 auto;
+}
+
+.project-page aside:not(:hover) .aside-title-content {
+    justify-content: center;
+}
+
+/* Center icons when collapsed */
+.project-page aside:not(:hover) nav ul li a {
+    justify-content: center;
+    padding: 10px 0;
+    width: 30px;
+    margin: 0 auto;
+    text-align: center;
+    color: transparent;
+    position: relative;
+}
+
+.project-page aside:not(:hover) nav ul li a i {
+    color: var(--primary-text-color);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+.project-page aside:hover nav ul li a {
+    justify-content: flex-start;
+    padding: 10px;
+    width: auto;
+    text-align: left;
+    color: var(--primary-text-color);
+    position: static;
+}
+
+.project-page aside:hover nav ul li a i {
+    color: var(--primary-text-color);
+    position: static;
+    transform: none;
+}
