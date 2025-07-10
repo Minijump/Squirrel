@@ -58,7 +58,7 @@
     border-right: none;
 }
 .table-action-btn:hover {
-    background-color: var(--hover-overlay);
+    background-color: color-mix(in srgb, var(--secondary-text-color) 50%, transparent);
 }
 
 /* Dropdown styles */
@@ -84,12 +84,24 @@
     text-align: left;
 }
 .dropdown-content a:hover {
-    background-color: var(--structure-color);
+    background-color: color-mix(in srgb, var(--secondary-text-color) 50%, transparent);
 }
 .dropdown-content.show {
     display: block;
 }
 
+/* same as table-action-btn (without hover effect, else it appear twice) */
+.dropdown-toggle {
+    background-color: transparent;
+    color: var(--primary-text-color);
+    border: none;
+    border-left: 1px solid var(--primary-text-color);
+    border-right: 1px solid var(--primary-text-color);     
+    cursor: pointer;
+    padding: 3px;
+    transition: 0.3s;
+    flex: 1;
+}
 .dropdown-toggle::after {
     content: " ▼";
     font-size: 0.7em;

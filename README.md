@@ -136,7 +136,6 @@ There are 3 main folders:
 
 ### To do UX
 * Factorize classes/colors/... ? (for transient + ...)
-* Remove '--hover-overlay' (not used enough)
 
 ### Feature ideas
 * Add dynamic doctrsing (expl: pd.Series.replace.__doc__)
