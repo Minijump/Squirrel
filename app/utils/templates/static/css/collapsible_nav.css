@@ -40,8 +40,16 @@
     transition: margin-right 0.3s ease;
 }
 
+.project-page aside:not(:hover) .aside-title {
+    padding-left: 2px;
+}
+
 .project-page aside:not(:hover) .aside-title .title-separator {
     color: transparent;
+}
+
+.project-page aside:not(:hover) .aside-title h3 {
+    display: none;
 }
 
 .project-page aside:not(:hover) .aside-title .home-link {
@@ -85,4 +93,10 @@
     color: var(--primary-text-color);
     position: static;
     transform: none;
+}
+
+.project-page aside:hover .aside-title h3 {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
 }
