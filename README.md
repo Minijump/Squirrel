@@ -135,7 +135,6 @@ There are 3 main folders:
 * Add actions + tours on actions
 
 ### To do UX
-* Imp page when there is no table created yet
 
 ### Feature ideas
 * Add dynamic doctrsing (expl: pd.Series.replace.__doc__)
