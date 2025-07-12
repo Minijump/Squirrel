@@ -130,12 +130,12 @@ There are 3 main folders:
 * Move 'create' out of transient components' constructor (add it in open?) (to be able to access 'this' in subclasses)
 
 ### To Fix
-* Fix collapsed sidebar glitches: glitch when clicking on a line
 
 ### To do MVP
 * Add actions + tours on actions
 
 ### To do UX
+* Imp page when there is no table created yet
 
 ### Feature ideas
 * Add dynamic doctrsing (expl: pd.Series.replace.__doc__)
