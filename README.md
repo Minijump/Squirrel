@@ -134,7 +134,6 @@ There are 3 main folders:
 * Add actions + tours on actions
 
 ### To do UX
-* Imp source settings? merge general and specific settings?
 
 ### Feature ideas
 * Add dynamic doctrsing (expl: pd.Series.replace.__doc__)

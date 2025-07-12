@@ -22,9 +22,8 @@
         </aside>
         <main>
             <h2>Source Settings</h2>
-
-                <form id="sourceSettingsForm" method="post" action="/source/update_settings/" enctype="multipart/form-data" class="std-form">
-                    <div class="settings-section">
+                <div class="settings-section">
+                    <form id="sourceSettingsForm" method="post" action="/source/update_settings/" enctype="multipart/form-data" class="std-form">
                         <h3>General Settings</h3>
                         <input type="hidden" name="type" value="{{ source.type }}" id="sourceType">
                         <input type="hidden" name="project_dir" value="{{ project_dir }}">
@@ -41,15 +40,13 @@
                             <textarea id="sourceDescription" name="description">{{ source.description }}</textarea>
                             <p class="setting-description">A brief description of what this data source provides.</p>
                         </div>
-                    </div>
 
-                    <div class="settings-section">
                         <h3>Source Type Specific Settings</h3>
                         <div id="sourceSettingsAdditionalArgsDiv" data-source='{{ source | tojson }}'></div>
-                    </div>
 
-                    <button type="submit" class="btn-primary" style="margin-bottom: 20px;">Save Settings</button>
-                </form>
+                        <button type="submit" class="btn-primary" style="margin-bottom: 20px;">Save Settings</button>
+                    </form>
+                </div>
 
             <div class="settings-section">
                 <h3>Danger Zone</h3>
