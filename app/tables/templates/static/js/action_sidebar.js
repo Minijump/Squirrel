@@ -48,12 +48,6 @@ export class ActionSidebar extends FormSidebar {
         return sidebarContent;
     }
 
-    async open() {
-        await this.addInputs();
-        await this.addKwargs(); 
-        super.open();
-    }
-
     async addInputs() {
         try {
             const response = await fetch(`/tables/get_action_args/?action_name=${this.actionName}`);
@@ -102,7 +96,9 @@ export class ActionSidebar extends FormSidebar {
         }
     }
 
-    fillData() {
+    async fillData() {
+        await this.addInputs();
+        await this.addKwargs();
         let data = this.actionData || {};
         // table_name, col_name and coll_idx already in data 
         // (see getColumnInfo or infos provided in openSidebarActionForm)
@@ -117,6 +113,10 @@ export class ActionSidebar extends FormSidebar {
                 });
             }
             else console.warn(`Element with id ${key} not found in the form.`);
+        });
+        const onchangeElements = this.componentHtml.querySelectorAll('[onchange]');
+        onchangeElements.forEach(element => {
+            element.dispatchEvent(new Event('change'));
         });
     }
 

@@ -12,6 +12,10 @@ export class TransientComponent {
         this.projectDir = options.projectDir || new URLSearchParams(window.location.search).get('project_dir');
     }
 
+    create() {
+        return;
+    }
+
     createContent() {
         const content = document.createElement('div');
         if (typeof this.bodyContent === 'string') content.innerHTML = this.bodyContent;
@@ -46,6 +50,7 @@ export class TransientComponent {
 
     open() {
         if (this.isOpen) return;
+        this.create()
 
         this.fillData();
         this.componentOpen();

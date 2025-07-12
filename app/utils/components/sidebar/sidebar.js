@@ -10,7 +10,6 @@ export class Sidebar extends TransientComponent {
         this.width = options.width || '320px';
         this.position = options.position || 'right';
         this.overlayId = options.overlayId || 'sidebar-overlay';
-        this.create();
     }
 
     create() {

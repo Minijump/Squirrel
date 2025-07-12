@@ -22,30 +22,13 @@ export class ConfirmationModal extends Modal {
     createContent() {
         const content = document.createElement('div');
         content.innerHTML = `
-            <p id="message" style="margin-bottom: 20px; color: var(--primary-text-color);"></p>
+            <p id="message" style="margin-bottom: 20px; color: var(--primary-text-color);">${this.message}</p>
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="button" id="cancel-btn"></button>
-                <button type="button" id="confirm-btn"></button>
+                <button type="button" id="cancel-btn" class="${this.cancelClass}">${this.cancelText}</button>
+                <button type="button" id="confirm-btn" class="${this.confirmClass}">${this.confirmText}</button>
             </div>
         `;
         return content;
-    }
-
-    fillData() {
-        const messageElement = this.componentHtml.querySelector('#message');
-        if (messageElement) messageElement.textContent = this.message;
-        
-        const confirmBtn = this.componentHtml.querySelector('#confirm-btn');
-        if (confirmBtn) {
-            confirmBtn.textContent = this.confirmText;
-            confirmBtn.classList.add(this.confirmClass);
-        }
-        
-        const cancelBtn = this.componentHtml.querySelector('#cancel-btn');
-        if (cancelBtn) {
-            cancelBtn.textContent = this.cancelText;
-            cancelBtn.classList.add(this.cancelClass);
-        }
     }
 
     bindEvents() {

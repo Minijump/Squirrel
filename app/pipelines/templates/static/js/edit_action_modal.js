@@ -53,11 +53,6 @@ export class EditActionModal extends FormModal {
         return content;
     }
 
-    fillData() {
-        const actionNameDisplay = this.componentHtml.querySelector('strong');
-        if (actionNameDisplay) actionNameDisplay.textContent = this.actionName;
-    }
-
     showDeleteConfirmation() {
         const confirmationModal = new ConfirmationModal({
             title: 'Delete Action',

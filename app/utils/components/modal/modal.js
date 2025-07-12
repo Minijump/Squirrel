@@ -9,7 +9,6 @@ export class Modal extends TransientComponent {
         this.title = options.title || 'Modal';
         this.componentHtml = null;
         this.overlayId = this.id || 'modal-overlay';
-        this.create();
     }
 
     create() {
