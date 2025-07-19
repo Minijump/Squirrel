@@ -11,7 +11,8 @@ function isProjectPage() {
     return urlParams.has('project_dir') || window.location.pathname.includes('/project/');
 }
 
-// Add project-page class before dom is loaded, else the nav is expanded by default for a split second
+// Add project-page class before dom is loaded,
+// else the nav is expanded by default for a split second (still happens sometimes)
 (function() {
     if (isTestMode()) return;
     if (!isProjectPage()) return;

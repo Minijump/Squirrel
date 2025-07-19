@@ -66,7 +66,8 @@ class ThemeManager {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    ThemeManager.getInstance();
-});
+// Add theme before dom is loaded to avoid flash of default theme (still flash sometimes)
+(function() {
+    ThemeManager.getInstance()
+})();
 export { ThemeManager };
