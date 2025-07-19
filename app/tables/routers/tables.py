@@ -156,6 +156,8 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
         "null": str(column.isna().sum()),
         "count": str(len(column.index)),
         "is_numeric": column.dtype in ["float64", "int64"],
+        "is_string": column.dtype == "object",
+        "top_values": column.value_counts().head(5).to_dict()
     }
 
     if col_infos["is_numeric"]:
@@ -167,6 +169,14 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
         col_infos["25"] = str(column.quantile(0.25))
         col_infos["50"] = str(column.quantile(0.5))
         col_infos["75"] = str(column.quantile(0.75))
+    
+    if col_infos["is_string"]:
+        col_infos["is_string"] = True
+        string_lengths = column.str.len()
+        col_infos["avg_length"] = str(string_lengths.mean())
+        col_infos["min_length"] = str(string_lengths.min())
+        col_infos["max_length"] = str(string_lengths.max())
+        col_infos["empty_strings"] = str((column == "").sum())
 
     return col_infos
 

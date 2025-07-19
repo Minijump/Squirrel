@@ -305,3 +305,59 @@ class MathOperations(ActionColumn):
         else:
             raise ValueError("Invalid math operation")
         return new_code
+
+@table_action_type
+class ReplaceInCell(ActionColumn):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args.update({
+            "action": {"type": "select", "label": "Action", 
+                       "select_options": [("whitespace", "White spaces"), ("regex", "Regex")],
+                       "onchange": "onchangeFormValue('ReplaceInCell_action', event)"},
+            "regex": {"type": "textarea", "label": "Regex", 
+                      "info": "Regex pattern to replace in every cell: E.g. '\\d+' matches digits; '\\x' matches all x; ...",
+                      "required": False, "onchange_visibility": ["ReplaceInCell_action", "regex"]},
+            "replacement": {"type": "text", "label": "Replacement"},
+        })
+
+    async def execute(self):
+        table_name, col_name, col_idx, action, regex, replacement = await self._get(["table_name", "col_name", "col_idx", "action", "regex", "replacement"])
+        new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].str.replace"""
+        if action == "whitespace":
+            new_code += f"""(r'\\s+', '{replacement}', regex=True)  #sq_action:Replace whitespace in column {col_name} of table {table_name}"""
+        elif action == "regex":
+            new_code += f"""(r'{regex}', '{replacement}', regex=True)  #sq_action:Replace regex in column {col_name} of table {table_name}"""
+        else:
+            raise ValueError("Invalid action for replacing in cell")
+        return new_code
+    
+@table_action_type
+class FormatString(ActionColumn):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args.update({
+            "operation": {"type": "select", "label": "Operation", 
+                         "select_options": [("upper", "Upper Case (HELLO WORLD)"), ("lower", "Lower Case (hello world)"), ("title", "Title Case (Hello World)"), ("capitalize", "Capitalize First Letter (Hello world)"),
+                                            ("strip", "Remove start/end Whitespace (xxx)"), ("lstrip", "Remove start Whitespace (xxx )"), ("rstrip", "Remove end Whitespace ( xxx)")],},
+        })
+
+    async def execute(self):
+        table_name, col_name, operation, col_idx = await self._get(["table_name", "col_name", "operation", "col_idx"])
+        new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].str."""
+        if operation == "upper":
+            new_code += f"""upper()  #sq_action:Convert column {col_name} to uppercase in table {table_name}"""
+        elif operation == "lower":
+            new_code += f"""lower()  #sq_action:Convert column {col_name} to lowercase in table {table_name}"""
+        elif operation == "title":
+            new_code += f"""title()  #sq_action:Convert column {col_name} to title case in table {table_name}"""
+        elif operation == "capitalize":
+            new_code += f"""capitalize()  #sq_action:Capitalize column {col_name} in table {table_name}"""
+        elif operation == "strip":
+            new_code += f"""strip()  #sq_action:Strip whitespace from column {col_name} in table {table_name}"""
+        elif operation == "lstrip":
+            new_code += f"""lstrip()  #sq_action:Left strip whitespace from column {col_name} in table {table_name}"""
+        elif operation == "rstrip":
+            new_code += f"""rstrip()  #sq_action:Right strip whitespace from column {col_name} in table {table_name}"""
+        else:
+            raise ValueError("Invalid string operation")
+        return new_code

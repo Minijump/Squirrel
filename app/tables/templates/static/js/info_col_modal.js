@@ -29,7 +29,7 @@ export class InfoColModal extends Modal {
         const content = super.createContent();
 
         const buttonConfigs = [
-            ['.btn-div:not(.numeric-only)', [
+            ['.btn-div:not(.numeric-only):not(.string-only)', [
                 {'action': 'HandleMissingValues', 'label': 'Missing vals.'},
                 {'action': 'ReplaceVals', 'label': 'Replace vals.'},
                 {'action': 'ChangeType', 'label': 'Change type'},
@@ -44,6 +44,10 @@ export class InfoColModal extends Modal {
                 {'action': 'NSmallest', 'label': 'Keep N smallest'},
                 {'action': 'ColDiff', 'label': 'Diff'},
                 {'action': 'MathOperations', 'label': 'Math operations'},
+            ]],
+            ['.btn-div.string-only', [
+                {'action': 'ReplaceInCell', 'label': 'Replace in cell'},
+                {'action': 'FormatString', 'label': 'String formats'},
             ]]
         ];
 
@@ -83,9 +87,14 @@ export class InfoColModal extends Modal {
             this.componentHtml.querySelectorAll('.numeric-only').forEach(div => 
                 div.style.display = data['is_numeric'] ? 'flex' : 'none'
             );
+            
+            this.componentHtml.querySelectorAll('.string-only').forEach(div => 
+                div.style.display = data['is_string'] ? 'flex' : 'none'
+            );
 
             const fields = ['dtype', 'count', 'unique', 'null',
-                            'mean', 'std', 'min', '25', '50', '75', 'max'];    
+                            'mean', 'std', 'min', '25', '50', '75', 'max', // numeric only
+                            'avg_length', 'min_length', 'max_length', 'empty_strings']; // string only   
             fields.forEach(field => {       
                 const element = this.componentHtml.querySelector(`#col_${field}`);
                 if (element) {
@@ -94,6 +103,39 @@ export class InfoColModal extends Modal {
                     element.querySelector('span').innerText = hasValue ? this.formatNumber(data[field]) : 'N/A';
                 }
             });
+            
+            // Handle top values
+            const topValuesDiv = this.componentHtml.querySelector('#top_values_list');
+            if (topValuesDiv && data['top_values']) {
+                topValuesDiv.innerHTML = '';
+                Object.entries(data['top_values']).forEach(([value, count]) => {
+                    const valueDiv = document.createElement('div');
+                    valueDiv.className = 'top-value-item';
+                    valueDiv.innerHTML = `<span class="value">"${value}"</span>: <span class="count">${count}</span>`;
+                    topValuesDiv.appendChild(valueDiv);
+                });
+                
+                // Add fold/unfold feature
+                const title = this.componentHtml.querySelector('#top_values_title');
+                const values = this.componentHtml.querySelector('#top_values_list');
+                const sign = this.componentHtml.querySelector('#fold_sign');
+                let isExpanded = true;
+                function fold() {
+                    isExpanded = !isExpanded;
+                    sign.textContent = isExpanded ? '-' : '+';
+                    const items = topValuesDiv.querySelectorAll('.top-value-item');
+                    items.forEach((item, index) => {
+                        item.style.display = (isExpanded || index === 0) ? 'block' : 'none';
+                    });
+                }
+                fold(); // Initially folded
+                title.onclick = () => {
+                    fold();
+                };
+                values.onclick = () => {
+                    fold();
+                }
+            }
         } catch (error) {
             this.componentHtml.querySelector('#error_infos_computation').innerHTML = `Error computing informations: ${error.message}`;
         }

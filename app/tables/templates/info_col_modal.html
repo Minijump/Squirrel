@@ -29,6 +29,23 @@
         </div> 
         <div class="btn-div numeric-only"></div>
 
+        <div class="infos-div string-only">
+            <div id="col_avg_length" class="info" style="margin-right: 8px;">Avg Length: <span></span></div>
+            <div id="col_min_length" class="info" style="margin-right: 8px;">Min Length: <span></span></div>
+            <div id="col_max_length" class="info" style="margin-right: 8px;">Max Length: <span></span></div>
+            <div id="col_empty_strings" class="info" style="margin-right: 8px;">Empty: <span></span></div>
+        </div>
+        <div class="btn-div string-only"></div>
+
+        <div id="top_values_div" class="infos-div" style="display: flex;">
+            <div style="margin-right: 8px;">
+                <h4 style="margin-top: 0; cursor: pointer;" id="top_values_title">
+                    <span id="fold_sign">+</span> Most Common Values:
+                </h4>
+            </div>
+            <div id="top_values_list" style="cursor: pointer;"></div>
+        </div>
+
         <form action="/tables/execute_action/" method="post">
             <input id="action_name" name="action_name" value="DropColumn" type="hidden" required>
             <input id="project_dir" name="project_dir" type="hidden"required>

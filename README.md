@@ -133,9 +133,11 @@ There are 3 main folders:
 
 ### To do MVP
 * Add actions + tours on actions
+* fields with onchange_visibility should be able to be mandatory
 
 ### To do UX
 * Imp sidebar UX (must be as modal)
+* When an error is raised when creating an action (action not yet create); raise an error notification instead of raising an error
 
 ### Feature ideas
 * Add dynamic doctrsing (expl: pd.Series.replace.__doc__)
@@ -155,4 +157,5 @@ There are 3 main folders:
 * integrated llm / Connection with online ones (+ crewAI?)
 * df explorer for vs code? Not much in common with squirrel?
 * Make app executable? Use py2exe?
+* Possibility to edit a cell value directly
 * ...
