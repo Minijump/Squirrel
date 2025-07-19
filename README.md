@@ -129,11 +129,13 @@ There are 3 main folders:
 ### To do
 
 ### To Fix
+* navbar glitch: (only sometimes), when page load it reopens/close directly
 
 ### To do MVP
 * Add actions + tours on actions
 
 ### To do UX
+* Imp sidebar UX (must be as modal)
 
 ### Feature ideas
 * Add dynamic doctrsing (expl: pd.Series.replace.__doc__)

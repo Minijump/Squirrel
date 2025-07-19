@@ -277,3 +277,31 @@ class ColDiff(ActionColumn):
         new_col_idx = col_idx.replace(", ", "-").replace("'", "").replace("(", "").replace(")", "") + "-diff"
         new_code = f"""tables['{table_name}']['{new_col_idx}'] = tables['{table_name}'][{col_idx}].diff({kwrags_str})  #sq_action:Calculate difference of {col_name} in table {table_name}"""    
         return new_code
+
+@table_action_type
+class MathOperations(ActionColumn):
+    def __init__(self, request):
+        super().__init__(request)
+        self.args.update({
+            "operation": {"type": "select", "label": "Operation", 
+                         "select_options": [("log", "Log"), ("sqrt", "Square Root"), ("abs", "Absolute"), ("round", "Round")],
+                         "onchange": "onchangeFormValue('MathOperations_operation', event)",},
+            "decimals": {"type": "number", "label": "Decimals", 
+                        "required": False, "onchange_visibility": ["MathOperations_operation", "round"],
+                        "info": "Number of decimal places to round to"},
+        })
+
+    async def execute(self):
+        table_name, col_name, operation, decimals, col_idx = await self._get(["table_name", "col_name", "operation", "decimals", "col_idx"])
+        if operation == "log":
+            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].apply(lambda x: __import__('math').log(x) if x > 0 else float('nan'))  #sq_action:Apply log to column {col_name} of table {table_name}"""
+        elif operation == "sqrt":
+            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].apply(lambda x: __import__('math').sqrt(x) if x >= 0 else float('nan'))  #sq_action:Apply sqrt to column {col_name} of table {table_name}"""
+        elif operation == "abs":
+            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].abs()  #sq_action:Apply abs to column {col_name} of table {table_name}"""
+        elif operation == "round":
+            decimals = decimals or 0
+            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].round({decimals})  #sq_action:Round column {col_name} to {decimals} decimals in table {table_name}"""
+        else:
+            raise ValueError("Invalid math operation")
+        return new_code

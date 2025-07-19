@@ -42,7 +42,8 @@ export class InfoColModal extends Modal {
                 {'action': 'CutValues', 'label': 'Cut'},
                 {'action': 'NLargest', 'label': 'Keep N largest'},
                 {'action': 'NSmallest', 'label': 'Keep N smallest'},
-                {'action': 'ColDiff', 'label': 'Diff'}
+                {'action': 'ColDiff', 'label': 'Diff'},
+                {'action': 'MathOperations', 'label': 'Math operations'},
             ]]
         ];
 
