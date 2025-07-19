@@ -17,13 +17,28 @@ export class Sidebar extends TransientComponent {
             className: `${this.position}-sidebar`,
             id: this.id
         });
-        this.componentHtml.innerHTML = `<a href="javascript:void(0)" class="close-btn">&times;</a>`;
-        this.componentHtml.appendChild(this.createContent());
+        
+        const header = this.createHeader();
+        const content = this.createContent();
+        content.className = 'sidebar-body';
+        
+        this.componentHtml.appendChild(header);
+        this.componentHtml.appendChild(content);
         
         if (this.hasOverlay) this.overlayHtml = this.getOrCreateOverlay();
         
         document.body.appendChild(this.componentHtml);
         this.bindEvents();
+    }
+
+    createHeader() {
+        const header = document.createElement('div');
+        header.className = 'sidebar-header';
+        header.innerHTML = `
+            <h3 class="sidebar-title">${this.title}</h3>
+            <a href="javascript:void(0)" class="close-btn">&times;</a>
+        `;
+        return header;
     }
 
     componentOpen() {

@@ -18,7 +18,7 @@ export class InfoColModal extends Modal {
         if (editBtn) {
             editBtn.onclick = () => {
                 this.close();
-                openSidebarActionForm('RenameColumn', this.getColumnInfo());
+                openSidebarActionForm('RenameColumn', this.getColumnInfo(), 'Rename Column');
             };
         }
         
@@ -67,7 +67,7 @@ export class InfoColModal extends Modal {
         button.textContent = btn.label;
         button.onclick = () => {
             this.close();
-            openSidebarActionForm(btn.action, this.getColumnInfo());
+            openSidebarActionForm(btn.action, this.getColumnInfo(), btn.label);
         };
         return button;
     }

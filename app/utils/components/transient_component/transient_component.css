@@ -5,6 +5,7 @@
     right: 0;
     bottom: 0;
     background: var(--transient-overlay-color);
+    backdrop-filter: blur(6px);
     display: none;
     z-index: 999;
 }

@@ -136,7 +136,6 @@ There are 3 main folders:
 * fields with onchange_visibility should be able to be mandatory
 
 ### To do UX
-* Imp sidebar UX (must be as modal)
 * When an error is raised when creating an action (action not yet create); raise an error notification instead of raising an error
 
 ### Feature ideas

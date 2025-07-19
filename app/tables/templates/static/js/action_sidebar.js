@@ -5,7 +5,7 @@ import { SquirrelDictionary } from '/static/utils/widgets/dictionary_widget/dict
 
 export class ActionSidebar extends FormSidebar {
     constructor(actionName, actionData, options = {}) {
-        options.title = `Action: ${actionName}`;
+        options.title = options.actionString || `Action: ${actionName}`;
         options.id = `ActionSidebar-${actionName}-${Math.random().toString(36).substring(2, 11)}`;
         super(options);
         Object.assign(this, {actionName, actionData});
@@ -14,7 +14,7 @@ export class ActionSidebar extends FormSidebar {
     createContent() {
         const sidebarContent = document.createElement('div')
         sidebarContent.innerHTML = `
-            <div class="sidebar-tabs">
+            <div id="sidebar-tabs-buttons" class="sidebar-tabs" style="display: none;">
                 <button class="tab-button active n-l-border n-r-border" onclick="this.switchTab(event, 'basic-tab')">Basic</button>
                 <button id="kwargs-btn" class="tab-button n-r-border" style="display: none;" onclick="this.switchTab(event, 'advanced-tab')">Advanced</button>
             </div>
@@ -23,7 +23,7 @@ export class ActionSidebar extends FormSidebar {
                     <input type="hidden" name="action_name" class="sync-action-name" required>
                     <input type="hidden" name="project_dir" value="${this.projectDir}">
                     <input type="hidden" name="table_name" required>
-                    <div id="args" style="padding-left: 8px;"></div>
+                    <div id="args"></div>
                     <button type="submit" class="btn-primary" style="margin-top: 10px;">Confirm</button>
                 </form>
             </div>
@@ -69,11 +69,13 @@ export class ActionSidebar extends FormSidebar {
             const response = await fetch(`/tables/get_action_kwargs/?action_name=${this.actionName}`);
             const kwargs = await response.json();
             
+            const tabButtons = this.componentHtml.querySelector('#sidebar-tabs-buttons');
             const kwargsForm = this.componentHtml.querySelector('#args-kwargs-form');
             const kwargsBtn = this.componentHtml.querySelector('#kwargs-btn');
             const kwargsDiv = this.componentHtml.querySelector('#args-kwargs');
             
             const hasKwargs = Object.keys(kwargs).length > 0;
+            tabButtons.style.display = hasKwargs ? 'flex' : 'none';
             kwargsForm.style.display = hasKwargs ? 'block' : 'none';
             kwargsBtn.style.display = hasKwargs ? 'block' : 'none';
             if (!hasKwargs) return;

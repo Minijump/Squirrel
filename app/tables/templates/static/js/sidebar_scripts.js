@@ -3,8 +3,8 @@ import { openCreateTableSidebar } from './create_table_sidebar.js';
 import { openExportTableSidebar } from './export_table_sidebar.js';
 
 
-export async function openSidebarActionForm(actionName, data = {}) {
-    const actionSidebar = new ActionSidebar(actionName, data, {});
+export async function openSidebarActionForm(actionName, data = {}, actionString = '') {
+    const actionSidebar = new ActionSidebar(actionName, data, {actionString});
     await actionSidebar.open();
 }
 
