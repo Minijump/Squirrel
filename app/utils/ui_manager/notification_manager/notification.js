@@ -1,8 +1,3 @@
-/**
- * Auto Notification System for JSONResponse
- * Automatically shows popups for JSONResponse messages from the server
- */
-
 class NotificationManager {
     constructor() {
         this.notifications = [];
@@ -21,7 +16,6 @@ class NotificationManager {
             sessionStorage.removeItem('showNotification');
             try {
                 const notification = JSON.parse(storedNotification);
-                // Small delay to ensure DOM is ready
                 setTimeout(() => {
                     this.show(notification.message, notification.type);
                 }, 100);
@@ -48,21 +42,17 @@ class NotificationManager {
         if (response && response.status >= 200) {
             const clonedResponse = response.clone();
             
-            // Check if it's a JSON response
             const contentType = response.headers.get('content-type');
             if (contentType && contentType.includes('application/json')) {
                 try {
                     const data = await clonedResponse.json();
                     
-                    // Check if it has a message property
                     if (data && typeof data.message === 'string' && data.message.trim()) {
                         const type = this.getTypeFromStatusCode(response.status);
                         
                         if (willRedirect) {
-                            // Store for after redirect
                             this.storeNotification(data.message, type);
                         } else {
-                            // Show immediately
                             setTimeout(() => {
                                 this.show(data.message, type);
                             }, 10);
@@ -80,33 +70,25 @@ class NotificationManager {
      */
     setupFetchInterceptor() {
         if (window.fetch.__intercepted) {
-            return; // Already intercepted
+            return;
         }
 
         const originalFetch = window.fetch;
-        const self = this; // Capture the correct context
+        const self = this;
         
         window.fetch = async function(...args) {
             try {
-                console.log('Fetch intercepted:', args[0]); // Debug log
                 const response = await originalFetch.apply(this, args);
                 
-                // Process notification IMMEDIATELY when response is received
                 if (response && response.status >= 200) {
-                    console.log('Processing response for notifications:', response.status, response.headers.get('content-type')); // Debug log
-                    // Clone the response IMMEDIATELY to avoid conflicts with user code
                     const clonedResponse = response.clone();
-                    
-                    // Process notification asynchronously without blocking the original response
                     self.processNotification(clonedResponse).catch(err => {
-                        // Silently ignore notification processing errors
                         console.debug('Notification processing error:', err);
                     });
                 }
                 
                 return response;
             } catch (error) {
-                // Network error or other fetch error
                 throw error;
             }
         };
@@ -119,26 +101,16 @@ class NotificationManager {
      */
     async processNotification(response) {
         try {
-            // Check if it's a JSON response
             const contentType = response.headers.get('content-type');
-            console.log('Content-Type:', contentType); // Debug log
             if (contentType && contentType.includes('application/json')) {
                 const data = await response.json();
-                console.log('JSON data received:', data); // Debug log
                 
-                // Check if it has a message property (typical for JSONResponse)
                 if (data && typeof data.message === 'string' && data.message.trim()) {
                     const type = this.getTypeFromStatusCode(response.status);
-                    console.log('Showing notification:', data.message, 'Type:', type); // Debug log
-                    // Use setTimeout to ensure DOM is ready and avoid blocking
                     setTimeout(() => {
                         this.show(data.message, type);
                     }, 10);
-                } else {
-                    console.log('No valid message found in data:', data); // Debug log
                 }
-            } else {
-                console.log('Not a JSON response'); // Debug log
             }
         } catch (error) {
             // Silently ignore - not a JSON response or no message property
@@ -180,7 +152,6 @@ class NotificationManager {
      * @param {number} duration - How long to show the notification (ms)
      */
     show(message, type = 'info', duration = this.defaultDuration) {
-        // Remove oldest notifications if we have too many
         while (this.notifications.length >= this.maxNotifications) {
             const oldest = this.notifications.shift();
             if (oldest && oldest.element) {
@@ -191,19 +162,15 @@ class NotificationManager {
         const notification = this.create(message, type);
         this.notifications.push(notification);
 
-        // Position notification based on existing notifications
         const index = this.notifications.length - 1;
         notification.element.style.top = `${20 + (index * 80)}px`;
 
-        // Add to DOM
         document.body.appendChild(notification.element);
 
-        // Trigger animation
         setTimeout(() => {
             notification.element.classList.add('show');
         }, 100);
 
-        // Auto remove after duration
         if (duration > 0) {
             notification.timeoutId = setTimeout(() => {
                 this.remove(notification.element);
@@ -231,7 +198,6 @@ class NotificationManager {
             <button class="close-btn" type="button">&times;</button>
         `;
 
-        // Add close button functionality
         const closeBtn = element.querySelector('.close-btn');
         closeBtn.addEventListener('click', () => {
             this.remove(element);
@@ -254,7 +220,6 @@ class NotificationManager {
     remove(element) {
         if (!element || !element.parentNode) return;
 
-        // Find and remove from notifications array
         const index = this.notifications.findIndex(n => n.element === element);
         if (index > -1) {
             const notification = this.notifications[index];
@@ -264,15 +229,12 @@ class NotificationManager {
             this.notifications.splice(index, 1);
         }
 
-        // Animate out
         element.classList.remove('show');
         
-        // Remove from DOM after animation
         setTimeout(() => {
             if (element.parentNode) {
                 element.parentNode.removeChild(element);
             }
-            // Reposition remaining notifications
             this.repositionNotifications();
         }, 300);
     }
@@ -318,36 +280,48 @@ class NotificationManager {
 // Initialize the notification manager as early as possible
 let notificationManagerInstance = null;
 
-// Initialize immediately when script loads
+function checkNotificationQueryParam() {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const notification = urlParams.get('notification');
+        if (notification) {
+            setTimeout(() => {
+                window.showNotification(decodeURIComponent(notification), 'error');
+            }, 0);
+            urlParams.delete('notification');
+            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    } catch (e) {
+        // Ignore errors
+    }
+}
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         notificationManagerInstance = new NotificationManager();
+        checkNotificationQueryParam();
     });
 } else {
-    // DOM is already ready
     notificationManagerInstance = new NotificationManager();
+    checkNotificationQueryParam();
 }
 
-// Export for manual use if needed
 window.NotificationManager = NotificationManager;
 
-// Also provide a simple global function for manual notifications
 window.showNotification = function(message, type = 'info', duration = 4000) {
     if (notificationManagerInstance) {
         return notificationManagerInstance.show(message, type, duration);
     } else {
-        // If not initialized yet, try to initialize and show
         notificationManagerInstance = new NotificationManager();
         return notificationManagerInstance.show(message, type, duration);
     }
 };
 
-// Function to store notification for after redirect
 window.storeNotification = function(message, type = 'info') {
     if (notificationManagerInstance) {
         return notificationManagerInstance.storeNotification(message, type);
     } else {
-        // Fallback - store directly in sessionStorage
         sessionStorage.setItem('showNotification', JSON.stringify({
             message: message,
             type: type
@@ -355,7 +329,6 @@ window.storeNotification = function(message, type = 'info') {
     }
 };
 
-// Function to handle redirect notifications with automatic message extraction
 window.handleRedirectNotification = function(response) {
     if (notificationManagerInstance) {
         return notificationManagerInstance.handleRedirectNotification(response, true);

@@ -6,7 +6,7 @@ from fastapi import Request
 from fastapi.responses import RedirectResponse
 
 from app.projects.models import NEW_CODE_TAG
-from app.utils.form_utils import squirrel_error
+from app.utils.form_utils import squirrel_error, squirrel_action_error
 
 
 # Decorators ------------------------------------------------------------------
@@ -18,7 +18,7 @@ def table_action_type(cls):
 
 # On function, to add new code
 def add(func):
-    @squirrel_error
+    @squirrel_action_error
     @wraps(func)
     async def wrapper(request: Request, *args, **kwargs):
         """
