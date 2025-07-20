@@ -120,6 +120,7 @@ export class ActionSidebar extends FormSidebar {
         onchangeElements.forEach(element => {
             element.dispatchEvent(new Event('change'));
         });
+        this.defaultFocus();
     }
 
     switchTab(evt, tabId) {
