@@ -12,6 +12,7 @@ app = FastAPI()
 
 # Used in Unit Tests
 SQUIRREL_ERROR_DECORATED = set()
+SQUIRREL_ACTION_ERROR_DECORATED = set()
 
 def squirrel_error(func):
     SQUIRREL_ERROR_DECORATED.add(func.__name__)
@@ -36,6 +37,7 @@ def squirrel_error(func):
     return wrapper
 
 def squirrel_action_error(func):
+    SQUIRREL_ACTION_ERROR_DECORATED.add(func.__name__)
     @wraps(func)
     async def wrapper(request: Request, *args, **kwargs):
         try:
