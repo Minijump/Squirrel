@@ -286,7 +286,7 @@ class Table(BaseElement):
     
     def get_cell(self, by_col_number: int, by_row_number: int) -> None:
         return self.browser.find_element(
-            By.CSS_SELECTOR, f"#table-html-ordered tr:nth-child({by_row_number}) > td:nth-child({by_col_number})")
+            By.CSS_SELECTOR, f"#{self.table_id} tr:nth-child({by_row_number}) > td:nth-child({by_col_number})")
     
     def check_displayed(self) -> None:
         self.check_visibility(

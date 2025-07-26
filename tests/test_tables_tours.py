@@ -156,3 +156,58 @@ class TestTablesTours:
         sidebar.submit()
         cell = table.get_cell(by_col_number=2, by_row_number=1)
         assert cell.text == "0"
+
+    @pytest.mark.slow
+    def test_replace_vals(self, server, browser, reset_projects):
+        """Check if the vals are replaced correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "mock0"
+        col_modal = table.click_header_button(by_col_number=1)
+        sidebar = col_modal.click_action_button("Replace vals.")
+        sidebar.add_to_dictionary("replace_vals", "mock0", "mock0_edited")
+        sidebar.submit()
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "mock0_edited"
+
+    @pytest.mark.slow
+    def test_replace_vals_advanced(self, server, browser, reset_projects):
+        """Test replacing values using the advanced tab with dictionary widget."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "mock0"
+        col_modal = table.click_header_button(by_col_number=1)
+        sidebar = col_modal.click_action_button("Replace vals.")
+        sidebar.switch_to_advanced_tab()
+        sidebar.edit_dictionary("kwargs", "to_replace", '["mock0"]')
+        sidebar.edit_dictionary("kwargs", "value", '["mock0_edited"]')
+        sidebar.submit()
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "mock0_edited"
+
+    @pytest.mark.slow
+    @pytest.mark.debug
+    def test_missing_vals(self, server, browser, reset_projects):
+        """Check if the missing vals are replaced correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="random")
+
+        cell = table.get_cell(by_col_number=1, by_row_number=2)
+        assert cell.text == "NaN"
+        col_modal = table.click_header_button(by_col_number=1)
+        sidebar = col_modal.click_action_button("Missing vals.")
+        sidebar.fill([("action", "Replace")])
+        sidebar.fill([("replace_value", "1000")])
+        sidebar.submit()
+        cell = table.get_cell(by_col_number=1, by_row_number=2)
+        assert cell.text == "1000"

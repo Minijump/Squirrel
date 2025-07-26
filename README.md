@@ -129,6 +129,7 @@ There are 3 main folders:
 ### To do
 
 ### To Fix
+* fix replaces vals for int/float/...
 * navbar/Theme glitch: (only sometimes), when page load it reopens/close directly; we see default theme flash
 
 ### To do MVP
