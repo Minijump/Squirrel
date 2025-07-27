@@ -156,7 +156,7 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
         "null": str(column.isna().sum()),
         "count": str(len(column.index)),
         "is_numeric": column.dtype in ["float64", "int64"],
-        "is_string": column.dtype == "object",
+        "is_string": column.dtype == "object" or isinstance(column.dtype, pd.StringDtype),
         "top_values": column.value_counts().head(5).to_dict()
     }
 

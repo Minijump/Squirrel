@@ -173,9 +173,17 @@ class TransientElement(BaseElement):
 
     def assert_visibility(self, visible: bool = True) -> None:
         self.check_visibility(
-            xpath=self.expected_visible, 
+            xpath="", 
             visible=visible, 
             message=f"{self.transient_element_name} did not {'appear' if visible else 'closed'} as expected.")
+        
+    def check_visibility(self, xpath: str, visible: bool = True, message: str = False) -> None:
+        """ Check if the element is visible or not """
+        xpath = f"{self.expected_visible}{xpath}"
+        super().check_visibility(
+            xpath=xpath, 
+            visible=visible, 
+            message=message or f"Element with xpath {xpath} of {self.transient_element_name} should {'be visible' if visible else 'not be visible'}.")
 
     def fill(self, values: list) -> None:
         """ Fill the form with the given values, where values is a list of tuples (by_id, value) """

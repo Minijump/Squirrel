@@ -93,17 +93,17 @@ class TestTablesTours:
         table = tour.select_table(by_name="ordered")
 
         col_modal = table.click_header_button(by_col_number=1)
-        col_modal.check_visibility(xpath="//div[@id='InfoColModal']//div[@class='infos-div']")
-        col_modal.check_visibility(xpath="//div[@id='InfoColModal']//div[@class='btn-div']")
-        col_modal.check_visibility(xpath="//div[@id='InfoColModal']//div[@class='infos-div numeric-only']", visible=False)
-        col_modal.check_visibility(xpath="//div[@id='InfoColModal']//div[@class='btn-div numeric-only']", visible=False)
+        col_modal.check_visibility(xpath="//div[@class='infos-div']")
+        col_modal.check_visibility(xpath="//div[@class='btn-div']")
+        col_modal.check_visibility(xpath="//div[@class='infos-div numeric-only']", visible=False)
+        col_modal.check_visibility(xpath="//div[@class='btn-div numeric-only']", visible=False)
         col_modal.close()
 
         col_modal = table.click_header_button(by_col_number=2)
-        col_modal.check_visibility(xpath="//div[@id='InfoColModal']//div[@class='infos-div']")
-        col_modal.check_visibility(xpath="//div[@id='InfoColModal']//div[@class='btn-div']")
-        col_modal.check_visibility(xpath="//div[@id='InfoColModal']//div[@class='infos-div numeric-only']")
-        col_modal.check_visibility(xpath="//div[@id='InfoColModal']//div[@class='btn-div numeric-only']")
+        col_modal.check_visibility(xpath="//div[@class='infos-div']")
+        col_modal.check_visibility(xpath="//div[@class='btn-div']")
+        col_modal.check_visibility(xpath="//div[@class='infos-div numeric-only']")
+        col_modal.check_visibility(xpath="//div[@class='btn-div numeric-only']")
         col_modal.close()
 
     @pytest.mark.slow
@@ -194,7 +194,6 @@ class TestTablesTours:
         assert cell.text == "mock0_edited"
 
     @pytest.mark.slow
-    @pytest.mark.debug
     def test_missing_vals(self, server, browser, reset_projects):
         """Check if the missing vals are replaced correctly."""
         tour = Tour(browser, server)
@@ -211,3 +210,22 @@ class TestTablesTours:
         sidebar.submit()
         cell = table.get_cell(by_col_number=1, by_row_number=2)
         assert cell.text == "1000"
+
+    @pytest.mark.slow
+    def test_change_type(self, server, browser, reset_projects):
+        """Check if the column changes of type correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        col_modal = table.click_header_button(by_col_number=2)
+        col_modal.check_visibility(xpath="//div[@class='infos-div numeric-only']")
+        col_modal.check_visibility(xpath="//div[@class='infos-div string-only']", visible=False)
+        sidebar = col_modal.click_action_button("Change type")
+        sidebar.fill([("new_type", "String")])
+        sidebar.submit()
+
+        col_modal = table.click_header_button(by_col_number=2)  
+        col_modal.check_visibility(xpath="//div[@class='infos-div numeric-only']", visible=False)
+        col_modal.check_visibility(xpath="//div[@class='infos-div string-only']")
