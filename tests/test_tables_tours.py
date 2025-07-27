@@ -1,4 +1,5 @@
 import pytest
+from tomlkit import table
 
 from tests.utils.tours_toolbox import Tour
 
@@ -229,3 +230,21 @@ class TestTablesTours:
         col_modal = table.click_header_button(by_col_number=2)  
         col_modal.check_visibility(xpath="//div[@class='infos-div numeric-only']", visible=False)
         col_modal.check_visibility(xpath="//div[@class='infos-div string-only']")
+
+    @pytest.mark.slow
+    def test_apply_function(self, server, browser, reset_projects):
+        """Check if the apply function works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "mock0"
+        col_modal = table.click_header_button(by_col_number=1)
+        sidebar = col_modal.click_action_button("Apply Function")
+        sidebar.fill([("function", "len(row['mock_name'])")])
+        sidebar.submit()
+
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "5"
