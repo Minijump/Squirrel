@@ -308,6 +308,30 @@ class Table(BaseElement):
     def previous_page(self) -> None:
         self.browser.find_element(By.XPATH, f"//div[@id=\'table-{self.table_name}\']//div[@id= \'prev\']").click()
 
+    def click_button(self, by_button_text: str = False, by_id:str = False) -> None:
+        if by_id:
+            button = self.browser.find_element(By.ID, by_id)
+        elif by_button_text:
+            button = self.browser.find_element(By.XPATH, f"//button[contains(text(), '{by_button_text}')]")
+        else:
+            raise ValueError("Either 'by_button_text' or 'by_id' must be provided.")
+        button.click()
+
+    def click_action_button(self, by_button_text: str) -> RightSidebar:
+        self.click_button(by_button_text)
+        return RightSidebar(self.browser, expected_visible="//div[starts-with(@id, 'ActionSidebar')]")
+    
+    def click_custom_action_button(self) -> Modal:
+        button_text = "Add Action"
+        self.click_button(button_text)
+        return Modal(self.browser, expected_visible="//form[@id='customActionModalForm']")
+    
+    def click_dropdown_action_button(self, first_button_text: str, second_button_text: str) -> RightSidebar:
+        self.click_button(by_button_text=first_button_text)
+        button = self.browser.find_element(By.XPATH, f"//a[contains(text(), '{second_button_text}')]")
+        button.click()
+        return RightSidebar(self.browser, expected_visible="//div[starts-with(@id, 'ActionSidebar')]")
+
 class TablesScreen(BaseElement):
     def click_create_new_table(self) -> None:
         self.browser.find_element(By.CSS_SELECTOR, "img").click()

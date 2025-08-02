@@ -498,3 +498,219 @@ class TestTablesTours:
 
         cell = table.get_cell(by_col_number=1, by_row_number=1)
         assert cell.text == "0", "Cell should be 0, first column should be deleted"
+
+
+
+
+    # TABLE ACTIONS TOURS -----------------------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------------------------------------------------
+    @pytest.mark.slow
+    def test_add_column(self, server, browser, reset_projects):
+        """Check if the add column works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        sidebar = table.click_action_button("Add Column")
+        sidebar.fill([("col_name", "new_col")])
+        sidebar.fill([("col_value", "3")])
+        sidebar.submit()
+
+        cell = table.get_cell(by_col_number=3, by_row_number=1)
+        assert cell.text == "3", "New column should have the value '3'"
+
+    @pytest.mark.slow
+    def test_group_by(self, server, browser, reset_projects):
+        """Check if the group by works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        # create bins to be able to group by on something
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Cut")
+        sidebar.fill([("cut_values", "-1,50,100")])
+        sidebar.fill([("cut_labels", "failed,success")])
+        sidebar.submit()
+        # ------------------------------------------------
+
+        sidebar = table.click_action_button("Group By")
+        sidebar.fill([("groupby", "mock_price")])
+        sidebar.add_to_dictionary("agg", "mock_name", "nunique")
+        sidebar.submit()
+
+        grouped_cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert grouped_cell.text == "failed", "group of failed values"
+        grouped_cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert grouped_cell.text == "51", "Should have 51 values in the group"
+
+        grouped_cell = table.get_cell(by_col_number=1, by_row_number=2)
+        assert grouped_cell.text == "success", "group of success values"
+        grouped_cell = table.get_cell(by_col_number=2, by_row_number=2)
+        assert grouped_cell.text == "49", "Should have 49 values in the group"
+
+    @pytest.mark.slow
+    def test_merge_tables(self, server, browser, reset_projects):
+        """Check if the merge tables works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+
+        # Create a new table to merge with
+        sidebar = tour.click_create_new_table()
+        table_name = "ordered_2"
+        sidebar.fill([("table_name", table_name), ("data_source_dir", "Csv ordered")])
+        sidebar.submit()
+        # ---------------------------------------------------------------------------
+
+        table = tour.select_table(by_name="ordered")
+
+        sidebar = table.click_action_button("Merge Tables")
+        sidebar.fill([("table2", "ordered_2")])
+        sidebar.fill([("on", "mock_name")])
+        sidebar.submit()
+
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "mock0", "First cell should be 'mock0' after merge"
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert cell.text == "0", "Second cell should be '0' after merge"
+        cell = table.get_cell(by_col_number=3, by_row_number=1)
+        assert cell.text == "0", "Third cell should be '0' after merge"
+
+    @pytest.mark.slow
+    def test_merge_tables_advanced(self, server, browser, reset_projects):
+        """Test merging tables using the advanced tab with dictionary widget."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+
+        # Create a new table to merge with
+        sidebar = tour.click_create_new_table()
+        table_name = "ordered_2"
+        sidebar.fill([("table_name", table_name), ("data_source_dir", "Csv ordered")])
+        sidebar.submit()
+        # ---------------------------------------------------------------------------
+
+        table = tour.select_table(by_name="ordered")
+
+        sidebar = table.click_action_button("Merge Tables")
+        sidebar.switch_to_advanced_tab()
+        sidebar.edit_dictionary("kwargs", "right", "ordered_2")
+        sidebar.edit_dictionary("kwargs", "on", 'mock_name')
+        sidebar.submit()
+
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "mock0", "First cell should be 'mock0' after merge"
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert cell.text == "0", "Second cell should be '0' after merge"
+        cell = table.get_cell(by_col_number=3, by_row_number=1)
+        assert cell.text == "0", "Third cell should be '0' after merge"
+
+    @pytest.mark.slow
+    def test_concatenate_tables(self, server, browser, reset_projects):
+        """Check if the concatenate tables works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+
+        # Create a new table to concatenate with
+        sidebar = tour.click_create_new_table()
+        table_name = "ordered_2"
+        sidebar.fill([("table_name", table_name), ("data_source_dir", "Csv ordered")])
+        sidebar.submit()
+        # ---------------------------------------------------------------------------
+
+        table = tour.select_table(by_name="ordered")
+
+        sidebar = table.click_action_button("Concatenate Tables")
+        sidebar.fill([("table", "ordered_2")])
+        sidebar.submit()
+
+        # Sort ascending to make sure there is twice the same value
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Sort")
+        sidebar.fill([("sort_order", "Ascending")])
+        sidebar.submit()
+        # ---------------------------------------------------------
+
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "mock0", "First cell should be 'mock0' after concatenate"
+        cell = table.get_cell(by_col_number=1, by_row_number=2)
+        assert cell.text == "mock0", "Second cell should be 'mock0' after concatenate"
+    
+    @pytest.mark.slow
+    def test_add_custom_action(self, server, browser, reset_projects):
+        """Check if the custom action is added correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        modal = table.click_custom_action_button()
+        modal.fill([("custom_action_code", "tables['ordered']['mock_name'] = 'Custom Test'")])
+        modal.fill([("custom_action_name", "Custom Test")])
+        modal.submit()
+
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "Custom Test", "First cell should be 'Custom Test' after concatenate"
+
+    @pytest.mark.slow
+    def test_keep_rows(self, server, browser, reset_projects):
+        """Check if the keep rows works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        sidebar = table.click_dropdown_action_button("Rows", "Keep Rows")
+        sidebar.fill([("keep_domain", "mock_price >= 10")])
+        sidebar.submit()
+
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert cell.text == "10", "First cell should be 10 after keeping rows"
+
+    @pytest.mark.slow
+    def test_delete_rows(self, server, browser, reset_projects):
+        """Check if the delete rows works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        sidebar = table.click_dropdown_action_button("Rows", "Delete Rows")
+        sidebar.fill([("delete_domain", "mock_price < 10")])
+        sidebar.submit()
+
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert cell.text == "10", "First cell should be 10 after deleting rows"
+
+    @pytest.mark.slow
+    @pytest.mark.debug
+    def test_add_rows(self, server, browser, reset_projects):
+        """Check if the add rows works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        sidebar = table.click_dropdown_action_button("Rows", "Add Rows")
+        sidebar.fill([("new_rows", "[{'mock_name': 'new_mock_1', 'mock_price': -2}, {'mock_name': 'new_mock_2', 'mock_price': -1}]")])
+        sidebar.submit()
+
+        # Sort ascending to test if the new values were added correctly
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Sort")
+        sidebar.fill([("sort_order", "Ascending")])
+        sidebar.submit()
+        # ---------------------------------------------------------
+
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "new_mock_1", "Last cell should be 'new_mock_1' after adding rows"
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert cell.text == "-2", "Last cell should be -2 after adding rows"
+        cell = table.get_cell(by_col_number=1, by_row_number=2)
+        assert cell.text == "new_mock_2", "Second last cell should be 'new_mock_2' after adding rows"
+        cell = table.get_cell(by_col_number=2, by_row_number=2)
+        assert cell.text == "-1", "Second last cell should be -1 after adding rows"

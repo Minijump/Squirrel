@@ -112,7 +112,8 @@ def reset_projects(server):
 @pytest.fixture(scope="session")
 def browser():
     options = FirefoxOptions()
-    options.add_argument('--headless')
+    if os.environ.get("BROWSER_HEADLESS", "1") == "1":
+        options.add_argument('--headless')
     
     driver = Firefox(options=options)
     
