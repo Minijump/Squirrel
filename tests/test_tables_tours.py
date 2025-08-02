@@ -248,3 +248,253 @@ class TestTablesTours:
 
         cell = table.get_cell(by_col_number=1, by_row_number=1)
         assert cell.text == "5"
+
+    @pytest.mark.slow
+    def test_normalize(self, server, browser, reset_projects):
+        """Check if the normalize function works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Normalize")
+        sidebar.fill([("method", "Min-Max")])
+        sidebar.submit()
+
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert float(cell.text) == 0.0, "smallest element should be 0.0"
+
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Sort")
+        sidebar.fill([("sort_order", "Descending")])
+        sidebar.submit()
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert float(cell.text) == 1.0, "Biggest element should be 1.0"
+
+    @pytest.mark.slow
+    def test_remove_under_over(self, server, browser, reset_projects):
+        """Check if the remove under/overflow function works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Remove under/over")
+        sidebar.fill([("lower_bound", "10")])
+        sidebar.fill([("upper_bound", "90")])
+        sidebar.submit()
+
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert float(cell.text) == 10, "smallest element should be 10"
+
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Sort")
+        sidebar.fill([("sort_order", "Descending")])
+        sidebar.submit()
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert float(cell.text) == 90, "Biggest element should be 90"
+
+    @pytest.mark.slow
+    def test_cut(self, server, browser, reset_projects):
+        """Check if the cut function works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Cut")
+        sidebar.fill([("cut_values", "-1,50,100")])
+        sidebar.fill([("cut_labels", "failed,success")])
+        sidebar.submit()
+
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert cell.text == "failed", "smallest element should be 'failed'"
+
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Sort")
+        sidebar.fill([("sort_order", "Descending")])
+        sidebar.submit()
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert cell.text == "success", "Biggest element should be 'success'"
+
+    @pytest.mark.slow  
+    def test_cut_advanced(self, server, browser, reset_projects):
+        """Test cutting a column using the advanced tab with dictionary widget."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Cut")
+        sidebar.switch_to_advanced_tab()
+        sidebar.edit_dictionary("kwargs", "bins", '[0, 50, 100]')
+        sidebar.edit_dictionary("kwargs", "labels", '["failed", "success"]')
+        sidebar.edit_dictionary("kwargs", "include_lowest", 'True')
+        sidebar.submit()
+
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert cell.text == "failed", "smallest element should be 'failed'"
+
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Sort")
+        sidebar.fill([("sort_order", "Descending")])
+        sidebar.submit()
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert cell.text == "success", "Biggest element should be 'success'"
+
+    @pytest.mark.slow  
+    def test_keep_n_largest(self, server, browser, reset_projects):
+        """Check if the keep n largest function works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Keep N largest")
+        sidebar.fill([("n", "5")])
+        sidebar.submit()
+
+        cell_1 = table.get_cell(by_col_number=2, by_row_number=1)
+        assert float(cell_1.text) == 99, "1st largest element should be 99"
+        cell_5 = table.get_cell(by_col_number=2, by_row_number=5)
+        assert float(cell_5.text) == 95, "5th largest element should be 95"
+
+    @pytest.mark.slow  
+    def test_keep_n_smallest(self, server, browser, reset_projects):
+        """Check if the keep n smallest function works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Keep N smallest")
+        sidebar.fill([("n", "5")])
+        sidebar.submit()
+
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Sort")
+        sidebar.fill([("sort_order", "Descending")]) # sort else test would pass even if keep n smallest does not work
+        sidebar.submit()
+        cell_1 = table.get_cell(by_col_number=2, by_row_number=1)
+        assert float(cell_1.text) == 4, "1st element should be 4"
+        cell_5 = table.get_cell(by_col_number=2, by_row_number=5)
+        assert float(cell_5.text) == 0, "5th element should be 0"
+
+    @pytest.mark.slow  
+    def test_diff(self, server, browser, reset_projects):
+        """Check if the diff function works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Diff")
+        sidebar.fill([("periods", "1")])
+        sidebar.submit()
+
+        # creates a new column ('col2-diff')
+        cell_1 = table.get_cell(by_col_number=3, by_row_number=1)
+        assert cell_1.text == "NaN", "First element should be NaN"
+        cell_2 = table.get_cell(by_col_number=3, by_row_number=2)
+        assert float(cell_2.text) == 1, "Second element should be 1"
+
+    @pytest.mark.slow  
+    def test_diff_advanced(self, server, browser, reset_projects):
+        """Test diffing a column using the advanced tab with dictionary widget."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Diff")
+        sidebar.switch_to_advanced_tab()
+        sidebar.edit_dictionary("kwargs", "periods", "1")
+        sidebar.submit()
+
+        # creates a new column ('col2-diff')
+        cell_1 = table.get_cell(by_col_number=3, by_row_number=1)
+        assert cell_1.text == "NaN", "First element should be NaN"
+        cell_2 = table.get_cell(by_col_number=3, by_row_number=2)
+        assert float(cell_2.text) == 1, "Second element should be 1"
+
+    @pytest.mark.slow 
+    def test_math_operations(self, server, browser, reset_projects):
+        """Check if the math operation works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Math operations")
+        sidebar.fill([("operation", "Square Root")])
+        sidebar.submit()
+
+        cell_1 = table.get_cell(by_col_number=2, by_row_number=1)
+        assert float(cell_1.text) == 0, "First element should be 0"
+        cell_2 = table.get_cell(by_col_number=2, by_row_number=2)
+        assert float(cell_2.text) == 1, "Second element should be 1"
+        cell_5 = table.get_cell(by_col_number=2, by_row_number=5)
+        assert float(cell_5.text) == 2, "Fifth element should be 2"
+
+    @pytest.mark.slow 
+    def test_replace_in_cells(self, server, browser, reset_projects):
+        """Check if the replace in cells works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "mock0"
+
+        col_modal = table.click_header_button(by_col_number=1)
+        sidebar = col_modal.click_action_button("Replace in cell")
+        sidebar.fill([("action", "Regex")])
+        sidebar.fill([("regex", "mock")])
+        sidebar.fill([("replacement", "test")])
+        sidebar.submit()
+
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "test0", "Cell should be replaced with 'test0'"
+
+    @pytest.mark.slow 
+    def test_string_formats(self, server, browser, reset_projects):
+        """Check if the string formats work correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        col_modal = table.click_header_button(by_col_number=1)
+        sidebar = col_modal.click_action_button("String formats")
+        sidebar.fill([("operation", "Upper Case (HELLO WORLD)")])
+        sidebar.submit()
+
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "MOCK0", "Cell should be in uppercase"
+
+    @pytest.mark.slow 
+    def test_delete_column(self, server, browser, reset_projects):
+        """Check if the delete column works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "mock0", "Cell should be mock0"
+
+        col_modal = table.click_header_button(by_col_number=1)
+        col_modal.click_danger_button()
+
+        cell = table.get_cell(by_col_number=1, by_row_number=1)
+        assert cell.text == "0", "Cell should be 0, first column should be deleted"
