@@ -176,6 +176,23 @@ class TestTablesTours:
         assert cell.text == "mock0_edited"
 
     @pytest.mark.slow
+    def test_replace_vals_int(self, server, browser, reset_projects):
+        """Check if the vals are replaced correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert cell.text == "0"
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Replace vals.")
+        sidebar.add_to_dictionary("replace_vals", 0, 1)
+        sidebar.submit()
+        cell = table.get_cell(by_col_number=2, by_row_number=1)
+        assert cell.text == "1"
+
+    @pytest.mark.slow
     def test_replace_vals_advanced(self, server, browser, reset_projects):
         """Test replacing values using the advanced tab with dictionary widget."""
         tour = Tour(browser, server)
@@ -687,7 +704,6 @@ class TestTablesTours:
         assert cell.text == "10", "First cell should be 10 after deleting rows"
 
     @pytest.mark.slow
-    @pytest.mark.debug
     def test_add_rows(self, server, browser, reset_projects):
         """Check if the add rows works correctly."""
         tour = Tour(browser, server)

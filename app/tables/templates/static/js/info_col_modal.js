@@ -7,6 +7,7 @@ export class InfoColModal extends Modal {
         options['id'] = 'InfoColModal';
         super(options);
         Object.assign(this, {colName, colIdx, tableName});
+        this.dtype = options['dtype'] || '';
     }
 
     createHeader() {
@@ -83,6 +84,7 @@ export class InfoColModal extends Modal {
             const response = await fetch(`/tables/column_infos/?project_dir=${this.projectDir}&table=${this.tableName}&column_name=${this.colName}&column_idx=${this.colIdx}`);
             if (!response.ok) throw new Error(`Error in response ${response.status}`);
             const data = await response.json();
+            this.dtype = data['dtype'] || '';
 
             this.componentHtml.querySelectorAll('.numeric-only').forEach(div => 
                 div.style.display = data['is_numeric'] ? 'flex' : 'none'
@@ -153,6 +155,7 @@ export class InfoColModal extends Modal {
             'table_name': this.tableName,
             'col_name': this.colName,
             'col_idx': this.colIdx,
+            'col_dtype': this.dtype,
         };
         if (additionalData) {
             infos = {...infos, ...additionalData};

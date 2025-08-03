@@ -1,5 +1,6 @@
 import ast
 import pandas as pd
+import numpy as np
 
 from .actions_utils import table_action_type, _get_method_sig, convert_col_idx
 from .actions import Action
@@ -11,6 +12,7 @@ class ActionColumn(Action):
         self.args.update({
             "col_name": {"type": "text", "invisible": True},
             "col_idx": {"type": "text", "invisible": True},
+            "col_dtype": {"type": "text", "invisible": True},
         })
 
     async def _get(self, args_list):
@@ -39,12 +41,18 @@ class ReplaceVals(ActionColumn):
         self.args.update({
             "replace_vals": {"type": "dict", 
                              "label": "Replace Domain:", 
-                             "info": "With format {'to_replace1': 'replacing1', 'to_replace2': 'replacing2', ...}",
-                             "dict_options": {'create': True, 'remove': True}},
+                             "dict_options": {'create': True, 'remove': True, 'placeholder': {'key': 'To Replace', 'value': 'Replace By'}}
+                            }
         })
 
     async def execute(self):
-        table_name, col_name, replace_vals, col_idx = await self._get(["table_name", "col_name", "replace_vals", "col_idx"])
+        table_name, col_name, replace_vals, col_idx, col_dtype = await self._get(["table_name", "col_name", "replace_vals", "col_idx", "col_dtype"])
+        if col_dtype.startswith('int') or col_dtype.startswith('float'):
+            dtype_type = np.dtype(col_dtype).type
+            replace_vals = {dtype_type(k): dtype_type(v) for k, v in ast.literal_eval(replace_vals).items()}
+        elif col_dtype.startswith('bool'):
+            falses = ['False', 'false', '0']
+            replace_vals = {False if k in falses else True: False if v in falses else True for k, v in ast.literal_eval(replace_vals).items()}
         new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].replace({replace_vals})  #sq_action:Replace values in column {col_name} of table {table_name}"""
         return new_code
     
