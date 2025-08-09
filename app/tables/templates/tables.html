@@ -59,22 +59,22 @@
                         <div class="table-html" id="table-html-{{ name }}">
                             {{ html_table|safe }}
                         </div>
-                        <div class="pager" data-table="{{ name }}" data-totallen="{{ table_len_infos.get(name, {}).get('total_len', 0) }}" data-displaylen="{{ table_len_infos.get(name, {}).get('display_len', 0) }}" data-project_dir="{{ project_dir }}">
-                            <div id="prev" class="pager-btn">&lt;</div>
-                            <div id="pager-info-{{ name }}" class="pager-info">
-                                {% set display_len = table_len_infos.get(name, {}).get('display_len', 0) %}
-                                {% set total_len = table_len_infos.get(name, {}).get('total_len', 0) %}
-                                0-{% if display_len > total_len %}{{ total_len }}{% else %}{{ display_len }}{% endif %} / {{ total_len }}
-                            </div>
-                            <div id="next" class="pager-btn">&gt;</div>
-                        </div>
                         <div class="table-bottom-bar">
-                            <div>
+                            <div class="left-bottom">
                                 Table: {{ name }}
                             </div>
-                            <div>
+                            <div class="pager" data-table="{{ name }}" data-totallen="{{ table_len_infos.get(name, {}).get('total_len', 0) }}" data-displaylen="{{ table_len_infos.get(name, {}).get('display_len', 0) }}" data-project_dir="{{ project_dir }}">
+                                <div id="prev" class="pager-btn">&lt;</div>
+                                <div id="pager-info-{{ name }}" class="pager-info">
+                                    {% set display_len = table_len_infos.get(name, {}).get('display_len', 0) %}
+                                    {% set total_len = table_len_infos.get(name, {}).get('total_len', 0) %}
+                                    0-{% if display_len > total_len %}{{ total_len }}{% else %}{{ display_len }}{% endif %} / {{ total_len }}
+                                </div>
+                                <div id="next" class="pager-btn">&gt;</div>
+                            </div>
+                            <div class="right-bottom">
                                 <button onclick="openSidebarForm('ExportTable', { 'table_name': '{{ name }}' })" class="export-btn">
-                                    <i class="fas fa-file-export"></i>
+                                    <i class="fas fa-file-export"> Export</i>
                                 </button>
                             </div>
                         </div>

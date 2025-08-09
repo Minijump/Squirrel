@@ -7,6 +7,9 @@
 .table-container {
     height: 85vh;
 }
+.table-main, .table-container {
+    position: relative;
+}
 
 /* --- Select Table button --- */
 .table-select-btn-div {
@@ -120,7 +123,7 @@
 
 .table-html {
     overflow-y: auto;
-    max-height: 95%;
+    max-height: 98%;
     border-bottom: 1px solid var(--structure-color);
 }
 
@@ -162,11 +165,35 @@
     border-bottom: 0;
 }
 
-/* --- Pager --- */
+/* --- Page bottom --- */
+.table-bottom-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--structure-color);
+    color: var(--primary-text-color);
+}
+
+.left-bottom {
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 10px;
+    flex: 1;
+}
 .pager {
     display: flex;
     justify-content: center;
+    flex: 1;
 }
+.right-bottom {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 10px;
+    flex: 1;
+}
+
 .pager-btn {
     border: 1px solid var(--primary-text-color);
     border-radius: 5px;
@@ -181,21 +208,8 @@
     align-items: center;
 }
 
-/* --- Page bottom --- */
-.table-bottom-bar {
-    display: flex;
-    padding: 5px;
-    position: fixed; 
-    width:100%; 
-    bottom: 0; 
-    background-color: var(--structure-color); 
-    color: var(--primary-text-color);
-    font-size: 10px;
-}
-
 .export-btn {
     color: var(--primary-text-color);
     border: none;
     background-color: transparent;
-    font-size: 10px;
 }
