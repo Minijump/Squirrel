@@ -133,7 +133,6 @@ There are 3 main folders:
 
 ### To do MVP
 * Add actions + tours on actions
-* fields with onchange_visibility should be able to be mandatory
 * Change pipeline => we will save 'custome' actions (saving the class names and inputs, in a pkl file?), si will enable to have a no-code pipeline edit action + add icons + ... However this will require a new way to encode/decode the pipeline.
 
 ### To do UX

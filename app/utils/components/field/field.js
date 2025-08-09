@@ -17,7 +17,7 @@ import { SquirrelDictionary } from '/static/utils/widgets/dictionary_widget/dict
  * @property {string} [label] - Input label text
  * @property {string} [info] - Info text displayed above input (supports HTML)
  * @property {string} [placeholder] - Placeholder text for text, password, textarea, and number inputs
- * @property {boolean} [required=true] - Whether the input is required
+ * @property {boolean} [required=true] - Whether the input is required (for field displayed conditionally, only required if dislayed)
  * @property {boolean} [invisible=false] - Whether the input is hidden
  * @property {Array<Array<string>>|Object} [select_options] - Set select input options: [['value1', 'Label 1'], ['value2', 'Label 2'], ...]
  * @property {Object} [dict_options={'create': true, 'remove': true}] - Set dict input options
@@ -58,13 +58,17 @@ export class Field {
         
         const input = this.createInput(inputInfo);
         input.name = input.id = inputId;
-        input.required = (inputInfo.required !== undefined) ? inputInfo.required : true;
+        if (!inputInfo.onchange_visibility){
+            // For field displayed conditionally, see 'onchangeFormValue'
+            input.required = (inputInfo.required !== undefined) ? inputInfo.required : true;
+        }
 
         if (inputInfo.onchange_visibility) {
             inputDivHTML.classList.add('onchange-visibility');
             const [triggerField, triggerValue] = inputInfo.onchange_visibility;
             inputDivHTML.dataset.visibilitytrigger = triggerField;
             inputDivHTML.dataset.visibilityvalue = triggerValue;
+            inputDivHTML.dataset.requiredwhenvisible = (inputInfo.required !== undefined) ? inputInfo.required : true;
         }
 
         if (inputInfo.invisible) input.type = 'hidden';
@@ -121,10 +125,16 @@ function onchangeFormValue(onchangeId, event) {
     fields.forEach(field => {
         const triggerOnchageId = field.dataset.visibilitytrigger;
         const triggerValue = field.dataset.visibilityvalue;
+        const requiredWhenVisible = field.dataset.requiredwhenvisible === 'true';
         const inputElement = event.target
 
-        if (triggerOnchageId === onchangeId && inputElement.value === triggerValue) field.style.display = 'block';
+        const shouldBeVisible = (triggerOnchageId === onchangeId && inputElement.value === triggerValue);
+        if (shouldBeVisible) field.style.display = 'block';
         else field.style.display = 'none';
+        if (requiredWhenVisible){
+            const input = field.querySelector('input, select, textarea');
+            if (input) input.required = shouldBeVisible;
+        }
     });
 };
 window.onchangeFormValue = onchangeFormValue;

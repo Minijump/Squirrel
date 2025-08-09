@@ -161,7 +161,7 @@ class SortColumn(ActionColumn):
                            "onchange": "onchangeFormValue('SortColumn_sort_order', event)",},
             "sort_key": {"type": "textarea", "label": "Sort Key", 
                          "info": "Key must be python code with x as the col values. E.g. x.str.len(), x**2, ... (in practice this will execute: key=lambda x: ...your_input...).", 
-                         "required": False, "onchange_visibility": ["SortColumn_sort_order", "custom"]},
+                         "required": True, "onchange_visibility": ["SortColumn_sort_order", "custom"]},
         })
 
     async def execute(self):
@@ -234,7 +234,7 @@ class HandleMissingValues(ActionColumn):
                        "onchange": "onchangeFormValue('HandleMissingValues_action', event)",
                        "info": "Interpolate will only work for numeric columns."},
             "replace_value": {"type": "textarea", "label": "Replace Value", 
-                              "required": False, "onchange_visibility": ["HandleMissingValues_action", "replace"]},
+                              "required": True, "onchange_visibility": ["HandleMissingValues_action", "replace"]},
         })
 
     async def execute(self):
@@ -324,7 +324,7 @@ class ReplaceInCell(ActionColumn):
                        "onchange": "onchangeFormValue('ReplaceInCell_action', event)"},
             "regex": {"type": "textarea", "label": "Regex", 
                       "info": "Regex pattern to replace in every cell: E.g. '\\d+' matches digits; '\\x' matches all x; ...",
-                      "required": False, "onchange_visibility": ["ReplaceInCell_action", "regex"]},
+                      "required": True, "onchange_visibility": ["ReplaceInCell_action", "regex"]},
             "replacement": {"type": "text", "label": "Replacement"},
         })
 
