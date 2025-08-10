@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Settings</title>
+    {% include 'utils/ui_manager/theme_manager/theme_head.html' %}
     <link href="{{ url_for('projects_static', path='css/style.css') }}" rel="stylesheet">
     <link href="{{ url_for('app_settings_static', path='css/settings.css') }}" rel="stylesheet">
+    <title>App Settings</title>
 </head>
 <body>
     <div class="container">

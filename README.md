@@ -129,7 +129,7 @@ There are 3 main folders:
 ### To do
 
 ### To Fix
-* navbar/Theme glitch: (only sometimes), when page load it reopens/close directly; we see default theme flash
+* navbar glitch: (only sometimes), when page load it reopens/close directly
 
 ### To do MVP
 * Add actions + tours on actions

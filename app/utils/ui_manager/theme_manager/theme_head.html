@@ -1,0 +1,14 @@
+<meta name="color-scheme" content="dark light">
+<script>
+    (function () {
+        var d = document.documentElement;
+        try {
+            var saved = localStorage.getItem('squirrel-theme');
+            if (!saved) {
+                saved = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+            }
+            if (saved === 'light') d.setAttribute('data-theme', 'light');
+            else d.removeAttribute('data-theme');
+        } catch (_) {}
+    })();
+</script>
