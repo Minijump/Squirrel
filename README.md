@@ -129,7 +129,6 @@ There are 3 main folders:
 ### To do
 
 ### To Fix
-* navbar glitch: when clicking on a nav element, it looks like the text/icon/... css transition is executed before the navbar folds
 
 ### To do MVP
 * Add actions + tours on actions
