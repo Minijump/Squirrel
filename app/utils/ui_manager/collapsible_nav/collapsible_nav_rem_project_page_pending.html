@@ -1,0 +1,9 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var html = document.documentElement;
+        if (html.classList.contains('project-page-pending')) {
+            html.classList.remove('project-page-pending');
+            document.body.classList.add('project-page');
+        }
+    });
+</script>

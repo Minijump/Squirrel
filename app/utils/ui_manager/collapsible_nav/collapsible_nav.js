@@ -11,13 +11,7 @@ function isProjectPage() {
     return urlParams.has('project_dir') || window.location.pathname.includes('/project/');
 }
 
-// Add project-page class before dom is loaded,
-// else the nav is expanded by default for a split second (still happens sometimes)
-(function() {
-    if (isTestMode()) return;
-    if (!isProjectPage()) return;
-    document.body.classList.add('project-page');
-})();
+// 'project-page' class is added via script tags inside template, to avoid glitches
 
 // Add click handlers on navigation links to close sidebar before redirect
 document.addEventListener('DOMContentLoaded', function() {

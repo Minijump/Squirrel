@@ -1,0 +1,16 @@
+<script>
+    (function() {
+        var isTestMode = window.isTestMode ||
+            window.navigator.webdriver ||
+            document.documentElement.getAttribute('webdriver') !== null ||
+            window.location.search.includes('test_mode=true');
+        if (!isTestMode) {
+            var body = document.body;
+            if (body) {
+                body.classList.add('project-page');
+            } else {
+                document.documentElement.classList.add('project-page-pending');
+            }
+        }
+    })();
+</script>
