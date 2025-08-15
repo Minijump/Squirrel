@@ -127,32 +127,40 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
+* Change pipeline => we will save 'custom' actions (saving the class names and inputs, in a pkl file?), it will enable to have a no-code pipeline's edit action + add icons + ... However this will require a new way to encode/decode the pipeline. (see instructions.md file)
 
 ### To Fix
 
 ### To do MVP
-* Add actions + tours on actions
-* Change pipeline => we will save 'custome' actions (saving the class names and inputs, in a pkl file?), si will enable to have a no-code pipeline edit action + add icons + ... However this will require a new way to encode/decode the pipeline.
+* Improve actions
+  * possibility to add icons, action descr,
+  * do not run all pipeline everytime (check if pipeline changed (with hash?), run everything only if yes, else only execute required action)
+* Widgets: autocomplete Squirrel action
+* Imp Actions 2
+  * add inputs type (column, table, ... to enable easy autocomplete), ... 
+  * add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch (ie: somewhere where a can type sum(col1, col2)), ...
+  * add dynamic documentation (ie: pd.Series.replace.__doc__)
+* Add actions + tours (expl: Possibility to edit a cell value directly)
 
 ### To do UX
+* Imp notification manager
 
 ### Feature ideas
-* Add dynamic doctrsing (expl: pd.Series.replace.__doc__)
+* Widgets: lists, ...
+* Basic graphs in columns inspect (chart.js, d3.js,...?)
+* Data sources
+  * Give a way to secure credentials?
+  * Add a way to add credentials in settings/data sources/new credentials tabs/... and select them in a data source
+  * Automatic/easy creation of a source when creating a table?
+  * ?'Dynamic' data source: sync before running the pipeline. List of dynamics in project settings + sync file source??
+* Pipeline
+  * Imp pipeline (test before save? summary with blocks on the top? ...?)?
+  * Multiples pipelines?
 * Great-expectation unit test
-* 'Dynamic' data source: sync before running the pipeline. List of dynamics in project settings + sync file source?
-* See diff before doing an action/ at each actions in pipeline
-* Imp pipeline (test before save? summary with blocks on the top? ...?)
-* Multiple pipelines
-* basic graphs (chart.js, d3.js,...?)
-* Dashboards? (can be saved) (computed var)
-* Widgets: autocomplete Squirrel action, lists
-* Give a way to secure credentials?
-* Supabase connection, blockchain.com
-* Datasources are only credentials, set the request args at table creation?? Automatic creation of a source when creating a table?
+* Dashboard tab (custom/embedded metabase? Not sure it suits need/...)
 * Odoo module; ease imports ?
+* Supabase connection, blockchain.com
 * Git/Github integration
-* integrated llm / Connection with online ones (+ crewAI?)
-* df explorer for vs code? Not much in common with squirrel?
 * Make app executable? Use py2exe?
-* Possibility to edit a cell value directly
+* integrated llm / Connection with online ones (+ crewAI?) ?
 * ...
