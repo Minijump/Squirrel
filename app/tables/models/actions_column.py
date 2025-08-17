@@ -16,7 +16,7 @@ class ActionColumn(Action):
         })
 
     async def _get(self, args_list):
-        form_data = await self.request.form()
+        form_data = self.form_data
         data = []
         for arg in args_list:
             if arg == 'col_idx':

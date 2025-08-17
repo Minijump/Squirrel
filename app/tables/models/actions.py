@@ -8,12 +8,12 @@ from app.data_sources.models.data_source import DATA_SOURCE_REGISTRY
 
 class Action:
     def __init__(self, request):
-        self.request = request
+        self.form_data = request
         self.args = {}
         self.kwargs = {}
 
     async def _get(self, args_list):
-        form_data = self.request
+        form_data = self.form_data
         return (form_data.get(arg) for arg in args_list)
     
     async def execute(self):
@@ -107,7 +107,7 @@ class CreateTable(Action):
 
             SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
             source = SourceClass(manifest_data)
-            new_code = source.create_table(self.request)
+            new_code = source.create_table(self.form_data)
 
         elif source_creation_type == "other_tables":
             new_code = f"tables['{table_name}'] = tables['{table_df}']  #sq_action:Create table {table_name}"

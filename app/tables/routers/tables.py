@@ -106,7 +106,7 @@ async def execute_action(request: Request):
     ActionClass = TABLE_ACTION_REGISTRY.get(action_name)
     if not ActionClass:
         raise ValueError(f"Action {action_name} not found")
-    action_instance = ActionClass(request)
+    action_instance = ActionClass(form_data)
 
     pipeline = Pipeline(project_dir)
     pipeline_action = PipelineAction(pipeline, action_instance)
@@ -121,7 +121,7 @@ async def get_action_args(request: Request, action_name: str):
     if not ActionClass:
         raise ValueError(f"Action {action_name} not found")
 
-    action_instance = ActionClass(request)
+    action_instance = ActionClass({})
     args = action_instance.args
     return args
 
@@ -132,7 +132,7 @@ async def get_action_kwargs(request: Request, action_name: str):
     if not ActionClass:
         raise ValueError(f"Action {action_name} not found")
 
-    action_instance = ActionClass(request)
+    action_instance = ActionClass({})
     kwargs = action_instance.kwargs
     return kwargs
 
