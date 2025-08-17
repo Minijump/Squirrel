@@ -127,24 +127,29 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
-* Fix/Imp Pipeline/Actions
+* Do edit action in pipeline (dynamic)
+* Do advanced tab actions
+* Refactor and rename misc (add a static descr to actions)
+* Fix unit tests (make them runnable again)
+* Update readme and demo project
 
 ### To Fix
 
 ### To do MVP
 * Improve actions
-  * possibility to add icons, action descr, ...
+  * possibility to add icons, action descr (can be changed by user), ...
   * do not run all pipeline everytime (check if pipeline changed (with hash?), run everything only if yes, else only execute required action)
 * Widgets: autocomplete Squirrel action
 * Imp Actions 2
   * add inputs type (column, table, ... to enable easy autocomplete), ... 
   * add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch (ie: somewhere where a can type sum(col1, col2)), ...
   * add dynamic documentation (ie: pd.Series.replace.__doc__)
-* Add actions + tours (expl: Possibility to edit a cell value directly)
+* Add actions (expl: Possibility to edit a cell value directly)
+* Add tours + imp UT + refactor code if needed(create private methods, ...) 
 
 ### To do UX
 * Imp notification manager
-* Error background in  (not in pipeline) has not a height of 100% (probably after table style change)
+* Error background in (not in pipeline) has not a height of 100% (probably after table style change)
 * When no table: we have a screen that suggest creating one; the navbar is in the same color than the bacground, when when it is unfolded the border disapear (looks bad becaus we can not differentiate it with backroud)
 
 ### Feature ideas
