@@ -127,13 +127,13 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
-* Change pipeline => we will save 'custom' actions (saving the class names and inputs, in a pkl file?), it will enable to have a no-code pipeline's edit action + add icons + ... However this will require a new way to encode/decode the pipeline. (see instructions.md file)
+* Fix/Imp Pipeline/Actions
 
 ### To Fix
 
 ### To do MVP
 * Improve actions
-  * possibility to add icons, action descr,
+  * possibility to add icons, action descr, ...
   * do not run all pipeline everytime (check if pipeline changed (with hash?), run everything only if yes, else only execute required action)
 * Widgets: autocomplete Squirrel action
 * Imp Actions 2

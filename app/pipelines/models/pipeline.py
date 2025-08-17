@@ -1,7 +1,6 @@
 import os
 import pickle
 import pandas as pd
-import traceback
 from typing import List
 
 from app.pipelines.models.pipeline_action import PipelineAction
@@ -23,60 +22,30 @@ class Pipeline:
                 self.actions = pickle.load(f)
         else:
             self.actions = []
-        return self.actions
 
     async def get_actions(self):
-        actions = self.load_actions()
+        self.load_actions()
         result = []
         
-        for idx, action in enumerate(actions):
-            # Format: (action_id, action_description, action_summary)
-            # Create a summary for display and editing
-            key_params = {}
-            for key, value in action.parameters.items():
-                if key not in ['project_dir', 'csrfmiddlewaretoken'] and value:
-                    key_params[key] = value
-            
-            # Create a readable summary
-            params_summary = f"Action: {action.action_class}"
-            if key_params:
-                params_summary += f"\nKey parameters: {key_params}"
-            
-            result.append((idx, action.description, params_summary))
+        for idx, action in enumerate(self.actions):
+            result.append((idx, action.description, action.parameters))
         
         return result
     
     async def confirm_new_order(self, order: str):
         new_order = [int(action_str.split('-')[0]) for action_str in order.split(",")]
-        if len(new_order) != len(self.actions):
-            raise ValueError("New order must contain all action indices")
-        
         reordered_actions = [self.actions[i] for i in new_order]
         self.actions = reordered_actions
         self.save_actions()
 
     async def edit_action(self, action_id: int, action_data):
-        """Edit an action in the pipeline."""
-        # TODO: not working, only edit description
-        # action_data should contain the new parameters and optionally description
-        if isinstance(action_data, str):
-            # If it's a string (legacy code), we need to parse it
-            # For now, we'll treat it as a description update
-            actions = self.load_actions()
-            if 0 <= action_id < len(actions):
-                actions[action_id].description = action_data.strip()
-                self.actions = actions
-                self.save_actions()
-        elif isinstance(action_data, dict):
-            # If it's a dict, it contains the new parameters
-            description = action_data.pop('description', None)
-            if 0 <= action_id < len(self.actions):
-                self.actions[action_id].parameters = action_data
-                if description:
-                    self.actions[action_id].description = description
-                self.save_actions()
-            else:
-                raise IndexError("Action index out of range")
+        self.load_actions()
+        # Does not work because action_data is a string (copying info of FormData) while action.parameters should be FormData
+        # Will be solved once we use a dynamic form for editing action?
+        actions = self.actions
+        actions[action_id].parameters = action_data
+        self.actions = actions
+        self.save_actions()
 
     async def delete_action(self, delete_action_id: int):
         if 0 <= delete_action_id < len(self.actions):
@@ -96,26 +65,11 @@ class Pipeline:
     
     async def run_pipeline(self):
         tables = {}
-
-        for i, action in enumerate(self.actions):            
-            action_class = TABLE_ACTION_REGISTRY.get(action.action_class)
-            if not action_class:
-                continue
-            
-            try:
-                code = await self._execute_action(action, action.parameters) 
-                if not code:
-                    print(f"No code generated for action {action.action_class}")
-                    continue
-                
-                local_vars = {'tables': tables, 'pd': pd}
-                exec(code, globals(), local_vars)
-                tables.update(local_vars['tables'])
-                
-            except Exception as e:
-                print(f"Error executing action {action.action_class}: {e}")
-                traceback.print_exc()
-                continue
+        for i, action in enumerate(self.actions):              
+            code = await self._execute_action(action, action.parameters) 
+            local_vars = {'tables': tables, 'pd': pd}
+            exec(code, globals(), local_vars)
+            tables.update(local_vars['tables'])
         
         return tables
     
