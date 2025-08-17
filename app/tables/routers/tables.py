@@ -13,7 +13,7 @@ from app.tables.models.actions_utils import TABLE_ACTION_REGISTRY
 from app.utils.form_utils import squirrel_error, _get_form_data_info
 
 from app.pipelines.models.pipeline import Pipeline
-from app.pipelines.models.pipeline_storage import PipelineAction
+from app.pipelines.models.pipeline_action import PipelineAction
 
 def load_pipeline_module(project_dir):
     """Loads and returns the pipeline instance"""
