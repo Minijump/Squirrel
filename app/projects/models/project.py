@@ -65,9 +65,12 @@ class Project:
 
     async def _create_pipeline_file(self):
         """Creates the pipeline file"""
-        pipeline_path = os.path.join(self.path, "pipeline.py")
-        with open(pipeline_path, 'w') as file:
-            file.write(BASIC_PIPELINE)
+        import pickle
+        pipeline_path = os.path.join(self.path, "pipeline.pkl")
+        # Create an empty pipeline with no actions
+        actions = []
+        with open(pipeline_path, 'wb') as file:
+            pickle.dump(actions, file)
 
     async def update_settings(self, updated_data):
         """Update the project settings"""

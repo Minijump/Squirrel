@@ -13,7 +13,7 @@ class Action:
         self.kwargs = {}
 
     async def _get(self, args_list):
-        form_data = await self.request.form()
+        form_data = self.request
         return (form_data.get(arg) for arg in args_list)
     
     async def execute(self):
@@ -107,7 +107,7 @@ class CreateTable(Action):
 
             SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
             source = SourceClass(manifest_data)
-            new_code = source.create_table(await self.request.form())
+            new_code = source.create_table(self.request)
 
         elif source_creation_type == "other_tables":
             new_code = f"tables['{table_name}'] = tables['{table_df}']  #sq_action:Create table {table_name}"

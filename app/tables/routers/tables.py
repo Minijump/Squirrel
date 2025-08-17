@@ -1,24 +1,23 @@
-import importlib.util
 import json
 import os
 import pandas as pd
 import pickle
 
 from fastapi import Request
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 
 from app import router, templates
 from app.data_sources.routers.data_sources import get_sources
 from app.tables.models.actions_column import convert_col_idx
-from app.tables.models.actions_utils import action, TABLE_ACTION_REGISTRY
+from app.tables.models.actions_utils import TABLE_ACTION_REGISTRY
 from app.utils.form_utils import squirrel_error, _get_form_data_info
 
+from app.pipelines.models.pipeline import Pipeline
+from app.pipelines.models.pipeline_storage import PipelineAction
+
 def load_pipeline_module(project_dir):
-    """Loads and returns the python pipeline"""
-    pipeline_path = os.path.join( os.getcwd(), "_projects", project_dir, "pipeline.py")
-    spec = importlib.util.spec_from_file_location("pipeline", pipeline_path)
-    pipeline = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(pipeline)
+    """Loads and returns the pipeline instance"""
+    pipeline = Pipeline(project_dir)
     return pipeline
 
 def to_html_with_idx(df):
@@ -47,7 +46,7 @@ async def tables(request: Request, project_dir: str):
     tables = {}
     try:
         pipeline = load_pipeline_module(project_dir)
-        tables = pipeline.run_pipeline()
+        tables = await pipeline.run_pipeline()
     except Exception as e:
         exception = e
     finally:
@@ -86,7 +85,7 @@ async def tables_pager(request: Request, project_dir: str, table_name: str, page
             tables = pickle.load(f)
     else:
         pipeline = load_pipeline_module(project_dir)
-        tables = pipeline.run_pipeline()
+        tables = await pipeline.run_pipeline()
     df = tables[table_name]
     start = page * n
     end = start + n
@@ -94,7 +93,6 @@ async def tables_pager(request: Request, project_dir: str, table_name: str, page
     return table_html
 
 @router.post("/tables/execute_action/")
-@action.add
 async def execute_action(request: Request):
     """ 
     Execute the selected action selected by the user. 
@@ -105,14 +103,13 @@ async def execute_action(request: Request):
     ActionClass = TABLE_ACTION_REGISTRY.get(action_name)
     if not ActionClass:
         raise ValueError(f"Action {action_name} not found")
+    project_dir = form_data.get("project_dir")
 
-    action_instance = ActionClass(request)
+    pipeline = Pipeline(project_dir)
+    pipeline_action = PipelineAction(action_name, form_data)
+    await pipeline_action.add_to_pipeline(pipeline)
 
-    if form_data.get("advanced"):
-        new_code = await action_instance.execute_advanced()
-        return new_code
-    new_code = await action_instance.execute()
-    return new_code
+    return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)                
 
 @router.get("/tables/get_action_args/")
 async def get_action_args(request: Request, action_name: str):
@@ -147,7 +144,7 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
             df = tables[table]
     else:
         pipeline = load_pipeline_module(project_dir)
-        df = pipeline.run_pipeline()[table]
+        df = await pipeline.run_pipeline()[table]
     column = df[eval(convert_col_idx(column_idx))]
 
     col_infos = {
@@ -187,7 +184,7 @@ async def export_table(request: Request):
     table_name, export_type, project_dir = await _get_form_data_info(request, ["table_name", "export_type", "project_dir"])
 
     pipeline = load_pipeline_module(project_dir)
-    tables = pipeline.run_pipeline()
+    tables = await pipeline.run_pipeline()
     df = tables[table_name]
 
     export_dir = os.path.join(os.getcwd(), "_projects", project_dir, "exports")
