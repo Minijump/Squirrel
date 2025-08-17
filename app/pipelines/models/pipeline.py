@@ -27,9 +27,9 @@ class Pipeline:
         self.load_actions()
         result = []
         
-        for idx, action in enumerate(self.actions):
-            result.append((idx, action.description, action.parameters))
-        
+        for idx, pipeline_action in enumerate(self.actions):
+            result.append((idx, pipeline_action.description, pipeline_action.action))
+
         return result
     
     async def confirm_new_order(self, order: str):
@@ -40,8 +40,8 @@ class Pipeline:
 
     async def edit_action(self, action_id: int, action_data):
         self.load_actions()
-        # Does not work because action_data is a string (copying info of FormData) while action.parameters should be FormData
-        # Will be solved once we use a dynamic form for editing action?
+        # TODO: not working
+        # edit pipeline_action.action object instead
         actions = self.actions
         actions[action_id].parameters = action_data
         self.actions = actions
@@ -57,16 +57,11 @@ class Pipeline:
     def add_action(self, action: PipelineAction):
         self.actions.append(action)
         self.save_actions()
-
-    async def _execute_action(self, action: PipelineAction, parameters):
-        action_instance = TABLE_ACTION_REGISTRY.get(action.action_class)(parameters)
-        code = await action_instance.execute()
-        return code
     
     async def run_pipeline(self):
         tables = {}
-        for i, action in enumerate(self.actions):              
-            code = await self._execute_action(action, action.parameters) 
+        for i, pipeline_action in enumerate(self.actions):              
+            code = await pipeline_action.action.execute() 
             local_vars = {'tables': tables, 'pd': pd}
             exec(code, globals(), local_vars)
             tables.update(local_vars['tables'])

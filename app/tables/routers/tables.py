@@ -10,7 +10,7 @@ from app import router, templates
 from app.data_sources.routers.data_sources import get_sources
 from app.tables.models.actions_column import convert_col_idx
 from app.tables.models.actions_utils import TABLE_ACTION_REGISTRY
-from app.utils.form_utils import squirrel_error, _get_form_data_info
+from app.utils.form_utils import squirrel_error, squirrel_action_error, _get_form_data_info
 
 from app.pipelines.models.pipeline import Pipeline
 from app.pipelines.models.pipeline_action import PipelineAction
@@ -93,21 +93,24 @@ async def tables_pager(request: Request, project_dir: str, table_name: str, page
     return table_html
 
 @router.post("/tables/execute_action/")
+@squirrel_action_error
 async def execute_action(request: Request):
     """ 
     Execute the selected action selected by the user. 
     The function returns the corresponding code, which is added in the python pipeline file via the decorator
     """
     form_data = await request.form()
+    project_dir = form_data.get("project_dir")
     action_name = form_data.get("action_name")
+
     ActionClass = TABLE_ACTION_REGISTRY.get(action_name)
     if not ActionClass:
         raise ValueError(f"Action {action_name} not found")
-    project_dir = form_data.get("project_dir")
+    action_instance = ActionClass(request)
 
     pipeline = Pipeline(project_dir)
-    pipeline_action = PipelineAction(action_name, form_data)
-    await pipeline_action.add_to_pipeline(pipeline)
+    pipeline_action = PipelineAction(pipeline, action_instance)
+    await pipeline_action.add_to_pipeline()
 
     return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)                
 
