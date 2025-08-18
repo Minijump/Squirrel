@@ -31,24 +31,16 @@
             </div>
             <div class="action-list dragndrop" id="pipeline">
                 {% for action in actions %}
-                    <div data-swapy-slot="{{ action[0] }}-slot">
-                        <div class="action" data-swapy-item="{{ action[0] }}-item">
-                            {{ action[1] }}
+                    <div data-swapy-slot="{{ action['id'] }}-slot">
+                        <div class="action" data-swapy-item="{{ action['id'] }}-item">
+                            {{ action['description'] }}
                             <div>
-                                <!-- Form is required to escape action[2] (= python code) -->
-                                <form style="display: inline-block;" 
-                                    onsubmit="editPipelineActionOpenModal(
-                                        '{{ action[0] }}', 
-                                        this.elements['action_name'].value, 
-                                        this.elements['action_py'].value, 
-                                        '{{ project_dir }}'); return false;"
-                                >          
-                                    <input type="hidden" name="action_name" value="{{ action[1]|escape }}">
-                                    <input type="hidden" name="action_py" value="{{ action[2]|escape }}">
-                                    <button class="list-edit-btn" type="submit" style="width: 30px;">
-                                        &middot;&middot;&middot;
-                                    </button>
-                                </form>
+                                {% set action_id = action['id'] %}
+                                <button class="list-edit-btn" 
+                                        onclick="editPipelineActionOpenModal('{{ action_id }}'); return false;"
+                                        style="width: 30px;">
+                                    &middot;&middot;&middot;
+                                </button>
                             </div> 
                         </div>
                     </div>

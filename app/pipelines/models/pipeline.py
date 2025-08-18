@@ -28,7 +28,11 @@ class Pipeline:
         result = []
         
         for idx, pipeline_action in enumerate(self.actions):
-            result.append((idx, pipeline_action.description, pipeline_action.action))
+            result.append({
+                'id': idx,
+                'description': pipeline_action.description,
+                'action': pipeline_action.action
+            })
 
         return result
     
@@ -39,12 +43,24 @@ class Pipeline:
         self.save_actions()
 
     async def edit_action(self, action_id: int, action_data):
+        # TODO editaction: imp
         self.load_actions()
-        # TODO: not working
-        # edit pipeline_action.action object instead
-        actions = self.actions
-        actions[action_id].parameters = action_data
-        self.actions = actions
+        if action_id >= len(self.actions):
+            raise IndexError("Action index out of range")
+        
+        # Update the action's form_data with new values
+        pipeline_action = self.actions[action_id]
+        if hasattr(pipeline_action.action, 'form_data'):
+            # Convert form data to a mutable dict if it's not already
+            if hasattr(pipeline_action.action.form_data, 'items'):
+                current_data = dict(pipeline_action.action.form_data)
+            else:
+                current_data = {}
+            
+            # Update with new data
+            current_data.update(action_data)
+            pipeline_action.action.form_data = current_data
+        
         self.save_actions()
 
     async def delete_action(self, delete_action_id: int):
