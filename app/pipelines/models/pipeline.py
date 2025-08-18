@@ -25,17 +25,8 @@ class Pipeline:
 
     async def get_actions(self):
         self.load_actions()
-        result = []
-        
-        for idx, pipeline_action in enumerate(self.actions):
-            result.append({
-                'id': idx,
-                'description': pipeline_action.description,
-                'action': pipeline_action.action
-            })
+        return self.actions
 
-        return result
-    
     async def confirm_new_order(self, order: str):
         new_order = [int(action_str.split('-')[0]) for action_str in order.split(",")]
         reordered_actions = [self.actions[i] for i in new_order]
@@ -43,7 +34,7 @@ class Pipeline:
         self.save_actions()
 
     async def edit_action(self, action_id: int, action_data):
-        # TODO editaction: imp
+        # TODO editaction: imp -----------------------------------------------------------
         self.load_actions()
         if action_id >= len(self.actions):
             raise IndexError("Action index out of range")

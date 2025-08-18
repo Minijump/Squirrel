@@ -2,7 +2,7 @@ import { FormModal } from '/static/utils/components/modal/modal.js';
 import { ConfirmationModal } from '/static/utils/components/modal/confirmation_modal.js';
 import { Field } from '/static/utils/components/field/field.js';
 
-// TODO editaction: refactor + improve + remove useless things
+// TODO editaction: refactor + improve + remove useless things -------------------------------------------
 export class EditActionModal extends FormModal {
     constructor(actionId, options = {}) {
         const formInputs = {
@@ -25,10 +25,8 @@ export class EditActionModal extends FormModal {
     }
 
     async open() {
-        // Load action data before opening
         await this.loadActionData();
         super.open();
-        // Add dynamic inputs after modal is created
         setTimeout(() => this.addDynamicInputsAfterOpen(), 100);
     }
 

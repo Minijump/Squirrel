@@ -31,11 +31,11 @@
             </div>
             <div class="action-list dragndrop" id="pipeline">
                 {% for action in actions %}
-                    <div data-swapy-slot="{{ action['id'] }}-slot">
-                        <div class="action" data-swapy-item="{{ action['id'] }}-item">
-                            {{ action['description'] }}
+                    {% set action_id = loop.index0 %}
+                    <div data-swapy-slot="{{ action_id }}-slot">
+                        <div class="action" data-swapy-item="{{ action_id }}-item">
+                            {{ action.description }}
                             <div>
-                                {% set action_id = action['id'] %}
                                 <button class="list-edit-btn" 
                                         onclick="editPipelineActionOpenModal('{{ action_id }}'); return false;"
                                         style="width: 30px;">

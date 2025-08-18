@@ -32,7 +32,7 @@ async def confirm_new_order(request: Request, project_dir: str, order: str):
 @squirrel_error
 async def edit_action(request: Request):
     """Edit an action in the pipeline and RedirectResponse to the pipeline"""
-    #TODO editaction: imp
+    #TODO editaction: imp -------------------------------------------------------------------
     form_data = await request.form()
     action_id = int(form_data.get("action_id"))
     project_dir = form_data.get("project_dir")
@@ -61,7 +61,7 @@ async def delete_action(request: Request, project_dir: str, delete_action_id: in
 @squirrel_error
 async def get_action_data(request: Request, project_dir: str, action_id: int):
     """Returns the action data for editing"""
-    #TODO editaction: remove? Use existing controller that we use for action sidebar?
+    #TODO editaction: remove? Use existing controller that we use for action sidebar? ------------------------------------------
     pipeline = Pipeline(project_dir)
     pipeline.load_actions()
     
