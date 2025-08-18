@@ -56,29 +56,3 @@ async def delete_action(request: Request, project_dir: str, delete_action_id: in
     await pipeline.delete_action(delete_action_id)
 
     return JSONResponse(content={"message": "Action deleted successfully"}, status_code=200)
-
-@router.get("/pipeline/get_action_data/")
-@squirrel_error
-async def get_action_data(request: Request, project_dir: str, action_id: int):
-    """Returns the action data for editing"""
-    #TODO editaction: remove? Use existing controller that we use for action sidebar? ------------------------------------------
-    pipeline = Pipeline(project_dir)
-    pipeline.load_actions()
-    
-    if action_id >= len(pipeline.actions):
-        return JSONResponse(content={"error": "Action not found"}, status_code=404)
-    
-    pipeline_action = pipeline.actions[action_id]
-    action_instance = pipeline_action.action
-    
-    # Get form data from action instance
-    form_data = {}
-    if hasattr(action_instance, 'form_data') and action_instance.form_data:
-        form_data = dict(action_instance.form_data)
-    
-    return JSONResponse(content={
-        "args": action_instance.args,
-        "kwargs": action_instance.kwargs,
-        "form_data": form_data,
-        "action_name": action_instance.__class__.__name__
-    })

@@ -4,51 +4,43 @@ import { Field } from '/static/utils/components/field/field.js';
 
 // TODO editaction: refactor + improve + remove useless things -------------------------------------------
 export class EditActionModal extends FormModal {
-    constructor(actionId, options = {}) {
+    constructor(actionId, actionName, options = {}) {
         const formInputs = {
             'project_dir': {'type': 'text', 'required': true, 'invisible': true},
             'action_id': {'type': 'text', 'required': true, 'invisible': true}
         };
-        
         const formData = {
             'project_dir': new URLSearchParams(window.location.search).get('project_dir'),
             'action_id': actionId
         };
 
         super({
-            formInputs, formData,
+            formInputs,
+            formData,
             formSubmitRoute: '/pipeline/edit_action/', id: 'editActionModal', title: 'Edit Action',
             ...options
         });
         this.actionId = actionId;
+        this.actionName = actionName;
         this.actionData = null;
-    }
-
-    async open() {
-        await this.loadActionData();
-        super.open();
-        setTimeout(() => this.addDynamicInputsAfterOpen(), 100);
     }
 
     createContent() {
         const content = super.createContent();
         const form = content.querySelector('form');
         
-        // Add action name display placeholder
         const actionNameDisplay = Object.assign(document.createElement('strong'), {
-            textContent: 'Loading...',
+            textContent: this.actionName,
             style: 'display: block; margin-bottom: 15px;',
             id: 'action-name-display'
         });
         form.insertBefore(actionNameDisplay, form.firstChild);
         
-        // Add container for dynamic inputs
         const argsDiv = document.createElement('div');
-        argsDiv.id = 'dynamic-args';
+        argsDiv.id = 'args';
         const submitButton = form.querySelector('button[type="submit"]');
         form.insertBefore(argsDiv, submitButton);
         
-        // Add delete button
         const deleteButton = Object.assign(document.createElement('button'), {
             type: 'button',
             className: 'btn-danger',
@@ -61,54 +53,45 @@ export class EditActionModal extends FormModal {
         return content;
     }
 
-    async loadActionData() {
-        try {
-            const response = await fetch(`/pipeline/get_action_data/?project_dir=${this.projectDir}&action_id=${this.actionId}`);
-            this.actionData = await response.json();
-        } catch (error) {
-            console.error('Error loading action data:', error);
-        }
-    }
-
-    async addDynamicInputsAfterOpen() {
-        if (!this.actionData) return;
-
-        const form = this.componentHtml.querySelector('form');
+    async fillData() {
+        // Similar to ActionSidebar (TO FACTORIZE)
+        await this.addInputs();
         
-        // Update action name display
-        const actionNameDisplay = form.querySelector('#action-name-display');
-        if (actionNameDisplay && this.actionData.action_name) {
-            actionNameDisplay.textContent = this.actionData.action_name;
-        }
-        
-        // Add dynamic inputs
-        const argsDiv = form.querySelector('#dynamic-args');
-        Object.keys(this.actionData.args).forEach(key => {
-            const field = new Field(key, this.actionData.args[key]);
-            argsDiv.appendChild(field.inputDivHTML);
-        });
-
-        // Pre-fill form data
-        this.fillFormData(form);
-    }
-
-    fillFormData(form) {
-        if (!this.actionData || !this.actionData.form_data) return;
-
-        Object.keys(this.actionData.form_data).forEach(key => {
-            const inputElements = form.querySelectorAll(`[name="${key}"], #${key}`);
+        // TODO editaction: fill inputs with default values (create a controller looking at the action by the id)
+        let data = this.actionData || {};
+        const hiddenInputs = {}
+        data = {...data, ...hiddenInputs};
+        Object.keys(data).forEach(key => {
+            const inputElements = this.componentHtml.querySelectorAll(`[name="${key}"], #${key}`);
             if (inputElements.length > 0) {
                 inputElements.forEach(element => {
-                    element.value = this.actionData.form_data[key];
+                    element.value = data[key];
                 });
             }
         });
 
-        // Trigger change events for conditional visibility
-        const onchangeElements = form.querySelectorAll('[onchange]');
+        const onchangeElements = this.componentHtml.querySelectorAll('[onchange]');
         onchangeElements.forEach(element => {
             element.dispatchEvent(new Event('change'));
         });
+        this.defaultFocus();
+    }
+
+    async addInputs() {
+        // Same than ActionSidebar (TO FACTORIZE)
+        try {
+            const response = await fetch(`/tables/get_action_args/?action_name=${this.actionName}`);
+            const args = await response.json();
+            
+            const argsDiv = this.componentHtml.querySelector('#args');
+            argsDiv.innerHTML = '';
+            Object.keys(args).forEach(key => {
+                const field = new Field(key, args[key]);
+                argsDiv.appendChild(field.inputDivHTML);
+            });
+        } catch (error) {
+            console.error('Error loading action arguments:', error);
+        }
     }
 
     showDeleteConfirmation() {

@@ -37,7 +37,7 @@
                             {{ action.description }}
                             <div>
                                 <button class="list-edit-btn" 
-                                        onclick="editPipelineActionOpenModal('{{ action_id }}'); return false;"
+                                        onclick="editPipelineActionOpenModal('{{ action_id }}', '{{ action.action.__class__.__name__}}'); return false;"
                                         style="width: 30px;">
                                     &middot;&middot;&middot;
                                 </button>
