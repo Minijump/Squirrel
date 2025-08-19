@@ -26,6 +26,10 @@ class Pipeline:
     async def get_actions(self):
         self.load_actions()
         return self.actions
+    
+    async def get_action_data(self, action_id: int):
+        self.load_actions()
+        return self.actions[action_id].action.form_data
 
     async def confirm_new_order(self, order: str):
         new_order = [int(action_str.split('-')[0]) for action_str in order.split(",")]

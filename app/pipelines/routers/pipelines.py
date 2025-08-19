@@ -48,6 +48,14 @@ async def edit_action(request: Request):
 
     return RedirectResponse(url=f"/pipeline?project_dir={project_dir}", status_code=303)
 
+@router.get("/pipeline/get_action_data/")
+@squirrel_error
+async def get_action_data(request: Request, project_dir: str, action_id: int):
+    """Get action data for a specific action in the pipeline + Returns a JSONResponse"""
+    pipeline = Pipeline(project_dir)
+    action_data = await pipeline.get_action_data(action_id)
+    return action_data
+
 @router.post("/pipeline/delete_action/")
 @squirrel_error
 async def delete_action(request: Request, project_dir: str, delete_action_id: int):

@@ -2,7 +2,6 @@ import { FormModal } from '/static/utils/components/modal/modal.js';
 import { ConfirmationModal } from '/static/utils/components/modal/confirmation_modal.js';
 import { Field } from '/static/utils/components/field/field.js';
 
-// TODO editaction: refactor + improve + remove useless things -------------------------------------------
 export class EditActionModal extends FormModal {
     constructor(actionId, actionName, options = {}) {
         const formInputs = {
@@ -22,7 +21,6 @@ export class EditActionModal extends FormModal {
         });
         this.actionId = actionId;
         this.actionName = actionName;
-        this.actionData = null;
     }
 
     createContent() {
@@ -55,12 +53,8 @@ export class EditActionModal extends FormModal {
 
     async fillData() {
         // Similar to ActionSidebar (TO FACTORIZE)
+        const data = await this.getActionData(); // Called before addInputs, else we see a little glitch cause by the time of the request
         await this.addInputs();
-        
-        // TODO editaction: fill inputs with default values (create a controller looking at the action by the id)
-        let data = this.actionData || {};
-        const hiddenInputs = {}
-        data = {...data, ...hiddenInputs};
         Object.keys(data).forEach(key => {
             const inputElements = this.componentHtml.querySelectorAll(`[name="${key}"], #${key}`);
             if (inputElements.length > 0) {
@@ -92,6 +86,15 @@ export class EditActionModal extends FormModal {
         } catch (error) {
             console.error('Error loading action arguments:', error);
         }
+    }
+
+    async getActionData() {
+        const response = await fetch(`/pipeline/get_action_data/?project_dir=${this.projectDir}&action_id=${this.actionId}`);
+        if (!response.ok) {
+            console.error('Error fetching action data:', response.statusText);
+            return null;
+        }
+        return await response.json();
     }
 
     showDeleteConfirmation() {
