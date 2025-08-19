@@ -128,9 +128,8 @@ There are 3 main folders:
 
 ### To do
 * Do advanced tab actions (+ in edit action)
-* Refactor and rename misc (add a static descr to actions)
-* Fix unit tests (make them runnable again)
 * Update readme and demo project
+* Refactor (+fix) unit tests + code (all, not only pipeline) ((rename method, typing?, move logic out of controllers, create private methods, ...))
 
 ### To Fix
 * Fix create table edit action
@@ -145,7 +144,7 @@ There are 3 main folders:
   * add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch (ie: somewhere where a can type sum(col1, col2)), ...
   * add dynamic documentation (ie: pd.Series.replace.__doc__)
 * Add actions (expl: Possibility to edit a cell value directly)
-* Add tours + imp UT + refactor code (rename method, typing, move logic out of controllers, create private methods, ...) 
+* check if needed to Add tours/UT?
 
 ### To do UX
 * Imp notification manager
