@@ -1,6 +1,6 @@
 # Squirrel (Mvp)
       
-Create data analysis pipeline by generating python with a low-code interface. 
+Create data analysis pipeline with a no/low-code interface. 
 ## The app
 ### Installation
 
@@ -48,7 +48,7 @@ Create data analysis pipeline by generating python with a low-code interface.
     ```sh
     uvicorn app.main:app
     ```
-    Note that you will often see this command with '--reload' argument. Do not use it to run the app, it will cause troubles when the pipeline.py file is updated.
+    Note that you will often see this command with '--reload' argument. Do not use it to run the app, it will cause troubles when the pipeline file is updated.
 
 3. **Open your browser and navigate to:**
     ```
@@ -88,7 +88,7 @@ The tables page is where the action happens. On this page, you can create new ta
 
 __The pipeline:__
 
-Every time you perform an action on a table, it is stored in the pipeline. The pipeline page provides an overview of these actions, allowing you to reorder them, edit the Python code executed by the actions, or delete them.
+Every time you perform an action on a table, it is stored in the pipeline. The pipeline page provides an overview of these actions, allowing you to reorder, edit, or delete them.
 
 ![Pipeline Page](app/utils/templates/static/img/pipeline.png)
 
@@ -100,7 +100,7 @@ The project structure can be somewhat strange to those accustomed to well-struct
 There are 3 main folders:
 
 * app: this folder contains every code required to run the app: endpoints, templates, classes, js, ...
-* _projects: this is the folder that stores the user's projects. Each projects must contains a manifest, a folder data_source and a pipeline.py file
+* _projects: this is the folder that stores the user's projects. Each projects must contains a manifest and a folder data_source
 * tests: this is where the unit tests and the tours lays
 
 ### Running Tests
@@ -128,11 +128,11 @@ There are 3 main folders:
 
 ### To do
 * Do advanced tab actions (+ in edit action)
-* Update readme and demo project
 * Refactor (+fix) unit tests + code (all, not only pipeline) ((rename method, typing?, move logic out of controllers, create private methods, ...))
 
 ### To Fix
 * Fix create table edit action
+* Test custom action?
 
 ### To do MVP
 * Improve actions

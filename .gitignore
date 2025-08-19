@@ -2,8 +2,6 @@
 !tests/**/*.csv
 *.ipynb
 _projects/**
-!_projects/demo_project/
-!_projects/demo_project/**
 *.xml
 *.idea
 .vscode/*
