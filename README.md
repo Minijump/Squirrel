@@ -127,13 +127,13 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
-* Do edit action in pipeline (dynamic)
-* Do advanced tab actions
+* Do advanced tab actions (+ in edit action)
 * Refactor and rename misc (add a static descr to actions)
 * Fix unit tests (make them runnable again)
 * Update readme and demo project
 
 ### To Fix
+* Fix create table edit action
 
 ### To do MVP
 * Improve actions
@@ -145,7 +145,7 @@ There are 3 main folders:
   * add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch (ie: somewhere where a can type sum(col1, col2)), ...
   * add dynamic documentation (ie: pd.Series.replace.__doc__)
 * Add actions (expl: Possibility to edit a cell value directly)
-* Add tours + imp UT + refactor code if needed(create private methods, ...) 
+* Add tours + imp UT + refactor code (rename method, typing, move logic out of controllers, create private methods, ...) 
 
 ### To do UX
 * Imp notification manager

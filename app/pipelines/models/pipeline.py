@@ -38,23 +38,15 @@ class Pipeline:
         self.save_actions()
 
     async def edit_action(self, action_id: int, action_data):
-        # TODO editaction: imp -----------------------------------------------------------
         self.load_actions()
         if action_id >= len(self.actions):
             raise IndexError("Action index out of range")
         
-        # Update the action's form_data with new values
         pipeline_action = self.actions[action_id]
-        if hasattr(pipeline_action.action, 'form_data'):
-            # Convert form data to a mutable dict if it's not already
-            if hasattr(pipeline_action.action.form_data, 'items'):
-                current_data = dict(pipeline_action.action.form_data)
-            else:
-                current_data = {}
-            
-            # Update with new data
-            current_data.update(action_data)
-            pipeline_action.action.form_data = current_data
+        current_action_data = pipeline_action.action.form_data
+        action_data = {key: value for key, value in action_data.items() if key in current_action_data}
+        current_action_data.update(action_data)
+        pipeline_action.action.form_data = current_action_data
         
         self.save_actions()
 

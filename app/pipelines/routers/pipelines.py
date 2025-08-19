@@ -32,16 +32,11 @@ async def confirm_new_order(request: Request, project_dir: str, order: str):
 @squirrel_error
 async def edit_action(request: Request):
     """Edit an action in the pipeline and RedirectResponse to the pipeline"""
-    #TODO editaction: imp -------------------------------------------------------------------
     form_data = await request.form()
     action_id = int(form_data.get("action_id"))
     project_dir = form_data.get("project_dir")
-    
-    # Convert form data to dict, excluding system fields
-    action_data = {}
-    for key, value in form_data.items():
-        if key not in ["action_id", "project_dir"]:
-            action_data[key] = value
+
+    action_data = {key: value for key, value in form_data.items()}
 
     pipeline = Pipeline(project_dir)
     await pipeline.edit_action(action_id, action_data)
