@@ -74,7 +74,7 @@ export class EditActionModal extends FormModal {
     async addInputs() {
         // Same than ActionSidebar (TO FACTORIZE)
         try {
-            const response = await fetch(`/tables/get_action_args/?action_name=${this.actionName}`);
+            const response = await fetch(`/tables/get_action_args/?action_name=${this.actionName}&project_dir=${this.projectDir}`);
             const args = await response.json();
             
             const argsDiv = this.componentHtml.querySelector('#args');

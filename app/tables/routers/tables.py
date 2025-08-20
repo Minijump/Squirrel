@@ -66,7 +66,6 @@ async def tables(request: Request, project_dir: str):
                 table_html[name] = to_html_with_idx(df.head(display_len))
                 table_len_infos[name] = {'total_len': len(df.index), 'display_len': display_len}
 
-        # Add available sources for table creation
         sources = await get_sources(project_dir)
 
         return templates.TemplateResponse(
@@ -115,7 +114,7 @@ async def execute_action(request: Request):
     return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)                
 
 @router.get("/tables/get_action_args/")
-async def get_action_args(request: Request, action_name: str):
+async def get_action_args(request: Request, action_name: str, project_dir: str = None):
     """Returns the arguments of the action selected by the user"""
     ActionClass = TABLE_ACTION_REGISTRY.get(action_name)
     if not ActionClass:
@@ -123,6 +122,44 @@ async def get_action_args(request: Request, action_name: str):
 
     action_instance = ActionClass({})
     args = action_instance.args
+
+    # TODO: move this logic outside of controller ------------------------------------------
+    # (add a method in ActionClass, that will do nothing for most)
+
+    # If the CreateTable action is requested and a project_dir is provided,
+    # populate the select_options for data_source_dir and table_df from the
+    # project's data sources and previously computed tables (if available).
+    if action_name == 'CreateTable' and project_dir:
+        # available data sources
+        try:
+            sources = await get_sources(project_dir)
+            available_data_sources = [(s.get('directory'), s.get('name')) for s in sources]
+        except Exception:
+            available_data_sources = []
+
+        # available tables (try to read the cached pickle file first)
+        available_tables = []
+        data_tables_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_tables.pkl")
+        try:
+            if os.path.exists(data_tables_path):
+                with open(data_tables_path, 'rb') as f:
+                    tables = pickle.load(f)
+            else:
+                pipeline = load_pipeline_module(project_dir)
+                tables = await pipeline.run_pipeline()
+
+            if isinstance(tables, dict):
+                available_tables = [(k, k) for k in tables.keys()]
+        except Exception:
+            available_tables = []
+
+        # inject into args if the expected keys exist
+        if 'data_source_dir' in args:
+            args['data_source_dir']['select_options'] = available_data_sources
+        if 'table_df' in args:
+            args['table_df']['select_options'] = available_tables
+    #----------------------------------------------------------------------------------------
+
     return args
 
 @router.get("/tables/column_infos/")

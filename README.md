@@ -130,8 +130,7 @@ There are 3 main folders:
 * Refactor (+fix) unit tests + code (all, not only pipeline) ((rename method, typing?, move logic out of controllers, create private methods, ...))
 
 ### To Fix
-* Fix create table edit action
-* Test custom action?
+* Fix edit action: "AttributeError: 'FormData' object has no attribute 'update'"
 
 ### To do MVP
 * Improve actions

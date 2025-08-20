@@ -12,11 +12,16 @@ export class ActionSidebar extends FormSidebar {
 
     createContent() {
         const sidebarContent = document.createElement('div')
+
+        // Useful to be able to open 'Create Table' action with the action sidebar
+        const hasNoTable = !!this.actionData && (this.actionData.no_table === true || this.actionData.no_table === 'true');
+        const tableInput = hasNoTable ? '' : `<input type="hidden" name="table_name" required>`;
+
         sidebarContent.innerHTML = `
             <form id="action-sidebar-form" action="/tables/execute_action/" method="post" class="std-form">
                 <input type="hidden" name="action_name" class="sync-action-name" required>
                 <input type="hidden" name="project_dir" value="${this.projectDir}">
-                <input type="hidden" name="table_name" required>
+                ${tableInput}
                 <div id="args"></div>
                 <button type="submit" class="btn-primary" style="margin-top: 10px;">Confirm</button>
             </form>
@@ -27,7 +32,7 @@ export class ActionSidebar extends FormSidebar {
 
     async addInputs() {
         try {
-            const response = await fetch(`/tables/get_action_args/?action_name=${this.actionName}`);
+            const response = await fetch(`/tables/get_action_args/?action_name=${this.actionName}&project_dir=${this.projectDir}`);
             const args = await response.json();
             
             const argsDiv = this.componentHtml.querySelector('#args');

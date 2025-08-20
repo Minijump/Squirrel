@@ -78,6 +78,21 @@ class KeepRow(Action):
 
 @table_action_type
 class CreateTable(Action):
+    def __init__(self, request):
+        super().__init__(request)
+        # Selections choices are set afterward (in get_action_args) (because we need the project_dir)
+        self.args = {
+            "table_name": {"type": "text", "label": "Table Name", "placeholder": 'Enter the new table name'},
+            "source_creation_type": {"type": "select", "label": "Source Creation Type", 
+                           "select_options": [("data_source", "Data Source"), ("other_tables", "Other Tables")],
+                           "onchange": "onchangeFormValue('TableCreation_source_creation_type', event)"},
+            "data_source_dir": {"type": "select", "label": "Data Source Directory", 
+                                "select_options": [],
+                                "onchange_visibility": ["TableCreation_source_creation_type", "data_source"]},
+            "table_df": {"type": "select", "label": "Table",
+                          "select_options": [],
+                          "onchange_visibility": ["TableCreation_source_creation_type", "other_tables"]}
+        }
     async def execute(self):
         table_name, project_dir, data_source_dir, source_creation_type, table_df = await self._get(
             ["table_name", "project_dir", "data_source_dir", "source_creation_type", "table_df"])

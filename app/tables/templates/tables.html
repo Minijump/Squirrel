@@ -34,7 +34,7 @@
                                 {{ name }}
                         </button>
                     {% endfor %}
-                    <button onclick="openSidebarForm('CreateTable')" class="table-select-btn">
+                    <button onclick="openSidebarActionForm('CreateTable', { 'no_table': 1 }, 'Create Table');" class="table-select-btn">
                         <img
                             src="{{ url_for('tables_static', path='img/plus_icon.png') }}"
                             alt="Plus Icon"
@@ -116,9 +116,7 @@
             {% endif %}
 
             {% include 'tables/templates/info_col_modal.html' %}
-            
-            <script type="application/json" id="sources-data">{{ sources | tojson }}</script>
-            <script type="application/json" id="tables-data">{{ table | tojson }}</script>
+
             <script type="module" src="{{ url_for('utils_static', path='ui_manager/theme_manager/theme.js') }}"></script>
             <script type="module" src="{{ url_for('utils_static', path='ui_manager/notification_manager/notification.js') }}"></script>
             <script type="module" src="{{ url_for('tables_static', path='js/table_scripts.js') }}"></script>
