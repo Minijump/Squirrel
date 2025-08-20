@@ -132,33 +132,6 @@ class TestTablesTours:
         assert cell.text == "0"
 
     @pytest.mark.slow
-    def test_sort_column_advanced(self, server, browser, reset_projects):
-        """Test sorting a column using the advanced tab with dictionary widget."""
-        tour = Tour(browser, server)
-
-        tour.click_card(by_position=2)
-        table = tour.select_table(by_name="ordered")
-
-        # Sort descending
-        col_modal = table.click_header_button(by_col_number=2)
-        sidebar = col_modal.click_action_button("Sort")
-        sidebar.switch_to_advanced_tab()
-        sidebar.edit_dictionary("kwargs", "ascending", "False")     
-        sidebar.submit()
-        cell = table.get_cell(by_col_number=2, by_row_number=1)
-        assert cell.text == "99"
-
-        # Sort back to ascending (by removing and adding back the key)
-        col_modal = table.click_header_button(by_col_number=2)
-        sidebar = col_modal.click_action_button("Sort")
-        sidebar.switch_to_advanced_tab()
-        sidebar.remove_from_dictionary("kwargs", "ascending")
-        sidebar.add_to_dictionary("kwargs", "ascending", "True")
-        sidebar.submit()
-        cell = table.get_cell(by_col_number=2, by_row_number=1)
-        assert cell.text == "0"
-
-    @pytest.mark.slow
     def test_replace_vals(self, server, browser, reset_projects):
         """Check if the vals are replaced correctly."""
         tour = Tour(browser, server)
@@ -191,25 +164,6 @@ class TestTablesTours:
         sidebar.submit()
         cell = table.get_cell(by_col_number=2, by_row_number=1)
         assert cell.text == "1"
-
-    @pytest.mark.slow
-    def test_replace_vals_advanced(self, server, browser, reset_projects):
-        """Test replacing values using the advanced tab with dictionary widget."""
-        tour = Tour(browser, server)
-
-        tour.click_card(by_position=2)
-        table = tour.select_table(by_name="ordered")
-
-        cell = table.get_cell(by_col_number=1, by_row_number=1)
-        assert cell.text == "mock0"
-        col_modal = table.click_header_button(by_col_number=1)
-        sidebar = col_modal.click_action_button("Replace vals.")
-        sidebar.switch_to_advanced_tab()
-        sidebar.edit_dictionary("kwargs", "to_replace", '["mock0"]')
-        sidebar.edit_dictionary("kwargs", "value", '["mock0_edited"]')
-        sidebar.submit()
-        cell = table.get_cell(by_col_number=1, by_row_number=1)
-        assert cell.text == "mock0_edited"
 
     @pytest.mark.slow
     def test_missing_vals(self, server, browser, reset_projects):
@@ -338,32 +292,6 @@ class TestTablesTours:
         assert cell.text == "success", "Biggest element should be 'success'"
 
     @pytest.mark.slow  
-    def test_cut_advanced(self, server, browser, reset_projects):
-        """Test cutting a column using the advanced tab with dictionary widget."""
-        tour = Tour(browser, server)
-
-        tour.click_card(by_position=2)
-        table = tour.select_table(by_name="ordered")
-
-        col_modal = table.click_header_button(by_col_number=2)
-        sidebar = col_modal.click_action_button("Cut")
-        sidebar.switch_to_advanced_tab()
-        sidebar.edit_dictionary("kwargs", "bins", '[0, 50, 100]')
-        sidebar.edit_dictionary("kwargs", "labels", '["failed", "success"]')
-        sidebar.edit_dictionary("kwargs", "include_lowest", 'True')
-        sidebar.submit()
-
-        cell = table.get_cell(by_col_number=2, by_row_number=1)
-        assert cell.text == "failed", "smallest element should be 'failed'"
-
-        col_modal = table.click_header_button(by_col_number=2)
-        sidebar = col_modal.click_action_button("Sort")
-        sidebar.fill([("sort_order", "Descending")])
-        sidebar.submit()
-        cell = table.get_cell(by_col_number=2, by_row_number=1)
-        assert cell.text == "success", "Biggest element should be 'success'"
-
-    @pytest.mark.slow  
     def test_keep_n_largest(self, server, browser, reset_projects):
         """Check if the keep n largest function works correctly."""
         tour = Tour(browser, server)
@@ -414,26 +342,6 @@ class TestTablesTours:
         col_modal = table.click_header_button(by_col_number=2)
         sidebar = col_modal.click_action_button("Diff")
         sidebar.fill([("periods", "1")])
-        sidebar.submit()
-
-        # creates a new column ('col2-diff')
-        cell_1 = table.get_cell(by_col_number=3, by_row_number=1)
-        assert cell_1.text == "NaN", "First element should be NaN"
-        cell_2 = table.get_cell(by_col_number=3, by_row_number=2)
-        assert float(cell_2.text) == 1, "Second element should be 1"
-
-    @pytest.mark.slow  
-    def test_diff_advanced(self, server, browser, reset_projects):
-        """Test diffing a column using the advanced tab with dictionary widget."""
-        tour = Tour(browser, server)
-
-        tour.click_card(by_position=2)
-        table = tour.select_table(by_name="ordered")
-
-        col_modal = table.click_header_button(by_col_number=2)
-        sidebar = col_modal.click_action_button("Diff")
-        sidebar.switch_to_advanced_tab()
-        sidebar.edit_dictionary("kwargs", "periods", "1")
         sidebar.submit()
 
         # creates a new column ('col2-diff')
@@ -587,35 +495,6 @@ class TestTablesTours:
         sidebar = table.click_action_button("Merge Tables")
         sidebar.fill([("table2", "ordered_2")])
         sidebar.fill([("on", "mock_name")])
-        sidebar.submit()
-
-        cell = table.get_cell(by_col_number=1, by_row_number=1)
-        assert cell.text == "mock0", "First cell should be 'mock0' after merge"
-        cell = table.get_cell(by_col_number=2, by_row_number=1)
-        assert cell.text == "0", "Second cell should be '0' after merge"
-        cell = table.get_cell(by_col_number=3, by_row_number=1)
-        assert cell.text == "0", "Third cell should be '0' after merge"
-
-    @pytest.mark.slow
-    def test_merge_tables_advanced(self, server, browser, reset_projects):
-        """Test merging tables using the advanced tab with dictionary widget."""
-        tour = Tour(browser, server)
-
-        tour.click_card(by_position=2)
-
-        # Create a new table to merge with
-        sidebar = tour.click_create_new_table()
-        table_name = "ordered_2"
-        sidebar.fill([("table_name", table_name), ("data_source_dir", "Csv ordered")])
-        sidebar.submit()
-        # ---------------------------------------------------------------------------
-
-        table = tour.select_table(by_name="ordered")
-
-        sidebar = table.click_action_button("Merge Tables")
-        sidebar.switch_to_advanced_tab()
-        sidebar.edit_dictionary("kwargs", "right", "ordered_2")
-        sidebar.edit_dictionary("kwargs", "on", 'mock_name')
         sidebar.submit()
 
         cell = table.get_cell(by_col_number=1, by_row_number=1)

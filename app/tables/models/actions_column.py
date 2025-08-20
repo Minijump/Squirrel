@@ -1,8 +1,7 @@
 import ast
-import pandas as pd
 import numpy as np
 
-from .actions_utils import table_action_type, _get_method_sig, convert_col_idx
+from .actions_utils import table_action_type, convert_col_idx
 from .actions import Action
 
 
@@ -37,7 +36,6 @@ class DropColumn(ActionColumn):
 class ReplaceVals(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
-        self.kwargs = _get_method_sig(pd.Series.replace, remove=['inplace', 'limit', 'method'])
         self.args.update({
             "replace_vals": {"type": "dict", 
                              "label": "Replace Domain:", 
@@ -54,12 +52,6 @@ class ReplaceVals(ActionColumn):
             falses = ['False', 'false', '0']
             replace_vals = {False if k in falses else True: False if v in falses else True for k, v in ast.literal_eval(replace_vals).items()}
         new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].replace({replace_vals})  #sq_action:Replace values in column {col_name} of table {table_name}"""
-        return new_code
-    
-    async def execute_advanced(self):
-        table_name, col_name, col_idx, kwargs = await self._get(["table_name", "col_name", "col_idx", "kwargs"])
-        kwrags_str = await self._get_kwargs_str(ast.literal_eval(kwargs))
-        new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].replace({kwrags_str})  #sq_action:Replace values in column {col_name} of table {table_name}"""    
         return new_code
 
 @table_action_type
@@ -131,7 +123,6 @@ tables['{table_name}'].columns = pd.MultiIndex.from_tuples(new_cols) #sq_action:
 class CutValues(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
-        self.kwargs = _get_method_sig(pd.cut, remove=['x', 'retbins', 'duplicates'])
         self.args.update({
             "cut_values": {"type": "text", "label": "Cut Values", "info": "Comma separated. E.g. 0,10,20,30"},
             "cut_labels": {"type": "text", "label": "Cut Labels", "info": "Comma separated. E.g. low,middle,high'"},
@@ -143,18 +134,11 @@ class CutValues(ActionColumn):
         cut_labels = cut_labels.split(',')
         new_code = f"""tables['{table_name}'][{col_idx}] = pd.cut(tables['{table_name}'][{col_idx}], bins={cut_values}, labels={cut_labels})  #sq_action:Cut values in column {col_name} of table {table_name}"""
         return new_code
-    
-    async def execute_advanced(self):
-        table_name, col_name, col_idx, kwargs = await self._get(["table_name", "col_name", "col_idx", "kwargs"])
-        kwrags_str = await self._get_kwargs_str(ast.literal_eval(kwargs))
-        new_code = f"""tables['{table_name}'][{col_idx}] = pd.cut(tables['{table_name}'][{col_idx}], {kwrags_str})  #sq_action:Cut values in column {col_name} of table {table_name}"""    
-        return new_code
 
 @table_action_type
 class SortColumn(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
-        self.kwargs = _get_method_sig(pd.DataFrame.sort_values, remove=['by', 'inplace', 'ignore_index', 'axis'])
         self.args.update({
             "sort_order": {"type": "select", "label": "Sort Order", 
                            "select_options": [("ascending", "Ascending"), ("descending", "Descending"), ("custom", "Custom")], 
@@ -176,12 +160,6 @@ class SortColumn(ActionColumn):
         else:
             raise ValueError("Invalid sort order")
     
-        return new_code
-    
-    async def execute_advanced(self):
-        table_name, col_name, col_idx, kwargs = await self._get(["table_name", "col_name", "col_idx", "kwargs"])
-        kwrags_str = await self._get_kwargs_str(ast.literal_eval(kwargs))
-        new_code = f"""tables['{table_name}'] = tables['{table_name}'].sort_values(by=[{col_idx}], {kwrags_str})  #sq_action:Sort {col_name} of table {table_name} with kwargs"""
         return new_code
 
 @table_action_type
@@ -268,7 +246,6 @@ class ApplyFunction(ActionColumn):
 class ColDiff(ActionColumn):
     def __init__(self, request):
         super().__init__(request)
-        self.kwargs = _get_method_sig(pd.DataFrame.diff, remove=['axis'])
         self.args.update({
             "periods": {"type": "number", "label": "Periods"},
         })
@@ -277,13 +254,6 @@ class ColDiff(ActionColumn):
         table_name, col_name, periods, col_idx = await self._get(["table_name", "col_name", "periods", "col_idx"])
         new_col_idx = col_idx.replace(", ", "-").replace("'", "").replace("(", "").replace(")", "") + "-diff"
         new_code = f"""tables['{table_name}']['{new_col_idx}'] = tables['{table_name}'][{col_idx}].diff(periods={periods})  #sq_action:Calculate difference of {col_name} in table {table_name}"""
-        return new_code
-    
-    async def execute_advanced(self):
-        table_name, col_name, col_idx, kwargs = await self._get(["table_name", "col_name", "col_idx", "kwargs"])
-        kwrags_str = await self._get_kwargs_str(ast.literal_eval(kwargs))
-        new_col_idx = col_idx.replace(", ", "-").replace("'", "").replace("(", "").replace(")", "") + "-diff"
-        new_code = f"""tables['{table_name}']['{new_col_idx}'] = tables['{table_name}'][{col_idx}].diff({kwrags_str})  #sq_action:Calculate difference of {col_name} in table {table_name}"""    
         return new_code
 
 @table_action_type

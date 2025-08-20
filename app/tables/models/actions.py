@@ -1,33 +1,19 @@
-import ast
 import os
 import json
-import pandas as pd
 
-from .actions_utils import table_action_type, convert_sq_action_to_python, _get_method_sig, isnt_str
+from .actions_utils import table_action_type, convert_sq_action_to_python
 from app.data_sources.models.data_source import DATA_SOURCE_REGISTRY
 
 class Action:
     def __init__(self, request):
         self.form_data = request
         self.args = {}
-        self.kwargs = {}
 
     async def _get(self, args_list):
         form_data = self.form_data
         return (form_data.get(arg) for arg in args_list)
     
     async def execute(self):
-        raise NotImplementedError("Subclasses must implement this method")
-    
-    async def _get_kwargs_str(self, kwargs):
-        kwargs_str = ', '.join(
-            [
-                f"{key}={val}" if isnt_str(val) 
-                else f"{key}='{val}'" 
-            for key, val in kwargs.items()])
-        return kwargs_str
-    
-    async def execute_advanced(self):
         raise NotImplementedError("Subclasses must implement this method")
 
 @table_action_type
@@ -138,8 +124,6 @@ class CustomAction(Action):
 class MergeTables(Action):
     def __init__(self, request):
         super().__init__(request)
-        self.kwargs = _get_method_sig(pd.merge, remove=['left', 'left_index', 'right_index', 'copy', 'indicator'])
-        self.kwargs['suffixes'] = str(self.kwargs['suffixes']) # convert tuple to str, else parenthesis are removed in frontend
         self.args = {
             "table2": {"type": "text", "label": "Table to merge"},
             "on": {"type": "text", "label": "On", "info": "Column name (must be in both tables)"},
@@ -151,14 +135,6 @@ class MergeTables(Action):
     async def execute(self):
         table_name, table2, on, how = await self._get(["table_name", "table2", "on", "how"])
         new_code = f"""tables['{table_name}'] = pd.merge(tables['{table_name}'], tables['{table2}'], on='{on}', how='{how}')  #sq_action:Merge {table_name} with {table2}"""
-        return new_code
-    
-    async def execute_advanced(self):
-        table_name, kwargs = await self._get(["table_name", "kwargs"])
-        kwargs = ast.literal_eval(kwargs)
-        table2_name = kwargs.pop("right")
-        kwargs_str = await self._get_kwargs_str(kwargs)
-        new_code = f"""tables['{table_name}'] = pd.merge(tables['{table_name}'], tables['{table2_name}'], {kwargs_str})  #sq_action:Merge {table_name}"""
         return new_code
 
 @table_action_type

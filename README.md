@@ -127,7 +127,6 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
-* Do advanced tab actions (+ in edit action)
 * Refactor (+fix) unit tests + code (all, not only pipeline) ((rename method, typing?, move logic out of controllers, create private methods, ...))
 
 ### To Fix

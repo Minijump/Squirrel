@@ -125,17 +125,6 @@ async def get_action_args(request: Request, action_name: str):
     args = action_instance.args
     return args
 
-@router.get("/tables/get_action_kwargs/")
-async def get_action_kwargs(request: Request, action_name: str):
-    """Returns the keyword arguments of the action selected by the user"""
-    ActionClass = TABLE_ACTION_REGISTRY.get(action_name)
-    if not ActionClass:
-        raise ValueError(f"Action {action_name} not found")
-
-    action_instance = ActionClass({})
-    kwargs = action_instance.kwargs
-    return kwargs
-
 @router.get("/tables/column_infos/")
 @squirrel_error
 async def get_col_infos(request: Request, project_dir: str, table: str, column_name: str, column_idx: str):

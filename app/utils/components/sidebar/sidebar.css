@@ -86,51 +86,6 @@
     max-height: calc(100vh - 80px);
 }
 
-/* Sidebar Tabs */
-.sidebar-body .sidebar-tabs {
-    display: flex;
-    margin-bottom: 15px;
-}
-
-.sidebar-body .tab-button {
-    flex: 1;
-    background: transparent;
-    color: var(--primary-text-color);
-    border: none;
-    border-bottom: 1px solid var(--border-color);
-    border-left: 1px solid var(--border-color);
-    outline: none;
-    cursor: pointer;
-    padding: 10px;
-    transition: 0.3s;
-}
-.sidebar-body .tab-button:hover {
-    filter: brightness(1.2);
-}
-.sidebar-body .tab-button.active {
-    border-bottom: 0;
-    border-top: 0;
-}
-.sidebar-body .tab-button.n-l-border {
-    border-left: 0;
-}
-.sidebar-body .tab-button.n-r-border {
-    border-right: 0;
-}
-
-/* Sidebar content */
-.sidebar-body .tab-content {
-    display: none;
-    padding: 10px 0;
-    max-height: calc(100vh - 200px);
-    overflow-y: hidden;
-    overflow-x: hidden;
-}
-.sidebar-body .tab-content.active {
-    display: block;
-    overflow-y: auto;
-}
-
 /* Sidebar form */
 .sidebar-body .std-form {
     padding: 20px 15px;

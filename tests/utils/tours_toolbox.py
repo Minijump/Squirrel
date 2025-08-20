@@ -204,19 +204,6 @@ class RightSidebar(TransientElement):
         super().__init__(browser, expected_visible, transient_element_name="Right Sidebar")
         self.right_sidebar_expected_visible = expected_visible # Used to deal with the sidebar tabs (for action sidebars)
 
-    def switch_to_advanced_tab(self) -> None:
-        """ Switch to the advanced tab in the sidebar """
-        advanced_tab_btn = self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[@id='kwargs-btn']")
-        advanced_tab_btn.click()
-        self.expected_visible = f"{self.right_sidebar_expected_visible}//div[@id='advanced-tab']"
-
-    def switch_to_basic_tab(self) -> None:
-        """ Switch to the basic tab in the sidebar """
-        basic_tab_btn = self.browser.find_element(By.XPATH, f"{self.expected_visible}//button[@class='tab-button active n-l-border n-r-border']")
-        basic_tab_btn.click()
-        self.expected_visible = f"{self.right_sidebar_expected_visible}//div[@id='basic-tab']"
-
-
 class Modal(TransientElement):
     def click_button(self, by_button_text: str = False, by_id:str = False) -> None:
         if by_id:
