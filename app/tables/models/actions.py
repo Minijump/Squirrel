@@ -6,7 +6,7 @@ from app.data_sources.models.data_source import DATA_SOURCE_REGISTRY
 
 class Action:
     def __init__(self, request):
-        self.form_data = request
+        self.form_data = dict(request)
         self.args = {}
 
     async def _get(self, args_list):
