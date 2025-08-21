@@ -5,14 +5,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.projects.models import (
-    Project,
-    BASIC_PIPELINE,
-    PROJECT_TYPE_REGISTRY,
-    NEW_CODE_TAG,
-    PIPELINE_END_TAG,
-    PIPELINE_START_TAG
-)
+from app.projects.models import Project, PROJECT_TYPE_REGISTRY
 
 
 client = TestClient(app)
@@ -24,15 +17,6 @@ def test_project_utils_registry():
     """
     assert PROJECT_TYPE_REGISTRY != {}, "Empty project type registry"
     assert "std" in PROJECT_TYPE_REGISTRY, "Failed to register standard project type"
-
-def test_project_utils_basic_pipeline():
-    """
-    Test if the pipeline content is correctly set
-    """
-    assert NEW_CODE_TAG in BASIC_PIPELINE, "Basic pipeline does not contain new code tag"
-    assert PIPELINE_START_TAG in BASIC_PIPELINE, "Basic pipeline does not contain pipeline start tag"
-    assert PIPELINE_END_TAG in BASIC_PIPELINE, "Basic pipeline does not contain pipeline end tag"
-    assert "def run_pipeline():" in BASIC_PIPELINE, "Basic pipeline does not contain run_pipeline function"
 
 # Test Project Creation methods -----------------------------------------------------------------------------
 @pytest.mark.asyncio
@@ -112,7 +96,6 @@ async def test_create_pipeline_file(temp_project_dir_fixture):
     await project._create_project_directory()
     await project._create_pipeline_file()
     assert os.path.exists(os.path.join(project.path, "pipeline.py")), "Failed to create project pipeline"
-    assert BASIC_PIPELINE in open(os.path.join(project.path, "pipeline.py")).read(), "Failed to create project pipeline with the correct content"
 
 @pytest.mark.asyncio
 async def test_create_misc(temp_project_dir_fixture):

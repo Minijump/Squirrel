@@ -1,7 +1,7 @@
 import os
 import json
 
-from app.projects.models import project_type, BASIC_PIPELINE
+from app.projects.models import project_type
 
 
 @project_type
