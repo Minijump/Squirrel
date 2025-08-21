@@ -145,24 +145,10 @@ class App(BaseElement):
 
 
 class Navbar(BaseElement):    
-    def navbar_click(self, text: str, check_over_effect: bool = False) -> None:
+    def navbar_click(self, text: str) -> None:
         nav_element = self.browser.find_element(By.TAG_NAME, "nav")
-        if check_over_effect:
-            self.check_navbar_hover_effect(nav_element)
         link = nav_element.find_element(By.LINK_TEXT, text)
         link.click()
-
-    def check_navbar_hover_effect(self, nav_element: WebElement) -> None:
-        links = nav_element.find_elements(By.TAG_NAME, "a") 
-        actions = ActionChains(self.browser)       
-        for link in links:            
-            original_color = link.value_of_css_property("background-color")
-            actions.move_to_element(link).perform()
-            hover_color = link.value_of_css_property("background-color")
-            
-            if hover_color == original_color:
-                warnings.warn(f"Hover effect not working on link with text: {link.text}")
-
 
 class TransientElement(BaseElement):
     def __init__(self, browser: WebDriver, expected_visible: str, transient_element_name: str = "Transient Element") -> None:
