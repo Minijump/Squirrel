@@ -41,7 +41,6 @@ async def edit_action(request: Request):
 @router.get("/pipeline/get_action_data/")
 @squirrel_error
 async def get_action_data(request: Request, project_dir: str, action_id: int):
-    """Get action data for a specific action in the pipeline + Returns a JSONResponse"""
     pipeline = Pipeline(project_dir)
     action_data = pipeline.get_action_data(action_id)
     return action_data
@@ -49,7 +48,6 @@ async def get_action_data(request: Request, project_dir: str, action_id: int):
 @router.post("/pipeline/delete_action/")
 @squirrel_error
 async def delete_action(request: Request, project_dir: str, delete_action_id: int):
-    """Remove an action from the pipeline + Returns a JSONResponse"""
     pipeline = Pipeline(project_dir)
     pipeline.delete_action(delete_action_id)
     return JSONResponse(content={"message": "Action deleted successfully"}, status_code=200)

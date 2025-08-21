@@ -33,7 +33,7 @@ def test_squirrel_error_decorator_usage():
     projects_routes = ['/projects/', '/projects/open/', '/projects/create/', '/project/settings/', '/project/update_settings/', '/project/delete/']
     data_sources_routes = ['/data_sources/', '/source/create/', '/source/settings', '/source/update_settings/', '/source/delete/']
     table_routes = ['/tables/', '/tables/pager/', '/tables/column_infos/', '/tables/export_table/']
-    pipeline_routes = ['/pipeline/', '/pipeline/confirm_new_order/', '/pipeline/delete_action/', '/pipeline/edit_action/']
+    pipeline_routes = ['/pipeline/', '/pipeline/confirm_new_order/', '/pipeline/delete_action/', '/pipeline/edit_action/', '/pipeline/get_action_data/']
     expected_decorated_routes = app_routes + projects_routes + data_sources_routes + table_routes + pipeline_routes
     
     missing_decoration = set(expected_decorated_routes) - set(decorated_routes)

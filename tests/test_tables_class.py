@@ -1,5 +1,4 @@
 import pandas as pd
-import pytest
 
 from fastapi.testclient import TestClient
 
@@ -73,13 +72,13 @@ def test_convert_col_idx():
 
 
 # Action class ------------------------------------------------------------------------
-def test_table_action_registry_execute():
+def test_table_action_registry_get_code():
     """
-    Test if all classes in the table action registry have an execute method that is different from the Action class.
+    Test if all classes in the table action registry have a get_code method that is different from the Action class.
     """
     from app.tables.models.actions_utils import TABLE_ACTION_REGISTRY
     from app.tables.models.actions import Action
     
     for action_name, action_class in TABLE_ACTION_REGISTRY.items():
-        assert hasattr(action_class, "execute"), f"{action_name} does not have an execute method"
-        assert action_class.execute != Action.execute, f"{action_name} execute method was not implemented"
+        assert hasattr(action_class, "get_code"), f"{action_name} does not have a get_code method"
+        assert action_class.get_code != Action.get_code, f"{action_name} get_code method was not implemented"

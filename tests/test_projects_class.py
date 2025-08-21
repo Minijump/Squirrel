@@ -32,7 +32,7 @@ async def test_create(temp_project_dir_fixture):
     await project.create()
     assert os.path.exists(project.path), "Failed to create project directory"
     assert os.path.exists(os.path.join(project.path, "__manifest__.json")), "Failed to create project manifest"
-    assert os.path.exists(os.path.join(project.path, "pipeline.py")), "Failed to create project pipeline"
+    assert os.path.exists(os.path.join(project.path, "pipeline.pkl")), "Failed to create project pipeline"
     assert os.path.exists(os.path.join(project.path, "data_sources")), "Failed to create project data_sources directory"
 
 @pytest.mark.asyncio
@@ -95,7 +95,7 @@ async def test_create_pipeline_file(temp_project_dir_fixture):
     project = Project(project_infos)
     await project._create_project_directory()
     await project._create_pipeline_file()
-    assert os.path.exists(os.path.join(project.path, "pipeline.py")), "Failed to create project pipeline"
+    assert os.path.exists(os.path.join(project.path, "pipeline.pkl")), "Failed to create project pipeline"
 
 @pytest.mark.asyncio
 async def test_create_misc(temp_project_dir_fixture):
