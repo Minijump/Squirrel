@@ -130,11 +130,13 @@ There are 3 main folders:
 * Refactor (+fix) unit tests + code (all, not only pipeline) ((rename method, typing?, move logic out of controllers, create private methods, ...))
 
 ### To Fix
+* edit action: default values not set for dictionnaries (expl in relace vals:)
 
 ### To do MVP
 * Improve actions
   * possibility to add icons, action descr (can be changed by user), ...
   * do not run all pipeline everytime (check if pipeline changed (with hash?), run everything only if yes, else only execute required action)
+  * In pipeline class: override getter/setter? to replace get_actions/get_action_data ?
 * Widgets: autocomplete Squirrel action
 * Imp Actions 2
   * add inputs type (column, table, ... to enable easy autocomplete), ... 

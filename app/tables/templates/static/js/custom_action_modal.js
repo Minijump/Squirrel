@@ -42,7 +42,7 @@ export async function openCustomActionModal(tableName='') {
         title: 'Custom Action',
         formId: 'customActionModalForm',
         formInputs: FORMINPUTS,
-        formSubmitRoute: '/tables/execute_action/',
+        formSubmitRoute: '/tables/add_action/',
         formData: {
             'action_name': 'CustomAction',
             'project_dir': new URLSearchParams(window.location.search).get('project_dir'),

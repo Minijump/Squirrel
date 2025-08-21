@@ -91,9 +91,9 @@ async def tables_pager(request: Request, project_dir: str, table_name: str, page
     table_html = to_html_with_idx(df.iloc[start:end])
     return table_html
 
-@router.post("/tables/execute_action/")
+@router.post("/tables/add_action/")
 @squirrel_action_error
-async def execute_action(request: Request):
+async def add_action(request: Request):
     """ 
     Execute the selected action selected by the user. 
     The function returns the corresponding code, which is added in the python pipeline file via the decorator

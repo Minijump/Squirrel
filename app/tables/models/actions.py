@@ -13,7 +13,7 @@ class Action:
         form_data = self.form_data
         return (form_data.get(arg) for arg in args_list)
     
-    async def execute(self):
+    async def get_code(self):
         raise NotImplementedError("Subclasses must implement this method")
 
 @table_action_type
@@ -27,7 +27,7 @@ class AddColumn(Action):
             "col_value": {"type": "textarea", "label": "Col. Value"},
         }
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, col_value, value_type = await self._get(["table_name", "col_name", "col_value", "value_type"])
         code = convert_sq_action_to_python(col_value, actual_table_name=table_name, is_sq_action=(value_type == "sq_action"))
         new_code = f"""tables['{table_name}']['{col_name}'] = {code}  #sq_action:Add column {col_name} on table {table_name}"""
@@ -44,7 +44,7 @@ class AddRow(Action):
                 "info": """With format<br/> [<br/>{'Col1': Value1, 'Col2': Value2, ...},<br/> {'Col1': Value3 ...<br/>]"""},
         }
 
-    async def execute(self):
+    async def get_code(self):
         table_name, new_rows = await self._get(["table_name", "new_rows"])
         new_rows = f"pd.DataFrame({new_rows})" if new_rows else "pd.DataFrame()"
         new_code = f"""tables['{table_name}'] = pd.concat([tables['{table_name}'], {new_rows}], ignore_index=True)  #sq_action:Add rows in table {table_name}"""
@@ -58,7 +58,7 @@ class DeleteRow(Action):
             "delete_domain": {"type": "textarea", "label": "Domain", "info": "With format Col1 &lt; Col2, Colx == 'Value',...."},
         }
 
-    async def execute(self):
+    async def get_code(self):
         table_name, delete_domain = await self._get(["table_name", "delete_domain"])
         new_code = f"""tables['{table_name}'] = tables['{table_name}'].query("not ({delete_domain})")  #sq_action:Delete rows in table {table_name}"""
         return new_code
@@ -71,7 +71,7 @@ class KeepRow(Action):
             "keep_domain": {"type": "textarea", "label": "Domain", "info": "With format Col1 &lt; Col2, Colx == 'Value',...."},
         }
 
-    async def execute(self):
+    async def get_code(self):
         table_name, keep_domain = await self._get(["table_name", "keep_domain"])
         new_code = f"""tables['{table_name}'] = tables['{table_name}'].query("({keep_domain})")  #sq_action:Keep rows in table {table_name}"""
         return new_code
@@ -93,7 +93,7 @@ class CreateTable(Action):
                           "select_options": [],
                           "onchange_visibility": ["TableCreation_source_creation_type", "other_tables"]}
         }
-    async def execute(self):
+    async def get_code(self):
         table_name, project_dir, data_source_dir, source_creation_type, table_df = await self._get(
             ["table_name", "project_dir", "data_source_dir", "source_creation_type", "table_df"])
         
@@ -129,7 +129,7 @@ class CustomAction(Action):
             "custom_action_name": {"type": "text", "label": "Action Name"},
         }
 
-    async def execute(self):
+    async def get_code(self):
         custom_action_code, custom_action_name, custom_action_type, default_table_name = await self._get(["custom_action_code", "custom_action_name", "custom_action_type", "default_table_name"])
         code = convert_sq_action_to_python(custom_action_code, actual_table_name=default_table_name, is_sq_action=(custom_action_type == "sq_action"))
         new_code = f"""{code}  #sq_action: {custom_action_name}"""
@@ -147,7 +147,7 @@ class MergeTables(Action):
                     "info": "Type of merge, see pandas merge doc (similar to SQL JOIN)"},
         }
 
-    async def execute(self):
+    async def get_code(self):
         table_name, table2, on, how = await self._get(["table_name", "table2", "on", "how"])
         new_code = f"""tables['{table_name}'] = pd.merge(tables['{table_name}'], tables['{table2}'], on='{on}', how='{how}')  #sq_action:Merge {table_name} with {table2}"""
         return new_code
@@ -160,7 +160,7 @@ class ConcatenateTables(Action):
             "table": {"type": "text", "label": "Table to concat", "info": "Table name to concatenate (SQL UNION) into actual table"},
         }
 
-    async def execute(self):
+    async def get_code(self):
         table_name, table = await self._get(["table_name", "table"])
         new_code = f"""tables['{table_name}'] = pd.concat([tables['{table_name}'], tables['{table}']], ignore_index=True)  #sq_action:Concatenate tables {table_name} and {table}"""
         return new_code
@@ -177,7 +177,7 @@ class GroupBy(Action):
                     "info": "Aggregation functions to apply to each group </br> i.e. sum or {'col1': 'sum', 'col2': 'mean'}"},
         }
 
-    async def execute(self):
+    async def get_code(self):
         table_name, groupby, agg = await self._get(["table_name", "groupby", "agg"])
 
         groupby_str = groupby if groupby.startswith('[') else f"'{groupby}'"

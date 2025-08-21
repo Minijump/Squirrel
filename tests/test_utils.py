@@ -52,7 +52,7 @@ def test_squirrel_action_error_decorator_usage():
         if isinstance(route, APIRoute) and route.endpoint.__name__ in SQUIRREL_ACTION_ERROR_DECORATED:
             decorated_routes.append(route.path)
     
-    table_routes = ['/tables/execute_action/']
+    table_routes = ['/tables/add_action/']
     expected_decorated_routes = table_routes
     
     missing_decoration = set(expected_decorated_routes) - set(decorated_routes)

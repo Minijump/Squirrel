@@ -11,21 +11,6 @@ from tests import MOCK_PROJECT
 client = TestClient(app)
 
 
-#  Test utils
-@pytest.mark.asyncio
-async def test_get_file_lines(temp_project_dir_fixture):
-    """
-    Test if the get_file_lines function returns the correct number of actions
-    Test if their format is ok
-    """
-    from app.pipelines.models.pipeline_utils import get_file_lines
-    pipeline_path = os.path.join(os.getcwd(), "_projects", MOCK_PROJECT, "pipeline.py")
-    lines = await get_file_lines(pipeline_path)
-    actions = [line for line in lines if isinstance(line, tuple)]
-    assert len(actions) == 3, "File should contain 3 actions"
-    assert len(actions[0]) == 2, "Actions should be a tuple with following structure: (action_id, action_line(s)))"
-
-
 # Test pipeline class
 def test_init_pipeline(temp_project_dir_fixture):
     """

@@ -18,7 +18,7 @@ export class ActionSidebar extends FormSidebar {
         const tableInput = hasNoTable ? '' : `<input type="hidden" name="table_name" required>`;
 
         sidebarContent.innerHTML = `
-            <form id="action-sidebar-form" action="/tables/execute_action/" method="post" class="std-form">
+            <form id="action-sidebar-form" action="/tables/add_action/" method="post" class="std-form">
                 <input type="hidden" name="action_name" class="sync-action-name" required>
                 <input type="hidden" name="project_dir" value="${this.projectDir}">
                 ${tableInput}

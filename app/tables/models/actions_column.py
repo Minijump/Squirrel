@@ -27,7 +27,7 @@ class ActionColumn(Action):
     
 @table_action_type
 class DropColumn(ActionColumn):
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, col_idx = await self._get(["table_name", "col_name", "col_idx"])
         new_code = f"""tables['{table_name}'] = tables['{table_name}'].drop(columns=[{col_idx}])  #sq_action:Delete column {col_name} on table {table_name}"""
         return new_code
@@ -43,7 +43,7 @@ class ReplaceVals(ActionColumn):
                             }
         })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, replace_vals, col_idx, col_dtype = await self._get(["table_name", "col_name", "replace_vals", "col_idx", "col_dtype"])
         if col_dtype.startswith('int') or col_dtype.startswith('float'):
             dtype_type = np.dtype(col_dtype).type
@@ -63,7 +63,7 @@ class RemoveUnderOver(ActionColumn):
             "upper_bound": {"type": "number", "label": "Upper Bound"},
         })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, lower_bound, upper_bound, col_idx = await self._get(["table_name", "col_name", "lower_bound", "upper_bound", "col_idx"])
         new_code = f"""tables['{table_name}'] = tables['{table_name}'][(tables['{table_name}'][{col_idx}] >= {lower_bound}) & (tables['{table_name}'][{col_idx}] <= {upper_bound})]  #sq_action:Remove vals out of [{lower_bound}, {upper_bound}] in column {col_name} of table {table_name}"""
         return new_code
@@ -80,7 +80,7 @@ class NLargest(ActionColumn):
 },
         })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, n, keep, col_idx = await self._get(["table_name", "col_name", "n", "keep", "col_idx"])
         new_code = f"""tables['{table_name}'] = tables['{table_name}'].nlargest({n}, [{col_idx}], keep='{keep}')  #sq_action:Get {n} largest values in column {col_name} of table {table_name}"""
         return new_code
@@ -97,7 +97,7 @@ class NSmallest(ActionColumn):
 },
         })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, n, keep, col_idx = await self._get(["table_name", "col_name", "n", "keep", "col_idx"])
         new_code = f"""tables['{table_name}'] = tables['{table_name}'].nsmallest({n}, [{col_idx}], keep='{keep}')  #sq_action:Get {n} smallest values in column {col_name} of table {table_name}"""
         return new_code
@@ -110,7 +110,7 @@ class RenameColumn(ActionColumn):
             "new_col_name": {"type": "text", "label": "New Col. Name"},
         })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, new_col_name, col_idx = await self._get(["table_name", "col_name", "new_col_name", "col_idx"])
         if col_idx.startswith('(') and col_idx.endswith(')'):
             new_code = f"""new_cols = [(val1, val2 if (val1, val2) != {col_idx} else '{new_col_name}') for val1, val2 in tables['{table_name}'].columns.tolist()]
@@ -128,7 +128,7 @@ class CutValues(ActionColumn):
             "cut_labels": {"type": "text", "label": "Cut Labels", "info": "Comma separated. E.g. low,middle,high'"},
         })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, cut_values, cut_labels, col_idx = await self._get(["table_name", "col_name", "cut_values", "cut_labels", "col_idx"])
         cut_values = [float(val) for val in cut_values.split(',')]
         cut_labels = cut_labels.split(',')
@@ -148,7 +148,7 @@ class SortColumn(ActionColumn):
                          "required": True, "onchange_visibility": ["SortColumn_sort_order", "custom"]},
         })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, col_idx, sort_order, sort_key = await self._get(["table_name", "col_name", "col_idx", "sort_order", "sort_key"])
         new_code = f"""tables['{table_name}'] = tables['{table_name}'].sort_values(by=[{col_idx}], """
         if sort_order == "custom":
@@ -173,7 +173,7 @@ class ChangeType(ActionColumn):
                                      ("datetime", "Datetime")]},
                 })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, new_type, col_idx = await self._get(["table_name", "col_name", "new_type", "col_idx"])
 
         if new_type == "datetime":
@@ -192,7 +192,7 @@ class NormalizeColumn(ActionColumn):
                        "select_options": [("min_max", "Min-Max"), ("z_score", "Z Score")]}
         })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, method, col_idx = await self._get(["table_name", "col_name", "method", "col_idx"])
         if method == "min_max":
             new_code = f"""tables['{table_name}'][{col_idx}] = (tables['{table_name}'][{col_idx}] - tables['{table_name}'][{col_idx}].min()) / (tables['{table_name}'][{col_idx}].max() - tables['{table_name}'][{col_idx}].min())  #sq_action:Normalize column {col_name} in table {table_name} with Min-Max"""
@@ -215,7 +215,7 @@ class HandleMissingValues(ActionColumn):
                               "required": True, "onchange_visibility": ["HandleMissingValues_action", "replace"]},
         })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, action, replace_value, col_idx = await self._get(["table_name", "col_name", "action", "replace_value", "col_idx"])
         if action == "delete":
             new_code = f"""tables['{table_name}'] = tables['{table_name}'].dropna(subset=[{col_idx}])  #sq_action:Delete rows with missing values in column {col_name} of table {table_name}"""
@@ -237,7 +237,7 @@ class ApplyFunction(ActionColumn):
                          "info": "Function must be python code with 'row['Col_name']' as the col values. E.g. row['Col_name'].str.len(), row['Col_name'] * -1 if row['Col_name'] < 0 else row['Col_name'], ...",},
         })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, function, col_idx = await self._get(["table_name", "col_name", "function", "col_idx"])
         new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'].apply(lambda row: {function}, axis=1)  #sq_action:Apply function to column {col_name} of table {table_name}"""
         return new_code
@@ -250,7 +250,7 @@ class ColDiff(ActionColumn):
             "periods": {"type": "number", "label": "Periods"},
         })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, periods, col_idx = await self._get(["table_name", "col_name", "periods", "col_idx"])
         new_col_idx = col_idx.replace(", ", "-").replace("'", "").replace("(", "").replace(")", "") + "-diff"
         new_code = f"""tables['{table_name}']['{new_col_idx}'] = tables['{table_name}'][{col_idx}].diff(periods={periods})  #sq_action:Calculate difference of {col_name} in table {table_name}"""
@@ -269,7 +269,7 @@ class MathOperations(ActionColumn):
                         "info": "Number of decimal places to round to"},
         })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, operation, decimals, col_idx = await self._get(["table_name", "col_name", "operation", "decimals", "col_idx"])
         if operation == "log":
             new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].apply(lambda x: __import__('math').log(x) if x > 0 else float('nan'))  #sq_action:Apply log to column {col_name} of table {table_name}"""
@@ -298,7 +298,7 @@ class ReplaceInCell(ActionColumn):
             "replacement": {"type": "text", "label": "Replacement"},
         })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, col_idx, action, regex, replacement = await self._get(["table_name", "col_name", "col_idx", "action", "regex", "replacement"])
         new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].str.replace"""
         if action == "whitespace":
@@ -319,7 +319,7 @@ class FormatString(ActionColumn):
                                             ("strip", "Remove start/end Whitespace (xxx)"), ("lstrip", "Remove start Whitespace (xxx )"), ("rstrip", "Remove end Whitespace ( xxx)")],},
         })
 
-    async def execute(self):
+    async def get_code(self):
         table_name, col_name, operation, col_idx = await self._get(["table_name", "col_name", "operation", "col_idx"])
         new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].str."""
         if operation == "upper":

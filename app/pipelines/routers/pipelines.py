@@ -3,15 +3,14 @@ from fastapi.responses import JSONResponse, RedirectResponse
 
 from app import router, templates
 from app.pipelines.models.pipeline import Pipeline
-from app.utils.form_utils import squirrel_error, _get_form_data_info
+from app.utils.form_utils import squirrel_error
 
 
 @router.get("/pipeline/")
 @squirrel_error
 async def pipeline(request: Request, project_dir: str):
-    """ Returns a TemplateResponse that displays the pipeline"""
     pipeline = Pipeline(project_dir)
-    actions = await pipeline.get_actions()
+    actions = pipeline.get_actions()
     
     return templates.TemplateResponse(
         request,
@@ -22,24 +21,20 @@ async def pipeline(request: Request, project_dir: str):
 @router.post("/pipeline/confirm_new_order/")
 @squirrel_error
 async def confirm_new_order(request: Request, project_dir: str, order: str):
-    """Reorder the actions in the pipeline + Returns a JSONResponse"""
     pipeline = Pipeline(project_dir)
-    await pipeline.confirm_new_order(order)
-
+    pipeline.confirm_new_order(order)
     return JSONResponse(content={"message": "Order changed successfully"}, status_code=200)
 
 @router.post("/pipeline/edit_action/")
 @squirrel_error
 async def edit_action(request: Request):
-    """Edit an action in the pipeline and RedirectResponse to the pipeline"""
     form_data = await request.form()
-    action_id = int(form_data.get("action_id"))
-    project_dir = form_data.get("project_dir")
-
     action_data = {key: value for key, value in form_data.items()}
+    action_id = int(action_data.get("action_id"))
+    project_dir = action_data.get("project_dir")
 
     pipeline = Pipeline(project_dir)
-    await pipeline.edit_action(action_id, action_data)
+    pipeline.edit_action(action_id, action_data)
 
     return RedirectResponse(url=f"/pipeline?project_dir={project_dir}", status_code=303)
 
@@ -48,7 +43,7 @@ async def edit_action(request: Request):
 async def get_action_data(request: Request, project_dir: str, action_id: int):
     """Get action data for a specific action in the pipeline + Returns a JSONResponse"""
     pipeline = Pipeline(project_dir)
-    action_data = await pipeline.get_action_data(action_id)
+    action_data = pipeline.get_action_data(action_id)
     return action_data
 
 @router.post("/pipeline/delete_action/")
@@ -56,6 +51,5 @@ async def get_action_data(request: Request, project_dir: str, action_id: int):
 async def delete_action(request: Request, project_dir: str, delete_action_id: int):
     """Remove an action from the pipeline + Returns a JSONResponse"""
     pipeline = Pipeline(project_dir)
-    await pipeline.delete_action(delete_action_id)
-
+    pipeline.delete_action(delete_action_id)
     return JSONResponse(content={"message": "Action deleted successfully"}, status_code=200)
