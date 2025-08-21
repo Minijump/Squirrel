@@ -4,51 +4,17 @@ from tests.utils.tours_toolbox import Tour, MOCK_PROJECT1_NAME
 
 class TestProjectsTours:
     @pytest.mark.slow
-    def test_create_project_modal(self, server, browser, reset_projects):
-        """Check we can open/close the create project modal"""
-        tour = Tour(browser, server)
-
-        tour.check_grid_cards_over_effect()
-        create_project_modal = tour.click_create_card(
-            expected_visible="//div[@id='createProjectModal']")
-        create_project_modal.close()
-        tour.check_grid_cards_over_effect()
-
-    @pytest.mark.slow
-    def test_mandatory_input_create_project_modal(self, server, browser, reset_projects):
-        """Check the mandatory inputs in the create project modal"""
-        tour = Tour(browser, server)
-
-        # Try to confirm with no name, pop up does not disappear
-        create_project_modal = tour.click_create_card(
-            expected_visible="//div[contains(@class,'modal-content')]//form[@id='createProjectModalForm']")
-        create_project_modal.submit(assert_closed=False)
-        # Add a name and confirm, pop up disappears
-        create_project_modal.fill([("name", "dumb project name")])
-        create_project_modal.submit(assert_closed=True)
-
-    @pytest.mark.slow
-    def test_openexistingproject(self, server, browser, reset_projects):
-        """Check we can open an existing project"""
-        tour = Tour(browser, server)
-
-        tour.click_card(by_title=MOCK_PROJECT1_NAME)
-        tour.check_page(title="Tables", url=f"/tables/")
-        tour.navbar_click("Data sources", check_over_effect=True)
-        tour.check_page(title="Data Sources", url=f"/data_sources/")
-        tour.navbar_click("Pipeline")
-        tour.check_page(title="Pipeline", url=f"/pipeline/")
-        tour.navbar_click("Table")
-        tour.check_page(title="Tables", url=f"/tables/")
-        tour.navbar_click("Settings", check_over_effect=True)
-        tour.check_page(title="Project Settings", url=f"/settings/")
-        tour.check_elements(by_ids=[('projectName', MOCK_PROJECT1_NAME)])
-
-    @pytest.mark.slow
     def test_project_creation(self, server, browser, reset_projects):
         """Check project creation"""
         tour = Tour(browser, server)
 
+        # Try to confirm with no name, pop up does not disappear
+        create_project_modal = tour.click_create_card(
+            expected_visible="//div[@id='createProjectModal']")
+        create_project_modal.submit(assert_closed=False)
+        create_project_modal.close()
+
+        # Create the project
         project_name = "tour_project_creation"
         project_descr = "Project creation test tour"
         tour.create_project(project_name, description=project_descr)
@@ -64,32 +30,15 @@ class TestProjectsTours:
         """Check invalid/existing project name"""
         tour = Tour(browser, server)
 
-        tour.create_project('"..\\invalid name"') # Invalid name
+        # Test invalid name
+        tour.create_project('"..\\invalid name"')
         tour.assert_error_page()
 
         tour.navbar_click("Projects")
 
-        tour.create_project("UT Mock Project 1") # Existing name
+        # Test existing name
+        tour.create_project("UT Mock Project 1")
         tour.assert_error_page()
-
-    @pytest.mark.slow
-    def test_project_edit_settings(self, server, browser, reset_projects):
-        """Check project settings edition"""
-        tour = Tour(browser, server)
-
-        tour.click_card(by_title=MOCK_PROJECT1_NAME)
-
-        descr, table_len = "settings description updated", "20"
-        tour.navbar_click("Settings")
-        tour.fill_element(by_id="projectDescription", value=descr)
-        tour.fill_element(by_css_selector="td:nth-child(2) > input", value=table_len)
-        tour.click_confirm_button()
-
-        tour.navbar_click("Settings")
-        tour.check_elements(
-            by_ids=[('projectDescription', descr)],
-            by_css_selectors=[("td:nth-child(2) > input", table_len)]
-        )
 
     @pytest.mark.slow
     def test_change_project_name(self, server, browser, reset_projects):

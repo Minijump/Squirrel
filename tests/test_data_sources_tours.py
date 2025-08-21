@@ -17,10 +17,8 @@ class TestDataSourcesTours:
         tour.click_card(by_title=MOCK_PROJECT1_NAME)
 
         tour.navbar_click("Data sources")
-        tour.check_grid_cards_over_effect()
         create_source_modal = tour.click_create_card(expected_visible="//div[@class=\'modal-content\']")
         create_source_modal.close()
-        tour.check_grid_cards_over_effect()
 
     @pytest.mark.slow
     def test_form_input_depends_data_source_type(self, server, browser, reset_projects):

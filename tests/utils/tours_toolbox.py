@@ -237,19 +237,6 @@ class Grid(BaseElement):
             xpath=f"//div[@class=\'grid\']//h3[text()=\'{by_title}\']", 
             visible=visible, 
             message=f"Card {by_title} should {'' if visible else 'not'} be displayed")
-        
-    def check_grid_cards_over_effect(self) -> None:
-        grid = self.browser.find_element(By.CSS_SELECTOR, ".grid")
-        cards = grid.find_elements(By.CSS_SELECTOR, ".card")
-        actions = ActionChains(self.browser)
-        
-        for card in cards:
-            original_transform = card.value_of_css_property("transform")
-            actions.move_to_element(card).perform()
-            hover_transform = card.value_of_css_property("transform")
-            
-            if hover_transform == original_transform:
-                warnings.warn("Hover effect not working on card with title: {card.text}")
 
     def click_create_card(self, expected_visible:bool = False) -> Modal:
         self.browser.find_element(By.CSS_SELECTOR, "p:nth-child(1)").click()

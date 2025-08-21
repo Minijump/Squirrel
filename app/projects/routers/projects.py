@@ -1,4 +1,3 @@
-import json
 import os
 import shutil
 
@@ -6,8 +5,8 @@ from fastapi import Request
 from fastapi.responses import RedirectResponse, JSONResponse
 
 from app import router, templates
-from app.projects.models import PROJECT_TYPE_REGISTRY
-from app.utils.form_utils import squirrel_error, _get_form_data_info
+from app.projects.models import PROJECT_TYPE_REGISTRY, Project
+from app.utils.form_utils import squirrel_error
 
 
 @router.get("/projects/get_type_options/")
@@ -19,21 +18,8 @@ async def project_type_options(request: Request):
 @router.get("/projects/")
 @squirrel_error
 async def projects(request: Request):
-    """
-    The homepage of the application, displays all the 'project' in the ./_projects directory, 
-    Informations about a project are read from their manifests
-
-    => Returns a TemplateResponse to display the projects
-    """
-    projects = []
     projects_path = os.path.join(os.getcwd(), "_projects")
-
-    for project in os.listdir(projects_path):
-        manifest_path = os.path.join(projects_path, project, "__manifest__.json")
-        with open(manifest_path, 'r') as file:
-            manifest_data = json.load(file)
-            projects.append(manifest_data)
-
+    projects = Project.get_available_projects(projects_path)
     return templates.TemplateResponse(
         request, 
         "projects/templates/projects.html", 
@@ -42,11 +28,6 @@ async def projects(request: Request):
 @router.post("/projects/create/")
 @squirrel_error
 async def create_project(request: Request):
-    """
-    Creates a new project directory in the ./_projects directory, with the necessary files
-
-    => Returns a RedirectResponse to the created project page
-    """
     form_data = await request.form()
     project_type = form_data.get("project_type", "std")
     
@@ -59,50 +40,39 @@ async def create_project(request: Request):
 @router.get("/projects/open/")
 @squirrel_error
 async def open_project(request: Request):
-    """ Return a RedirectResponse to the selected project page """
     project_dir = request.query_params.get("project_dir")
     return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)
 
 @router.get("/project/settings/")
 @squirrel_error
 async def project_settings(request: Request, project_dir: str):
-    """Returns a TemplateResponse to display the selected project's settings"""
-    manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "__manifest__.json")
-    with open(manifest_path, 'r') as file:
-        manifest_data = json.load(file)
+    project_dir= os.path.join(os.getcwd(), "_projects", project_dir)
+    project = Project.instantiate_project_from_path(project_dir)
+    project_settings = project.get_settings()
 
     return templates.TemplateResponse(
-        request, 
-        "projects/templates/project_settings.html", 
-        {"project": manifest_data, "project_dir": project_dir}
+        request,
+        "projects/templates/project_settings.html",
+        {"project": project_settings, "project_dir": project_dir}
     )
 
 @router.post("/project/update_settings/")
 @squirrel_error
 async def update_project_settings(request: Request):
-    """
-    Update the project settings (contained in the __manifest__.json file)
-
-    => Returns a JSONResponse indicating success or failure
-    """
     form_data = await request.form()
-    project_dir = form_data.get("project_dir")
+    project_dir= os.path.join(os.getcwd(), "_projects", form_data.get("project_dir"))
 
-    manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "__manifest__.json")
-    with open(manifest_path, 'r') as file:
-        manifest_data = json.load(file)
-    
-    ProjectClass = PROJECT_TYPE_REGISTRY[manifest_data['project_type']]
-    project = ProjectClass(manifest_data)
-    await project.update_settings(form_data)
+    project = Project.instantiate_project_from_path(project_dir)
+    project.update_settings(form_data)
 
     return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)
 
 @router.post("/project/delete/")
 @squirrel_error
 async def delete_project(request: Request):
-    """Delete the project + Returns a RedirectResponse to the projects page"""
-    project_dir, = await _get_form_data_info(request, ["project_dir"])
+    """Delete the project (not in the class because it the _projects directory)"""
+    form_data = await request.form()
+    project_dir = form_data.get("project_dir")
 
     project_path = os.path.join(os.getcwd(), "_projects", project_dir)
     shutil.rmtree(project_path)

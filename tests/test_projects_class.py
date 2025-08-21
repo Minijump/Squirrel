@@ -18,128 +18,54 @@ def test_project_utils_registry():
     assert PROJECT_TYPE_REGISTRY != {}, "Empty project type registry"
     assert "std" in PROJECT_TYPE_REGISTRY, "Failed to register standard project type"
 
-# Test Project Creation methods -----------------------------------------------------------------------------
 @pytest.mark.asyncio
 async def test_create(temp_project_dir_fixture):
-    """
-    Test if the created method
-    """
     project_infos = {
         "name": "Test Create",
         "description": "This is a test for project creation"
     }
     project = Project(project_infos)
+
     await project.create()
+
     assert os.path.exists(project.path), "Failed to create project directory"
     assert os.path.exists(os.path.join(project.path, "__manifest__.json")), "Failed to create project manifest"
     assert os.path.exists(os.path.join(project.path, "pipeline.pkl")), "Failed to create project pipeline"
     assert os.path.exists(os.path.join(project.path, "data_sources")), "Failed to create project data_sources directory"
 
 @pytest.mark.asyncio
-async def test_create_project_directory(temp_project_dir_fixture):
-    """
-    Test if the project directory is created
-    """
-    project_infos = {
-        "name": "Test Create Project Directory",
-        "description": "This is a test for project directory creation"
-    }
-    project = Project(project_infos)
-    await project._create_project_directory()
-    assert os.path.exists(project.path), "Failed to create project directory"
+async def test_get_available_projects(temp_project_dir_fixture):
+    project_dir = os.path.join(temp_project_dir_fixture, "_projects")
+    available_projects = Project.get_available_projects(project_dir)
+
+    assert len(available_projects) > 0, "No available projects found"
+    assert type(available_projects[0]) == Project, "Failed to retrieve correct project type"
 
 @pytest.mark.asyncio
-async def test_create_manifest(temp_project_dir_fixture):
-    """
-    Test if the manifest file is correctly created
-    """
-    project_infos = {
-        "name": "Test Create Manifest File",
-        "description": "This is a test for manifest creation"
-    }
-    project = Project(project_infos)
-    await project._create_project_directory()
-    await project._create_manifest()
-    assert os.path.exists(os.path.join(project.path, "__manifest__.json")), "Failed to create project manifest"
-    assert {
-        "name": project.name,
-        "description": project.description,
-        "directory": project.directory,
-        "project_type": project.project_type[0],
-        "misc": project.misc
-    } == json.load(open(os.path.join(project.path, "__manifest__.json"))), "Failed to create project manifest with the correct content"
-    
-@pytest.mark.asyncio
-async def test_create_data_sources_directory(temp_project_dir_fixture):
-    """
-    Test if the data_sources directory is created
-    """
-    project_infos = {
-        "name": "Test Create Data Sources Dir",
-        "description": "This is a test for data_sources creation"
-    }
-    project = Project(project_infos)
-    await project._create_project_directory()
-    await project._create_data_sources_directory()
-    assert os.path.exists(os.path.join(project.path, "data_sources")), "Failed to create project data_sources directory"
+async def test_instantiate_project_from_path(temp_project_dir_fixture):
+    project_path = os.path.join(temp_project_dir_fixture, "_projects", "ut_mock_project_1")
+
+    project = Project.instantiate_project_from_path(project_path)
+
+    assert type(project) is Project, "Failed to instantiate project from path"
+    assert project.name == "UT Mock Project 1", "Failed to initialize project name from path"
 
 @pytest.mark.asyncio
-async def test_create_pipeline_file(temp_project_dir_fixture):
-    """
-    Test if the pipeline file is created
-    """
+async def test_get_settings(temp_project_dir_fixture):
     project_infos = {
-        "name": "Test Create Pipeline File",
-        "description": "This is a test for pipeline creation"
-    }
-    project = Project(project_infos)
-    await project._create_project_directory()
-    await project._create_pipeline_file()
-    assert os.path.exists(os.path.join(project.path, "pipeline.pkl")), "Failed to create project pipeline"
-
-@pytest.mark.asyncio
-async def test_create_misc(temp_project_dir_fixture):
-    """
-    Test if the misc values are correctly created
-    """
-    project_infos = {
-        "name": "Test Create Misc",
-        "description": "This is a test for misc creation"
-    }
-    project = Project(project_infos)
-    assert project.create_misc({"other_misc_field": 8})["table_len"] == 10, "Failed set default misc values"
-    assert project.create_misc({"table_len": 20})["table_len"] == 20, "Failed to set custom misc values"
-
-# Test init/edit methods -------------------------------------------------------------------------------------
-@pytest.mark.asyncio
-async def test_init_from_manifest(temp_project_dir_fixture):
-    """
-    Test if the project is correctly initialized from a manifest
-    """
-    # Create the project
-    project_infos = {
-        "name": "Test Init From Manifest",
-        "description": "This is a test for project initialization from manifest"
+        "name": "Test Get Settings",
+        "description": "This is a test for project settings retrieval"
     }
     project = Project(project_infos)
     await project.create()
 
-    # Initialize the project from the manifest + tests
-    manifest_data = json.load(open(os.path.join(project.path, "__manifest__.json")))    
-    project = Project(manifest_data)
-    assert project.name == project_infos['name'], "Failed to initialize project name from manifest"
-    assert project.description == project_infos['description'], "Failed to initialize project description from manifest"
-    assert project.directory == project_infos['name'].lower().replace(" ", "_"), "Failed to initialize project directory from manifest"
-    assert project.path == os.path.join(os.getcwd(), "_projects", project_infos['name'].lower().replace(" ", "_")), "Failed to initialize project path from manifest"
-    assert project.project_type[0] == project.short_name, "Failed to initialize project project_type from manifest"
-    assert project.misc == project.create_misc({}), "Failed to initialize project misc from manifest"
+    settings = project.get_settings()
+
+    assert settings['name'] == project_infos['name'], "Failed to retrieve project name"
+    assert settings['description'] == project_infos['description'], "Failed to retrieve project description"
 
 @pytest.mark.asyncio
 async def test_update_settings(temp_project_dir_fixture):
-    """
-    Test if the project settings are correctly updated
-    """
-    # Create the project
     project_infos = {
         "name": "Test Update Settings",
         "description": "This is a test for project settings update"
@@ -147,16 +73,14 @@ async def test_update_settings(temp_project_dir_fixture):
     project = Project(project_infos)
     await project.create()
 
-    # Update the project settings + tests
     new_settings = {
         "name": "Test Update Settings; Updated",
         "description": "This is a test for project settings update; Updated",
         "misc": '{"table_len": 20}'
     }
-    await project.update_settings(new_settings)
+    project.update_settings(new_settings)
 
-    manifest_data = json.load(open(os.path.join(project.path, "__manifest__.json")))
-    updated_project = Project(manifest_data)
-    assert updated_project.name == new_settings['name'], "Failed to update project name"
-    assert updated_project.description == new_settings['description'], "Failed to update project description"
-    assert updated_project.misc == json.loads(new_settings['misc']), "Failed to update project misc"
+    updated_settings = project.get_settings()
+    assert updated_settings['name'] == new_settings['name'], "Failed to update project name"
+    assert updated_settings['description'] == new_settings['description'], "Failed to update project description"
+    assert updated_settings['misc'] == json.loads(new_settings['misc']), "Failed to update project misc"

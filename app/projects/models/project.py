@@ -1,7 +1,15 @@
-import os
 import json
+import os
+import pickle
 
-from app.projects.models import project_type
+
+PROJECT_TYPE_REGISTRY = {}
+def project_type(cls):
+    """
+    Decorator to register all data source types
+    """
+    PROJECT_TYPE_REGISTRY[cls.short_name] = cls
+    return cls
 
 
 @project_type
@@ -9,46 +17,62 @@ class Project:
     short_name = "std"
     display_name = "Standard"
 
+    def get_available_projects(all_projects_path: str) -> list['Project']:
+        projects = []
+        for project in os.listdir(all_projects_path):
+            project_path = os.path.join(all_projects_path, project)
+            projects.append(Project.instantiate_project_from_path(project_path))
+        return projects
+
+    def instantiate_project_from_path(project_path: str) -> 'Project':
+        manifest_path = os.path.join(project_path, "__manifest__.json")
+        with open(manifest_path, 'r') as file:
+            manifest_data = json.load(file)
+        return Project(manifest_data)
+
     def __init__(self, manifest):
         self.name = manifest['name']
         self.description = manifest['description']
         self.directory = manifest.get('directory', self.name.lower().replace(" ", "_"))
         self.path = os.path.join(os.getcwd(), "_projects", self.directory)
         self.project_type = self.short_name,
-        self.misc = self.create_misc(manifest.get('misc', {}))
+        self.misc = self._create_misc(manifest.get('misc', {}))
+    
+    def _read_manifest(self) -> dict:
+        manifest_path = os.path.join(self.path, "__manifest__.json")
+        with open(manifest_path, 'r') as file:
+            manifest_data = json.load(file)
+        return manifest_data
 
-    def create_misc(self, misc):
-        """Create the misc values of the manifest"""
+    def _write_manifest(self, data: dict):
+        manifest_path = os.path.join(self.path, "__manifest__.json")
+        with open(manifest_path, 'w') as file:
+            json.dump(data, file, indent=4)
+
+    def _create_misc(self, misc: dict) -> dict:
         if "table_len" not in misc:
             misc["table_len"] = 10
-
         return misc
 
     async def create(self):
-        """Creates a new project with the necessary files"""
-        await self._create_project_directory()
-        await self._create_manifest()
-        await self._create_data_sources_directory()
-        await self._create_pipeline_file()
-       
-    async def _create_project_directory(self):
-        """Creates a new project directory in the ./_projects directory"""
-        project_dir = self.path
+        self._create_project_directory()
+        self._create_manifest()
+        self._create_data_sources_directory()
+        self._create_pipeline_file()
 
-        if os.path.exists(project_dir):
+    def _create_project_directory(self):
+        if os.path.exists(self.path):
             raise FileExistsError(f"Project with name {self.name} or similar already exists")
         invalid_chars = '/\\.:?*'
         if any(char in self.name for char in invalid_chars):
             raise Exception(f"Project name cannot contain /, \\, ., :, ?, *")
 
         try:
-            os.makedirs(project_dir)
+            os.makedirs(self.path)
         except Exception as e:
             raise Exception(f"Could not create a project with this name: {e}")
 
-    async def _create_manifest(self):
-        """Creates the manifest file"""
-        manifest_path = os.path.join(self.path, "__manifest__.json")
+    def _create_manifest(self):
         manifest_content = {
             "name": self.name,
             "description": self.description,
@@ -56,36 +80,31 @@ class Project:
             "project_type": self.project_type[0],
             "misc": self.misc
         }
-        with open(manifest_path, 'w') as file:
-            json.dump(manifest_content, file, indent=4)
+        self._write_manifest(manifest_content)
 
-    async def _create_data_sources_directory(self):
-        """Creates the data_sources directory"""
+    def _create_data_sources_directory(self):
         os.makedirs(os.path.join(self.path, "data_sources"))
 
-    async def _create_pipeline_file(self):
-        """Creates the pipeline file"""
-        import pickle
+    def _create_pipeline_file(self):
+        """Create a dummy, useless, file for the pipeline"""
         pipeline_path = os.path.join(self.path, "pipeline.pkl")
-        # Create an empty pipeline with no actions
-        actions = []
         with open(pipeline_path, 'wb') as file:
-            pickle.dump(actions, file)
+            pickle.dump([], file)
 
-    async def update_settings(self, updated_data):
-        """Update the project settings"""
-        manifest_path = os.path.join(self.path, "__manifest__.json")
-        with open(manifest_path, 'r') as file:
-            manifest_data = json.load(file)
+    def get_settings(self) -> dict:
+        manifest_data = self._read_manifest()
+        return manifest_data
+
+    def update_settings(self, updated_data: dict):
+        manifest_data = self._read_manifest()
 
         for key, value in updated_data.items():
             if key in ('misc'):
                 try:
                     value = json.loads(value)
                 except:
-                    value = self.create_misc({})
+                    value = self._create_misc({})
             if key in manifest_data:
                 manifest_data[key] = value
 
-        with open(manifest_path, 'w') as file:
-            json.dump(manifest_data, file, indent=4)
+        self._write_manifest(manifest_data)
