@@ -11,14 +11,9 @@ from app.data_sources.routers.data_sources import get_sources
 from app.tables.models.actions_column import convert_col_idx
 from app.tables.models.actions_utils import TABLE_ACTION_REGISTRY
 from app.utils.form_utils import squirrel_error, squirrel_action_error, _get_form_data_info
-
 from app.pipelines.models.pipeline import Pipeline
 from app.pipelines.models.pipeline_action import PipelineAction
 
-def load_pipeline_module(project_dir):
-    """Loads and returns the pipeline instance"""
-    pipeline = Pipeline(project_dir)
-    return pipeline
 
 def to_html_with_idx(df):
     """Convert a dataframe to HTML with custom 'data-columnidx'"""
@@ -45,7 +40,7 @@ async def tables(request: Request, project_dir: str):
     exception = False
     tables = {}
     try:
-        pipeline = load_pipeline_module(project_dir)
+        pipeline = Pipeline(project_dir)
         tables = await pipeline.run_pipeline()
     except Exception as e:
         exception = e
@@ -83,7 +78,7 @@ async def tables_pager(request: Request, project_dir: str, table_name: str, page
         with open(data_tables_path, 'rb') as f:
             tables = pickle.load(f)
     else:
-        pipeline = load_pipeline_module(project_dir)
+        pipeline = Pipeline(project_dir)
         tables = await pipeline.run_pipeline()
     df = tables[table_name]
     start = page * n
@@ -145,7 +140,7 @@ async def get_action_args(request: Request, action_name: str, project_dir: str =
                 with open(data_tables_path, 'rb') as f:
                     tables = pickle.load(f)
             else:
-                pipeline = load_pipeline_module(project_dir)
+                pipeline = Pipeline(project_dir)
                 tables = await pipeline.run_pipeline()
 
             if isinstance(tables, dict):
@@ -172,7 +167,7 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
             tables = pickle.load(f)
             df = tables[table]
     else:
-        pipeline = load_pipeline_module(project_dir)
+        pipeline = Pipeline(project_dir)
         df = await pipeline.run_pipeline()[table]
     column = df[eval(convert_col_idx(column_idx))]
 
@@ -212,7 +207,7 @@ async def export_table(request: Request):
     """ Returns a FileResponse to export the selected file"""
     table_name, export_type, project_dir = await _get_form_data_info(request, ["table_name", "export_type", "project_dir"])
 
-    pipeline = load_pipeline_module(project_dir)
+    pipeline = Pipeline(project_dir)
     tables = await pipeline.run_pipeline()
     df = tables[table_name]
 

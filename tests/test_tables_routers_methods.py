@@ -3,31 +3,15 @@ import pandas as pd
 from fastapi.testclient import TestClient
 
 from app.main import app
-from tests import MOCK_PROJECT_CWD_INDEPENDENT
-
 
 client = TestClient(app)
 
-
-def test_load_pipeline_module(temp_project_dir_fixture):
-    """
-    Test if pipeline is loaded correctly 
-    Test wether the pipeline is 'runable'
-    """
-    from app.tables.routers.tables import load_pipeline_module
-    pipeline = load_pipeline_module(MOCK_PROJECT_CWD_INDEPENDENT)
-    try:
-        tables = pipeline.run_pipeline()
-    except Exception as e:
-        raise AssertionError("Not able to run 'run_pipeline' from pipeline") from e
-    assert isinstance(tables, dict) and isinstance(tables['df'], pd.DataFrame), "'run_pipeline' response should be a dictionary"
 
 def test_to_html_with_idx():
     """
     Test that to_html_with_idx correctly adds data-columnidx attributes to table headers.
     """
     from app.tables.routers.tables import to_html_with_idx
-    import pandas as pd
     
     # Test case 1: Simple DataFrame with single-level columns
     df1 = pd.DataFrame({

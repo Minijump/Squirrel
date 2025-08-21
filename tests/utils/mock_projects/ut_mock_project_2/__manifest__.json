@@ -1,9 +1,0 @@
-{
-    "name": "UT Mock Project 2",
-    "description": "This is a mock project for unit testing squirrel app. Pipeline does not depends on cwd so it can run everywhere",
-    "directory": "ut_mock_project_2",
-    "project_type": "std",
-    "misc": {
-        "table_len": 10
-    }
-}
