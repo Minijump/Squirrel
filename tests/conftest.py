@@ -1,5 +1,6 @@
 import multiprocessing
 import os
+import pickle
 import pytest
 import shutil
 import socket
@@ -15,7 +16,7 @@ from selenium.webdriver import Firefox
 from app.main import app
 
 
-def copy_dir(src, dst, ignore=None):
+def _copy_dir(src, dst, ignore=None):
     """Recursively copy a directory to a new location."""
     for item in os.listdir(src):
         src_path = os.path.join(src, item)
@@ -28,6 +29,39 @@ def copy_dir(src, dst, ignore=None):
         else:
             shutil.copy2(src_path, dst_path)
 
+def _create_fake_pipeline():
+    from app.tables.models.actions import CreateTable, AddColumn
+    from app.pipelines.models.pipeline_action import PipelineAction
+    action_1 = CreateTable({
+            "project_dir": "ut_mock_project_1",
+            "table_name": "ordered",
+            "source_creation_type": "data_source",
+            "data_source_dir": "Csv_ordered"
+        }
+    )
+    pipeline_action_1 = PipelineAction(False, action_1)
+    action_2 = CreateTable(
+        {
+            "project_dir": "ut_mock_project_1",
+            "table_name": "random",
+            "source_creation_type": "data_source",
+            "data_source_dir": "Csv_random"
+        }
+    )
+    pipeline_action_2 = PipelineAction(False, action_2)
+    action_3 = AddColumn(
+        {
+            "project_dir": "ut_mock_project_1",
+            "col_name": "ref + price",
+            "value_type": "python",
+            "table_name": "random",
+            "col_value": "'reference' + 'price'"
+        }
+    )
+    pipeline_action_3 = PipelineAction(False, action_3)
+    pipeline = [pipeline_action_1, pipeline_action_2, pipeline_action_3]
+    return pipeline
+
 @pytest.fixture
 def temp_project_dir_fixture():
     """Fixture that creates a temporary directory and patches os.getcwd to return it."""
@@ -38,7 +72,10 @@ def temp_project_dir_fixture():
             
             project_dir = os.path.join(projects_dir, "ut_mock_project_1")
             os.makedirs(project_dir, exist_ok=True)
-            copy_dir("tests/utils/mock_projects/ut_mock_project_1", project_dir)
+            _copy_dir("tests/utils/mock_projects/ut_mock_project_1", project_dir)
+            pipeline = _create_fake_pipeline()
+            with open(os.path.join(project_dir, "pipeline.pkl"), "wb") as f:
+                pickle.dump(pipeline, f)
 
             yield temp_dir
 
@@ -61,7 +98,7 @@ def server(tmpdir_factory):
     
     temp_dir = tmpdir_factory.mktemp("squirrel_test")
     original_cwd = os.getcwd()
-    copy_dir(original_cwd, temp_dir, ignore="_projects")
+    _copy_dir(original_cwd, temp_dir, ignore="_projects")
     projects_dir = os.path.join(temp_dir, "_projects")
     os.makedirs(projects_dir)
     os.chdir(temp_dir)
@@ -101,7 +138,10 @@ def reset_projects(server):
     # (Re)create project(s)
     project_dir = os.path.join(projects_dir, "ut_mock_project_1") 
     os.makedirs(project_dir)
-    copy_dir("tests/utils/mock_projects/ut_mock_project_1", project_dir)
+    _copy_dir("tests/utils/mock_projects/ut_mock_project_1", project_dir)
+    pipeline = _create_fake_pipeline()
+    with open(os.path.join(project_dir, "pipeline.pkl"), "wb") as f:
+        pickle.dump(pipeline, f)
     
     yield
 

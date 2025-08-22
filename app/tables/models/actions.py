@@ -98,9 +98,7 @@ class CreateTable(Action):
             ["table_name", "project_dir", "data_source_dir", "source_creation_type", "table_df"])
         
         if source_creation_type == "data_source":
-            data_source_path = os.path.relpath(
-                os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', data_source_dir), 
-                os.getcwd())
+            data_source_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', data_source_dir)
 
             manifest_path = os.path.join(data_source_path, "__manifest__.json")
             with open(manifest_path, 'r') as file:

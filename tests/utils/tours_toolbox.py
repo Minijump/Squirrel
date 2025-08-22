@@ -310,17 +310,6 @@ class TablesScreen(BaseElement):
 
 
 class PipelineScreen(BaseElement):
-    def check_pipeline_actions_hover_effect(self) -> None:
-        pipeline_actions = self.browser.find_elements(By.CSS_SELECTOR, ".action")
-        actions = ActionChains(self.browser)
-        for action in pipeline_actions:
-            original_style = action.value_of_css_property("transform")
-            actions.move_to_element(action).perform()
-            hover_style = action.value_of_css_property("transform")
-            
-            if hover_style == original_style:
-                warnings.warn(f"Hover effect not working on action with text: {action.text}")
-
     def get_pipeline_actions(self, wait_a_minute: bool = False) -> list:
         if wait_a_minute:
             time.sleep(0.5)
