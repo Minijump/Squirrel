@@ -132,7 +132,7 @@ There are 3 main folders:
 * Refactor Data sources methods (+ controllers) + UT
 
 ### To Fix
-* edit action: default values not set for dictionnaries (expl in relace vals:)
+* edit action: default values not set for dictionnaries (expl in relace vals:) => Note: the value is set by method fillData but only in the textarea, as the widget is initialized before (in addInputs), the value does not appear in the widget
 
 ### To do MVP
 * Improve actions
@@ -149,7 +149,6 @@ There are 3 main folders:
 
 ### To do UX
 * Imp notification manager
-* Error background in (not in pipeline) has not a height of 100% (probably after table style change)
 
 ### Feature ideas
 * Widgets: lists, ...
