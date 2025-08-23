@@ -37,6 +37,12 @@ class DataSource:
                     raise ValueError(f"{field} is required")
 
     @staticmethod
+    def get_manifest(project_dir, source_dir):
+        manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir, "__manifest__.json")
+        with open(manifest_path, 'r') as file:
+            return json.load(file)
+
+    @staticmethod
     def _generate_manifest(form_data):
         """
         Generates the manifest of the source

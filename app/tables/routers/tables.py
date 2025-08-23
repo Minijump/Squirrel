@@ -7,7 +7,7 @@ from fastapi import Request
 from fastapi.responses import FileResponse, RedirectResponse
 
 from app import router, templates
-from app.data_sources.routers.data_sources import get_sources
+from app.projects.models.project import Project
 from app.tables.models.actions_column import convert_col_idx
 from app.tables.models.actions_utils import TABLE_ACTION_REGISTRY
 from app.utils.form_utils import squirrel_error, squirrel_action_error, _get_form_data_info
@@ -61,7 +61,9 @@ async def tables(request: Request, project_dir: str):
                 table_html[name] = to_html_with_idx(df.head(display_len))
                 table_len_infos[name] = {'total_len': len(df.index), 'display_len': display_len}
 
-        sources = await get_sources(project_dir)
+        project_path = os.path.join(os.getcwd(), "_projects", project_dir)
+        project = Project.instantiate_project_from_path(project_path)
+        sources = project.get_sources()
 
         return templates.TemplateResponse(
             request,
@@ -127,7 +129,9 @@ async def get_action_args(request: Request, action_name: str, project_dir: str =
     if action_name == 'CreateTable' and project_dir:
         # available data sources
         try:
-            sources = await get_sources(project_dir)
+            project_path = os.path.join(os.getcwd(), "_projects", project_dir)
+            project = Project.instantiate_project_from_path(project_path)
+            sources = project.get_sources()
             available_data_sources = [(s.get('directory'), s.get('name')) for s in sources]
         except Exception:
             available_data_sources = []

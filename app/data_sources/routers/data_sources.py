@@ -7,27 +7,10 @@ from fastapi import Request
 from fastapi.responses import RedirectResponse, JSONResponse
 
 from app import router, templates
-from app.data_sources.models import DATA_SOURCE_REGISTRY
+from app.data_sources.models import DATA_SOURCE_REGISTRY, DataSource
+from app.projects.models.project import Project
 from app.utils.form_utils import squirrel_error, _get_form_data_info
 
-
-async def get_sources(project_dir):
-    """Returns the list of data sources in the project"""
-    sources = []
-    project_data_sources_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources")
-    for source in os.listdir(project_data_sources_path):
-        manifest_path = os.path.join(project_data_sources_path, source, "__manifest__.json")
-        if os.path.isfile(manifest_path):
-            with open(manifest_path, 'r') as file:
-                manifest_data = json.load(file)
-                sources.append(manifest_data)
-    return sources
-
-async def get_manifest(project_dir, source_dir):
-    """Returns the manifest content"""
-    manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir, "__manifest__.json")
-    with open(manifest_path, 'r') as file:
-        return json.load(file)
     
 async def init_source_instance(manifest_data):
     """Initialize the source instance"""
@@ -53,7 +36,9 @@ async def get_source_specific_args(request: Request, source_type):
 @squirrel_error
 async def data_sources(request: Request, project_dir: str):
     """Returns a TemplateResponse to display data_sources page"""
-    sources = await get_sources(project_dir)
+    project_path = os.path.join(os.getcwd(), "_projects", project_dir)
+    project = Project.instantiate_project_from_path(project_path)
+    sources = project.get_sources()
     return templates.TemplateResponse(request, "data_sources/templates/data_sources.html", 
         {   "project_dir": project_dir, 
             "sources": sources,
@@ -77,7 +62,7 @@ async def create_source(request: Request):
 @squirrel_error   
 async def source_settings(request: Request, project_dir: str, source_dir: str):
     """Returns a TemplateResponse to display data_sources settings page"""
-    source = await get_manifest(project_dir, source_dir)
+    source = DataSource.get_manifest(project_dir, source_dir)
     return templates.TemplateResponse(request, "data_sources/templates/data_source_settings.html",
         {"project_dir": project_dir, "source": source})
 
@@ -88,7 +73,7 @@ async def update_source_settings(request: Request):
     form_data = await request.form()
     project_dir, source_dir = await _get_form_data_info(request, ["project_dir", "source_dir"])
 
-    manifest_data = await get_manifest(project_dir, source_dir)
+    manifest_data = DataSource.get_manifest(project_dir, source_dir)
     source = await init_source_instance(manifest_data)
     await source.update_source_settings(form_data)
 
@@ -100,7 +85,7 @@ async def sync_source(request: Request):
     try:
         project_dir, source_dir = await _get_form_data_info(request, ["project_dir", "source_dir"])
 
-        manifest_data = await get_manifest(project_dir, source_dir)
+        manifest_data = DataSource.get_manifest(project_dir, source_dir)
         source = await init_source_instance(manifest_data)
         await source.sync(project_dir)
 

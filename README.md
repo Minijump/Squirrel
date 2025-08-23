@@ -128,6 +128,8 @@ There are 3 main folders:
 
 ### To do
 * Refactor (+fix) unit tests + code (all, not only pipeline) ((rename method, typing?, move logic out of controllers, create private methods, ...))
+* Refactor datasources (and others?), should automatically select the correct class based on the manifest? See another way of inheritance?
+* Refactor Data sources methods (+ controllers) + UT
 
 ### To Fix
 * edit action: default values not set for dictionnaries (expl in relace vals:)

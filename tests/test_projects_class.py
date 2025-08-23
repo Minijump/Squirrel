@@ -84,3 +84,13 @@ async def test_update_settings(temp_project_dir_fixture):
     assert updated_settings['name'] == new_settings['name'], "Failed to update project name"
     assert updated_settings['description'] == new_settings['description'], "Failed to update project description"
     assert updated_settings['misc'] == json.loads(new_settings['misc']), "Failed to update project misc"
+
+def test_get_sources(temp_project_dir_fixture):
+    project_path = os.path.join(temp_project_dir_fixture, "_projects", "ut_mock_project_1")
+    project = Project.instantiate_project_from_path(project_path)
+
+    sources = project.get_sources()
+
+    assert len(sources) == 2, "Expected 2 sources in the project"
+    assert sources[0]["name"] == "Csv ordered", "Expected first source to be 'Csv ordered'"
+    assert sources[1]["name"] == "Csv random", "Expected second source to be 'Csv random'"
