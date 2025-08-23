@@ -61,8 +61,7 @@ async def tables(request: Request, project_dir: str):
                 table_html[name] = to_html_with_idx(df.head(display_len))
                 table_len_infos[name] = {'total_len': len(df.index), 'display_len': display_len}
 
-        project_path = os.path.join(os.getcwd(), "_projects", project_dir)
-        project = Project.instantiate_project_from_path(project_path)
+        project = Project.instantiate_from_dir(project_dir)
         sources = project.get_sources()
 
         return templates.TemplateResponse(
@@ -129,8 +128,7 @@ async def get_action_args(request: Request, action_name: str, project_dir: str =
     if action_name == 'CreateTable' and project_dir:
         # available data sources
         try:
-            project_path = os.path.join(os.getcwd(), "_projects", project_dir)
-            project = Project.instantiate_project_from_path(project_path)
+            project = Project.instantiate_from_dir(project_dir)
             sources = project.get_sources()
             available_data_sources = [(s.get('directory'), s.get('name')) for s in sources]
         except Exception:

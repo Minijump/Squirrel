@@ -42,10 +42,8 @@ async def test_get_available_projects(temp_project_dir_fixture):
     assert type(available_projects[0]) == Project, "Failed to retrieve correct project type"
 
 @pytest.mark.asyncio
-async def test_instantiate_project_from_path(temp_project_dir_fixture):
-    project_path = os.path.join(temp_project_dir_fixture, "_projects", "ut_mock_project_1")
-
-    project = Project.instantiate_project_from_path(project_path)
+async def test_instantiate_from_dir(temp_project_dir_fixture):
+    project = Project.instantiate_from_dir("ut_mock_project_1")
 
     assert type(project) is Project, "Failed to instantiate project from path"
     assert project.name == "UT Mock Project 1", "Failed to initialize project name from path"
@@ -86,9 +84,7 @@ async def test_update_settings(temp_project_dir_fixture):
     assert updated_settings['misc'] == json.loads(new_settings['misc']), "Failed to update project misc"
 
 def test_get_sources(temp_project_dir_fixture):
-    project_path = os.path.join(temp_project_dir_fixture, "_projects", "ut_mock_project_1")
-    project = Project.instantiate_project_from_path(project_path)
-
+    project = Project.instantiate_from_dir("ut_mock_project_1")
     sources = project.get_sources()
 
     assert len(sources) == 2, "Expected 2 sources in the project"

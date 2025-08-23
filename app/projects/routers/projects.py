@@ -46,8 +46,7 @@ async def open_project(request: Request):
 @router.get("/project/settings/")
 @squirrel_error
 async def project_settings(request: Request, project_dir: str):
-    project_dir= os.path.join(os.getcwd(), "_projects", project_dir)
-    project = Project.instantiate_project_from_path(project_dir)
+    project = Project.instantiate_from_dir(project_dir)
     project_settings = project.get_settings()
 
     return templates.TemplateResponse(
@@ -60,9 +59,9 @@ async def project_settings(request: Request, project_dir: str):
 @squirrel_error
 async def update_project_settings(request: Request):
     form_data = await request.form()
-    project_dir= os.path.join(os.getcwd(), "_projects", form_data.get("project_dir"))
+    project_dir = form_data.get("project_dir")
+    project = Project.instantiate_from_dir(project_dir)
 
-    project = Project.instantiate_project_from_path(project_dir)
     project.update_settings(form_data)
 
     return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)

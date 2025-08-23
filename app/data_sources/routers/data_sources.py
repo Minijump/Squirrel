@@ -36,8 +36,7 @@ async def get_source_specific_args(request: Request, source_type):
 @squirrel_error
 async def data_sources(request: Request, project_dir: str):
     """Returns a TemplateResponse to display data_sources page"""
-    project_path = os.path.join(os.getcwd(), "_projects", project_dir)
-    project = Project.instantiate_project_from_path(project_path)
+    project = Project.instantiate_from_dir(project_dir)
     sources = project.get_sources()
     return templates.TemplateResponse(request, "data_sources/templates/data_sources.html", 
         {   "project_dir": project_dir, 

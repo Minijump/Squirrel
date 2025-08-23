@@ -20,16 +20,18 @@ class Project:
     def get_available_projects(all_projects_path: str) -> list['Project']:
         projects = []
         for project in os.listdir(all_projects_path):
-            project_path = os.path.join(all_projects_path, project)
-            projects.append(Project.instantiate_project_from_path(project_path))
+            projects.append(Project.instantiate_from_dir(project))
         return projects
 
-    def instantiate_project_from_path(project_path: str) -> 'Project':
-        # TODO: do an 'instantiate_from_dir' method?
+    def _instantiate_from_path(project_path: str) -> 'Project':
         manifest_path = os.path.join(project_path, "__manifest__.json")
         with open(manifest_path, 'r') as file:
             manifest_data = json.load(file)
         return Project(manifest_data)
+    
+    def instantiate_from_dir(project_dir: str) -> 'Project':
+        project_path = os.path.join(os.getcwd(), "_projects", project_dir)
+        return Project._instantiate_from_path(project_path)
 
     def __init__(self, manifest):
         self.name = manifest['name']
