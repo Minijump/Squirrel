@@ -150,7 +150,6 @@ There are 3 main folders:
 ### To do UX
 * Imp notification manager
 * Error background in (not in pipeline) has not a height of 100% (probably after table style change)
-* When no table: we have a screen that suggest creating one; the navbar is in the same color than the bacground, when when it is unfolded the border disapear (looks bad becaus we can not differentiate it with backroud)
 
 ### Feature ideas
 * Widgets: lists, ...

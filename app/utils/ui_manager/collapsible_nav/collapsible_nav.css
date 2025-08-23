@@ -78,6 +78,7 @@ html.project-page-pending .aside-title-content {
     padding-left: 10px;
     padding-right: 10px;
     z-index: 1000;
+    border-right: 1px solid var(--border-color);
 }
 .project-page aside:hover {
     width: var(--nav-expanded-width);
