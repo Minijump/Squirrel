@@ -13,12 +13,6 @@ async function onSourceCardClick(card) {
 
 function syncOneSource(sourceDir, projectDir, syncIconId) {
     syncSource(sourceDir, projectDir, syncIconId)
-        .then(() => {
-            storeNotification('Source synced successfully', 'success');
-        })
-        .catch(error => {
-            storeNotification(`Failed to sync source: ${error}`, 'error');
-        })
         .finally(() => {
             location.reload();
         });
@@ -41,22 +35,29 @@ function syncSource(sourceDir, projectDir, syncIconId) {
             method: 'POST',
             body: formData
         })
-        .then(response => {
+        .then(async response => {
+            syncIcon.classList.remove('fa-spinner', 'fa-spin');
+            
+            let notificationMessage, notificationType;
             if (response.ok) {
-                syncIcon.classList.remove('fa-spinner', 'fa-spin');
                 syncIcon.classList.add('fa-check');
                 console.log(`Sync completed successfully for source: ${sourceDir}`);
-                resolve();
+                notificationType = 'success';
+                notificationMessage = `Source ${sourceDir} synced successfully`;
             } else {
-                syncIcon.classList.remove('fa-spinner', 'fa-spin');
                 syncIcon.classList.add('fa-times');
                 console.error(`Error syncing source: ${response.status} ${response.statusText}`);
-                reject(`Error syncing source: ${response.status} ${response.statusText}`);
+                notificationType = 'error';
+                notificationMessage = `Failed to sync source ${sourceDir}: ${response.status} ${response.statusText}`;
             }
+            
+            storeNotification(notificationMessage, notificationType);
+            resolve(response);
         })
         .catch(error => {
             syncIcon.classList.remove('fa-spinner', 'fa-spin');
             syncIcon.classList.add('fa-times');
+            storeNotification(`Failed to sync source ${sourceDir}: ${error}`, 'error');
             reject(error);
         });
     });
@@ -80,13 +81,7 @@ function syncAllSources(projectDir) {
         }
     });
 
-    Promise.all(syncPromises)
-        .then(() => {
-            storeNotification('All sources synced successfully', 'success');
-        })
-        .catch(error => {
-            storeNotification(`Some sources failed to sync: ${error}`, 'error');
-        })
+    Promise.allSettled(syncPromises)
         .finally(() => {
             syncAllButton.disabled = false;
             syncAllButton.innerHTML = 'Sync All Sources';

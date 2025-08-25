@@ -121,8 +121,7 @@ export class EditActionModal extends FormModal {
                 window.location.href = `/pipeline/?project_dir=${this.projectDir}`;
             })
             .catch(error => {
-                console.error('Error deleting action:', response.statusText);
-                storeNotification(`Failed to delete action: ${error}`, 'error');
+                window.showNotification(`Failed to delete action: ${error}`, 'error');
             });
     }
 }

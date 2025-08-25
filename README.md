@@ -146,7 +146,6 @@ There are 3 main folders:
 * check if needed to Add tours/UT?
 
 ### To do UX
-* Imp notification manager
 
 ### Feature ideas
 * Widgets: lists, ...

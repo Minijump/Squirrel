@@ -1,70 +1,58 @@
+// Notification System Usage:
+// JavaScript: window.showNotification('Message', 'success/error/warning/info', duration)
+//             window.storeNotification('Message', 'type') - for page reloads/redirects
+//             window.handleRedirectNotification(response) - extracts server messages before redirect
+// Python: return JSONResponse({'message': 'Your message'}, status_code=200/400+)
+//         create URL param ?notification=Error%20message (see squirrel_action_error)
 class NotificationManager {
     constructor() {
         this.notifications = [];
         this.maxNotifications = 5;
         this.defaultDuration = 3000;
-        this.setupFetchInterceptor();
         this.checkStoredNotifications();
     }
 
     checkStoredNotifications() {
-        const stored = sessionStorage.getItem('showNotification');
+        const stored = sessionStorage.getItem('showNotifications');
         if (stored) {
-            sessionStorage.removeItem('showNotification');
+            sessionStorage.removeItem('showNotifications');
             try {
-                const {message, type} = JSON.parse(stored);
-                setTimeout(() => this.show(message, type), 100);
+                const notifications = JSON.parse(stored);
+                if (Array.isArray(notifications)) {
+                    notifications.forEach((notification, index) => {
+                        setTimeout(() => this.show(notification.message, notification.type), 100 + (index * 50));
+                    });
+                }
             } catch (e) {}
         }
     }
 
     storeNotification(message, type = 'info') {
-        sessionStorage.setItem('showNotification', JSON.stringify({message, type}));
+        const existing = sessionStorage.getItem('showNotifications');
+        let notifications = existing ? JSON.parse(existing) : [];
+        if (!Array.isArray(notifications)) notifications = [];
+        
+        notifications.push({message, type});
+        if (notifications.length > 5) notifications = notifications.slice(-5);
+        
+        sessionStorage.setItem('showNotifications', JSON.stringify(notifications));
     }
 
     async handleRedirectNotification(response, willRedirect = false) {
-        const data = await this.extractMessage(response);
-        if (data) {
-            const type = response.status >= 400 ? 'error' : 'success';
-            if (willRedirect) {
-                this.storeNotification(data.message, type);
-            } else {
-                setTimeout(() => this.show(data.message, type), 10);
-            }
-        }
-    }
-
-    setupFetchInterceptor() {
-        if (window.fetch.__intercepted) return;
-
-        const originalFetch = window.fetch;
-        window.fetch = async (...args) => {
-            const response = await originalFetch(...args);
-            if (response?.status >= 200) {
-                this.processNotification(response.clone()).catch(() => {});
-            }
-            return response;
-        };
-        window.fetch.__intercepted = true;
-    }
-
-    async processNotification(response) {
-        const data = await this.extractMessage(response);
-        if (data) {
-            const type = response.status >= 400 ? 'error' : 'success';
-            setTimeout(() => this.show(data.message, type), 10);
-        }
-    }
-
-    async extractMessage(response) {
         try {
             const contentType = response.headers.get('content-type');
             if (contentType?.includes('application/json')) {
                 const data = await response.json();
-                if (data?.message?.trim()) return data;
+                if (data?.message?.trim()) {
+                    const type = response.status >= 400 ? 'error' : 'success';
+                    if (willRedirect) {
+                        this.storeNotification(data.message, type);
+                    } else {
+                        setTimeout(() => this.show(data.message, type), 10);
+                    }
+                }
             }
         } catch (e) {}
-        return null;
     }
 
     getIcon(type) {
@@ -189,15 +177,9 @@ window.showNotification = function(message, type = 'info', duration = 4000) {
 };
 
 window.storeNotification = function(message, type = 'info') {
-    const instance = getOrCreateInstance();
-    if (instance) {
-        return instance.storeNotification(message, type);
-    } else {
-        sessionStorage.setItem('showNotification', JSON.stringify({message, type}));
-    }
+    return getOrCreateInstance().storeNotification(message, type);
 };
 
 window.handleRedirectNotification = function(response) {
-    const instance = getOrCreateInstance();
-    return instance ? instance.handleRedirectNotification(response, true) : Promise.resolve();
+    return getOrCreateInstance().handleRedirectNotification(response, true);
 };

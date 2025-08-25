@@ -11,7 +11,7 @@
     font-weight: 500;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     z-index: 10000;
-    max-width: 400px;
+    width: 300px;
     opacity: 0;
     transform: translateX(100%);
     transition: all 0.3s ease-in-out;
