@@ -30,7 +30,7 @@ def _copy_dir(src, dst, ignore=None):
             shutil.copy2(src_path, dst_path)
 
 def _create_fake_pipeline():
-    from app.tables.models.actions import CreateTable, AddColumn
+    from app.pipelines.models.actions import CreateTable, AddColumn
     from app.pipelines.models.pipeline_action import PipelineAction
     action_1 = CreateTable({
             "project_dir": "ut_mock_project_1",

@@ -8,8 +8,8 @@ from fastapi.responses import FileResponse, RedirectResponse
 
 from app import router, templates
 from app.projects.models.project import Project
-from app.tables.models.actions_column import convert_col_idx
-from app.tables.models.actions_utils import TABLE_ACTION_REGISTRY
+from app.pipelines.models.actions_column import convert_col_idx
+from app.pipelines.models.actions_utils import TABLE_ACTION_REGISTRY
 from app.utils.form_utils import squirrel_error, squirrel_action_error, _get_form_data_info
 from app.pipelines.models.pipeline import Pipeline
 from app.pipelines.models.pipeline_action import PipelineAction

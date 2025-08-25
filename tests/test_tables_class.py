@@ -14,8 +14,8 @@ def test_table_action_registry():
     """
     Test if the table action registry is correctly populated
     """
-    from app.tables.models.actions_utils import TABLE_ACTION_REGISTRY
-    from app.tables.models.actions import Action
+    from app.pipelines.models.actions_utils import TABLE_ACTION_REGISTRY
+    from app.pipelines.models.actions import Action
     assert len(TABLE_ACTION_REGISTRY) > 0, "No table action registered"
     assert all([isinstance(v, type) for v in TABLE_ACTION_REGISTRY.values()]), "Not all values in registry are classes"
     assert all([issubclass(v, Action) for v in TABLE_ACTION_REGISTRY.values()]), "Not all values in registry are subclasses of Action"
@@ -24,7 +24,7 @@ def test_convert_sq_action_to_python():
     """
     Test if the convert_sq_action_to_python function is correctly converting the sq_action to python code
     """
-    from app.tables.models.actions_utils import convert_sq_action_to_python
+    from app.pipelines.models.actions_utils import convert_sq_action_to_python
     
     # Test with python code (is_sq_action=False)
     code = "t[users]c[name] + c[age]"
@@ -58,7 +58,7 @@ def test_convert_col_idx():
     """
     Test the convert_col_idx function for formatting pandas dataframe column indices.
     """
-    from app.tables.models.actions_utils import convert_col_idx
+    from app.pipelines.models.actions_utils import convert_col_idx
     
     # Create test dataframes with different types of indices
     df1 = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
@@ -76,8 +76,8 @@ def test_table_action_registry_get_code():
     """
     Test if all classes in the table action registry have a get_code method that is different from the Action class.
     """
-    from app.tables.models.actions_utils import TABLE_ACTION_REGISTRY
-    from app.tables.models.actions import Action
+    from app.pipelines.models.actions_utils import TABLE_ACTION_REGISTRY
+    from app.pipelines.models.actions import Action
     
     for action_name, action_class in TABLE_ACTION_REGISTRY.items():
         assert hasattr(action_class, "get_code"), f"{action_name} does not have a get_code method"

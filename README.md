@@ -128,8 +128,8 @@ There are 3 main folders:
 
 ### To do
 * Refactor (+fix) unit tests + code (all, not only pipeline) ((rename method, typing?, move logic out of controllers, create private methods, ...))
-* Refactor datasources (and others?), should automatically select the correct class based on the manifest? See another way of inheritance?
-* Refactor Data sources methods (+ controllers) + UT
+* Check/Refactor Actions (that were moved inside pipeline folder)
+* Refactor datasources (and others?), should automatically select the correct class based on the manifest(data_source factory?)?
 
 ### To Fix
 * edit action: default values not set for dictionnaries (expl in relace vals:) => Note: the value is set by method fillData but only in the textarea, as the widget is initialized before (in addInputs), the value does not appear in the widget

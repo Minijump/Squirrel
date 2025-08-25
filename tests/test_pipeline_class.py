@@ -52,7 +52,7 @@ def test_delete_action(temp_project_dir_fixture):
 
 def test_add_action(temp_project_dir_fixture):
     pipeline = Pipeline(MOCK_PROJECT)
-    from app.tables.models.actions import AddColumn
+    from app.pipelines.models.actions import AddColumn
     from app.pipelines.models.pipeline_action import PipelineAction
     action_3 = AddColumn(
         {
