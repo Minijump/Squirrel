@@ -1,8 +1,10 @@
-import os
 import json
+import os
+import pickle
 
 from .actions_utils import table_action_type, convert_sq_action_to_python
 from app.data_sources.models.data_source import DATA_SOURCE_REGISTRY
+from app.projects.models.project import Project
 
 class Action:
     def __init__(self, request):
@@ -15,6 +17,9 @@ class Action:
     
     async def get_code(self):
         raise NotImplementedError("Subclasses must implement this method")
+    
+    async def get_args(self, kwargs=False):
+        return self.args
 
 @table_action_type
 class AddColumn(Action):
@@ -93,6 +98,45 @@ class CreateTable(Action):
                           "select_options": [],
                           "onchange_visibility": ["TableCreation_source_creation_type", "other_tables"]}
         }
+    
+    async def get_args(self, kwargs=False):
+        from app.pipelines.models.pipeline import Pipeline # !! 'circular' dependency
+
+        args = await super().get_args(kwargs)
+        project_dir = kwargs.get("project_dir")
+        if not project_dir:
+            return args
+        try:
+            project = Project.instantiate_from_dir(project_dir)
+            sources = project.get_sources()
+            available_data_sources = [(s.get('directory'), s.get('name')) for s in sources]
+        except Exception:
+            available_data_sources = []
+
+        # available tables (try to read the cached pickle file first)
+        available_tables = []
+        data_tables_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_tables.pkl")
+        try:
+            if os.path.exists(data_tables_path):
+                with open(data_tables_path, 'rb') as f:
+                    table_manager = pickle.load(f)
+            else:
+                pipeline = Pipeline(project_dir)
+                table_manager = await pipeline.run_pipeline()
+
+            for table_name, table in table_manager.tables.items():
+                available_tables.append((table_name, table_name))
+        except Exception:
+            available_tables = []
+
+        # inject into args if the expected keys exist
+        if 'data_source_dir' in args:
+            args['data_source_dir']['select_options'] = available_data_sources
+        if 'table_df' in args:
+            args['table_df']['select_options'] = available_tables
+
+        return args
+
     async def get_code(self):
         table_name, project_dir, data_source_dir, source_creation_type, table_df = await self._get(
             ["table_name", "project_dir", "data_source_dir", "source_creation_type", "table_df"])

@@ -295,8 +295,8 @@ class Table(BaseElement):
 class TablesScreen(BaseElement):
     def click_create_new_table(self) -> None:
         self.browser.find_element(By.CSS_SELECTOR, "img").click()
-        return RightSidebar(self.browser, expected_visible="//div[@id=\'CreateTableSidebar\']")
-    
+        return RightSidebar(self.browser, expected_visible="//div[starts-with(@id, 'ActionSidebar-CreateTable')]")
+
     def check_table_select_button_visibility(self, table_name: str, visible: bool = True) -> None:
         self.check_visibility(
             xpath=f"//button[contains(.,\'{table_name}\')]",

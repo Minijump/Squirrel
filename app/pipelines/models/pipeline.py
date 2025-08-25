@@ -4,6 +4,7 @@ import pandas as pd
 from typing import List
 
 from app.pipelines.models.pipeline_action import PipelineAction
+from app.tables.models.table_manager import TableManager
 
 
 class Pipeline:
@@ -68,5 +69,5 @@ class Pipeline:
             local_vars = {'tables': tables, 'pd': pd}
             exec(code, globals(), local_vars)
             tables.update(local_vars['tables'])
-        
-        return tables
+
+        return TableManager(tables, self.project_dir)

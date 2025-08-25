@@ -1,5 +1,4 @@
 import pytest
-from tomlkit import table
 
 from tests.utils.tours_toolbox import Tour
 
@@ -18,7 +17,7 @@ class TestTablesTours:
         sidebar.check_visibility("//select[@id='table_df']", visible=True)
         sidebar.check_visibility("//select[@id='data_source_dir']", visible=False)
 
-        sidebar.fill([("source_creation_type", "Data Sources")])
+        sidebar.fill([("source_creation_type", "Data Source")])
         sidebar.check_visibility("//select[@id='table_df']", visible=False)
         sidebar.check_visibility("//select[@id='data_source_dir']", visible=True)
 

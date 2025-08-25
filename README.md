@@ -127,20 +127,18 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
-* Refactor (+fix) unit tests + code (all, not only pipeline) ((rename method, typing?, move logic out of controllers, create private methods, ...))
-* Check/Refactor Actions (that were moved inside pipeline folder)
 * Refactor datasources (and others?), should automatically select the correct class based on the manifest(data_source factory?)?
+* Imp table/table_manager classes + create a new class (table_screen???) that deals with Pipeline/table_manager/tables/... to simplify the tables controllers + change the way the Action class is selected (such as data sources, a factory?) + Check/Refactor Actions (that were moved inside pipeline folder) + refcator tables UT
 
 ### To Fix
 * edit action: default values not set for dictionnaries (expl in relace vals:) => Note: the value is set by method fillData but only in the textarea, as the widget is initialized before (in addInputs), the value does not appear in the widget
 
 ### To do MVP
+* Widgets: start autocomplete Squirrel action
 * Improve actions
   * possibility to add icons, action descr (can be changed by user), ...
   * do not run all pipeline everytime (check if pipeline changed (with hash?), run everything only if yes, else only execute required action)
   * In pipeline class: override getter/setter? to replace get_actions/get_action_data ?
-* Widgets: autocomplete Squirrel action
-* Imp Actions 2
   * add inputs type (column, table, ... to enable easy autocomplete), ... 
   * add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch (ie: somewhere where a can type sum(col1, col2)), ...
   * add dynamic documentation (ie: pd.Series.replace.__doc__)
