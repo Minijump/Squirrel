@@ -35,10 +35,10 @@ app.mount("/static/app_settings", StaticFiles(directory="app/app_settings/templa
 templates = Jinja2Templates(directory="app")
 
 
-from app.projects import projects
-from app.tables import tables
+from app.projects.routers import projects
+from app.tables.routers import tables
 from app.data_sources.routers import data_sources
-from app.pipelines import pipelines
+from app.pipelines.routers import pipelines
 from app.app_settings.routers import app_settings_router
 app.include_router(projects.router, tags=["projects"])
 app.include_router(tables.router, tags=["tables"])
