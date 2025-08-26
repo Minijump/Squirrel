@@ -127,10 +127,11 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
-* Refactor datasources (and others?), should automatically select the correct class based on the manifest(data_source factory?)?
+* Refactor datasources: clean DataSource class (remove useless async,...) + remove imports (see TODO), + imp subclasses + unit tests class ans subclasses
 * Imp table/table_manager classes + create a new class (table_screen???) that deals with Pipeline/table_manager/tables/... to simplify the tables controllers + change the way the Action class is selected (such as data sources, a factory?) + Check/Refactor Actions (that were moved inside pipeline folder) + refcator tables UT
 
 ### To Fix
+* Yahoo data sources: problem with tickers: we can say 'AU' to create source, but not when editing. Additionally, if we edit source to ['AU'] and open settings back, it is back to 'AU'
 * edit action: default values not set for dictionnaries (expl in relace vals:) => Note: the value is set by method fillData but only in the textarea, as the widget is initialized before (in addInputs), the value does not appear in the widget
 
 ### To do MVP

@@ -70,13 +70,12 @@ class DataSourceFile(DataSource):
         # However, the drawback is that if the user change the file (csv,...) manually, the changes will not be reflected 
         # (must use the settings page) => Is there something to do about this?
         await self._create_pickle_file(source_file_path)
-    
-    @classmethod
-    async def _update_source_settings(cls, source, updated_data):
+
+    async def _update_source_settings(self, source, updated_data):
         """Update the source's values with the updated data, replace the file if it's not empty"""
         old_kwargs = source.get("kwargs") or {}
 
-        updated_source = await DataSource._update_source_settings(source, updated_data)
+        updated_source = await super()._update_source_settings(source, updated_data)
         try: 
             updated_source["kwargs"] = ast.literal_eval(updated_source["kwargs"])
         except:
@@ -89,9 +88,9 @@ class DataSourceFile(DataSource):
             content = await new_file.read()
 
         if content:
-            await cls(source)._create_data_file(updated_data, content)
+            await self._create_data_file(updated_data, content)
         elif new_kwargs:
-            await cls(source)._create_data_file(updated_data)
+            await self._create_data_file(updated_data)
 
         return updated_source
     

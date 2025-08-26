@@ -136,9 +136,8 @@ class DataSourceOdoo(DataSourceAPI):
         data = pd.DataFrame(table)
         return data
 
-    @classmethod
-    async def _update_source_settings(cls, source, updated_data):
-        updated_source = await DataSourceAPI._update_source_settings(source, updated_data)
+    async def _update_source_settings(self, source, updated_data):
+        updated_source = await super()._update_source_settings(source, updated_data)
 
         updated_source["fields"] = ast.literal_eval(updated_source["fields"])
         updated_source["domain"] = ast.literal_eval(updated_source["domain"]) if updated_source["domain"] else ""

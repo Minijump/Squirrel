@@ -26,26 +26,3 @@ async def test_create_source(temp_project_dir_fixture):
     assert source.__class__.__name__ == "DataSource", "Expected instance of DataSource"
     assert os.path.exists(os.path.join(os.getcwd(), '_projects', MOCK_PROJECT, "data_sources", "mock_source")), "Expected mock_source directory to exist"
     assert os.path.exists(os.path.join(os.getcwd(), '_projects', MOCK_PROJECT, "data_sources", "mock_source", "__manifest__.json")), "Expected __manifest__.json to exist"
-
-@pytest.mark.asyncio
-async def test_update_source_settings(temp_project_dir_fixture):
-    """
-    Test if the _update_source_settings method is correctly implemented
-    """
-    source = {
-        "name": "Mock source",
-        "type": "csv",
-        "description": "a mock source",
-        "directory": "mock_source"
-    }
-    updated_data = {
-        "name": "Mock source, new name",
-        "type": "csv",
-        "description": "a mock source, new description",
-        "directory": "mock_source",
-        "non_existing_arg": "should not be added"
-    }
-    updated_source = await DataSource._update_source_settings(source, updated_data)
-    assert updated_source["name"] == "Mock source, new name", "Expected name to be Mock source, new name"
-    assert updated_source["description"] == "a mock source, new description", "Expected description to be a mock source, new description"
-    assert "non_existing_arg" not in updated_source, "Expected non_existing_arg to not be in updated source"

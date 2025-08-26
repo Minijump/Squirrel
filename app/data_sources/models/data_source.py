@@ -37,6 +37,11 @@ class DataSource:
         manifest_path = os.path.join(self.path, "__manifest__.json")
         with open(manifest_path, 'r') as file:
             return json.load(file)
+        
+    def _write_manifest(self, manifest_data):
+        manifest_path = os.path.join(self.path, "__manifest__.json")
+        with open(manifest_path, 'w') as file:
+            json.dump(manifest_data, file, indent=4)
 
     @staticmethod
     def _generate_manifest_content(form_data):
@@ -50,19 +55,18 @@ class DataSource:
         }
         return manifest
 
-    async def _create_source_directory(self, form_data):
+    async def _create_source_directory(self):
         os.makedirs(self.path)
 
     async def _create_manifest_file(self, manifest_data):
-        with open(os.path.join(self.path, "__manifest__.json"), 'w') as file:
-            json.dump(manifest_data, file, indent=4)
+        self._write_manifest(manifest_data)
 
     @classmethod
     async def create_source(cls, form_data):
         cls._check_required_infos(form_data)
         manifest = cls._generate_manifest_content(form_data)
         source = cls(manifest)
-        await source._create_source_directory(form_data)
+        await source._create_source_directory()
         await source._create_manifest_file(manifest)
         await source._create_data_file(form_data)
         return source
@@ -87,19 +91,12 @@ class DataSource:
         return self._read_manifest()
 
     async def update_source_settings(self, updated_data):
-        manifest_path = os.path.join(self.path, "__manifest__.json")
-        with open(manifest_path, 'r') as file:
-            source = json.load(file)
+        manifest_data = self._read_manifest()
+        updated_source = await self._update_source_settings(manifest_data, updated_data)
+        self._write_manifest(updated_source)
 
-        updated_source = await self.__class__._update_source_settings(source, updated_data)
-
-        with open(manifest_path, 'w') as file:
-            json.dump(updated_source, file, indent=4)
-
-    @classmethod
-    async def _update_source_settings(cls, source, updated_data):
+    async def _update_source_settings(self, source, updated_data):
         for key in updated_data.keys():
             if key in source.keys():
                 source[key] = updated_data[key]
-
         return source
