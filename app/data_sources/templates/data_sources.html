@@ -51,7 +51,7 @@
                     <p class="card-description">{{ source.description }}</p>
 
                     <div class="card-sync">
-                      {% if 'last_sync' in source %}
+                      {% if source.last_sync %}
                           <i class="fas fa-sync-alt card-sync-btn" id="syncSource-{{ source.directory }}" onclick="syncOneSource('{{ source.directory }}', '{{ project_dir }}', 'syncSource-{{ source.directory }}')"></i>
                           <i>
                             Last sync: {{ source.last_sync }}

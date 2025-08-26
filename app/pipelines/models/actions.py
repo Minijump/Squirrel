@@ -109,7 +109,7 @@ class CreateTable(Action):
         try:
             project = Project.instantiate_from_dir(project_dir)
             sources = project.get_sources()
-            available_data_sources = [(s.get('directory'), s.get('name')) for s in sources]
+            available_data_sources = [(s.directory, s.name) for s in sources]
         except Exception:
             available_data_sources = []
 

@@ -88,5 +88,5 @@ def test_get_sources(temp_project_dir_fixture):
     sources = project.get_sources()
 
     assert len(sources) == 2, "Expected 2 sources in the project"
-    assert sources[0]["name"] == "Csv ordered", "Expected first source to be 'Csv ordered'"
-    assert sources[1]["name"] == "Csv random", "Expected second source to be 'Csv random'"
+    assert sources[0].name == "Csv ordered", "Expected first source to be 'Csv ordered'"
+    assert sources[1].name == "Csv random", "Expected second source to be 'Csv random'"

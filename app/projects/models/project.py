@@ -2,6 +2,8 @@ import json
 import os
 import pickle
 
+from app.data_sources.models import DataSourceFactory
+
 
 PROJECT_TYPE_REGISTRY = {}
 def project_type(cls):
@@ -113,13 +115,9 @@ class Project:
         self._write_manifest(manifest_data)
 
     def get_sources(self):
-        # TODO: return DATASOURCES objects? change inheritance stuct first?
         sources = []
         project_data_sources_path = os.path.join(self.path, "data_sources")
-        for source in os.listdir(project_data_sources_path):
-            manifest_path = os.path.join(project_data_sources_path, source, "__manifest__.json")
-            if os.path.isfile(manifest_path):
-                with open(manifest_path, 'r') as file:
-                    manifest_data = json.load(file)
-                    sources.append(manifest_data)
+        for source_dir in os.listdir(project_data_sources_path):
+            source = DataSourceFactory.init_source_from_dir(self.path, source_dir)
+            sources.append(source)
         return sources
