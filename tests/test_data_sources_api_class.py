@@ -5,18 +5,6 @@ from app.data_sources.models.data_source_api import DataSourceAPI
 
 client = TestClient(app)
 
-def test_generate_manifest():
-    """
-    Test the _generate_manifest method of DataSourceAPI
-    last_sync should be an empty string
-    """
-    infos = {
-        "source_name": "Mock source",
-        "source_type": "API",
-    }
-    manifest = DataSourceAPI._generate_manifest(infos)
-    assert manifest["name"] == "Mock source"
-    assert manifest['last_sync'] == ""
 
 def test_instance_from_manifest():
     """

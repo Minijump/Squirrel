@@ -44,8 +44,8 @@ class DataSourceFile(DataSource):
         DataSource._check_required_infos(form_data)
 
     @staticmethod
-    def _generate_manifest(form_data):
-        manifest = DataSource._generate_manifest(form_data)
+    def _generate_manifest_content(form_data):
+        manifest = DataSource._generate_manifest_content(form_data)
         try:
             manifest["kwargs"] = ast.literal_eval(form_data["kwargs"])
         except:

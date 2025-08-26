@@ -36,7 +36,7 @@ class DataSource:
             return json.load(file)
 
     @staticmethod
-    def _generate_manifest(form_data):
+    def _generate_manifest_content(form_data):
         source_name = form_data.get("source_name")
         manifest = {
             "name": source_name,
@@ -46,32 +46,25 @@ class DataSource:
         }
         return manifest
 
-    @staticmethod
-    async def _create_source_base(manifest, form_data):
+    async def _create_source_directory(self, form_data):
         project_dir = form_data.get("project_dir")
-        source_dir = form_data.get("source_name").replace(" ", "_")
-        source_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir)
-
+        source_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", self.directory)
         os.makedirs(source_path)
-        with open(os.path.join(source_path, "__manifest__.json"), 'w') as file:
-            json.dump(manifest, file, indent=4)
+        return source_path
 
-    async def _create_required_files(self, form_data=False):
-        await self._create_python_file(form_data)
-        await self._create_data_file(form_data)
+    async def _create_manifest_file(self, source_path, manifest_data):
+        with open(os.path.join(source_path, "__manifest__.json"), 'w') as file:
+            json.dump(manifest_data, file, indent=4)
 
     @classmethod
     async def create_source(cls, form_data):
         cls._check_required_infos(form_data)
-        manifest = cls._generate_manifest(form_data)
-        await cls._create_source_base(manifest, form_data)
+        manifest = cls._generate_manifest_content(form_data)
         source = cls(manifest)
-        await source._create_required_files(form_data)
+        source_path = await source._create_source_directory(form_data)
+        await source._create_manifest_file(source_path, manifest)
+        await source._create_data_file(form_data)
         return source
-
-    async def _create_python_file(self, form_data=False):
-        """To be implemented by subclasses (optional)"""
-        pass
 
     async def _create_data_file(self, form_data=False):
         """To be implemented by subclasses (mandatory)"""

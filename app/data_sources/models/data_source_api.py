@@ -14,8 +14,8 @@ class DataSourceAPI(DataSource):
         self.last_sync = manifest.get("last_sync")
 
     @staticmethod
-    def _generate_manifest(form_data):
-        manifest = DataSource._generate_manifest(form_data)
+    def _generate_manifest_content(form_data):
+        manifest = DataSource._generate_manifest_content(form_data)
         manifest["last_sync"] = ""
 
         return manifest

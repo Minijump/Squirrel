@@ -78,8 +78,8 @@ class DataSourceOdoo(DataSourceAPI):
         DataSourceAPI._check_required_infos(form_data, required_fields)
 
     @staticmethod
-    def _generate_manifest(form_data):
-        manifest = DataSourceAPI._generate_manifest(form_data)
+    def _generate_manifest_content(form_data):
+        manifest = DataSourceAPI._generate_manifest_content(form_data)
         manifest["url"] = form_data.get("url")
         manifest["db"] = form_data.get("db")
         manifest["username"] = form_data.get("username")

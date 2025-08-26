@@ -52,8 +52,8 @@ class DataSourceYahooFinance(DataSourceAPI):
         DataSourceAPI._check_required_infos(form_data, required_fields)
 
     @staticmethod
-    def _generate_manifest(form_data):
-        manifest = DataSourceAPI._generate_manifest(form_data)
+    def _generate_manifest_content(form_data):
+        manifest = DataSourceAPI._generate_manifest_content(form_data)
         manifest["tickers"] = ast.literal_eval(form_data.get("tickers"))
         manifest["start_date"] = form_data.get("start_date")
         manifest["end_date"] = form_data.get("end_date")
