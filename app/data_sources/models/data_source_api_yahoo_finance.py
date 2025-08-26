@@ -1,7 +1,7 @@
 import ast
 import yfinance as yf
 
-from app.data_sources.models.data_source import data_source_type
+from app.data_sources.models.data_source_factory import data_source_type
 from app.data_sources.models.data_source_api import DataSourceAPI
 
 @data_source_type

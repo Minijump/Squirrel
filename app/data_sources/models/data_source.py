@@ -2,12 +2,6 @@ import os
 import json
 
 
-DATA_SOURCE_REGISTRY = {}
-def data_source_type(cls):
-    """Decorator to register all data source types"""
-    DATA_SOURCE_REGISTRY[cls.short_name] = cls
-    return cls
-
 class DataSource:
     short_name = "short_name"
     display_name = "Display name"

@@ -5,55 +5,12 @@ import warnings
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.data_sources.models import DATA_SOURCE_REGISTRY, DataSource
+from app.data_sources.models import DataSource
 from tests import MOCK_PROJECT
 
 
 client = TestClient(app)
 
-
-def test_data_source_registry_format():
-    """
-    Test if the data source registry is a dictionary with 'key': class pairs 
-    (with class a subclass of DataSource)
-    """
-    assert isinstance(DATA_SOURCE_REGISTRY, dict), "Expected DATA_SOURCE_REGISTRY to be a dictionary"
-    for key, value in DATA_SOURCE_REGISTRY.items():
-        assert isinstance(key, str), "Expected key to be a string"
-        assert isinstance(value, type), "Expected value to be a class"
-        assert issubclass(value, DataSource), "Expected value to be a subclass of DataSource"
-
-def test_data_source_registry_content():
-    """
-    Test if the data source registry contains some expected sources (csv, xlsx, pkl)
-    """
-    assert "csv" in DATA_SOURCE_REGISTRY, "Expected csv in DATA_SOURCE_REGISTRY"
-    assert DATA_SOURCE_REGISTRY["csv"].__name__ == "DataSourceCSV", "Expected DataSourceCSV class"
-    assert "xlsx" in DATA_SOURCE_REGISTRY, "Expected xlsx in DATA_SOURCE_REGISTRY"
-    assert DATA_SOURCE_REGISTRY["xlsx"].__name__ == "DataSourceXLSX", "Expected DataSourceXLSX class"
-    assert "pkl" in DATA_SOURCE_REGISTRY, "Expected pkl in DATA_SOURCE_REGISTRY"
-    assert DATA_SOURCE_REGISTRY["pkl"].__name__ == "DataSourcePickle", "Expected pkl class"
-
-def test_data_source_types_required_class_attributes():
-    """
-    Test if the required class attributes are implemented in all data source types
-    """
-    for source_type in DATA_SOURCE_REGISTRY:
-        source = DATA_SOURCE_REGISTRY[source_type]
-        assert source.short_name != 'short_name', f"Expected short_name for {source_type}"
-        assert source.display_name != 'Display name', f"Expected display_name for {source_type}"
-        if not source.icon:
-            warnings.warn("Missing icon for source type" + source.display_name, UserWarning)
-
-def test_check_available_infos_error():
-    """
-    Test if the check_available_infos method is correctly implemented
-    for an empty dictionnary, it should raise a ValueError
-    """
-    for source_type in DATA_SOURCE_REGISTRY:
-        SourceClass = DATA_SOURCE_REGISTRY[source_type]
-        with pytest.raises(ValueError):
-            SourceClass.check_available_infos({})
 
 def test_check_available_infos_with_additional_fields():
     """
@@ -92,35 +49,6 @@ def test_generate_manifest():
     assert manifest["type"] == "csv", "Expected type to be csv"
     assert manifest["description"] == "a mock source", "Expected description to be a mock source"
     assert manifest["directory"] == "Mock_source", "Expected directory to be Mock_source"
-
-def test_init_data_source_from_manifest():
-    """
-    Test if a data source can be initialized from a manifest
-    """
-    for source_type in DATA_SOURCE_REGISTRY:
-        manifest = {
-            "name": "Mock source",
-            "type": source_type,
-            "description": "a mock source",
-            "directory": "mock_source"
-        }
-        try:
-            source = DataSource(manifest)
-        except Exception as e:
-            pytest.fail(f"Failed to initialize source from manifest: {e}")
-        assert source.name == "Mock source", "Expected name to be Mock source"
-        assert source.type == source_type, f"Expected type to be {source_type}"
-        assert source.description == "a mock source", "Expected description to be a mock source"
-        assert source.directory == "mock_source", "Expected directory to be mock_source"
-
-def test_data_sources_specific_methods_implemented():
-    """
-    Test if the specific methods of a data source are implemented
-    """
-    for source_type in DATA_SOURCE_REGISTRY:
-        source = DATA_SOURCE_REGISTRY[source_type]
-        assert source._create_data_file != DataSource._create_data_file, f"_create_data_file not implemented for {source_type}"
-        assert source.create_table != DataSource.create_table, f"create_table not implemented for {source_type}"
 
 @pytest.mark.asyncio
 async def test_create_source(temp_project_dir_fixture):

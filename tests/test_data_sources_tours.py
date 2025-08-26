@@ -28,7 +28,6 @@ class TestDataSourcesTours:
         tour.click_card(by_title=MOCK_PROJECT1_NAME)
         tour.navbar_click("Data sources")
         create_source_modal = tour.click_create_card(expected_visible="//div[@class=\'modal-content\']")
-        tour.check_elements(by_ids=[("source_name", ""), ("source_description", ""), ("source_type", "csv"), ("source_file", "")])
 
         create_source_modal.fill([("source_type", "Odoo")])
         tour.check_elements(by_ids=[

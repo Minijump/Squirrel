@@ -41,9 +41,9 @@
                   <div class="card-content">
                     <div>
                       <h3 class="card-title">{{ source.name }}</h3>
-                      {% if DATA_SOURCE_REGISTRY[source.type].icon %}
+                      {% if source_factory.get_source_class(source.type).icon %}
                         <img 
-                          src="{{ url_for('data_sources_static', path='img/' + DATA_SOURCE_REGISTRY[source.type].icon) }}" 
+                          src="{{ url_for('data_sources_static', path='img/' + source_factory.get_source_class(source.type).icon) }}" 
                           alt="{{ source.type }} icon"
                           class="card-icon">
                       {% endif %}

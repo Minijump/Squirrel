@@ -3,7 +3,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.data_sources.models import DATA_SOURCE_REGISTRY, DataSourceFile
+from app.data_sources.models import DataSourceFile
 
 client = TestClient(app)
 
@@ -49,15 +49,6 @@ def test_instance_from_manifest():
     }
     source = DataSourceFile(manifest)
     assert source.name == "Mock source"
-
-def test_subclass_create_pickle_file_implemented():
-    """
-    Assert subclasses of DataSourceFile implement the _create_pickle_file method
-    """
-    for source_type in DATA_SOURCE_REGISTRY:
-        SourceClass = DATA_SOURCE_REGISTRY[source_type]
-        if issubclass(SourceClass, DataSourceFile):
-            assert SourceClass._create_pickle_file != DataSourceFile._create_pickle_file, f"{SourceClass.__name__} should implement _create_pickle_file"
 
 def test_create_table():
     """

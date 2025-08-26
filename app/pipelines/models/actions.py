@@ -3,7 +3,7 @@ import os
 import pickle
 
 from .actions_utils import table_action_type, convert_sq_action_to_python
-from app.data_sources.models.data_source import DATA_SOURCE_REGISTRY
+from app.data_sources.models import DataSourceFactory
 from app.projects.models.project import Project
 
 class Action:
@@ -142,19 +142,10 @@ class CreateTable(Action):
             ["table_name", "project_dir", "data_source_dir", "source_creation_type", "table_df"])
         
         if source_creation_type == "data_source":
-            data_source_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', data_source_dir)
-
-            manifest_path = os.path.join(data_source_path, "__manifest__.json")
-            with open(manifest_path, 'r') as file:
-                manifest_data = json.load(file)
-
-            SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
-            source = SourceClass(manifest_data)
+            source = DataSourceFactory.init_source_from_dir(project_dir, data_source_dir)
             new_code = source.create_table(self.form_data)
-
         elif source_creation_type == "other_tables":
             new_code = f"tables['{table_name}'] = tables['{table_df}']  #sq_action:Create table {table_name}"
-
         else:
             raise ValueError("Invalid source_creation_type")
         
