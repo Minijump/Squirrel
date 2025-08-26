@@ -41,13 +41,9 @@ async def data_sources(request: Request, project_dir: str):
 @squirrel_error
 async def create_source(request: Request):
     form_data = await request.form()
-    project_dir, source_type = await _get_form_data_info(request, ["project_dir", "source_type"])
+    project_dir = form_data.get("project_dir")
 
-    # TODO: should have a method (in DataSourceFactory?) to create a source object, instead of calling _create_source,...
-    SourceClass = DataSourceFactory.get_source_class(source_type)
-    SourceClass.check_available_infos(form_data)
-    source = await SourceClass._create_source(form_data)
-    await source._create_required_files(form_data)
+    await DataSourceFactory.create_source(form_data)
 
     return RedirectResponse(url=f"/data_sources/?project_dir={project_dir}", status_code=303)
 
