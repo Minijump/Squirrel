@@ -2,7 +2,7 @@ import json
 import os
 import pickle
 
-from app.data_sources.models import DataSourceFactory
+from app.data_sources.models.data_source_factory import DataSourceFactory
 
 
 PROJECT_TYPE_REGISTRY = {}

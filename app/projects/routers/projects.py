@@ -5,7 +5,7 @@ from fastapi import Request
 from fastapi.responses import RedirectResponse, JSONResponse
 
 from app import router, templates
-from app.projects.models import PROJECT_TYPE_REGISTRY, Project
+from app.projects.models.project import PROJECT_TYPE_REGISTRY, Project
 from app.utils.form_utils import squirrel_error
 
 

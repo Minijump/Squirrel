@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.data_sources.models import DataSourceAPI
+from app.data_sources.models.data_source_api import DataSourceAPI
 
 client = TestClient(app)
 

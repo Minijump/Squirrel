@@ -6,7 +6,8 @@ from fastapi import Request
 from fastapi.responses import RedirectResponse, JSONResponse
 
 from app import router, templates
-from app.data_sources.models import DataSource, DataSourceFactory
+from app.data_sources.models.data_source import DataSource
+from app.data_sources.models.data_source_factory import DataSourceFactory
 from app.projects.models.project import Project
 from app.utils.form_utils import squirrel_error, _get_form_data_info
 

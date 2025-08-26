@@ -3,7 +3,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.data_sources.models import DataSourceFile
+from app.data_sources.models.data_source_file import DataSourceFile
 
 client = TestClient(app)
 

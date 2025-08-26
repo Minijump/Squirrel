@@ -3,7 +3,7 @@ import os
 import pickle
 
 from .actions_utils import table_action_type, convert_sq_action_to_python
-from app.data_sources.models import DataSourceFactory
+from app.data_sources.models.data_source_factory import DataSourceFactory
 from app.projects.models.project import Project
 
 class Action:

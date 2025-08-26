@@ -5,7 +5,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.projects.models import Project, PROJECT_TYPE_REGISTRY
+from app.projects.models.project import Project, PROJECT_TYPE_REGISTRY
 
 
 client = TestClient(app)

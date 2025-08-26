@@ -5,7 +5,7 @@ import warnings
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.data_sources.models import DataSource
+from app.data_sources.models.data_source import DataSource
 from tests import MOCK_PROJECT
 
 
