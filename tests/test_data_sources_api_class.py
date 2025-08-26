@@ -15,6 +15,7 @@ def test_instance_from_manifest():
         "directory": "mock_directory",
         "type": "API",
         "last_sync": "2021-01-01 00:00:00",
+        "project_dir": "mock_project"
     }
     source = DataSourceAPI(manifest)
     assert source.name == "Mock source"
@@ -29,6 +30,7 @@ def test_create_table():
         "type": 'csv',
         "kwargs": '{"delimiter": ";"}',
         "directory": 'mock_directory',
+        "project_dir": "mock_project"
     }
     source = DataSourceAPI(form_data)
     table_form_data = {

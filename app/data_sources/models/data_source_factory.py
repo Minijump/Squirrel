@@ -10,13 +10,14 @@ def data_source_type(cls):
 
 class DataSourceFactory:
     def init_source_from_dir(project_dir, source_dir):
-        manifest_data = DataSource.get_manifest(project_dir, source_dir)
+        manifest_data = DataSource.get_manifest_from_dir(project_dir, source_dir)
         SourceClass = DATA_SOURCE_REGISTRY[manifest_data["type"]]
+        manifest_data["project_dir"] = project_dir
         return SourceClass(manifest_data)
 
     async def create_source(form_data):
         SourceClass = DATA_SOURCE_REGISTRY[form_data.get("source_type")]
-        source = await SourceClass.create_source(form_data)
+        await SourceClass.create_source(form_data)
 
     def get_available_type():
         return [(key, value.display_name) for key, value in DATA_SOURCE_REGISTRY.items()]

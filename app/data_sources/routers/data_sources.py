@@ -50,7 +50,7 @@ async def create_source(request: Request):
 @router.get("/source/settings") 
 @squirrel_error   
 async def source_settings(request: Request, project_dir: str, source_dir: str):
-    source = DataSource.get_manifest(project_dir, source_dir)
+    source = DataSource.get_manifest_from_dir(project_dir, source_dir)
     return templates.TemplateResponse(request, "data_sources/templates/data_source_settings.html",
         {   
             "project_dir": project_dir,

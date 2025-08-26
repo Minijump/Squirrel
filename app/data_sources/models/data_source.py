@@ -16,6 +16,8 @@ class DataSource:
         self.name = manifest['name']
         self.description = manifest.get('description')
         self.directory = manifest['directory']
+        self.project_dir = manifest.get('project_dir')
+        self.path = os.path.join(os.getcwd(), "_projects", self.project_dir, "data_sources", self.directory)
 
     @staticmethod
     def _check_required_infos(form_data, additional_required_fields=False):
@@ -23,14 +25,17 @@ class DataSource:
             raise ValueError("Source name is required")
         if not form_data.get("source_type"):
             raise ValueError("Source type is required")
-        
+        if not form_data.get("project_dir"):
+            raise ValueError("Project directory is required")
+
         if additional_required_fields:
             for field in additional_required_fields:
                 if not form_data.get(field):
                     raise ValueError(f"{field} is required")
 
     @staticmethod
-    def get_manifest(project_dir, source_dir):
+    def get_manifest_from_dir(project_dir, source_dir):
+        # TODO: move this logic inside factory, and do a proper write/read manifest in this class
         manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir, "__manifest__.json")
         with open(manifest_path, 'r') as file:
             return json.load(file)
@@ -42,18 +47,16 @@ class DataSource:
             "name": source_name,
             "type": form_data.get("source_type"),
             "description": form_data.get("source_description"),
-            "directory": source_name.replace(" ", "_")
+            "directory": source_name.replace(" ", "_"),
+            "project_dir": form_data.get("project_dir")
         }
         return manifest
 
     async def _create_source_directory(self, form_data):
-        project_dir = form_data.get("project_dir")
-        source_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", self.directory)
-        os.makedirs(source_path)
-        return source_path
+        os.makedirs(self.path)
 
-    async def _create_manifest_file(self, source_path, manifest_data):
-        with open(os.path.join(source_path, "__manifest__.json"), 'w') as file:
+    async def _create_manifest_file(self, manifest_data):
+        with open(os.path.join(self.path, "__manifest__.json"), 'w') as file:
             json.dump(manifest_data, file, indent=4)
 
     @classmethod
@@ -61,8 +64,8 @@ class DataSource:
         cls._check_required_infos(form_data)
         manifest = cls._generate_manifest_content(form_data)
         source = cls(manifest)
-        source_path = await source._create_source_directory(form_data)
-        await source._create_manifest_file(source_path, manifest)
+        await source._create_source_directory(form_data)
+        await source._create_manifest_file(manifest)
         await source._create_data_file(form_data)
         return source
 
@@ -83,8 +86,7 @@ class DataSource:
         pass
 
     async def update_source_settings(self, updated_data):
-        """Update the settings of a data source in the manifest"""
-        manifest_path = os.path.join(os.getcwd(), "_projects", updated_data["project_dir"], "data_sources", self.directory, "__manifest__.json")
+        manifest_path = os.path.join(self.path, "__manifest__.json")
         with open(manifest_path, 'r') as file:
             source = json.load(file)
 
@@ -95,11 +97,6 @@ class DataSource:
 
     @classmethod
     async def _update_source_settings(cls, source, updated_data):
-        """
-        Update the source's values with the updated data, method to be overriden by subclasses if needed
-
-        => Returns the updated source (dict)
-        """
         for key in updated_data.keys():
             if key in source.keys():
                 source[key] = updated_data[key]

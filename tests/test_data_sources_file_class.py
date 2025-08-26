@@ -16,6 +16,7 @@ def test_instance_from_manifest():
     manifest = {
         "name": "Mock source",
         "directory": "mock_directory",
+        "project_dir": "mock_project",
         "type": "csv",
         "kwargs": {}
     }
@@ -31,6 +32,7 @@ def test_create_table():
         "type": 'csv',
         "kwargs": '{"delimiter": ";"}',
         "directory": 'mock_directory',
+        "project_dir": "mock_project"
     }
     source = DataSourceFile(form_data)
     table_form_data = {
