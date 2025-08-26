@@ -33,10 +33,8 @@ class DataSource:
                 if not form_data.get(field):
                     raise ValueError(f"{field} is required")
 
-    @staticmethod
-    def get_manifest_from_dir(project_dir, source_dir):
-        # TODO: move this logic inside factory, and do a proper write/read manifest in this class
-        manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir, "__manifest__.json")
+    def _read_manifest(self):
+        manifest_path = os.path.join(self.path, "__manifest__.json")
         with open(manifest_path, 'r') as file:
             return json.load(file)
 
@@ -84,6 +82,9 @@ class DataSource:
     async def update_last_sync(self, project_dir):
         """To be implemented by subclasses (optional)"""
         pass
+
+    def get_settings(self):
+        return self._read_manifest()
 
     async def update_source_settings(self, updated_data):
         manifest_path = os.path.join(self.path, "__manifest__.json")
