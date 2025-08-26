@@ -22,7 +22,7 @@ async def test_create_source(temp_project_dir_fixture):
         "source_type": "std (no type)",
         "source_description": "a mock source"
     }
-    source = await DataSource._create_source(form_data)
+    source = await DataSource.create_source(form_data)
     assert source.__class__.__name__ == "DataSource", "Expected instance of DataSource"
     assert os.path.exists(os.path.join(os.getcwd(), '_projects', MOCK_PROJECT, "data_sources", "mock_source")), "Expected mock_source directory to exist"
     assert os.path.exists(os.path.join(os.getcwd(), '_projects', MOCK_PROJECT, "data_sources", "mock_source", "__manifest__.json")), "Expected __manifest__.json to exist"

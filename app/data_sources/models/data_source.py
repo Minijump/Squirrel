@@ -48,7 +48,6 @@ class DataSource:
 
     @staticmethod
     async def _create_source_base(manifest, form_data):
-        """Creates the base structure of a data source"""
         project_dir = form_data.get("project_dir")
         source_dir = form_data.get("source_name").replace(" ", "_")
         source_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir)
@@ -57,17 +56,18 @@ class DataSource:
         with open(os.path.join(source_path, "__manifest__.json"), 'w') as file:
             json.dump(manifest, file, indent=4)
 
+    async def _create_required_files(self, form_data=False):
+        await self._create_python_file(form_data)
+        await self._create_data_file(form_data)
+
     @classmethod
-    async def _create_source(cls, form_data):
+    async def create_source(cls, form_data):
         cls._check_required_infos(form_data)
         manifest = cls._generate_manifest(form_data)
         await cls._create_source_base(manifest, form_data)
-        return cls(manifest)
-
-    async def _create_required_files(self, form_data=False):
-        """Creates the required files for the source, can be directly a data file or a python file"""
-        await self._create_python_file(form_data)
-        await self._create_data_file(form_data)
+        source = cls(manifest)
+        await source._create_required_files(form_data)
+        return source
 
     async def _create_python_file(self, form_data=False):
         """To be implemented by subclasses (optional)"""
