@@ -18,8 +18,7 @@ class DataSource:
         self.directory = manifest['directory']
 
     @staticmethod
-    def check_available_infos(form_data, additional_required_fields=False):
-        """Check if the required infos are available"""
+    def _check_required_infos(form_data, additional_required_fields=False):
         if not form_data.get("source_name"):
             raise ValueError("Source name is required")
         if not form_data.get("source_type"):
@@ -66,11 +65,7 @@ class DataSource:
 
     @classmethod
     async def _create_source(cls, form_data):
-        """
-        Creates the data source
-
-        => Returns an object of the 'cls' class
-        """
+        cls._check_required_infos(form_data)
         manifest = cls._generate_manifest(form_data)
         await cls._create_source_base(manifest, form_data)
         return cls(manifest)

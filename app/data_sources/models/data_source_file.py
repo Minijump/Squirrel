@@ -33,7 +33,7 @@ class DataSourceFile(DataSource):
         self.kwargs = manifest.get("kwargs") or {}
 
     @classmethod
-    def check_available_infos(cls, form_data):
+    def _check_required_infos(cls, form_data):
         source_file = form_data.get("source_file")
 
         if not source_file:
@@ -41,7 +41,7 @@ class DataSourceFile(DataSource):
         if not source_file.filename.endswith('.' + cls.short_name):
             raise ValueError(f"File must be a {cls.short_name} file")
         
-        DataSource.check_available_infos(form_data)
+        DataSource._check_required_infos(form_data)
 
     @staticmethod
     def _generate_manifest(form_data):

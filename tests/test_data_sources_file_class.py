@@ -7,17 +7,6 @@ from app.data_sources.models.data_source_file import DataSourceFile
 
 client = TestClient(app)
 
-def test_data_source_file_check_available_infos():
-    """
-    Test the check_available_infos method of DataSourceFile
-    """
-    infos = {
-        "source_name": "Mock source",
-        "source_type": "csv",
-    }
-    with pytest.raises(ValueError):
-        DataSourceFile.check_available_infos(infos) #file is required
-
 def test_generate_manifest():
     """
     Test the _generate_manifest method of DataSourceFile

@@ -47,9 +47,9 @@ class DataSourceYahooFinance(DataSourceAPI):
         # misc to select only columns such as close,...
 
     @staticmethod
-    def check_available_infos(form_data):
+    def _check_required_infos(form_data):
         required_fields = ["tickers", "start_date", "end_date", "interval"]
-        DataSourceAPI.check_available_infos(form_data, required_fields)
+        DataSourceAPI._check_required_infos(form_data, required_fields)
 
     @staticmethod
     def _generate_manifest(form_data):

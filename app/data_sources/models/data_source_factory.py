@@ -16,7 +16,6 @@ class DataSourceFactory:
 
     async def create_source(form_data):
         SourceClass = DATA_SOURCE_REGISTRY[form_data.get("source_type")]
-        SourceClass.check_available_infos(form_data)
         source = await SourceClass._create_source(form_data)
         await source._create_required_files(form_data)
 

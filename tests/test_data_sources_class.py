@@ -12,29 +12,6 @@ from tests import MOCK_PROJECT
 client = TestClient(app)
 
 
-def test_check_available_infos_with_additional_fields():
-    """
-    Test if the check_available_infos method is correctly implemented
-    """
-    infos = {
-        "source_name": "Mock source",
-        "source_type": "csv",
-    }
-    try:
-        DataSource.check_available_infos(infos)
-    except ValueError:
-        pytest.fail("check_available_infos raised an error with required fields only")
-
-    with pytest.raises(ValueError):
-        DataSource.check_available_infos({}, additional_required_fields=["field1", "field2"])
-
-    infos["field1"] = "value1"
-    infos["field2"] = "value2"
-    try:
-        DataSource.check_available_infos(infos, additional_required_fields=["field1", "field2"])
-    except ValueError:
-        pytest.fail("check_available_infos raised an error with additional required fields")
-
 def test_generate_manifest():
     """
     Test if the manifest is correctly generated

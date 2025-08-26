@@ -73,9 +73,9 @@ class DataSourceOdoo(DataSourceAPI):
         self.kwargs = manifest.get("kwargs") or {}
 
     @staticmethod
-    def check_available_infos(form_data):
+    def _check_required_infos(form_data):
         required_fields = ["url", "db", "username", "key", "model", "fields"]
-        DataSourceAPI.check_available_infos(form_data, required_fields)
+        DataSourceAPI._check_required_infos(form_data, required_fields)
 
     @staticmethod
     def _generate_manifest(form_data):
