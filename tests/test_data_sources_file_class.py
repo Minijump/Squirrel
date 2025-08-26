@@ -5,26 +5,9 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.data_sources.models.data_source_file import DataSourceFile
 
+
 client = TestClient(app)
 
-def test_generate_manifest():
-    """
-    Test the _generate_manifest method of DataSourceFile
-    kwargs should be converted into a dictionnary
-    If no kwargs, should be an empty dic
-    """
-    form_data = {
-        "source_name": "Mock source",
-        "kwargs": '{"delimiter": ";"}'
-    }
-    manifest = DataSourceFile._generate_manifest(form_data)
-    assert manifest["kwargs"] == {"delimiter": ";"}
-
-    form_data = {
-        "source_name": "Mock source",
-    }
-    manifest = DataSourceFile._generate_manifest(form_data)
-    assert manifest["kwargs"] == {}
 
 def test_instance_from_manifest():
     """

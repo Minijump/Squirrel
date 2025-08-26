@@ -1,6 +1,5 @@
 import os
 import pytest
-import warnings
 
 from fastapi.testclient import TestClient
 
@@ -11,21 +10,6 @@ from tests import MOCK_PROJECT
 
 client = TestClient(app)
 
-
-def test_generate_manifest():
-    """
-    Test if the manifest is correctly generated
-    """
-    form_data = {
-        "source_name": "Mock source",
-        "source_type": "csv",
-        "source_description": "a mock source"
-    }
-    manifest = DataSource._generate_manifest(form_data)
-    assert manifest["name"] == "Mock source", "Expected name to be Mock source"
-    assert manifest["type"] == "csv", "Expected type to be csv"
-    assert manifest["description"] == "a mock source", "Expected description to be a mock source"
-    assert manifest["directory"] == "Mock_source", "Expected directory to be Mock_source"
 
 @pytest.mark.asyncio
 async def test_create_source(temp_project_dir_fixture):

@@ -37,12 +37,6 @@ class DataSource:
 
     @staticmethod
     def _generate_manifest(form_data):
-        """
-        Generates the manifest of the source
-        To be overriden by subclasses if manifest needs others infos
-
-        => Returns the manifest (dict)
-        """
         source_name = form_data.get("source_name")
         manifest = {
             "name": source_name,
