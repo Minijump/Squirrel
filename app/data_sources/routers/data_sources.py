@@ -74,7 +74,7 @@ async def sync_source(request: Request):
     try:
         project_dir, source_dir = await _get_form_data_info(request, ["project_dir", "source_dir"])
         source = DataSourceFactory.init_source_from_dir(project_dir, source_dir)
-        await source.sync(project_dir)
+        await source.sync()
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(content={"message": str(e)}, status_code=500)

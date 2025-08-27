@@ -72,11 +72,11 @@ class DataSource:
         """To be implemented by subclasses (mandatory)"""
         pass
 
-    async def sync(self, project_dir):
+    async def sync(self):
         """To be implemented by subclasses (optional)"""
         pass
 
-    def _update_last_sync(self, project_dir):
+    def _update_last_sync(self):
         """To be implemented by subclasses (optional)"""
         pass
 
