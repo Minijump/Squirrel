@@ -129,7 +129,6 @@ There are 3 main folders:
 ### To do
 * Refactor datasources: unit tests class and subclasses
 * Imp table/table_manager classes + create a new class (table_screen???) that deals with Pipeline/table_manager/tables/... to simplify the tables controllers + change the way the Action class is selected (such as data sources, a factory?) + Check/Refactor Actions (that were moved inside pipeline folder) + refcator tables UT
-* MOve MockUploadFile into utils
 
 ### To Fix
 * Yahoo data sources: problem with tickers: we can say 'AU' to create source, but not when editing. Additionally, if we edit source to ['AU'] and open settings back, it is back to 'AU'

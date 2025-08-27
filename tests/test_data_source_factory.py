@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.data_sources.models.data_source_factory import DataSourceFactory
 from tests import MOCK_PROJECT
+from tests.utils.tests_toolbox import MockUploadFile
 
 
 client = TestClient(app)
@@ -21,15 +22,6 @@ def test_init_source_from_dir(temp_project_dir_fixture):
 
 @pytest.mark.asyncio
 async def test_create_source(temp_project_dir_fixture):
-    class MockUploadFile:
-        def __init__(self, filename, content):
-            self.filename = filename
-            self.content = content.encode() if isinstance(content, str) else content
-            self.size = len(self.content)
-        
-        async def read(self):
-            return self.content
-    
     csv_content = "name,age,city\nJohn,25,New York\nJane,30,Paris"
     mock_source_file = MockUploadFile("test_data.csv", csv_content)
     
@@ -44,7 +36,6 @@ async def test_create_source(temp_project_dir_fixture):
 
     data_source = DataSourceFactory.init_source_from_dir(MOCK_PROJECT, "mock_source")
     assert data_source.name == "Mock source", "Expected a new source"
-
 
 def test_get_available_type(temp_project_dir_fixture):
     available_types = DataSourceFactory.get_available_type()
