@@ -127,7 +127,7 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
-* Refactor datasources: clean DataSource class (remove useless async,...) + remove imports (see TODO), + imp subclasses + unit tests class ans subclasses
+* Refactor datasources: clean DataSource class (remove useless async,...) + imp subclasses + unit tests class ans subclasses
 * Imp table/table_manager classes + create a new class (table_screen???) that deals with Pipeline/table_manager/tables/... to simplify the tables controllers + change the way the Action class is selected (such as data sources, a factory?) + Check/Refactor Actions (that were moved inside pipeline folder) + refcator tables UT
 
 ### To Fix

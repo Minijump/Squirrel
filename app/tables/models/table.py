@@ -1,6 +1,6 @@
 import pandas as pd
 
-from app.pipelines.models.actions_column import convert_col_idx
+from app.pipelines.models.actions_utils import convert_col_idx
 
 
 class Table:
