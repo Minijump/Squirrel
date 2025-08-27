@@ -9,7 +9,7 @@ from tests.utils.tests_toolbox import MockUploadFile
 
 
 client = TestClient(app)
-
+# TODO: test init_source_from_dir and create_source for all DataSourceType (instead of one here)
 
 def test_init_source_from_dir(temp_project_dir_fixture):
     project_dir = MOCK_PROJECT

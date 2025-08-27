@@ -1,28 +1,32 @@
-import os
 import pytest
 
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.data_sources.models.data_source import DataSource
+from app.data_sources.models.data_source_factory import DataSourceFactory
 from tests import MOCK_PROJECT
 
 
 client = TestClient(app)
+# Note: create_source, create_table, ... is not tested here; see factory/subclasses tests
 
+def test_get_settings(temp_project_dir_fixture):
+    source = DataSourceFactory.init_source_from_dir(MOCK_PROJECT, "Csv_ordered")
+
+    settings = source.get_settings()
+
+    assert settings['project_dir'] == MOCK_PROJECT
+    assert settings['name'] == "Csv ordered"
 
 @pytest.mark.asyncio
-async def test_create_source(temp_project_dir_fixture):
-    """
-    Test if the create_source_base method is correctly implemented
-    """
-    form_data = {
-        "project_dir": MOCK_PROJECT,
-        "source_name": "Mock source",
-        "source_type": "std (no type)",
-        "source_description": "a mock source"
+async def test_update_source_settings(temp_project_dir_fixture):
+    source = DataSourceFactory.init_source_from_dir(MOCK_PROJECT, "Csv_ordered")
+    new_settings = {
+        'name': "Csv ordered - Updated",
     }
-    source = await DataSource.create_source(form_data)
-    assert source.__class__.__name__ == "DataSource", "Expected instance of DataSource"
-    assert os.path.exists(os.path.join(os.getcwd(), '_projects', MOCK_PROJECT, "data_sources", "mock_source")), "Expected mock_source directory to exist"
-    assert os.path.exists(os.path.join(os.getcwd(), '_projects', MOCK_PROJECT, "data_sources", "mock_source", "__manifest__.json")), "Expected __manifest__.json to exist"
+
+    await source.update_source_settings(new_settings)
+
+    source = DataSourceFactory.init_source_from_dir(MOCK_PROJECT, "Csv_ordered")
+    settings = source.get_settings()
+    assert settings['name'] == "Csv ordered - Updated"
