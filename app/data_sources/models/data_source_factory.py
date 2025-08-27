@@ -10,6 +10,7 @@ def data_source_type(cls):
 
 
 class DataSourceFactory:
+    @staticmethod
     def init_source_from_dir(project_dir, source_dir):
         manifest_data = {}
         manifest_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir, "__manifest__.json")
@@ -19,12 +20,15 @@ class DataSourceFactory:
         manifest_data["project_dir"] = project_dir
         return SourceClass(manifest_data)
 
+    @staticmethod
     async def create_source(form_data):
         SourceClass = DATA_SOURCE_REGISTRY[form_data.get("source_type")]
         await SourceClass.create_source(form_data)
 
+    @staticmethod
     def get_available_type():
         return [(key, value.display_name) for key, value in DATA_SOURCE_REGISTRY.items()]
 
+    @staticmethod
     def get_source_class(class_name):
         return DATA_SOURCE_REGISTRY[class_name]

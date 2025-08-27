@@ -37,9 +37,9 @@ class DataSourceAPI(DataSource):
         data_file_path = os.path.join(os.getcwd(), "_projects", form_data["project_dir"], "data_sources", self.directory, 'data.pkl')
         data.to_pickle(data_file_path)
 
-        await self.update_last_sync(form_data["project_dir"])
+        self._update_last_sync(form_data["project_dir"])
 
-    async def update_last_sync(self, project_dir):
+    def _update_last_sync(self, project_dir):
         """Update the last sync date"""
         last_sync = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.last_sync = last_sync
