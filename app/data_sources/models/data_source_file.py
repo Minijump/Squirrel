@@ -1,5 +1,5 @@
-import os
 import ast
+import os
 import pandas as pd
 
 from app.data_sources.models.data_source import DataSource
@@ -10,6 +10,10 @@ class DataSourceFile(DataSource):
     short_name = "file_extension (without dot)"
     display_name = "File Type name"
     icon = ""
+
+    def __init__(self, manifest):
+        super().__init__(manifest)
+        self.kwargs = manifest.get("kwargs") or {}
 
     @classmethod
     def get_source_specific_args(cls, is_settings=False):
@@ -27,10 +31,6 @@ class DataSourceFile(DataSource):
                 "required": False,
             }
         }
-
-    def __init__(self, manifest):
-        super().__init__(manifest)
-        self.kwargs = manifest.get("kwargs") or {}
 
     @classmethod
     def _check_required_infos(cls, form_data):
@@ -52,52 +52,31 @@ class DataSourceFile(DataSource):
             manifest["kwargs"] = {}
         return manifest
 
-    async def _create_pickle_file(self, source_file_path):
-        """To be implemented by the child class"""
+    def _create_pickle_file(self, source_file_path):
+        """To be implemented by the subclasses"""
         pass
 
-    async def _create_data_file(self, form_data, content=False):
-        """Creates (copy) the data file"""
-        source_path = os.path.join(os.getcwd(), "_projects", form_data["project_dir"], "data_sources", self.directory)
-        source_file_path = os.path.join(source_path, 'data.' + self.short_name)
-        form_data_content = await form_data.get("source_file").read() if form_data.get("source_file") else False
-        content = content or form_data_content
-        if content:
+    async def _create_data_file(self, form_data):
+        source_file_path = os.path.join(self.path, 'data.' + self.short_name)
+        source_file = form_data.get("source_file")
+        if source_file and source_file.size > 0:
+            source_file_content = await source_file.read()
             with open(source_file_path, 'wb') as file:
-                file.write(content)
-
-        # All sources are converted to pickle files, this increase the speed of reading the data
-        # However, the drawback is that if the user change the file (csv,...) manually, the changes will not be reflected 
-        # (must use the settings page) => Is there something to do about this?
-        await self._create_pickle_file(source_file_path)
+                file.write(source_file_content)
+        self._create_pickle_file(source_file_path)
 
     async def _update_source_settings(self, source, updated_data):
         """Update the source's values with the updated data, replace the file if it's not empty"""
-        old_kwargs = source.get("kwargs") or {}
-
         updated_source = await super()._update_source_settings(source, updated_data)
         try: 
             updated_source["kwargs"] = ast.literal_eval(updated_source["kwargs"])
         except:
             updated_source["kwargs"] = {}
-
-        new_file = dict(updated_data).get("file")
-        new_kwargs = old_kwargs != source.get("kwargs")
-        content = False
-        if new_file:
-            content = await new_file.read()
-
-        if content:
-            await self._create_data_file(updated_data, content)
-        elif new_kwargs:
-            await self._create_data_file(updated_data)
-
+        await self._create_data_file(updated_data)
         return updated_source
     
     def create_table(self, form_data):
-        """Return the code to create the table from a file"""
-        project_dir = form_data.get("project_dir")
-        data_file_path = os.path.join(os.getcwd(), '_projects', project_dir, 'data_sources', self.directory, 'data.pkl')
+        data_file_path = os.path.join(self.path, 'data.pkl')
         table_name = form_data.get("table_name")
         return f"tables['{table_name}'] = pd.read_pickle(r'{data_file_path}')  #sq_action:Create table {table_name} from {self.name}"
 
@@ -107,7 +86,7 @@ class DataSourceCSV(DataSourceFile):
     display_name = "CSV"
     icon = "csv_icon.png"
 
-    async def _create_pickle_file(self, source_file_path):
+    def _create_pickle_file(self, source_file_path):
         data = pd.read_csv(source_file_path, **self.kwargs)
         pickle_file_path = source_file_path.replace(f'.{self.short_name}', '.pkl')
         data.to_pickle(pickle_file_path)
@@ -118,10 +97,8 @@ class DataSourcePickle(DataSourceFile):
     display_name = "Pickle"
     icon = "pickle_icon.png"
 
-    async def _create_pickle_file(self, source_file_path):
-        """
-        Already pickle file: kwargs does not work here
-        """
+    def _create_pickle_file(self, source_file_path):
+        """Already pickle file: kwargs does not work here"""
         pass
     
 @data_source_type
@@ -130,7 +107,7 @@ class DataSourceXLSX(DataSourceFile):
     display_name = "Excel"
     icon = "xlsx_icon.png"
 
-    async def _create_pickle_file(self, source_file_path):
+    def _create_pickle_file(self, source_file_path):
         data = pd.read_excel(source_file_path, **self.kwargs)
         pickle_file_path = source_file_path.replace(f'.{self.short_name}', '.pkl')
         data.to_pickle(pickle_file_path)
@@ -141,7 +118,7 @@ class DataSourceJSON(DataSourceFile):
     display_name = "JSON"
     icon = "json_icon.png"
 
-    async def _create_pickle_file(self, source_file_path):
+    def _create_pickle_file(self, source_file_path):
         data = pd.read_json(source_file_path, **self.kwargs)
         pickle_file_path = source_file_path.replace(f'.{self.short_name}', '.pkl')
         data.to_pickle(pickle_file_path)
