@@ -12,6 +12,17 @@ class DataSourceOdoo(DataSourceAPI):
     display_name = "Odoo"
     icon = "odoo_icon.png"
 
+    def __init__(self, manifest):
+        super().__init__(manifest)
+        self.username = manifest.get("username")
+        self.url = manifest.get("url")
+        self.db = manifest.get("db")
+        self.key = manifest.get("key")
+        self.model = manifest.get("model")
+        self.fields = manifest.get("fields")
+        self.domain = manifest.get("domain") or []
+        self.kwargs = manifest.get("kwargs") or {}
+
     @classmethod
     def get_source_specific_args(cls, is_settings=False):
         return {
@@ -61,20 +72,9 @@ class DataSourceOdoo(DataSourceAPI):
             }
         }
 
-    def __init__(self, manifest):
-        super().__init__(manifest)
-        self.username = manifest.get("username")
-        self.url = manifest.get("url")
-        self.db = manifest.get("db")
-        self.key = manifest.get("key")
-        self.model = manifest.get("model")
-        self.fields = manifest.get("fields")
-        self.domain = manifest.get("domain") or []
-        self.kwargs = manifest.get("kwargs") or {}
-
     @staticmethod
-    def _check_required_infos(form_data):
-        required_fields = ["url", "db", "username", "key", "model", "fields"]
+    def _check_required_infos(form_data, additional_required_fields=False):
+        required_fields = ["url", "db", "username", "key", "model", "fields"] + (additional_required_fields or [])
         DataSourceAPI._check_required_infos(form_data, required_fields)
 
     @staticmethod
@@ -88,7 +88,6 @@ class DataSourceOdoo(DataSourceAPI):
         manifest["fields"] = ast.literal_eval(form_data.get("fields"))
         manifest["domain"] = ast.literal_eval(form_data.get("domain")) if form_data.get("domain") else []
         manifest["kwargs"] = ast.literal_eval(form_data.get("kwargs")) if form_data.get("kwargs") else {}
-
         return manifest
 
     async def _get_data_from_api(self):
