@@ -8,7 +8,7 @@ from tests import MOCK_PROJECT
 
 
 client = TestClient(app)
-# Note: create_source, create_table, ... is not tested here; see factory/subclasses tests
+# Note: create_source, create_table, ... is not tested here; see subclasses tests
 
 def test_get_settings(temp_project_dir_fixture):
     source = DataSourceFactory.init_source_from_dir(MOCK_PROJECT, "Csv_ordered")
