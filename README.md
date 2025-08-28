@@ -127,23 +127,23 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
-* Imp table/table_manager classes + create a new class (table_screen???) that deals with Pipeline/table_manager/tables/... to simplify the tables controllers + change the way the Action class is selected (such as data sources, a factory?) + Check/Refactor Actions (that were moved inside pipeline folder) + refcator tables UT
+* Imp table/table_manager classes + create a new class (table_screen???) that deals with Pipeline/table_manager/tables/... to simplify the tables controllers + change the way the Action class is selected (such as data sources, a factory?) + Check/Refactor Actions (that were moved inside pipeline folder) + refactor tables UT
 
 ### To Fix
 * Yahoo data sources: problem with tickers: we can say 'AU' to create source, but not when editing. Additionally, if we edit source to ['AU'] and open settings back, it is back to 'AU'
 * edit action: default values not set for dictionnaries (expl in relace vals:) => Note: the value is set by method fillData but only in the textarea, as the widget is initialized before (in addInputs), the value does not appear in the widget
 
 ### To do MVP
-* Widgets: start autocomplete Squirrel action
 * Improve actions
-  * possibility to add icons, action descr (can be changed by user), ...
+  * possibility to add icons, action descr (can be changed by user; must change if action is edited in pipeline), ...
   * do not run all pipeline everytime (check if pipeline changed (with hash?), run everything only if yes, else only execute required action)
   * In pipeline class: override getter/setter? to replace get_actions/get_action_data ?
   * add inputs type (column, table, ... to enable easy autocomplete), ... 
   * add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch (ie: somewhere where a can type sum(col1, col2)), ...
   * add dynamic documentation (ie: pd.Series.replace.__doc__)
 * Add actions (expl: Possibility to edit a cell value directly)
-* check if needed to Add tours/UT?
+* check if needed to Add/refactor tours/UT?
+* Widgets: start autocomplete Squirrel action
 
 ### To do UX
 
@@ -158,6 +158,7 @@ There are 3 main folders:
 * Pipeline
   * Imp pipeline (test before save? summary with blocks on the top? ...?)?
   * Multiples pipelines?
+* Secure app? If a project is shared to somebody else, we must be sure it won't run something bad for the computer? Is it even possible to do that?
 * Great-expectation unit test
 * Dashboard tab (custom/embedded metabase? Not sure it suits need/...)
 * Odoo module; ease imports ?
