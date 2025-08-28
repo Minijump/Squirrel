@@ -21,7 +21,7 @@ class DataSourceAPI(DataSource):
     def create_table(self, form_data):
         data_file_path = os.path.join(self.path, 'data.pkl')
         table_name = form_data.get("table_name")
-        return f"""tables['{table_name}'] = pd.read_pickle(r'{data_file_path}')  #sq_action:Create table {table_name} from {self.name}"""
+        return f"""tables['{table_name}'] = pd.read_pickle(r'{data_file_path}')"""
     
     async def _get_data_from_api(self):
         """To be overriden by subclasses"""

@@ -29,7 +29,7 @@ class ActionColumn(Action):
 class DropColumn(ActionColumn):
     async def get_code(self):
         table_name, col_name, col_idx = await self._get(["table_name", "col_name", "col_idx"])
-        new_code = f"""tables['{table_name}'] = tables['{table_name}'].drop(columns=[{col_idx}])  #sq_action:Delete column {col_name} on table {table_name}"""
+        new_code = f"""tables['{table_name}'] = tables['{table_name}'].drop(columns=[{col_idx}])"""
         return new_code
 
 @table_action_type
@@ -51,7 +51,7 @@ class ReplaceVals(ActionColumn):
         elif col_dtype.startswith('bool'):
             falses = ['False', 'false', '0']
             replace_vals = {False if k in falses else True: False if v in falses else True for k, v in ast.literal_eval(replace_vals).items()}
-        new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].replace({replace_vals})  #sq_action:Replace values in column {col_name} of table {table_name}"""
+        new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].replace({replace_vals})"""
         return new_code
 
 @table_action_type
@@ -65,7 +65,7 @@ class RemoveUnderOver(ActionColumn):
 
     async def get_code(self):
         table_name, col_name, lower_bound, upper_bound, col_idx = await self._get(["table_name", "col_name", "lower_bound", "upper_bound", "col_idx"])
-        new_code = f"""tables['{table_name}'] = tables['{table_name}'][(tables['{table_name}'][{col_idx}] >= {lower_bound}) & (tables['{table_name}'][{col_idx}] <= {upper_bound})]  #sq_action:Remove vals out of [{lower_bound}, {upper_bound}] in column {col_name} of table {table_name}"""
+        new_code = f"""tables['{table_name}'] = tables['{table_name}'][(tables['{table_name}'][{col_idx}] >= {lower_bound}) & (tables['{table_name}'][{col_idx}] <= {upper_bound})]"""
         return new_code
 
 @table_action_type
@@ -82,7 +82,7 @@ class NLargest(ActionColumn):
 
     async def get_code(self):
         table_name, col_name, n, keep, col_idx = await self._get(["table_name", "col_name", "n", "keep", "col_idx"])
-        new_code = f"""tables['{table_name}'] = tables['{table_name}'].nlargest({n}, [{col_idx}], keep='{keep}')  #sq_action:Get {n} largest values in column {col_name} of table {table_name}"""
+        new_code = f"""tables['{table_name}'] = tables['{table_name}'].nlargest({n}, [{col_idx}], keep='{keep}')"""
         return new_code
     
 @table_action_type
@@ -99,7 +99,7 @@ class NSmallest(ActionColumn):
 
     async def get_code(self):
         table_name, col_name, n, keep, col_idx = await self._get(["table_name", "col_name", "n", "keep", "col_idx"])
-        new_code = f"""tables['{table_name}'] = tables['{table_name}'].nsmallest({n}, [{col_idx}], keep='{keep}')  #sq_action:Get {n} smallest values in column {col_name} of table {table_name}"""
+        new_code = f"""tables['{table_name}'] = tables['{table_name}'].nsmallest({n}, [{col_idx}], keep='{keep}')"""
         return new_code
 
 @table_action_type
@@ -114,9 +114,9 @@ class RenameColumn(ActionColumn):
         table_name, col_name, new_col_name, col_idx = await self._get(["table_name", "col_name", "new_col_name", "col_idx"])
         if col_idx.startswith('(') and col_idx.endswith(')'):
             new_code = f"""new_cols = [(val1, val2 if (val1, val2) != {col_idx} else '{new_col_name}') for val1, val2 in tables['{table_name}'].columns.tolist()]
-tables['{table_name}'].columns = pd.MultiIndex.from_tuples(new_cols) #sq_action:Rename column {col_name} of {col_idx} to {new_col_name} in table {table_name}"""
+tables['{table_name}'].columns = pd.MultiIndex.from_tuples(new_cols)"""
         else:
-            new_code = f"""tables['{table_name}'].rename(columns={{{col_idx}: '{new_col_name}'}}, inplace=True)  #sq_action:Rename column {col_name} to {new_col_name} in table {table_name}"""
+            new_code = f"""tables['{table_name}'].rename(columns={{{col_idx}: '{new_col_name}'}}, inplace=True)"""
         return new_code
 
 @table_action_type
@@ -132,7 +132,7 @@ class CutValues(ActionColumn):
         table_name, col_name, cut_values, cut_labels, col_idx = await self._get(["table_name", "col_name", "cut_values", "cut_labels", "col_idx"])
         cut_values = [float(val) for val in cut_values.split(',')]
         cut_labels = cut_labels.split(',')
-        new_code = f"""tables['{table_name}'][{col_idx}] = pd.cut(tables['{table_name}'][{col_idx}], bins={cut_values}, labels={cut_labels})  #sq_action:Cut values in column {col_name} of table {table_name}"""
+        new_code = f"""tables['{table_name}'][{col_idx}] = pd.cut(tables['{table_name}'][{col_idx}], bins={cut_values}, labels={cut_labels})"""
         return new_code
 
 @table_action_type
@@ -152,11 +152,11 @@ class SortColumn(ActionColumn):
         table_name, col_name, col_idx, sort_order, sort_key = await self._get(["table_name", "col_name", "col_idx", "sort_order", "sort_key"])
         new_code = f"""tables['{table_name}'] = tables['{table_name}'].sort_values(by=[{col_idx}], """
         if sort_order == "custom":
-            new_code += f"""key=lambda x: {sort_key})  #sq_action:Sort {col_name} of table {table_name} with custom key"""
+            new_code += f"""key=lambda x: {sort_key})"""
         elif sort_order == "ascending":
-            new_code += f"""ascending=True)  #sq_action:Sort(asc) {col_name} of table {table_name}"""
+            new_code += f"""ascending=True)"""
         elif sort_order == "descending":
-            new_code += f"""ascending=False)  #sq_action:Sort(desc) {col_name} of table {table_name}"""
+            new_code += f"""ascending=False)"""
         else:
             raise ValueError("Invalid sort order")
     
@@ -177,9 +177,9 @@ class ChangeType(ActionColumn):
         table_name, col_name, new_type, col_idx = await self._get(["table_name", "col_name", "new_type", "col_idx"])
 
         if new_type == "datetime":
-            new_code = f"""tables['{table_name}'][{col_idx}] = pd.to_datetime(tables['{table_name}'][{col_idx}])  #sq_action:Change type of column {col_name} to {new_type} in table {table_name}"""
+            new_code = f"""tables['{table_name}'][{col_idx}] = pd.to_datetime(tables['{table_name}'][{col_idx}])"""
         else:
-            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].astype('{new_type}')  #sq_action:Change type of column {col_name} to {new_type} in table {table_name}"""
+            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].astype('{new_type}')"""
 
         return new_code
 
@@ -195,9 +195,9 @@ class NormalizeColumn(ActionColumn):
     async def get_code(self):
         table_name, col_name, method, col_idx = await self._get(["table_name", "col_name", "method", "col_idx"])
         if method == "min_max":
-            new_code = f"""tables['{table_name}'][{col_idx}] = (tables['{table_name}'][{col_idx}] - tables['{table_name}'][{col_idx}].min()) / (tables['{table_name}'][{col_idx}].max() - tables['{table_name}'][{col_idx}].min())  #sq_action:Normalize column {col_name} in table {table_name} with Min-Max"""
+            new_code = f"""tables['{table_name}'][{col_idx}] = (tables['{table_name}'][{col_idx}] - tables['{table_name}'][{col_idx}].min()) / (tables['{table_name}'][{col_idx}].max() - tables['{table_name}'][{col_idx}].min())"""
         elif method == "z_score":
-            new_code = f"""tables['{table_name}'][{col_idx}] = (tables['{table_name}'][{col_idx}] - tables['{table_name}'][{col_idx}].mean()) / tables['{table_name}'][{col_idx}].std()  #sq_action:Normalize column {col_name} in table {table_name} with Z Score"""
+            new_code = f"""tables['{table_name}'][{col_idx}] = (tables['{table_name}'][{col_idx}] - tables['{table_name}'][{col_idx}].mean()) / tables['{table_name}'][{col_idx}].std()"""
         else:
             raise ValueError("Invalid normalization method")
         return new_code
@@ -218,11 +218,11 @@ class HandleMissingValues(ActionColumn):
     async def get_code(self):
         table_name, col_name, action, replace_value, col_idx = await self._get(["table_name", "col_name", "action", "replace_value", "col_idx"])
         if action == "delete":
-            new_code = f"""tables['{table_name}'] = tables['{table_name}'].dropna(subset=[{col_idx}])  #sq_action:Delete rows with missing values in column {col_name} of table {table_name}"""
+            new_code = f"""tables['{table_name}'] = tables['{table_name}'].dropna(subset=[{col_idx}])"""
         elif action == "replace":
-            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].fillna({replace_value})  #sq_action:Replace missing values with {replace_value} in column {col_name} of table {table_name}"""
+            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].fillna({replace_value})"""
         elif action == "interpolate":
-            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].interpolate()  #sq_action:Interpolate missing values in column {col_name} of table {table_name}"""
+            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].interpolate()"""
         else:
             raise ValueError("Invalid action for handling missing values")
 
@@ -239,7 +239,7 @@ class ApplyFunction(ActionColumn):
 
     async def get_code(self):
         table_name, col_name, function, col_idx = await self._get(["table_name", "col_name", "function", "col_idx"])
-        new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'].apply(lambda row: {function}, axis=1)  #sq_action:Apply function to column {col_name} of table {table_name}"""
+        new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'].apply(lambda row: {function}, axis=1)"""
         return new_code
 
 @table_action_type
@@ -253,7 +253,7 @@ class ColDiff(ActionColumn):
     async def get_code(self):
         table_name, col_name, periods, col_idx = await self._get(["table_name", "col_name", "periods", "col_idx"])
         new_col_idx = col_idx.replace(", ", "-").replace("'", "").replace("(", "").replace(")", "") + "-diff"
-        new_code = f"""tables['{table_name}']['{new_col_idx}'] = tables['{table_name}'][{col_idx}].diff(periods={periods})  #sq_action:Calculate difference of {col_name} in table {table_name}"""
+        new_code = f"""tables['{table_name}']['{new_col_idx}'] = tables['{table_name}'][{col_idx}].diff(periods={periods})"""
         return new_code
 
 @table_action_type
@@ -272,14 +272,14 @@ class MathOperations(ActionColumn):
     async def get_code(self):
         table_name, col_name, operation, decimals, col_idx = await self._get(["table_name", "col_name", "operation", "decimals", "col_idx"])
         if operation == "log":
-            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].apply(lambda x: __import__('math').log(x) if x > 0 else float('nan'))  #sq_action:Apply log to column {col_name} of table {table_name}"""
+            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].apply(lambda x: __import__('math').log(x) if x > 0 else float('nan'))"""
         elif operation == "sqrt":
-            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].apply(lambda x: __import__('math').sqrt(x) if x >= 0 else float('nan'))  #sq_action:Apply sqrt to column {col_name} of table {table_name}"""
+            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].apply(lambda x: __import__('math').sqrt(x) if x >= 0 else float('nan'))"""
         elif operation == "abs":
-            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].abs()  #sq_action:Apply abs to column {col_name} of table {table_name}"""
+            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].abs()"""
         elif operation == "round":
             decimals = decimals or 0
-            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].round({decimals})  #sq_action:Round column {col_name} to {decimals} decimals in table {table_name}"""
+            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].round({decimals})"""
         else:
             raise ValueError("Invalid math operation")
         return new_code
@@ -302,9 +302,9 @@ class ReplaceInCell(ActionColumn):
         table_name, col_name, col_idx, action, regex, replacement = await self._get(["table_name", "col_name", "col_idx", "action", "regex", "replacement"])
         new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].str.replace"""
         if action == "whitespace":
-            new_code += f"""(r'\\s+', '{replacement}', regex=True)  #sq_action:Replace whitespace in column {col_name} of table {table_name}"""
+            new_code += f"""(r'\\s+', '{replacement}', regex=True)"""
         elif action == "regex":
-            new_code += f"""(r'{regex}', '{replacement}', regex=True)  #sq_action:Replace regex in column {col_name} of table {table_name}"""
+            new_code += f"""(r'{regex}', '{replacement}', regex=True)"""
         else:
             raise ValueError("Invalid action for replacing in cell")
         return new_code
@@ -323,19 +323,19 @@ class FormatString(ActionColumn):
         table_name, col_name, operation, col_idx = await self._get(["table_name", "col_name", "operation", "col_idx"])
         new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].str."""
         if operation == "upper":
-            new_code += f"""upper()  #sq_action:Convert column {col_name} to uppercase in table {table_name}"""
+            new_code += f"""upper()"""
         elif operation == "lower":
-            new_code += f"""lower()  #sq_action:Convert column {col_name} to lowercase in table {table_name}"""
+            new_code += f"""lower()"""
         elif operation == "title":
-            new_code += f"""title()  #sq_action:Convert column {col_name} to title case in table {table_name}"""
+            new_code += f"""title()"""
         elif operation == "capitalize":
-            new_code += f"""capitalize()  #sq_action:Capitalize column {col_name} in table {table_name}"""
+            new_code += f"""capitalize()"""
         elif operation == "strip":
-            new_code += f"""strip()  #sq_action:Strip whitespace from column {col_name} in table {table_name}"""
+            new_code += f"""strip()"""
         elif operation == "lstrip":
-            new_code += f"""lstrip()  #sq_action:Left strip whitespace from column {col_name} in table {table_name}"""
+            new_code += f"""lstrip()"""
         elif operation == "rstrip":
-            new_code += f"""rstrip()  #sq_action:Right strip whitespace from column {col_name} in table {table_name}"""
+            new_code += f"""rstrip()"""
         else:
             raise ValueError("Invalid string operation")
         return new_code
