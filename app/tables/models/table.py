@@ -25,10 +25,13 @@ class Table:
         modified_header = f"{modified_header[0]}<tr>{header_html}</tr>"
         return html[:header_start] + modified_header + html[header_end:]
     
-    def to_html(self, display_len, start=False, end=False):
-        df = self.content.head(display_len)
-        if start and end:
+    def to_html(self, display_len, page=False, n=False):
+        if page and n:
+            start = page * n
+            end = start + n
             df = self.content.iloc[start:end]
+        else:
+            df = self.content.head(display_len)
         return Table._to_html_with_idx(df)
     
     def get_col_info(self, column_idx: str):
@@ -64,3 +67,13 @@ class Table:
             col_infos["empty_strings"] = str((column == "").sum())
 
         return col_infos
+
+    def export(self, export_path: str, export_type: str):
+        if export_type == "csv":
+            return self.content.to_csv(export_path, index=False)
+        elif export_type == "xlsx":
+            return self.content.to_excel(export_path, index=False)
+        elif export_type == "pkl":
+            return self.content.to_pickle(export_path)
+        elif export_type == "json":
+            return self.content.to_json(export_path, orient='records')

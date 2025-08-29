@@ -1,5 +1,3 @@
-import os
-
 from fastapi import Request
 from fastapi.responses import FileResponse, RedirectResponse
 
@@ -17,7 +15,6 @@ async def tables(request: Request, project_dir: str):
     table_manager = await TableManager.init_from_project_dir(project_dir)
     table_html, table_len_infos = table_manager.to_html()
     sources = table_manager.project.get_sources()
-
     return templates.TemplateResponse(
         request,
         "tables/templates/tables.html",
@@ -28,10 +25,7 @@ async def tables(request: Request, project_dir: str):
 @squirrel_error
 async def tables_pager(request: Request, project_dir: str, table_name: str, page: int, n: int):
     table_manager = await TableManager.init_from_project_dir(project_dir, lazy=True)
-    table = table_manager.tables.get(table_name)
-    start = page * n
-    end = start + n
-    table_html = table.to_html(table_manager.display_len, start=start, end=end)
+    table_html = table_manager.tables.get(table_name).to_html(table_manager.display_len, page=page, n=n)
     return table_html
 
 @router.post("/tables/add_action/")
@@ -73,23 +67,9 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
 @router.post("/tables/export_table/")
 @squirrel_error
 async def export_table(request: Request):
-    """ Returns a FileResponse to export the selected file"""
     table_name, export_type, project_dir = await _get_form_data_info(request, ["table_name", "export_type", "project_dir"])
 
     table_manager = await TableManager.init_from_project_dir(project_dir, lazy=True)
-    df = table_manager.tables[table_name].content
-
-    export_dir = os.path.join(table_manager.project.path, "exports")
-    os.makedirs(export_dir, exist_ok=True)
-    export_path = os.path.join(export_dir, f"{table_name}.{export_type}")
-
-    if export_type == "csv":
-        df.to_csv(export_path, index=False)
-    elif export_type == "xlsx":
-        df.to_excel(export_path, index=False)
-    elif export_type == "pkl":
-        df.to_pickle(export_path)
-    elif export_type == "json":
-        df.to_json(export_path, orient='records')
+    export_path = table_manager.export_table(table_name, export_type)
 
     return FileResponse(export_path, filename=f"{table_name}.{export_type}")

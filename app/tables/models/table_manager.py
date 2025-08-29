@@ -54,11 +54,11 @@ class TableManager:
         with open(datatables_path, 'wb') as f:
             pickle.dump(self, f)
 
-    def to_html(self, start=False, end=False):
+    def to_html(self, page=False, n=False):
         table_html = {}
         table_len_infos = {}
         for table_name, table in self.tables.items():
-            table_html[table_name] = table.to_html(display_len=self.display_len, start=start, end=end)
+            table_html[table_name] = table.to_html(display_len=self.display_len, page=page, n=n)
             table_len_infos[table_name] = {
                 'total_len': len(table.content.index),
                 'display_len': self.display_len
@@ -70,3 +70,10 @@ class TableManager:
         if not table:
             return None
         return table.get_col_info(column_idx)
+
+    def export_table(self, table_name: str, export_type: str):
+        export_dir = os.path.join(self.project.path, "exports")
+        os.makedirs(export_dir, exist_ok=True)
+        export_path = os.path.join(export_dir, f"{table_name}.{export_type}")
+        self.tables.get(table_name).export(export_path, export_type)
+        return export_path
