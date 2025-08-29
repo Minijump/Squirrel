@@ -29,17 +29,14 @@ class TestDataSourcesTours:
         tour.check_elements(by_ids=[("source_file", "")])
 
         create_source_modal.fill([("source_type", "Yahoo Finance")])
-        tour.check_elements(by_ids=[("start_date", ""), ("end_date", ""), ("tickers", ""), ("interval", "1d")])
-
-        # Fill the sources info
         create_source_modal.fill([
             ("source_name", "test yahoo"),
             ("source_description", "a simple test for yahoo data source"),
             ("source_type", "Yahoo Finance"),
-            ("tickers", "[\'AU\']"),
             ("start_date", "2025-03-03"),
             ("end_date", "2025-03-21")
         ])
+        create_source_modal.add_to_list("tickers", "AU")
         with patch('yfinance.download', return_value=MOCK_YFINANCE_DATA):
             create_source_modal.submit()
 

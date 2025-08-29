@@ -1,5 +1,6 @@
 import { Input } from '/static/utils/components/input/input.js';
 import { SquirrelDictionary } from '/static/utils/widgets/dictionary_widget/dictionary_widget.js';
+import { SquirrelList } from '/static/utils/widgets/list_widget/list_widget.js';
 
 
 /**
@@ -9,6 +10,7 @@ import { SquirrelDictionary } from '/static/utils/widgets/dictionary_widget/dict
  *   - 'text': string input
  *   - 'textarea': textarea input
  *   - 'dict': squirrel dict
+ *   - 'list': squirrel list
  *   - 'number': number input
  *   - 'select': dropdown select
  *   - 'file': file input
@@ -22,6 +24,8 @@ import { SquirrelDictionary } from '/static/utils/widgets/dictionary_widget/dict
  * @property {Array<Array<string>>|Object} [select_options] - Set select input options: [['value1', 'Label 1'], ['value2', 'Label 2'], ...]
  * @property {Object} [dict_options={'create': true, 'remove': true}] - Set dict input options
  * @property {Object} [dict_default={}] - Default value for the dictionnary input
+ * @property {Object} [list_options={'create': true, 'remove': true}] - Set list input options
+ * @property {Array} [list_default=[]] - Default value for the list input
  * @property {string} [accept] - File input accept attribute (e.g., '.txt,.csv')
  * @property {string} [step='any'] - Step attribute for number inputs
  * @property {string} [className] - CSS class name(s) to add to the input element
@@ -81,6 +85,7 @@ export class Field {
 
         inputDivHTML.appendChild(input);
         if (inputInfo.type === 'dict') new SquirrelDictionary(input);
+        if (inputInfo.type === 'list') new SquirrelList(input);
         return inputDivHTML;
     }
 

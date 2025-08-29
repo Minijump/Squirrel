@@ -74,6 +74,9 @@ export class Input {
         if (type === 'dict') {
             return  new Input(type, options).createDict(options);
         }
+        if (type === 'list') {
+            return  new Input(type, options).createList(options);
+        }
         return new Input(type, options).create();
     }
 
@@ -84,6 +87,16 @@ export class Input {
             element.setAttribute('options', JSON.stringify(options.dictOptions));
         }
         element.value = JSON.stringify(options.dictDefault || {});
+        return element;
+    }
+
+    createList(options = {}) {
+        const element = document.createElement('textarea');
+        element.setAttribute('widget', 'squirrel-list');
+        if (options.listOptions) {
+            element.setAttribute('options', JSON.stringify(options.listOptions));
+        }
+        element.value = JSON.stringify(options.listDefault || []);
         return element;
     }
 }

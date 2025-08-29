@@ -131,7 +131,7 @@ There are 3 main folders:
 * Refactor/do tables/tableManager/actions UT/tours
 
 ### To Fix
-* Yahoo data sources: problem with tickers: we can say 'AU' to create source, but not when editing. Additionally, if we edit source to ['AU'] and open settings back, it is back to 'AU'
+* Yahoo data sources: default value of list field (see generateAdditionalArgs); try to use existing component? Probably the same problem for dict?
 * edit action: default values not set for dictionnaries (expl in relace vals:) => Note: the value is set by method fillData but only in the textarea, as the widget is initialized before (in addInputs), the value does not appear in the widget
 
 ### To do MVP
@@ -149,7 +149,7 @@ There are 3 main folders:
 ### To do UX
 
 ### Feature ideas
-* Widgets: lists, ...
+* Widgets: ?...
 * Basic graphs in columns inspect (chart.js, d3.js,...?)
 * Data sources
   * Give a way to secure credentials?

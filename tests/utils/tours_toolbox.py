@@ -126,6 +126,22 @@ class BaseElement:
                 break
         else:
             raise ValueError(f"Key '{key}' not found in dictionary widget")
+        
+    def add_to_list(self, field_name: str, value: str) -> None:
+        """ Add a value to a list widget """
+        list_widget_xpath = f"{self.expected_visible}//*[@name='{field_name}'][@widget='squirrel-list']"
+        list_widget = self.browser.find_element(By.XPATH, list_widget_xpath)
+        wrapper = list_widget.find_element(By.XPATH, "./preceding-sibling::div[@class='squirrel-list-widget']")
+
+        # Click add button
+        add_btn = wrapper.find_element(By.CSS_SELECTOR, ".btn-add-line")
+        add_btn.click()
+        # Fill the new row
+        rows = wrapper.find_elements(By.XPATH, ".//tbody/tr")
+        new_row = rows[-1]
+        value_input = new_row.find_element(By.XPATH, "./td[1]/input")
+        value_input.clear()
+        value_input.send_keys(value)
 
 
 class App(BaseElement):    

@@ -21,10 +21,10 @@ class DataSourceYahooFinance(DataSourceAPI):
     def get_source_specific_args(cls, is_settings=False):
         return {
             "tickers": {
-                "type": "text",
+                "type": "list",
                 "label": "Tickers",
                 "required": True,
-                "info": "With format: ['ticker1', 'ticker2', ...]",
+                "info": "Enter each ticker symbol in a separate row",
             },
             "start_date": {
                 "type": "date",
