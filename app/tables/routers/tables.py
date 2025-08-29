@@ -68,7 +68,6 @@ async def get_action_args(request: Request, action_name: str, project_dir: str =
 async def get_col_infos(request: Request, project_dir: str, table: str, column_name: str, column_idx: str):
     table_manager = await TableManager.init_from_project_dir(project_dir, lazy=True)
     col_infos = table_manager.get_col_info(table, column_idx)
-
     return col_infos
 
 @router.post("/tables/export_table/")
@@ -77,11 +76,10 @@ async def export_table(request: Request):
     """ Returns a FileResponse to export the selected file"""
     table_name, export_type, project_dir = await _get_form_data_info(request, ["table_name", "export_type", "project_dir"])
 
-    pipeline = Pipeline(project_dir)
-    tables = await pipeline.run_pipeline()
-    df = tables[table_name]
+    table_manager = await TableManager.init_from_project_dir(project_dir, lazy=True)
+    df = table_manager.tables[table_name].content
 
-    export_dir = os.path.join(os.getcwd(), "_projects", project_dir, "exports")
+    export_dir = os.path.join(table_manager.project.path, "exports")
     os.makedirs(export_dir, exist_ok=True)
     export_path = os.path.join(export_dir, f"{table_name}.{export_type}")
 
