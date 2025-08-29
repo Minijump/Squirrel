@@ -57,7 +57,6 @@ async def test_create_source_csv(temp_project_dir_fixture):
 
 # XLSX Tests
 @pytest.mark.asyncio
-@pytest.mark.debug
 async def test_create_source_xlsx(temp_project_dir_fixture):
     import pandas as pd
     from unittest.mock import patch 

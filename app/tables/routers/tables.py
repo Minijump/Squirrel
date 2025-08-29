@@ -15,28 +15,18 @@ from app.tables.models.table_manager import TableManager
 @router.get("/tables/")
 @squirrel_error
 async def tables(request: Request, project_dir: str):
-    exception = False
-    tables = {}
-    try:
-        pipeline = Pipeline(project_dir)
-        tables = await pipeline.run_pipeline()
-    except Exception as e:
-        exception = e
-        table_html = {}
-        table_len_infos = {}
-    finally:
-        if not exception:
-            tables.save_tables()
-            table_html, table_len_infos = tables.to_html()
+    pipeline = Pipeline(project_dir)
+    tables = await pipeline.run_pipeline()
+    tables.save_tables()
+    table_html, table_len_infos = tables.to_html()
+    project = Project.instantiate_from_dir(project_dir)
+    sources = project.get_sources()
 
-        project = Project.instantiate_from_dir(project_dir)
-        sources = project.get_sources()
-
-        return templates.TemplateResponse(
-            request,
-            "tables/templates/tables.html",
-            {"table": table_html, "table_len_infos": table_len_infos, "project_dir": project_dir, "sources": sources, "exception": exception}
-        )
+    return templates.TemplateResponse(
+        request,
+        "tables/templates/tables.html",
+        {"table": table_html, "table_len_infos": table_len_infos, "project_dir": project_dir, "sources": sources}
+    )
 
 @router.get("/tables/pager/")
 @squirrel_error

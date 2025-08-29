@@ -25,7 +25,7 @@
         </aside>
 
         <main class="table-main"> 
-            {% if table and not exception %}
+            {% if table %}
                 <div class="table-select-btn-div">
                     {% for name, html_table in table.items() %}
                         <button 
@@ -84,35 +84,25 @@
                     </div>
                 {% endfor %}
             {% else %}
-                {% if exception %}
-                    <div class="error-box">
-                        <h3>
-                            <i class="fas fa-exclamation-triangle"></i> Error
-                        </h3>
-                        <p>An error occurred in Pipeline:</p>
-                        <p>{{ exception }}</p>
-                    </div>
-                {% else %}
-                    <div class="error-box" style="border: 0; height: 100%;">
-                        <h3>
-                            <i class="fas fa-table" style="color: var(--first-secondary-color);"></i> No Tables Yet
-                        </h3>
-                        {% if not sources %}
-                            <p style="color: var(--secondary-text-color); margin-bottom: 30px;">
-                                First, create your first Data source
-                            </p>
-                            <a href="/data_sources/?project_dir={{ project_dir }}" class="btn-primary" style="padding: 12px 24px; font-size: 16px; text-decoration: none; display: inline-block;">
-                                <i class="fas fa-plus" style="margin-right: 8px;"></i>Create Data Source
-                            </a>
-                        {% endif %}
+                <div class="error-box" style="border: 0; height: 100%;">
+                    <h3>
+                        <i class="fas fa-table" style="color: var(--first-secondary-color);"></i> No Tables Yet
+                    </h3>
+                    {% if not sources %}
                         <p style="color: var(--secondary-text-color); margin-bottom: 30px;">
-                            Create your first table to get started with data analysis
+                            First, create your first Data source
                         </p>
-                        <button onclick="openSidebarActionForm('CreateTable', { 'no_table': true }, 'Create Table');" class="btn-primary" style="padding: 12px 24px; font-size: 16px;">
-                            <i class="fas fa-plus" style="margin-right: 8px;"></i>Create Table
-                        </button>
-                    </div>
-                {% endif %}
+                        <a href="/data_sources/?project_dir={{ project_dir }}" class="btn-primary" style="padding: 12px 24px; font-size: 16px; text-decoration: none; display: inline-block;">
+                            <i class="fas fa-plus" style="margin-right: 8px;"></i>Create Data Source
+                        </a>
+                    {% endif %}
+                    <p style="color: var(--secondary-text-color); margin-bottom: 30px;">
+                        Create your first table to get started with data analysis
+                    </p>
+                    <button onclick="openSidebarActionForm('CreateTable', { 'no_table': true }, 'Create Table');" class="btn-primary" style="padding: 12px 24px; font-size: 16px;">
+                        <i class="fas fa-plus" style="margin-right: 8px;"></i>Create Table
+                    </button>
+                </div>
             {% endif %}
 
             {% include 'tables/templates/info_col_modal.html' %}
