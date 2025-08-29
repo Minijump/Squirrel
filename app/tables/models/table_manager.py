@@ -34,7 +34,8 @@ class TableManager:
     @staticmethod
     async def _load_table_manager_from_pipeline_run(project_dir):
         pipeline = Pipeline(project_dir)
-        table_manager = await pipeline.run_pipeline()
+        tables = await pipeline.run_pipeline()
+        table_manager = TableManager(tables, project_dir)
         table_manager._save_tables()
         return table_manager
 

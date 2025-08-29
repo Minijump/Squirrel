@@ -125,11 +125,12 @@ class CreateTable(Action):
             if os.path.exists(data_tables_path):
                 with open(data_tables_path, 'rb') as f:
                     table_manager = pickle.load(f)
+                    tables = table_manager.tables
             else:
                 pipeline = Pipeline(project_dir)
-                table_manager = await pipeline.run_pipeline()
+                tables = await pipeline.run_pipeline()
 
-            for table_name, table in table_manager.tables.items():
+            for table_name, table in tables.items():
                 available_tables.append((table_name, table_name))
         except Exception:
             available_tables = []

@@ -75,8 +75,8 @@ def test_add_action(temp_project_dir_fixture):
 async def test_run_pipeline(temp_project_dir_fixture):
     pipeline = Pipeline(MOCK_PROJECT)
 
-    table_manager = await pipeline.run_pipeline()
+    tables = await pipeline.run_pipeline()
 
-    assert table_manager is not None, "Should return tables"
-    assert isinstance(table_manager, TableManager), "Should return a TableManager instance"
-    assert table_manager.tables.get("ordered") is not None, "Should contain 'ordered' table"
+    assert tables is not None, "Should return tables"
+    assert isinstance(tables, dict), "Should return a dict of tables"
+    assert tables.get("ordered") is not None, "Should contain 'ordered' table"

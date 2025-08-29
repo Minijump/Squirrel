@@ -61,8 +61,6 @@ class Pipeline:
         self._save_actions()
     
     async def run_pipeline(self):
-        from app.tables.models.table_manager import TableManager  #!!! circular import
-        # TODO: should returns a dict of tables? TableManager creation should be done elsewhere
         self._load_actions()
         tables = {}
         for i, pipeline_action in enumerate(self.actions):              
@@ -71,4 +69,4 @@ class Pipeline:
             exec(code, globals(), local_vars)
             tables.update(local_vars['tables'])
 
-        return TableManager(tables, self.project_dir)
+        return tables
