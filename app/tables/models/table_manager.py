@@ -10,7 +10,7 @@ class TableManager:
     def __init__(self, tables: dict[str, pd.DataFrame], project_dir: str):
         self.project_dir = project_dir
         self.project = Project.instantiate_from_dir(project_dir)
-        self.tables = self._create_table(tables)
+        self.tables = self._create_tables(tables)
         self.display_len = self._get_project_display_len()
 
     @classmethod
@@ -25,20 +25,20 @@ class TableManager:
     @staticmethod
     def _load_table_manager_from_file(project_dir):
         datatables_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_tables.pkl")
-        if not os.path.exists(datatables_path):
+        try:
+            with open(datatables_path, 'rb') as f:
+                return pickle.load(f)
+        except FileNotFoundError:
             return False
-        with open(datatables_path, 'rb') as f:
-            table_manager = pickle.load(f)
-            return table_manager
     
     @staticmethod
     async def _load_table_manager_from_pipeline_run(project_dir):
         pipeline = Pipeline(project_dir)
         table_manager = await pipeline.run_pipeline()
-        table_manager.save_tables()
+        table_manager._save_tables()
         return table_manager
 
-    def _create_table(self, tables: dict):
+    def _create_tables(self, tables: dict):
         all_tables = {}
         for table_name, table_content in tables.items():
             all_tables[table_name] = Table(table_name, table_content)
@@ -49,8 +49,8 @@ class TableManager:
         display_len = manifest_data.get('misc', {}).get("table_len", 10)
         return display_len
 
-    def save_tables(self):
-        datatables_path = os.path.join( os.getcwd(), "_projects", self.project_dir, "data_tables.pkl")
+    def _save_tables(self):
+        datatables_path = os.path.join(self.project.path, "data_tables.pkl")
         with open(datatables_path, 'wb') as f:
             pickle.dump(self, f)
 
@@ -67,8 +67,6 @@ class TableManager:
 
     def get_col_info(self, table_name: str, column_idx: str):
         table = self.tables.get(table_name)
-        if not table:
-            return None
         return table.get_col_info(column_idx)
 
     def export_table(self, table_name: str, export_type: str):

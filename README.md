@@ -127,7 +127,6 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
-* Imp table/table_manager classes to simplify the tables controllers
 * Change the way the Action class is selected (such as data sources, a factory?) + Check/Refactor Actions (that were moved inside pipeline folder) 
 * Refactor/do tables/tableManager/actions UT/tours
 
