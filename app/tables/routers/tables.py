@@ -4,7 +4,6 @@ from fastapi import Request
 from fastapi.responses import FileResponse, RedirectResponse
 
 from app import router, templates
-from app.projects.models.project import Project
 from app.pipelines.models.actions_utils import TABLE_ACTION_REGISTRY
 from app.utils.form_utils import squirrel_error, squirrel_action_error, _get_form_data_info
 from app.pipelines.models.pipeline import Pipeline
@@ -15,12 +14,9 @@ from app.tables.models.table_manager import TableManager
 @router.get("/tables/")
 @squirrel_error
 async def tables(request: Request, project_dir: str):
-    pipeline = Pipeline(project_dir)
-    tables = await pipeline.run_pipeline()
-    tables.save_tables()
-    table_html, table_len_infos = tables.to_html()
-    project = Project.instantiate_from_dir(project_dir)
-    sources = project.get_sources()
+    table_manager = await TableManager.init_from_project_dir(project_dir)
+    table_html, table_len_infos = table_manager.to_html()
+    sources = table_manager.project.get_sources()
 
     return templates.TemplateResponse(
         request,
@@ -31,10 +27,7 @@ async def tables(request: Request, project_dir: str):
 @router.get("/tables/pager/")
 @squirrel_error
 async def tables_pager(request: Request, project_dir: str, table_name: str, page: int, n: int):
-    table_manager = TableManager.load_tables(project_dir)
-    if not table_manager:
-        pipeline = Pipeline(project_dir)
-        table_manager = await pipeline.run_pipeline()
+    table_manager = await TableManager.init_from_project_dir(project_dir, lazy=True)
     table = table_manager.tables.get(table_name)
     start = page * n
     end = start + n
@@ -73,10 +66,7 @@ async def get_action_args(request: Request, action_name: str, project_dir: str =
 @router.get("/tables/column_infos/")
 @squirrel_error
 async def get_col_infos(request: Request, project_dir: str, table: str, column_name: str, column_idx: str):
-    table_manager = TableManager.load_tables(project_dir)
-    if not table_manager:
-        pipeline = Pipeline(project_dir)
-        table_manager = await pipeline.run_pipeline()
+    table_manager = await TableManager.init_from_project_dir(project_dir, lazy=True)
     col_infos = table_manager.get_col_info(table, column_idx)
 
     return col_infos

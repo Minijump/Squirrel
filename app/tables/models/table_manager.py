@@ -4,8 +4,28 @@ import pandas as pd
 import pickle
 
 from .table import Table
+from app.pipelines.models.pipeline import Pipeline
+from app.projects.models.project import Project
 
 class TableManager:
+    def __init__(self, tables: dict[str, pd.DataFrame], project_dir: str):
+        self.project_dir = project_dir
+        self.tables = self._create_table(tables)
+        self.display_len = self._get_project_display_len()
+        self.project = Project.instantiate_from_dir(project_dir)
+
+    @classmethod
+    async def init_from_project_dir(cls, project_dir: str, lazy: bool = False):
+        if lazy:
+            table_manager = cls.load_tables(project_dir)
+            if table_manager:
+                return table_manager
+        pipeline = Pipeline(project_dir)
+        table_manager = await pipeline.run_pipeline()
+        table_manager.save_tables()
+        return table_manager
+
+    @staticmethod
     def load_tables(project_dir):
         datatables_path = os.path.join( os.getcwd(), "_projects", project_dir, "data_tables.pkl")
         if os.path.exists(datatables_path):
@@ -13,11 +33,6 @@ class TableManager:
                 table_manager = pickle.load(f)
             return table_manager
         return False
-
-    def __init__(self, tables: dict[str, pd.DataFrame], project_dir: str):
-        self.project_dir = project_dir
-        self.tables = self._create_table(tables)
-        self.display_len = self._get_project_display_len()
 
     def _create_table(self, tables: dict):
         all_tables = {}
