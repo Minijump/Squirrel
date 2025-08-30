@@ -41,7 +41,7 @@ async def add_action(request: Request):
 @router.get("/tables/get_action_args/")
 async def get_action_args(request: Request, action_name: str, project_dir: str = None):
     action_instance = ActionFactory.init_action({"action_name": action_name})
-    args = await action_instance.get_args(kwargs={"project_dir": project_dir}) # TODO: make get_args a class function
+    args = await action_instance.get_args(kwargs={"project_dir": project_dir})
     return args
 
 @router.get("/tables/column_infos/")

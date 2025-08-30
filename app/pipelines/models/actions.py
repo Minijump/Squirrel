@@ -1,9 +1,7 @@
-import os
-import pickle
-
 from .actions_utils import convert_sq_action_to_python
 from .action_factory import table_action_type
 from app.data_sources.models.data_source_factory import DataSourceFactory
+from app.tables.models.table_manager import TableManager
 from app.projects.models.project import Project
 
 class Action:
@@ -106,42 +104,20 @@ class CreateTable(Action):
         self.name = f"""Create table '{request.get('table_name', '?')}'"""
 
     async def get_args(self, kwargs=False):
-        from app.pipelines.models.pipeline import Pipeline # !! 'circular' dependency
-
         args = await super().get_args(kwargs)
         project_dir = kwargs.get("project_dir")
         if not project_dir:
             return args
-        try:
-            project = Project.instantiate_from_dir(project_dir)
-            sources = project.get_sources()
-            available_data_sources = [(s.directory, s.name) for s in sources]
-        except Exception:
-            available_data_sources = []
 
-        # available tables (try to read the cached pickle file first)
-        available_tables = []
-        data_tables_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_tables.pkl")
-        try:
-            if os.path.exists(data_tables_path):
-                with open(data_tables_path, 'rb') as f:
-                    table_manager = pickle.load(f)
-                    tables = table_manager.tables
-            else:
-                pipeline = Pipeline(project_dir)
-                tables = await pipeline.run_pipeline()
+        project = Project.instantiate_from_dir(project_dir)
+        sources = project.get_sources()
+        available_data_sources = [(s.directory, s.name) for s in sources]
 
-            for table_name, table in tables.items():
-                available_tables.append((table_name, table_name))
-        except Exception:
-            available_tables = []
+        table_manager = await TableManager.init_from_project_dir(project_dir, lazy=True)
+        available_tables = [(name, name) for name in table_manager.tables.keys()]
 
-        # inject into args if the expected keys exist
-        if 'data_source_dir' in args:
-            args['data_source_dir']['select_options'] = available_data_sources
-        if 'table_df' in args:
-            args['table_df']['select_options'] = available_tables
-
+        args['data_source_dir']['select_options'] = available_data_sources
+        args['table_df']['select_options'] = available_tables
         return args
 
     async def get_code(self):
