@@ -2,10 +2,9 @@ from fastapi import Request
 from fastapi.responses import FileResponse, RedirectResponse
 
 from app import router, templates
-from app.pipelines.models.actions_utils import TABLE_ACTION_REGISTRY
 from app.utils.form_utils import squirrel_error, squirrel_action_error, _get_form_data_info
 from app.pipelines.models.pipeline import Pipeline
-from app.pipelines.models.pipeline_action import PipelineAction
+from app.pipelines.models.action_factory import ActionFactory
 from app.tables.models.table_manager import TableManager
 
 
@@ -33,28 +32,16 @@ async def tables_pager(request: Request, project_dir: str, table_name: str, page
 async def add_action(request: Request):
     form_data = await request.form()
     project_dir = form_data.get("project_dir")
-    action_name = form_data.get("action_name")
 
-    ActionClass = TABLE_ACTION_REGISTRY.get(action_name)
-    if not ActionClass:
-        raise ValueError(f"Action {action_name} not found")
-    action_instance = ActionClass(form_data)
-
-    pipeline = Pipeline(project_dir)
-    pipeline_action = PipelineAction(pipeline, action_instance)
-    await pipeline_action.add_to_pipeline()
+    action_instance = ActionFactory.init_action(form_data)
+    Pipeline(project_dir).add_action(action_instance)
 
     return RedirectResponse(url=f"/tables/?project_dir={project_dir}", status_code=303)                
 
 @router.get("/tables/get_action_args/")
 async def get_action_args(request: Request, action_name: str, project_dir: str = None):
-    ActionClass = TABLE_ACTION_REGISTRY.get(action_name)
-    if not ActionClass:
-        raise ValueError(f"Action {action_name} not found")
-
-    action_instance = ActionClass({})
-    args = await action_instance.get_args(kwargs={"project_dir": project_dir})
-
+    action_instance = ActionFactory.init_action({"action_name": action_name})
+    args = await action_instance.get_args(kwargs={"project_dir": project_dir}) # TODO: make get_args a class function
     return args
 
 @router.get("/tables/column_infos/")

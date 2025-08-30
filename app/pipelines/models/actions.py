@@ -1,7 +1,8 @@
 import os
 import pickle
 
-from .actions_utils import table_action_type, convert_sq_action_to_python
+from .actions_utils import convert_sq_action_to_python
+from .action_factory import table_action_type
 from app.data_sources.models.data_source_factory import DataSourceFactory
 from app.projects.models.project import Project
 

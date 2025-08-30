@@ -1,11 +1,3 @@
-# Decorators ------------------------------------------------------------------
-# On Classes, to add new actions in registry
-TABLE_ACTION_REGISTRY = {}
-def table_action_type(cls):
-    TABLE_ACTION_REGISTRY[cls.__name__] = cls
-    return cls
-
-# Misc methods ---------------------------------------------------------------------------
 def convert_sq_action_to_python(code, actual_table_name=None, is_sq_action=True):
     """
     t[t_name] means 'table with name t_name' and is accessed by tables[t_name]

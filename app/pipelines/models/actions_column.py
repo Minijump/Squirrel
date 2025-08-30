@@ -1,7 +1,9 @@
 import ast
 import numpy as np
 
-from .actions_utils import table_action_type, convert_col_idx
+from .actions_utils import convert_col_idx
+from .action_factory import table_action_type
+
 from .actions import Action
 
 

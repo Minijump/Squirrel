@@ -4,7 +4,6 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.pipelines.models.pipeline import Pipeline
-from app.tables.models.table_manager import TableManager
 from tests import MOCK_PROJECT
 
 
@@ -54,7 +53,6 @@ def test_delete_action(temp_project_dir_fixture):
 def test_add_action(temp_project_dir_fixture):
     pipeline = Pipeline(MOCK_PROJECT)
     from app.pipelines.models.actions import AddColumn
-    from app.pipelines.models.pipeline_action import PipelineAction
     action_3 = AddColumn(
         {
             "col_name": "price (copy)",
@@ -63,9 +61,8 @@ def test_add_action(temp_project_dir_fixture):
             "col_value": "'price'"
         }
     )
-    pipeline_action_3 = PipelineAction(pipeline, action_3)
 
-    pipeline.add_action(pipeline_action_3)
+    pipeline.add_action(action_3)
 
     actions = pipeline.actions
     assert len(actions) == 4, "Should contain 4 actions after adding one"

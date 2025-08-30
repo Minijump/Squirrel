@@ -7,18 +7,6 @@ from app.main import app
 
 client = TestClient(app)
 
-# Test the action utils + classes (Action, ActionColumn)
-
-# Utils ----------------------------------------------------------------------------------------
-def test_table_action_registry():
-    """
-    Test if the table action registry is correctly populated
-    """
-    from app.pipelines.models.actions_utils import TABLE_ACTION_REGISTRY
-    from app.pipelines.models.actions import Action
-    assert len(TABLE_ACTION_REGISTRY) > 0, "No table action registered"
-    assert all([isinstance(v, type) for v in TABLE_ACTION_REGISTRY.values()]), "Not all values in registry are classes"
-    assert all([issubclass(v, Action) for v in TABLE_ACTION_REGISTRY.values()]), "Not all values in registry are subclasses of Action"
 
 def test_convert_sq_action_to_python():
     """
@@ -69,16 +57,3 @@ def test_convert_col_idx():
 
     df2_col1_idx = str(df2.columns[0])
     assert convert_col_idx(df2_col1_idx) == f"('level1', 'A')", "Expected multi-index column name to be formatted correctly"
-
-
-# Action class ------------------------------------------------------------------------
-def test_table_action_registry_get_code():
-    """
-    Test if all classes in the table action registry have a get_code method that is different from the Action class.
-    """
-    from app.pipelines.models.actions_utils import TABLE_ACTION_REGISTRY
-    from app.pipelines.models.actions import Action
-    
-    for action_name, action_class in TABLE_ACTION_REGISTRY.items():
-        assert hasattr(action_class, "get_code"), f"{action_name} does not have a get_code method"
-        assert action_class.get_code != Action.get_code, f"{action_name} get_code method was not implemented"

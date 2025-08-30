@@ -55,9 +55,9 @@ class Pipeline:
         del self.actions[delete_action_id]
         self._save_actions()
     
-    def add_action(self, action: PipelineAction):
+    def add_action(self, action):
         self._load_actions()
-        self.actions.append(action)
+        self.actions.append(PipelineAction(self, action))
         self._save_actions()
     
     async def run_pipeline(self):
