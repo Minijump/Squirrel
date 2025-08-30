@@ -20,11 +20,10 @@ class ActionColumn(Action):
         form_data = self.form_data
         data = []
         for arg in args_list:
+            arg_data = form_data.get(arg)
             if arg == 'col_idx':
-                col_idx = convert_col_idx(form_data.get('col_idx'))
-                data.append(col_idx)
-                continue
-            data.append(form_data.get(arg))
+                arg_data = convert_col_idx(arg_data)
+            data.append(arg_data)
         return tuple(data)
     
 @table_action_type

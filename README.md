@@ -127,7 +127,6 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
-* Check/Refactor Actions
 * Refactor/do tables/tableManager/actions/pipeline UT/tours
 
 ### To Fix
