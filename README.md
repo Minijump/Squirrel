@@ -127,7 +127,6 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
-* Refactor/do tables/tableManager/actions/pipeline UT/tours
 
 ### To Fix
 * Yahoo data sources: default value of list field (see generateAdditionalArgs); try to use existing component? Probably the same problem for dict?
@@ -142,7 +141,7 @@ There are 3 main folders:
   * add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch (ie: somewhere where a can type sum(col1, col2)), ...
   * add dynamic documentation (ie: pd.Series.replace.__doc__)
 * Add actions (expl: Possibility to edit a cell value directly)
-* check if needed to Add/refactor tours/UT?
+* Add/refactor tours/UT
 * Widgets: start autocomplete Squirrel action
 
 ### To do UX
