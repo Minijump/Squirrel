@@ -5,14 +5,13 @@ from app.tables.models.table_manager import TableManager
 from app.projects.models.project import Project
 
 class Action:
-    def __init__(self, request):
-        self.form_data = dict(request)
+    def __init__(self, form_data):
+        self.form_data = dict(form_data)
         self.args = {}
         self.name = ""
 
     async def _get(self, args_list):
-        form_data = self.form_data
-        return (form_data.get(arg) for arg in args_list)
+        return (self.form_data.get(arg) for arg in args_list)
     
     async def get_code(self):
         raise NotImplementedError("Subclasses must implement this method")
@@ -22,15 +21,15 @@ class Action:
 
 @table_action_type
 class AddColumn(Action):
-    def __init__(self, request):
-        super().__init__(request)
+    def __init__(self, form_data):
+        super().__init__(form_data)
         self.args = {
             "col_name": {"type": "text", "label": "Col. Name"},
             "value_type": {"type": "select", "label": "Value Type", 
                            "select_options": [("sq_action", "Squirrel action"), ("python", "Python")]},
             "col_value": {"type": "textarea", "label": "Col. Value"},
         }
-        self.name = f"Add column '{request.get('col_name', '?')}' in table '{request.get('table_name', '?')}'"
+        self.name = f"Add column '{form_data.get('col_name', '?')}' in table '{form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, col_value, value_type = await self._get(["table_name", "col_name", "col_value", "value_type"])
@@ -40,15 +39,15 @@ class AddColumn(Action):
 
 @table_action_type
 class AddRow(Action):
-    def __init__(self, request):
-        super().__init__(request)
+    def __init__(self, form_data):
+        super().__init__(form_data)
         self.args = {
             "new_rows": {
                 "type": "textarea", 
                 "label": "New rows", 
                 "info": """With format<br/> [<br/>{'Col1': Value1, 'Col2': Value2, ...},<br/> {'Col1': Value3 ...<br/>]"""},
         }
-        self.name = f"Add row '{request.get('new_rows', '?')}' in table '{request.get('table_name', '?')}'"
+        self.name = f"Add row '{form_data.get('new_rows', '?')}' in table '{form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, new_rows = await self._get(["table_name", "new_rows"])
@@ -58,12 +57,12 @@ class AddRow(Action):
 
 @table_action_type
 class DeleteRow(Action):
-    def __init__(self, request):
-        super().__init__(request)
+    def __init__(self, form_data):
+        super().__init__(form_data)
         self.args = {
             "delete_domain": {"type": "textarea", "label": "Domain", "info": "With format Col1 &lt; Col2, Colx == 'Value',...."},
         }
-        self.name = f"Delete rows with domain: '{request.get('delete_domain', '?')}' in table '{request.get('table_name', '?')}'"
+        self.name = f"Delete rows with domain: '{form_data.get('delete_domain', '?')}' in table '{form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, delete_domain = await self._get(["table_name", "delete_domain"])
@@ -72,12 +71,12 @@ class DeleteRow(Action):
     
 @table_action_type
 class KeepRow(Action):
-    def __init__(self, request):
-        super().__init__(request)
+    def __init__(self, form_data):
+        super().__init__(form_data)
         self.args = {
             "keep_domain": {"type": "textarea", "label": "Domain", "info": "With format Col1 &lt; Col2, Colx == 'Value',...."},
         }
-        self.name = f"Keep rows with domain: '{request.get('keep_domain', '?')}' in table '{request.get('table_name', '?')}'"
+        self.name = f"Keep rows with domain: '{form_data.get('keep_domain', '?')}' in table '{form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, keep_domain = await self._get(["table_name", "keep_domain"])
@@ -86,8 +85,8 @@ class KeepRow(Action):
 
 @table_action_type
 class CreateTable(Action):
-    def __init__(self, request):
-        super().__init__(request)
+    def __init__(self, form_data):
+        super().__init__(form_data)
         # Selections choices are set afterward (in get_action_args) (because we need the project_dir)
         self.args = {
             "table_name": {"type": "text", "label": "Table Name", "placeholder": 'Enter the new table name'},
@@ -101,7 +100,7 @@ class CreateTable(Action):
                           "select_options": [],
                           "onchange_visibility": ["TableCreation_source_creation_type", "other_tables"]}
         }
-        self.name = f"""Create table '{request.get('table_name', '?')}'"""
+        self.name = f"""Create table '{form_data.get('table_name', '?')}'"""
 
     async def get_args(self, kwargs=False):
         args = await super().get_args(kwargs)
@@ -136,15 +135,15 @@ class CreateTable(Action):
     
 @table_action_type
 class CustomAction(Action):
-    def __init__(self, request):
-        super().__init__(request)
+    def __init__(self, form_data):
+        super().__init__(form_data)
         self.args = {
             "custom_action_type": {"type": "select", "label": "Value Type", 
             "select_options": [("sq_action", "Squirrel action"), ("python", "Python")]},
             "custom_action_code": {"type": "textarea", "label": "Python"},
             "custom_action_name": {"type": "text", "label": "Action Name"},
         }
-        self.name = f"Custom action '{request.get('custom_action_name', '?')}'"
+        self.name = f"Custom action '{form_data.get('custom_action_name', '?')}'"
 
     async def get_code(self):
         custom_action_code, custom_action_name, custom_action_type, default_table_name = await self._get(["custom_action_code", "custom_action_name", "custom_action_type", "default_table_name"])
@@ -154,8 +153,8 @@ class CustomAction(Action):
 
 @table_action_type
 class MergeTables(Action):
-    def __init__(self, request):
-        super().__init__(request)
+    def __init__(self, form_data):
+        super().__init__(form_data)
         self.args = {
             "table2": {"type": "text", "label": "Table to merge"},
             "on": {"type": "text", "label": "On", "info": "Column name (must be in both tables)"},
@@ -163,7 +162,7 @@ class MergeTables(Action):
                     "select_options": [("inner", "Inner"), ("outer", "Outer"), ("left", "Left"), ("right", "Right")],
                     "info": "Type of merge, see pandas merge doc (similar to SQL JOIN)"},
         }
-        self.name = f"Merge table '{request.get('table_name', '?')}' with '{request.get('table2', '?')}'"
+        self.name = f"Merge table '{form_data.get('table_name', '?')}' with '{form_data.get('table2', '?')}'"
 
     async def get_code(self):
         table_name, table2, on, how = await self._get(["table_name", "table2", "on", "how"])
@@ -172,12 +171,12 @@ class MergeTables(Action):
 
 @table_action_type
 class ConcatenateTables(Action):
-    def __init__(self, request):
-        super().__init__(request)
+    def __init__(self, form_data):
+        super().__init__(form_data)
         self.args = {
             "table": {"type": "text", "label": "Table to concat", "info": "Table name to concatenate (SQL UNION) into actual table"},
         }
-        self.name = f"Concatenate table '{request.get('table_name', '?')}' with '{request.get('table', '?')}'"
+        self.name = f"Concatenate table '{form_data.get('table_name', '?')}' with '{form_data.get('table', '?')}'"
 
     async def get_code(self):
         table_name, table = await self._get(["table_name", "table"])
@@ -186,8 +185,8 @@ class ConcatenateTables(Action):
 
 @table_action_type
 class GroupBy(Action):
-    def __init__(self, request):
-        super().__init__(request)
+    def __init__(self, form_data):
+        super().__init__(form_data)
         # agg is mandatory, without agg it returns a dfGroupBy object whiwh can not be displayed yet
         self.args = {
             "groupby": {"type": "textarea", "label": "Group by", 
@@ -195,7 +194,7 @@ class GroupBy(Action):
             "agg": {"type": "dict", "label": "Aggregation",
                     "info": "Aggregation functions to apply to each group </br> i.e. sum or {'col1': 'sum', 'col2': 'mean'}"},
         }
-        self.name = f"Group by {request.get('groupby', '?')} in table '{request.get('table_name', '?')}'"
+        self.name = f"Group by {form_data.get('groupby', '?')} in table '{form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, groupby, agg = await self._get(["table_name", "groupby", "agg"])
