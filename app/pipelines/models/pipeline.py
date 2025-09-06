@@ -17,6 +17,9 @@ class Pipeline:
         with open(self.pipeline_path, 'rb') as f:
             self.actions = pickle.load(f)
 
+        for action in self.actions:
+            action.update_description()
+
     def _save_actions(self):
         with open(self.pipeline_path, 'wb') as f:
             pickle.dump(self.actions, f)

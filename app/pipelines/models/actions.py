@@ -8,7 +8,9 @@ class Action:
     def __init__(self, form_data):
         self.form_data = dict(form_data)
         self.args = {}
-        self.name = ""
+
+    def get_name(self):
+        return False
 
     async def _get(self, args_list):
         return (self.form_data.get(arg) for arg in args_list)
@@ -29,7 +31,9 @@ class AddColumn(Action):
                            "select_options": [("sq_action", "Squirrel action"), ("python", "Python")]},
             "col_value": {"type": "textarea", "label": "Col. Value"},
         }
-        self.name = f"Add column '{form_data.get('col_name', '?')}' in table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Add column '{self.form_data.get('col_name', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, col_value, value_type = await self._get(["table_name", "col_name", "col_value", "value_type"])
@@ -47,7 +51,9 @@ class AddRow(Action):
                 "label": "New rows", 
                 "info": """With format<br/> [<br/>{'Col1': Value1, 'Col2': Value2, ...},<br/> {'Col1': Value3 ...<br/>]"""},
         }
-        self.name = f"Add row '{form_data.get('new_rows', '?')}' in table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Add rows in table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, new_rows = await self._get(["table_name", "new_rows"])
@@ -62,7 +68,9 @@ class DeleteRow(Action):
         self.args = {
             "delete_domain": {"type": "textarea", "label": "Domain", "info": "With format Col1 &lt; Col2, Colx == 'Value',...."},
         }
-        self.name = f"Delete rows with domain: '{form_data.get('delete_domain', '?')}' in table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Delete rows with domain: '{self.form_data.get('delete_domain', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, delete_domain = await self._get(["table_name", "delete_domain"])
@@ -76,7 +84,9 @@ class KeepRow(Action):
         self.args = {
             "keep_domain": {"type": "textarea", "label": "Domain", "info": "With format Col1 &lt; Col2, Colx == 'Value',...."},
         }
-        self.name = f"Keep rows with domain: '{form_data.get('keep_domain', '?')}' in table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Keep rows with domain: '{self.form_data.get('keep_domain', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, keep_domain = await self._get(["table_name", "keep_domain"])
@@ -100,7 +110,9 @@ class CreateTable(Action):
                           "select_options": [],
                           "onchange_visibility": ["TableCreation_source_creation_type", "other_tables"]}
         }
-        self.name = f"""Create table '{form_data.get('table_name', '?')}'"""
+
+    def get_name(self):
+        return f"""Create table '{self.form_data.get('table_name', '?')}'"""
 
     async def get_args(self, kwargs=False):
         args = await super().get_args(kwargs)
@@ -143,7 +155,9 @@ class CustomAction(Action):
             "custom_action_code": {"type": "textarea", "label": "Python"},
             "custom_action_name": {"type": "text", "label": "Action Name"},
         }
-        self.name = f"Custom action '{form_data.get('custom_action_name', '?')}'"
+
+    def get_name(self):
+        return f"Custom action '{self.form_data.get('custom_action_name', '?')}'"
 
     async def get_code(self):
         custom_action_code, custom_action_name, custom_action_type, default_table_name = await self._get(["custom_action_code", "custom_action_name", "custom_action_type", "default_table_name"])
@@ -162,7 +176,9 @@ class MergeTables(Action):
                     "select_options": [("inner", "Inner"), ("outer", "Outer"), ("left", "Left"), ("right", "Right")],
                     "info": "Type of merge, see pandas merge doc (similar to SQL JOIN)"},
         }
-        self.name = f"Merge table '{form_data.get('table_name', '?')}' with '{form_data.get('table2', '?')}'"
+
+    def get_name(self):
+        return f"Merge table '{self.form_data.get('table_name', '?')}' with '{self.form_data.get('table2', '?')}'"
 
     async def get_code(self):
         table_name, table2, on, how = await self._get(["table_name", "table2", "on", "how"])
@@ -176,7 +192,9 @@ class ConcatenateTables(Action):
         self.args = {
             "table": {"type": "text", "label": "Table to concat", "info": "Table name to concatenate (SQL UNION) into actual table"},
         }
-        self.name = f"Concatenate table '{form_data.get('table_name', '?')}' with '{form_data.get('table', '?')}'"
+
+    def get_name(self):
+        return f"Concatenate table '{self.form_data.get('table_name', '?')}' with '{self.form_data.get('table', '?')}'"
 
     async def get_code(self):
         table_name, table = await self._get(["table_name", "table"])
@@ -194,7 +212,9 @@ class GroupBy(Action):
             "agg": {"type": "dict", "label": "Aggregation",
                     "info": "Aggregation functions to apply to each group </br> i.e. sum or {'col1': 'sum', 'col2': 'mean'}"},
         }
-        self.name = f"Group by {form_data.get('groupby', '?')} in table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Group by '{self.form_data.get('groupby', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, groupby, agg = await self._get(["table_name", "groupby", "agg"])

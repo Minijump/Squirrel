@@ -30,7 +30,9 @@ class ActionColumn(Action):
 class DropColumn(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
-        self.name = f"Drop column '{form_data.get('col_name', '?')}' in table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Drop column '{self.form_data.get('col_name', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, col_idx = await self._get(["table_name", "col_name", "col_idx"])
@@ -47,7 +49,9 @@ class ReplaceVals(ActionColumn):
                              "dict_options": {'create': True, 'remove': True, 'placeholder': {'key': 'To Replace', 'value': 'Replace By'}}
                             }
         })
-        self.name = f"Replace values in column '{form_data.get('col_name', '?')}' of table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Replace values in column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, replace_vals, col_idx, col_dtype = await self._get(["table_name", "col_name", "replace_vals", "col_idx", "col_dtype"])
@@ -68,7 +72,9 @@ class RemoveUnderOver(ActionColumn):
             "lower_bound": {"type": "number", "label": "Lower Bound"},
             "upper_bound": {"type": "number", "label": "Upper Bound"},
         })
-        self.name = f"Remove values outside [{form_data.get('lower_bound', '?')}, {form_data.get('upper_bound', '?')}] of column '{form_data.get('col_name', '?')}' of table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Keep values in [{self.form_data.get('lower_bound', '?')}, {self.form_data.get('upper_bound', '?')}] of column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, lower_bound, upper_bound, col_idx = await self._get(["table_name", "col_name", "lower_bound", "upper_bound", "col_idx"])
@@ -86,7 +92,9 @@ class NLargest(ActionColumn):
                      "info": "If some lines have similar values:<br/> -'First' will keep the first one<br/> -'Last' will keep the last one<br/> -'All' will keep all of them (even if the number of elements is bigger than expected).", 
                     },
         })
-        self.name = f"Keep {form_data.get('n', '?')} largest values of column '{form_data.get('col_name', '?')}' of table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Keep {self.form_data.get('n', '?')} largest values of column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, n, keep, col_idx = await self._get(["table_name", "col_name", "n", "keep", "col_idx"])
@@ -104,7 +112,9 @@ class NSmallest(ActionColumn):
                      "info": "If some lines have similar values:<br/> -'First' will keep the first one<br/> -'Last' will keep the last one<br/> -'All' will keep all of them (even if the number of elements is bigger than expected).", 
                     },
         })
-        self.name = f"Keep {form_data.get('n', '?')} smallest values of column '{form_data.get('col_name', '?')}' of table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Keep {self.form_data.get('n', '?')} smallest values of column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, n, keep, col_idx = await self._get(["table_name", "col_name", "n", "keep", "col_idx"])
@@ -118,7 +128,9 @@ class RenameColumn(ActionColumn):
         self.args.update({
             "new_col_name": {"type": "text", "label": "New Col. Name"},
         })
-        self.name = f"Rename column '{form_data.get('col_name', '?')}' to '{form_data.get('new_col_name', '?')}' in table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Rename column '{self.form_data.get('col_name', '?')}' to '{self.form_data.get('new_col_name', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, new_col_name, col_idx = await self._get(["table_name", "col_name", "new_col_name", "col_idx"])
@@ -137,7 +149,9 @@ class CutValues(ActionColumn):
             "cut_values": {"type": "text", "label": "Cut Values", "info": "Comma separated. E.g. 0,10,20,30"},
             "cut_labels": {"type": "text", "label": "Cut Labels", "info": "Comma separated. E.g. low,middle,high'"},
         })
-        self.name = f"Cut values in column '{form_data.get('col_name', '?')}' of table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Cut values in column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, cut_values, cut_labels, col_idx = await self._get(["table_name", "col_name", "cut_values", "cut_labels", "col_idx"])
@@ -158,7 +172,9 @@ class SortColumn(ActionColumn):
                          "info": "Key must be python code with x as the col values. E.g. x.str.len(), x**2, ... (in practice this will execute: key=lambda x: ...your_input...).", 
                          "required": True, "onchange_visibility": ["SortColumn_sort_order", "custom"]},
         })
-        self.name = f"Sort column '{form_data.get('col_name', '?')}' of table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Sort column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, col_idx, sort_order, sort_key = await self._get(["table_name", "col_name", "col_idx", "sort_order", "sort_key"])
@@ -184,7 +200,9 @@ class ChangeType(ActionColumn):
                                      ("string", "String"), ("bool", "Boolean"), ("category", "Category"), 
                                      ("datetime", "Datetime")]},
                 })
-        self.name = f"Change type of column '{form_data.get('col_name', '?')}' to '{form_data.get('new_type', '?')}' in table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Change type of column '{self.form_data.get('col_name', '?')}' to '{self.form_data.get('new_type', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, new_type, col_idx = await self._get(["table_name", "col_name", "new_type", "col_idx"])
@@ -204,7 +222,9 @@ class NormalizeColumn(ActionColumn):
             "method": {"type": "select", "label": "Method", 
                        "select_options": [("min_max", "Min-Max"), ("z_score", "Z Score")]}
         })
-        self.name = f"Normalize column '{form_data.get('col_name', '?')}' of table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Normalize column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, method, col_idx = await self._get(["table_name", "col_name", "method", "col_idx"])
@@ -228,7 +248,9 @@ class HandleMissingValues(ActionColumn):
             "replace_value": {"type": "textarea", "label": "Replace Value", 
                               "required": True, "onchange_visibility": ["HandleMissingValues_action", "replace"]},
         })
-        self.name = f"Handle missing values in column '{form_data.get('col_name', '?')}' of table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Handle missing values in column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, action, replace_value, col_idx = await self._get(["table_name", "col_name", "action", "replace_value", "col_idx"])
@@ -251,7 +273,9 @@ class ApplyFunction(ActionColumn):
             "function": {"type": "textarea", "label": "Function", 
                          "info": "Function must be python code with 'row['Col_name']' as the col values. E.g. row['Col_name'].str.len(), row['Col_name'] * -1 if row['Col_name'] < 0 else row['Col_name'], ...",},
         })
-        self.name = f"Apply custom function to column '{form_data.get('col_name', '?')}' of table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Apply custom function to column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, function, col_idx = await self._get(["table_name", "col_name", "function", "col_idx"])
@@ -265,7 +289,9 @@ class ColDiff(ActionColumn):
         self.args.update({
             "periods": {"type": "number", "label": "Periods"},
         })
-        self.name = f"Calculate difference of column '{form_data.get('col_name', '?')}' of table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Calculate difference of column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, periods, col_idx = await self._get(["table_name", "col_name", "periods", "col_idx"])
@@ -285,8 +311,10 @@ class MathOperations(ActionColumn):
                         "required": False, "onchange_visibility": ["MathOperations_operation", "round"],
                         "info": "Number of decimal places to round to"},
         })
-        self.name = f"Apply {form_data.get('operation', '?')} operation to column '{form_data.get('col_name', '?')}' of table '{form_data.get('table_name', '?')}'"
 
+    def get_name(self):
+        return f"Apply {self.form_data.get('operation', '?')} operation to column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
+  
     async def get_code(self):
         table_name, col_name, operation, decimals, col_idx = await self._get(["table_name", "col_name", "operation", "decimals", "col_idx"])
         if operation == "log":
@@ -315,7 +343,9 @@ class ReplaceInCell(ActionColumn):
                       "required": True, "onchange_visibility": ["ReplaceInCell_action", "regex"]},
             "replacement": {"type": "text", "label": "Replacement"},
         })
-        self.name = f"Replace values in cell in column '{form_data.get('col_name', '?')}' of table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Replace values in cell in column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, col_idx, action, regex, replacement = await self._get(["table_name", "col_name", "col_idx", "action", "regex", "replacement"])
@@ -337,7 +367,9 @@ class FormatString(ActionColumn):
                          "select_options": [("upper", "Upper Case (HELLO WORLD)"), ("lower", "Lower Case (hello world)"), ("title", "Title Case (Hello World)"), ("capitalize", "Capitalize First Letter (Hello world)"),
                                             ("strip", "Remove start/end Whitespace (xxx)"), ("lstrip", "Remove start Whitespace (xxx )"), ("rstrip", "Remove end Whitespace ( xxx)")],},
         })
-        self.name = f"Format string in column '{form_data.get('col_name', '?')}' of table '{form_data.get('table_name', '?')}'"
+
+    def get_name(self):
+        return f"Format string in column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
     async def get_code(self):
         table_name, col_name, operation, col_idx = await self._get(["table_name", "col_name", "operation", "col_idx"])
