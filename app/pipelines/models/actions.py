@@ -8,6 +8,7 @@ class Action:
     def __init__(self, form_data):
         self.form_data = dict(form_data)
         self.args = {}
+        self.icons = []
 
     def get_name(self):
         return False
@@ -25,6 +26,7 @@ class Action:
 class AddColumn(Action):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-plus", "fas fa-columns"]
         self.args = {
             "col_name": {"type": "text", "label": "Col. Name"},
             "value_type": {"type": "select", "label": "Value Type", 
@@ -45,6 +47,7 @@ class AddColumn(Action):
 class AddRow(Action):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-plus", "fas fa-table-list"]
         self.args = {
             "new_rows": {
                 "type": "textarea", 
@@ -65,6 +68,7 @@ class AddRow(Action):
 class DeleteRow(Action):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-trash", "fas fa-table-list"]
         self.args = {
             "delete_domain": {"type": "textarea", "label": "Domain", "info": "With format Col1 &lt; Col2, Colx == 'Value',...."},
         }
@@ -81,6 +85,7 @@ class DeleteRow(Action):
 class KeepRow(Action):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-filter", "fas fa-table-list"]
         self.args = {
             "keep_domain": {"type": "textarea", "label": "Domain", "info": "With format Col1 &lt; Col2, Colx == 'Value',...."},
         }
@@ -97,6 +102,7 @@ class KeepRow(Action):
 class CreateTable(Action):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-table", "fas fa-plus-circle"]
         # Selections choices are set afterward (in get_action_args) (because we need the project_dir)
         self.args = {
             "table_name": {"type": "text", "label": "Table Name", "placeholder": 'Enter the new table name'},
@@ -149,6 +155,7 @@ class CreateTable(Action):
 class CustomAction(Action):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-code", "fas fa-cog"]
         self.args = {
             "custom_action_type": {"type": "select", "label": "Value Type", 
             "select_options": [("sq_action", "Squirrel action"), ("python", "Python")]},
@@ -169,6 +176,7 @@ class CustomAction(Action):
 class MergeTables(Action):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-code-merge", "fas fa-table"]
         self.args = {
             "table2": {"type": "text", "label": "Table to merge"},
             "on": {"type": "text", "label": "On", "info": "Column name (must be in both tables)"},
@@ -189,6 +197,7 @@ class MergeTables(Action):
 class ConcatenateTables(Action):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-link", "fas fa-table"]
         self.args = {
             "table": {"type": "text", "label": "Table to concat", "info": "Table name to concatenate (SQL UNION) into actual table"},
         }
@@ -205,6 +214,7 @@ class ConcatenateTables(Action):
 class GroupBy(Action):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-layer-group", "fas fa-chart-bar"]
         # agg is mandatory, without agg it returns a dfGroupBy object whiwh can not be displayed yet
         self.args = {
             "groupby": {"type": "textarea", "label": "Group by", 

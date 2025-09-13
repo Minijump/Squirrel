@@ -30,6 +30,7 @@ class ActionColumn(Action):
 class DropColumn(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-trash", "fas fa-columns"]
 
     def get_name(self):
         return f"Drop column '{self.form_data.get('col_name', '?')}' in table '{self.form_data.get('table_name', '?')}'"
@@ -43,6 +44,7 @@ class DropColumn(ActionColumn):
 class ReplaceVals(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-exchange-alt", "fas fa-edit"]
         self.args.update({
             "replace_vals": {"type": "dict", 
                              "label": "Replace Domain:", 
@@ -68,6 +70,7 @@ class ReplaceVals(ActionColumn):
 class RemoveUnderOver(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-cut", "fas fa-arrows-alt-h"]
         self.args.update({
             "lower_bound": {"type": "number", "label": "Lower Bound"},
             "upper_bound": {"type": "number", "label": "Upper Bound"},
@@ -85,6 +88,7 @@ class RemoveUnderOver(ActionColumn):
 class NLargest(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-arrow-up", "fas fa-sort-numeric-up"]
         self.args.update({
             "n": {"type": "number", "label": "N"},
             "keep": {"type": "select", "label": "Keep",
@@ -105,6 +109,7 @@ class NLargest(ActionColumn):
 class NSmallest(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-arrow-down", "fas fa-sort-numeric-down"]
         self.args.update({
             "n": {"type": "number", "label": "N"},
             "keep": {"type": "select", "label": "Keep",
@@ -125,6 +130,7 @@ class NSmallest(ActionColumn):
 class RenameColumn(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-tag", "fas fa-edit"]
         self.args.update({
             "new_col_name": {"type": "text", "label": "New Col. Name"},
         })
@@ -145,6 +151,7 @@ tables['{table_name}'].columns = pd.MultiIndex.from_tuples(new_cols)"""
 class CutValues(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-cut", "fas fa-chart-pie"]
         self.args.update({
             "cut_values": {"type": "text", "label": "Cut Values", "info": "Comma separated. E.g. 0,10,20,30"},
             "cut_labels": {"type": "text", "label": "Cut Labels", "info": "Comma separated. E.g. low,middle,high'"},
@@ -164,6 +171,7 @@ class CutValues(ActionColumn):
 class SortColumn(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-sort", "fas fa-columns"]
         self.args.update({
             "sort_order": {"type": "select", "label": "Sort Order", 
                            "select_options": [("ascending", "Ascending"), ("descending", "Descending"), ("custom", "Custom")], 
@@ -194,6 +202,7 @@ class SortColumn(ActionColumn):
 class ChangeType(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-exchange-alt", "fas fa-database"]
         self.args.update({
             "new_type": {"type": "select", "label": "New Type", 
                          "select_options": [("int", "Integer"), ("float", "Float"), 
@@ -218,6 +227,7 @@ class ChangeType(ActionColumn):
 class NormalizeColumn(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-balance-scale", "fas fa-chart-line"]
         self.args.update({
             "method": {"type": "select", "label": "Method", 
                        "select_options": [("min_max", "Min-Max"), ("z_score", "Z Score")]}
@@ -240,6 +250,7 @@ class NormalizeColumn(ActionColumn):
 class HandleMissingValues(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-question-circle", "fas fa-tools"]
         self.args.update({
             "action": {"type": "select", "label": "Action", 
                        "select_options": [("delete", "Delete"), ("replace", "Replace"), ("interpolate", "Interpolate")],
@@ -269,6 +280,7 @@ class HandleMissingValues(ActionColumn):
 class ApplyFunction(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-function", "fas fa-code"]
         self.args.update({
             "function": {"type": "textarea", "label": "Function", 
                          "info": "Function must be python code with 'row['Col_name']' as the col values. E.g. row['Col_name'].str.len(), row['Col_name'] * -1 if row['Col_name'] < 0 else row['Col_name'], ...",},
@@ -286,6 +298,7 @@ class ApplyFunction(ActionColumn):
 class ColDiff(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-chart-line", "fas fa-minus"]
         self.args.update({
             "periods": {"type": "number", "label": "Periods"},
         })
@@ -303,6 +316,7 @@ class ColDiff(ActionColumn):
 class MathOperations(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-calculator", "fas fa-square-root-alt"]
         self.args.update({
             "operation": {"type": "select", "label": "Operation", 
                          "select_options": [("log", "Log"), ("sqrt", "Square Root"), ("abs", "Absolute"), ("round", "Round")],
@@ -334,6 +348,7 @@ class MathOperations(ActionColumn):
 class ReplaceInCell(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-search", "fas fa-exchange-alt"]
         self.args.update({
             "action": {"type": "select", "label": "Action", 
                        "select_options": [("whitespace", "White spaces"), ("regex", "Regex")],
@@ -362,6 +377,7 @@ class ReplaceInCell(ActionColumn):
 class FormatString(ActionColumn):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.icons = ["fas fa-font", "fas fa-text-height"]
         self.args.update({
             "operation": {"type": "select", "label": "Operation", 
                          "select_options": [("upper", "Upper Case (HELLO WORLD)"), ("lower", "Lower Case (hello world)"), ("title", "Title Case (Hello World)"), ("capitalize", "Capitalize First Letter (Hello world)"),

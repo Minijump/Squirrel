@@ -38,6 +38,27 @@
     filter: brightness(1.1);
 }
 
+.action-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.action-icons {
+    display: flex;
+    gap: 5px;
+    color: var(--accent-color);
+}
+
+.action-icons i {
+    font-size: 16px;
+}
+
+.action-description {
+    flex: 1;
+}
+
 .list-edit-btn {
     background: none;
 	color: inherit;

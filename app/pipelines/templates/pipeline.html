@@ -34,7 +34,16 @@
                     {% set action_id = loop.index0 %}
                     <div data-swapy-slot="{{ action_id }}-slot">
                         <div class="action" data-swapy-item="{{ action_id }}-item">
-                            {{ action.description }}
+                            <div class="action-content">
+                                <div class="action-icons">
+                                    {% for icon in action.action.icons %}
+                                        <i class="{{ icon }}"></i>
+                                    {% endfor %}
+                                </div>
+                                <div class="action-description">
+                                    {{ action.description }}
+                                </div>
+                            </div>
                             <div>
                                 <button class="list-edit-btn" 
                                         onclick="editPipelineActionOpenModal('{{ action_id }}', '{{ action.action.__class__.__name__}}'); return false;"
