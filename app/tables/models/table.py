@@ -1,7 +1,10 @@
 import pandas as pd
 
-from app.pipelines.models.actions_utils import convert_col_idx
-
+def convert_col_idx(col_idx):
+    """Returns the idx of a pandas dataframe column"""
+    if col_idx[0] != '(':
+        col_idx = f"'{col_idx}'"
+    return col_idx
 
 class Table:
     def __init__(self, name: str, content: pd.DataFrame):

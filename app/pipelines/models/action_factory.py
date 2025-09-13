@@ -1,5 +1,6 @@
 TABLE_ACTION_REGISTRY = {}
 def table_action_type(cls):
+    from . import actions
     TABLE_ACTION_REGISTRY[cls.__name__] = cls
     return cls
 
