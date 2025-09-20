@@ -339,7 +339,7 @@ class PipelineScreen(BaseElement):
     def click_edit_action(self, by_position: int) -> Modal:
         self.browser.find_element(
             By.XPATH,
-            f"//div[@id=\'pipeline\']//div[@class=\'action\'][{by_position}]//button[contains(@class, \'list-edit-btn\')]"
+            f"//div[@id=\'pipeline\']//div[@class=\'action\'][{by_position}]//button[contains(@class, \'list-edit-btn\') and @name='edit-action-btn']"
         ).click()
         return Modal(self.browser, expected_visible="//div[@id=\'editActionModal\']")
 

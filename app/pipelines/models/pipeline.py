@@ -28,16 +28,16 @@ class Pipeline:
         self._load_actions()
         return self.actions
     
-    def get_action_data(self, action_id: int):
-        self._load_actions()
-        return self.actions[action_id].action.form_data
-
     def confirm_new_order(self, order: str):
         self._load_actions()
         new_order = [int(action_str.split('-')[0]) for action_str in order.split(",")]
         reordered_actions = [self.actions[i] for i in new_order]
         self.actions = reordered_actions
         self._save_actions()
+    
+    def get_action_data(self, action_id: int):
+        self._load_actions()
+        return self.actions[action_id].action.form_data
 
     def edit_action(self, action_id: int, edit_action_data: dict):
         self._load_actions()
@@ -50,6 +50,23 @@ class Pipeline:
         }  # Update keys already existing in current_action_data
         current_action_data.update(new_action_data)
         pipeline_action.action.form_data = current_action_data
+        
+        self._save_actions()
+
+    def get_pipeline_action_data(self, action_id: int):
+        self._load_actions()
+        pipeline_action = self.actions[action_id]
+        return {
+            'custom_description': pipeline_action.custom_description or "",
+        }
+
+    def edit_pipeline_action(self, action_id: int, info_data: dict):
+        self._load_actions()
+        pipeline_action = self.actions[action_id]
+        
+        if 'custom_description' in info_data:
+            custom_desc = info_data['custom_description']
+            pipeline_action.set_custom_description(custom_desc if custom_desc.strip() else None)
         
         self._save_actions()
 

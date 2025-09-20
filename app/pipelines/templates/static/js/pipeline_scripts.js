@@ -1,8 +1,14 @@
 import { EditActionModal } from './edit_action_modal.js';
+import { EditPipelineActionModal } from './edit_pipeline_action_modal.js';
 
-function editPipelineActionOpenModal(actionId, actionName) {
+function editActionOpenModal(actionId, actionName) {
     const actionModal = new EditActionModal(actionId, actionName);
     actionModal.open();
+}
+
+function editPipelineActionOpenModal(actionId) {
+    const actionInfoModal = new EditPipelineActionModal(actionId);
+    actionInfoModal.open();
 }
 
 function getOrder() {
@@ -56,5 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+window.editActionOpenModal = editActionOpenModal;
 window.editPipelineActionOpenModal = editPipelineActionOpenModal;
 window.confirmNewOrder = confirmNewOrder;

@@ -134,7 +134,7 @@ There are 3 main folders:
 
 ### To do MVP
 * Improve actions
-  * action descr (can be changed by user), ...
+  * When code is changed, we can not use existing pipelines because the objects are not the same anymore (not the same fields,...), try to deal with that.
   * do not run all pipeline everytime (check if pipeline changed (with hash?), run everything only if yes, else only execute required action)
   * In pipeline class: override getter/setter? to replace get_actions/get_action_data ?
   * add inputs type (column, table, ... to enable easy autocomplete), ... 

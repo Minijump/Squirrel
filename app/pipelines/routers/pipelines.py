@@ -51,3 +51,23 @@ async def delete_action(request: Request, project_dir: str, delete_action_id: in
     pipeline = Pipeline(project_dir)
     pipeline.delete_action(delete_action_id)
     return JSONResponse(content={"message": "Action deleted successfully"}, status_code=200)
+
+@router.get("/pipeline/get_pipeline_action_data/")
+@squirrel_error
+async def get_pipeline_action_data(request: Request, project_dir: str, action_id: int):
+    pipeline = Pipeline(project_dir)
+    action_info = pipeline.get_pipeline_action_data(action_id)
+    return action_info
+
+@router.post("/pipeline/edit_pipeline_action/")
+@squirrel_error
+async def edit_pipeline_action(request: Request):
+    form_data = await request.form()
+    info_data = {key: value for key, value in form_data.items()}
+    action_id = int(info_data.get("action_id"))
+    project_dir = info_data.get("project_dir")
+
+    pipeline = Pipeline(project_dir)
+    pipeline.edit_pipeline_action(action_id, info_data)
+
+    return RedirectResponse(url=f"/pipeline?project_dir={project_dir}", status_code=303)

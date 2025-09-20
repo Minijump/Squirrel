@@ -45,9 +45,16 @@
                                 </div>
                             </div>
                             <div>
-                                <button class="list-edit-btn" 
-                                        onclick="editPipelineActionOpenModal('{{ action_id }}', '{{ action.action.__class__.__name__}}'); return false;"
-                                        style="width: 30px;">
+                                <button class="list-edit-btn" name="edit-pipeline-action-btn"
+                                        onclick="editPipelineActionOpenModal('{{ action_id }}'); return false;"
+                                        style="width: 30px; margin-right: 5px;"
+                                        title="Edit pipeline action info">
+                                    <i class="fas fa-info-circle"></i>
+                                </button>
+                                <button class="list-edit-btn" name="edit-action-btn"
+                                        onclick="editActionOpenModal('{{ action_id }}', '{{ action.action.__class__.__name__}}'); return false;"
+                                        style="width: 30px;"
+                                        title="Edit action parameters">
                                     &middot;&middot;&middot;
                                 </button>
                             </div> 
