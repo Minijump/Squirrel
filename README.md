@@ -129,7 +129,7 @@ There are 3 main folders:
 ### To do
 
 ### To Fix
-* Yahoo data sources: default value of list field (see generateAdditionalArgs); try to use existing component? Probably the same problem for dict?
+* Sync yahoo datasource not working
 
 ### To do MVP
 * Improve actions
