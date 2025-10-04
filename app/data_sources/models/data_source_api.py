@@ -42,4 +42,4 @@ class DataSourceAPI(DataSource):
         self._write_manifest(manifest)
 
     async def sync(self):
-        await self._create_data_file()
+        await self._create_data_file(False)

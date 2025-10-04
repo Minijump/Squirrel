@@ -129,7 +129,6 @@ There are 3 main folders:
 ### To do
 
 ### To Fix
-* Sync yahoo datasource not working
 
 ### To do MVP
 * Improve actions
