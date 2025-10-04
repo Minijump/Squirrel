@@ -52,15 +52,15 @@ import { SquirrelList } from '/static/utils/widgets/list_widget/list_widget.js';
  *   },
  */
 export class Field {
-    constructor(inputId, inputInfo) {
+    constructor(inputId, inputInfo, defaultValue = undefined) {
         this.id = 'field-' + Math.random().toString(36).substring(2, 11);
-        this.inputDivHTML = this.generateInputdiv(inputInfo, inputId);
+        this.inputDivHTML = this.generateInputdiv(inputInfo, inputId, defaultValue);
     }
 
-    generateInputdiv(inputInfo, inputId) {
+    generateInputdiv(inputInfo, inputId, defaultValue = undefined) {
         const inputDivHTML = document.createElement('div');
         
-        const input = this.createInput(inputInfo);
+        const input = this.createInput(inputInfo, defaultValue);
         input.name = input.id = inputId;
         if (!inputInfo.onchange_visibility){
             // For field displayed conditionally, see 'onchangeFormValue'
@@ -89,7 +89,7 @@ export class Field {
         return inputDivHTML;
     }
 
-    createInput(input) {
+    createInput(input, defaultValue = undefined) {
         let formInput;
         
         const inputOptions = {
@@ -100,9 +100,20 @@ export class Field {
             accept: input.accept,
             selectOptions: input.select_options,
             dictOptions: input.dict_options,
-            dictDefault: input.dict_default
+            dictDefault: input.dict_default,
+            listOptions: input.list_options,
+            listDefault: input.list_default
         };
+        
         formInput = Input.createInput(input.type, inputOptions);
+        
+        if (defaultValue !== undefined) {
+            if (input.type === 'dict' || input.type === 'list') {
+                formInput.value = typeof defaultValue === 'string' ? defaultValue : JSON.stringify(defaultValue);
+            } else {
+                formInput.value = defaultValue;
+            }
+        }
 
         return formInput;
     }

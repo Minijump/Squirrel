@@ -54,15 +54,7 @@ export class EditActionModal extends FormModal {
     async fillData() {
         // Similar to ActionSidebar (TO FACTORIZE)
         const data = await this.getActionData(); // Called before addInputs, else we see a little glitch cause by the time of the request
-        await this.addInputs();
-        Object.keys(data).forEach(key => {
-            const inputElements = this.componentHtml.querySelectorAll(`[name="${key}"], #${key}`);
-            if (inputElements.length > 0) {
-                inputElements.forEach(element => {
-                    element.value = data[key];
-                });
-            }
-        });
+        await this.addInputs(data);
 
         const onchangeElements = this.componentHtml.querySelectorAll('[onchange]');
         onchangeElements.forEach(element => {
@@ -71,7 +63,7 @@ export class EditActionModal extends FormModal {
         this.defaultFocus();
     }
 
-    async addInputs() {
+    async addInputs(actionData = {}) {
         // Same than ActionSidebar (TO FACTORIZE)
         try {
             const response = await fetch(`/tables/get_action_args/?action_name=${this.actionName}&project_dir=${this.projectDir}`);
@@ -80,7 +72,8 @@ export class EditActionModal extends FormModal {
             const argsDiv = this.componentHtml.querySelector('#args');
             argsDiv.innerHTML = '';
             Object.keys(args).forEach(key => {
-                const field = new Field(key, args[key]);
+                const defaultValue = actionData[key];
+                const field = new Field(key, args[key], defaultValue);
                 argsDiv.appendChild(field.inputDivHTML);
             });
         } catch (error) {

@@ -130,7 +130,6 @@ There are 3 main folders:
 
 ### To Fix
 * Yahoo data sources: default value of list field (see generateAdditionalArgs); try to use existing component? Probably the same problem for dict?
-* edit action: default values not set for dictionnaries (expl in relace vals:) => Note: the value is set by method fillData but only in the textarea, as the widget is initialized before (in addInputs), the value does not appear in the widget
 
 ### To do MVP
 * Improve actions
