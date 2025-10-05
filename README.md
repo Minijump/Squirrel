@@ -132,13 +132,13 @@ There are 3 main folders:
 
 ### To do MVP
 * Improve actions
-  * do not run all pipeline everytime (check if pipeline changed (with hash?), run everything only if yes, else only execute required action)
   * In pipeline class: override getter/setter? to replace get_actions/get_action_data ?
   * add inputs type (column, table, ... to enable easy autocomplete), ... 
   * add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch (ie: somewhere where a can type sum(col1, col2)), ...
   * add dynamic documentation (ie: pd.Series.replace.__doc__)
 * Add actions (expl: Possibility to edit a cell value directly)
 * Add/refactor tours/UT
+* IMP + refactor code (especially JS widgets and compenents)
 * Widgets: start autocomplete Squirrel action
 
 ### To do UX
@@ -152,6 +152,7 @@ There are 3 main folders:
   * Automatic/easy creation of a source when creating a table?
   * ?'Dynamic' data source: sync before running the pipeline. List of dynamics in project settings + sync file source??
 * Pipeline
+  * do not run all pipeline everytime (check if pipeline changed (with hash?), run everything only if yes, else only execute required action)
   * Imp pipeline (test before save? summary with blocks on the top? ...?)?
   * Multiples pipelines?
 * Secure app? If a project is shared to somebody else, we must be sure it won't run something bad for the computer? Is it even possible to do that?
