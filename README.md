@@ -132,7 +132,6 @@ There are 3 main folders:
 
 ### To do MVP
 * Improve actions
-  * In pipeline class: override getter/setter? to replace get_actions/get_action_data ?
   * add inputs type (column, table, ... to enable easy autocomplete), ... 
   * add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch (ie: somewhere where a can type sum(col1, col2)), ...
   * add dynamic documentation (ie: pd.Series.replace.__doc__)
