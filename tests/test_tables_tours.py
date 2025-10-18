@@ -567,6 +567,36 @@ class TestTablesTours:
         assert cell.text == "10", "First cell should be 10 after keeping rows"
 
     @pytest.mark.slow
+    def test_delete_duplicates(self, server, browser, reset_projects):
+        """Check if the delete duplicates works correctly."""
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        table = tour.select_table(by_name="ordered")
+        # Add duplicate rows first
+        sidebar = table.click_dropdown_action_button("Rows", "Add Rows")
+        sidebar.fill([("new_rows", "[{'mock_name': 'mock1', 'mock_price': 1}, {'mock_name': 'mock1', 'mock_price': 1}]")])
+        sidebar.submit()
+        # Sort ascending to test if the duplicates were deleted correctly
+        col_modal = table.click_header_button(by_col_number=2)
+        sidebar = col_modal.click_action_button("Sort")
+        sidebar.fill([("sort_order", "Ascending")])
+        sidebar.submit()
+        cell = table.get_cell(by_col_number=1, by_row_number=2)
+        assert cell.text == "mock1", "Second cell should be 'mock1' after adding duplicate rows"
+        cell = table.get_cell(by_col_number=1, by_row_number=3)
+        assert cell.text == "mock1", "Third cell should be 'mock1' after adding duplicate rows"
+        # ---------------------------------------------------------
+
+        sidebar = table.click_action_button("Drop Duplicates")
+        sidebar.submit()
+
+        cell = table.get_cell(by_col_number=1, by_row_number=2)
+        assert cell.text == "mock1", "Second cell should be 'mock1' after deleting duplicates"
+        cell = table.get_cell(by_col_number=1, by_row_number=3)
+        assert cell.text != "mock1", "Third cell should not be 'mock1' after deleting duplicates"
+
+    @pytest.mark.slow
     def test_delete_rows(self, server, browser, reset_projects):
         """Check if the delete rows works correctly."""
         tour = Tour(browser, server)

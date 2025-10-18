@@ -138,6 +138,7 @@ There are 3 main folders:
 * Add/refactor tours/UT
 * IMP + refactor code (especially JS widgets and compenents)
 * Widgets: start autocomplete Squirrel action
+* Do something to revert error in pipeline, sometimes we can not open project anymore (which makes impossible to remove action)(try except when executing the line and notif when it fails?)
 
 ### To do UX
 

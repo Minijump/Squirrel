@@ -120,6 +120,32 @@ class KeepRow(Action):
         return new_code
 
 @table_action_type
+class DropDuplicates(Action):
+    def __init__(self, form_data):
+        super().__init__(form_data)
+        self.icons = ["fas fa-trash", "fas fa-copy"]
+        self.args = {
+            "subset": {"type": "list", "label": "Subset Columns", 
+                       "info": "Column names to consider for duplicates. Leave empty to consider all columns."},
+            "keep": {"type": "select", "label": "Keep", 
+                     "select_options": [("first", "First"), ("last", "Last"), ("false", "False")],
+                     "info": "Which duplicate to keep: First, Last, 'False' drops all duplicates."},
+        }
+
+    def get_name(self):
+        subset_list = ast.literal_eval(self.form_data.get('subset', '[]'))
+        subset = ', '.join(subset_list) or 'all'
+        keep = self.form_data.get('keep', 'first')
+        return f"Drop duplicates in table '{self.form_data.get('table_name', '?')}' (columns: {subset} | keep: {keep})"
+
+    async def get_code(self):
+        table_name, subset, keep = await self._get(["table_name", "subset", "keep"])
+        subset = ast.literal_eval(subset)
+        keep_val = f"""'{keep}'""" if keep != 'false' else False
+        new_code = f"""tables['{table_name}'] = tables['{table_name}'].drop_duplicates(subset={subset or None}, keep={keep_val})"""
+        return new_code
+
+@table_action_type
 class CreateTable(Action):
     def __init__(self, form_data):
         super().__init__(form_data)
