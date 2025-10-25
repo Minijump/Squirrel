@@ -9,7 +9,7 @@
     text-align: center;
     border: 1px solid red;
     box-sizing: border-box;
-    height: 100vh;
+    height: 85vh;
 }
 .error-box h3 {
     font-weight: strong;

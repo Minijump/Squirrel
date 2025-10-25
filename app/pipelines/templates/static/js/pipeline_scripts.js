@@ -1,8 +1,8 @@
 import { EditActionModal } from './edit_action_modal.js';
 import { EditPipelineActionModal } from './edit_pipeline_action_modal.js';
 
-function editActionOpenModal(actionId, actionName) {
-    const actionModal = new EditActionModal(actionId, actionName);
+function editActionOpenModal(actionId, actionName, actionError='') {
+    const actionModal = new EditActionModal(actionId, actionName, actionError);
     actionModal.open();
 }
 

@@ -5,6 +5,7 @@ class PipelineAction:
         self.action = action_instance
         self.custom_description = None
         self.description = False
+        self.error = None
         self.update_description()
 
     def _set_field(self, field_name, value):

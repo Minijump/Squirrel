@@ -3,7 +3,7 @@ import { ConfirmationModal } from '/static/utils/components/modal/confirmation_m
 import { Field } from '/static/utils/components/field/field.js';
 
 export class EditActionModal extends FormModal {
-    constructor(actionId, actionName, options = {}) {
+    constructor(actionId, actionName, actionError = '', options = {}) {
         const formInputs = {
             'project_dir': {'type': 'text', 'required': true, 'invisible': true},
             'action_id': {'type': 'text', 'required': true, 'invisible': true}
@@ -21,6 +21,7 @@ export class EditActionModal extends FormModal {
         });
         this.actionId = actionId;
         this.actionName = actionName;
+        this.actionError = actionError;
     }
 
     createContent() {
@@ -33,7 +34,15 @@ export class EditActionModal extends FormModal {
             id: 'action-name-display'
         });
         form.insertBefore(actionNameDisplay, form.firstChild);
-        
+
+        if (this.actionError) {
+            const errorDiv = Object.assign(document.createElement('div'), {
+                style: 'color: red; margin-bottom: 15px;',
+                textContent: this.actionError
+            });
+            form.insertBefore(errorDiv, form.firstChild);
+        }
+
         const argsDiv = document.createElement('div');
         argsDiv.id = 'args';
         const submitButton = form.querySelector('button[type="submit"]');

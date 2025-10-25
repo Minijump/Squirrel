@@ -77,7 +77,14 @@ class Pipeline:
         for pipeline_action in self.actions:              
             code = await pipeline_action.action.get_code() 
             local_vars = {'tables': tables, 'pd': pd}
-            exec(code, globals(), local_vars) #! security risk
+            try:
+                exec(code, globals(), local_vars) #! security risk
+                pipeline_action.error = None
+            except Exception as e:
+                pipeline_action.error = str(e)
+                self._save_actions()
+                raise Exception(f"Error executing action '{pipeline_action.description}': {e}")
             tables.update(local_vars['tables'])
 
+        self._save_actions()
         return tables
