@@ -131,25 +131,21 @@ There are 3 main folders:
 ### To Fix
 
 ### To do MVP
+* Do something to revert error in pipeline, sometimes we can not open project anymore (which makes impossible to remove action)(try except when executing the line and notif when it fails?)
+* Add/refactor tours/UT
+* IMP + refactor code (especially JS widgets and compenents)
 * Improve actions
   * add inputs type (column, table, ... to enable easy autocomplete), ... => would required complete change of strct (Use directly pandas fct object, add a apply_on decorator?, call directly the fct object instead of a get_code fct, call fct_object.__doc__, ...)
   * add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch (ie: somewhere where a can type sum(col1, col2)), ... =>same than above, complete change of strct
-* Add actions (expl: Possibility to edit a cell value directly)
-* Add/refactor tours/UT
-* IMP + refactor code (especially JS widgets and compenents)
-* Widgets: start autocomplete Squirrel action
-* Do something to revert error in pipeline, sometimes we can not open project anymore (which makes impossible to remove action)(try except when executing the line and notif when it fails?)
+  * Autocomplete squirrel action widget
+  * Add actions (expl: Possibility to edit a cell value directly)
 
 ### To do UX
 
 ### Feature ideas
-* Widgets: ?...
 * Basic graphs in columns inspect (chart.js, d3.js,...?)
 * Data sources
-  * Give a way to secure credentials?
-  * Add a way to add credentials in settings/data sources/new credentials tabs/... and select them in a data source
-  * Automatic/easy creation of a source when creating a table?
-  * ?'Dynamic' data source: sync before running the pipeline. List of dynamics in project settings + sync file source??
+  * Give a way to secure credentials? =>Add a way to add credentials in settings/data sources/new credentials tabs/... and select them at data source creation
 * Pipeline
   * do not run all pipeline everytime (check if pipeline changed (with hash?), run everything only if yes, else only execute required action)
   * Imp pipeline (test before save? summary with blocks on the top? ...?)?
@@ -161,5 +157,4 @@ There are 3 main folders:
 * Supabase connection, blockchain.com
 * Git/Github integration
 * Make app executable? Use py2exe?
-* integrated llm / Connection with online ones (+ crewAI?) ?
 * ...
