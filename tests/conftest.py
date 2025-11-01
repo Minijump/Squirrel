@@ -111,7 +111,12 @@ class TestServer:
         cls._temp_dir = str(temp_dir)
         
         original_cwd = os.getcwd()
-        shutil.copytree(original_cwd, temp_dir, ignore=shutil.ignore_patterns("_projects"), dirs_exist_ok=True)
+        shutil.copytree(
+            original_cwd, 
+            temp_dir, 
+            ignore=shutil.ignore_patterns("_projects", "__pycache__", "*.pyc", ".git", ".pytest_cache", ".vscode"),
+            dirs_exist_ok=True
+        )
         os.makedirs(os.path.join(temp_dir, "_projects"))
         os.chdir(temp_dir)
         
@@ -178,6 +183,10 @@ def browser():
     options = FirefoxOptions()
     if os.environ.get("BROWSER_HEADLESS", "1") == "1":
         options.add_argument('--headless')
+    
+    options.set_preference("dom.disable_beforeunload", True)
+    options.set_preference("browser.tabs.warnOnClose", False)
+    options.page_load_strategy = 'eager'
     
     driver = Firefox(options=options)
     driver.set_window_size(1524, 716)
