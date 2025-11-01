@@ -1,15 +1,12 @@
+import pandas as pd
+import pickle
 import pytest
+from unittest.mock import patch 
 
-from fastapi.testclient import TestClient
-
-from app.main import app
 from app.data_sources.models.data_source_factory import DataSourceFactory
 from app.data_sources.models.data_source_file import DataSourceFile, DataSourceCSV, DataSourceXLSX, DataSourceJSON, DataSourcePickle
 from tests import MOCK_PROJECT
 from tests.utils.tests_toolbox import MockUploadFile
-
-
-client = TestClient(app)
 
 
 def test_create_table():
@@ -58,8 +55,6 @@ async def test_create_source_csv(temp_project_dir_fixture):
 # XLSX Tests
 @pytest.mark.asyncio
 async def test_create_source_xlsx(temp_project_dir_fixture):
-    import pandas as pd
-    from unittest.mock import patch 
     xlsx_content = b"PK\x03\x04" + b"mock_excel_content" * 100
     mock_source_file = MockUploadFile("test_data.xlsx", xlsx_content)
     
@@ -100,7 +95,6 @@ async def test_create_source_json(temp_project_dir_fixture):
 # Pickle Tests
 @pytest.mark.asyncio
 async def test_create_source_pickle(temp_project_dir_fixture):
-    import pickle
     test_data = {"name": ["John", "Jane"], "age": [25, 30]}
     pickle_content = pickle.dumps(test_data)
     mock_source_file = MockUploadFile("test_data.pkl", pickle_content)

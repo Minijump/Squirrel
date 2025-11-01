@@ -1,13 +1,8 @@
 import pytest
 
-from fastapi.testclient import TestClient
-
-from app.main import app
 from app.data_sources.models.data_source_factory import DataSourceFactory
 from tests import MOCK_PROJECT
 
-
-client = TestClient(app)
 # Note: create_source, create_table, ... is not tested here; see subclasses tests
 
 def test_get_settings(temp_project_dir_fixture):

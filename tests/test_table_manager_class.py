@@ -1,13 +1,7 @@
 import pytest
 
-from fastapi.testclient import TestClient
-
-from app.main import app
 from app.tables.models.table_manager import TableManager
 from tests import MOCK_PROJECT
-
-
-client = TestClient(app)
 
 
 @pytest.mark.asyncio

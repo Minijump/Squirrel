@@ -2,13 +2,7 @@ import json
 import os
 import pytest
 
-from fastapi.testclient import TestClient
-
-from app.main import app
 from app.projects.models.project import Project, PROJECT_TYPE_REGISTRY
-
-
-client = TestClient(app)
 
 
 def test_project_utils_registry():
@@ -39,13 +33,13 @@ async def test_get_available_projects(temp_project_dir_fixture):
     available_projects = Project.get_available_projects(project_dir)
 
     assert len(available_projects) > 0, "No available projects found"
-    assert type(available_projects[0]) == Project, "Failed to retrieve correct project type"
+    assert isinstance(available_projects[0], Project), "Failed to retrieve correct project type"
 
 @pytest.mark.asyncio
 async def test_instantiate_from_dir(temp_project_dir_fixture):
     project = Project.instantiate_from_dir("ut_mock_project_1")
 
-    assert type(project) is Project, "Failed to instantiate project from path"
+    assert isinstance(project, Project), "Failed to instantiate project from path"
     assert project.name == "UT Mock Project 1", "Failed to initialize project name from path"
 
 @pytest.mark.asyncio

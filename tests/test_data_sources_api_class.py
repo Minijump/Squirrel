@@ -1,17 +1,13 @@
+import json
+import os
 import pytest
 from unittest.mock import AsyncMock, patch
 
-from fastapi.testclient import TestClient
-
-from app.main import app
 from app.data_sources.models.data_source_factory import DataSourceFactory
 from app.data_sources.models.data_source_api import DataSourceAPI
 from app.data_sources.models.data_source_api_odoo import DataSourceOdoo
 from app.data_sources.models.data_source_api_yahoo_finance import DataSourceYahooFinance
 from tests import MOCK_PROJECT
-
-
-client = TestClient(app)
 
 
 class MockOdooApiResponse:
@@ -45,6 +41,16 @@ class MockMultiIndex:
         return self
 
 
+def _create_mock_source_dir(project_dir, source_dir, manifest):
+    """Helper function to create a mock data source directory with manifest"""
+    source_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir)
+    os.makedirs(source_path, exist_ok=True)
+    manifest_path = os.path.join(source_path, "__manifest__.json")
+    with open(manifest_path, 'w') as f:
+        json.dump(manifest, f)
+    return source_path
+
+
 def test_create_table():
     form_data = {
         "name": 'mock_source',
@@ -60,12 +66,8 @@ def test_create_table():
 
 # Odoo Tests
 def test_init_source_from_dir_odoo(temp_project_dir_fixture):
-    import os
-    import json
     project_dir = MOCK_PROJECT
     source_dir = "mock_odoo_source"
-    source_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir)
-    os.makedirs(source_path, exist_ok=True)
     manifest = {
         "name": "Mock Odoo source",
         "type": "odoo",
@@ -81,9 +83,7 @@ def test_init_source_from_dir_odoo(temp_project_dir_fixture):
         "kwargs": {},
         "last_sync": ""
     }
-    manifest_path = os.path.join(source_path, "__manifest__.json")
-    with open(manifest_path, 'w') as f:
-        json.dump(manifest, f)
+    _create_mock_source_dir(project_dir, source_dir, manifest)
 
     data_source = DataSourceFactory.init_source_from_dir(project_dir, source_dir)
 
@@ -130,12 +130,8 @@ async def test_create_source_odoo(temp_project_dir_fixture):
 
 # Yahoo Finance Tests
 def test_init_source_from_dir_yahoo_finance(temp_project_dir_fixture):
-    import os
-    import json
     project_dir = MOCK_PROJECT
-    source_dir = "mock_yahoo_finance_source" 
-    source_path = os.path.join(os.getcwd(), "_projects", project_dir, "data_sources", source_dir)
-    os.makedirs(source_path, exist_ok=True)
+    source_dir = "mock_yahoo_finance_source"
     manifest = {
         "name": "Mock Yahoo Finance source",
         "type": "yahoo_finance",
@@ -147,9 +143,7 @@ def test_init_source_from_dir_yahoo_finance(temp_project_dir_fixture):
         "interval": "1d",
         "last_sync": ""
     }
-    manifest_path = os.path.join(source_path, "__manifest__.json")
-    with open(manifest_path, 'w') as f:
-        json.dump(manifest, f)
+    _create_mock_source_dir(project_dir, source_dir, manifest)
 
     data_source = DataSourceFactory.init_source_from_dir(project_dir, source_dir)
 
