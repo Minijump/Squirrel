@@ -67,17 +67,6 @@ class MockProjectBuilder:
         return cls._cache
     
     @classmethod
-    def copy_to(cls, dst):
-        for item in os.listdir(cls.SOURCE_DIR):
-            src_path = os.path.join(cls.SOURCE_DIR, item)
-            dst_path = os.path.join(dst, item)
-            
-            if os.path.isdir(src_path):
-                shutil.copytree(src_path, dst_path, dirs_exist_ok=True)
-            else:
-                shutil.copy2(src_path, dst_path)
-    
-    @classmethod
     def create_from_cache(cls, project_dir):
         cache = cls.get_cached_project()
         
@@ -95,29 +84,13 @@ class TestServer:
     _temp_dir = None
     
     @staticmethod
-    def _copy_dir(src, dst, ignore=None):
-        ignore_func = shutil.ignore_patterns(ignore) if ignore else None
-        
-        for item in os.listdir(src):
-            if ignore and item == ignore:
-                continue
-            
-            src_path = os.path.join(src, item)
-            dst_path = os.path.join(dst, item)
-            
-            if os.path.isdir(src_path):
-                shutil.copytree(src_path, dst_path, ignore=ignore_func, dirs_exist_ok=True)
-            else:
-                shutil.copy2(src_path, dst_path)
-    
-    @classmethod
-    def find_free_port(cls):
+    def find_free_port():
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.bind(('', 0))
             return s.getsockname()[1]
     
-    @classmethod
-    def run(cls, port):
+    @staticmethod
+    def run(port):
         uvicorn.run(app, host="127.0.0.1", port=port, log_level="error")
     
     @classmethod
@@ -127,7 +100,7 @@ class TestServer:
             try:
                 requests.get(url, timeout=1)
                 return True
-            except:
+            except requests.RequestException:
                 time.sleep(0.1)
         return False
     
@@ -138,7 +111,7 @@ class TestServer:
         cls._temp_dir = str(temp_dir)
         
         original_cwd = os.getcwd()
-        cls._copy_dir(original_cwd, temp_dir, ignore="_projects")
+        shutil.copytree(original_cwd, temp_dir, ignore=shutil.ignore_patterns("_projects"), dirs_exist_ok=True)
         os.makedirs(os.path.join(temp_dir, "_projects"))
         os.chdir(temp_dir)
         
@@ -176,12 +149,10 @@ class TestServer:
 def temp_project_dir_fixture():
     with tempfile.TemporaryDirectory() as temp_dir:
         with patch('os.getcwd', return_value=temp_dir):
-            projects_dir = os.path.join(temp_dir, "_projects")
-            os.makedirs(projects_dir, exist_ok=True)
+            project_dir = os.path.join(temp_dir, "_projects", MockProjectBuilder.PROJECT_NAME)
+            os.makedirs(project_dir)
             
-            project_dir = os.path.join(projects_dir, MockProjectBuilder.PROJECT_NAME)
-            os.makedirs(project_dir, exist_ok=True)
-            MockProjectBuilder.copy_to(project_dir)
+            shutil.copytree(MockProjectBuilder.SOURCE_DIR, project_dir, dirs_exist_ok=True)
             
             pipeline = MockProjectBuilder.build_pipeline()
             with open(os.path.join(project_dir, "pipeline.pkl"), "wb") as f:
@@ -200,7 +171,6 @@ def server(tmpdir_factory):
 @pytest.fixture
 def reset_projects(server):
     TestServer.reset_projects()
-    yield
 
 
 @pytest.fixture(scope="session")
