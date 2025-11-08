@@ -1,6 +1,6 @@
 import pytest
 
-from tests.utils.tours_toolbox import Tour, MOCK_PROJECT1_NAME
+from tests.utils.tour_toolbox_tour import Tour, MOCK_PROJECT1_NAME
 
 class TestProjectsTours:
     @pytest.mark.slow

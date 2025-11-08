@@ -1,6 +1,6 @@
 import pytest
 
-from tests.utils.tours_toolbox import Tour
+from tests.utils.tour_toolbox_tour import Tour
 
 
 class TestTablesTours:

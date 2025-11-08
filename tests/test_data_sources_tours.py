@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 from unittest.mock import patch
 
-from tests.utils.tours_toolbox import Tour, MOCK_PROJECT1_NAME
+from tests.utils.tour_toolbox_tour import Tour, MOCK_PROJECT1_NAME
 
 
 MOCK_YFINANCE_DATA = pd.DataFrame({'Open': [100.0, 101.0, 102.0], 'High': [105.0, 106.0, 107.0], 'Low': [98.0, 99.0, 100.0]})

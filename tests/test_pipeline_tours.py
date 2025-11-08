@@ -1,6 +1,6 @@
 import pytest
 
-from tests.utils.tours_toolbox import Tour
+from tests.utils.tour_toolbox_tour import Tour
 
 
 class TestPipelineTours:
@@ -44,9 +44,9 @@ class TestPipelineTours:
         
         edit_action_modal = tour.click_edit_action(1)
         edit_action_modal.click_danger_button()
-        tour.confirmation_modal(confirm=False) # First, cancel
+        tour.confirm_modal(confirm=False) # First, cancel
         edit_action_modal.click_danger_button()
-        tour.confirmation_modal(confirm=True) # Then, confirm
+        tour.confirm_modal(confirm=True) # Then, confirm
         
         new_action_elements = tour.get_pipeline_actions(wait_a_minute=True)
         new_number_of_actions = len(new_action_elements)
