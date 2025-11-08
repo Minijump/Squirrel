@@ -33,7 +33,6 @@ class TestPipelineTours:
 
     @pytest.mark.slow
     def test_delete_action(self, server, browser, reset_projects):
-        """Test the delete action in the pipeline."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -54,7 +53,6 @@ class TestPipelineTours:
 
     @pytest.mark.slow
     def test_edit_action(self, server, browser, reset_projects):
-        """Test the edit action in the pipeline."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -66,3 +64,17 @@ class TestPipelineTours:
         
         edit_action_modal = tour.click_edit_action(1)
         tour.check_elements(by_ids=[("table_name", "New Table Name")])
+
+    @pytest.mark.slow
+    def test_edit_action_description(self, server, browser, reset_projects):
+        tour = Tour(browser, server)
+
+        tour.click_card(by_position=2)
+        tour.navbar_click("Pipeline")
+
+        edit_pipeline_action_modal = tour.click_edit_pipeline_action(1)
+        edit_pipeline_action_modal.fill([("custom_description", "New Action Descr")])
+        edit_pipeline_action_modal.submit()
+
+        edit_pipeline_action_modal = tour.click_edit_pipeline_action(1)
+        tour.check_elements(by_ids=[("custom_description", "New Action Descr")])

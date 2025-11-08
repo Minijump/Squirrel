@@ -6,7 +6,6 @@ from tests.utils.tour_toolbox_tour import Tour
 class TestTablesTours:
     @pytest.mark.slow
     def test_create_table_onchange(self, server, browser, reset_projects):
-        """Check the onchange of right sidebar table creation."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -23,7 +22,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_create_table_from_data_source(self, server, browser, reset_projects):
-        """Check if the table is created correctly (from a data source)."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -37,7 +35,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_create_table_from_other_table_copy(self, server, browser, reset_projects):
-        """Check if the table is created correctly (from another table)."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -52,7 +49,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_swap_table_displayed(self, server, browser, reset_projects):
-        """Check if the selected table is displayed correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -68,7 +64,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_table_pager(self, server, browser, reset_projects):
-        """Check if the table pager is displayed correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -85,7 +80,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_info_col_modal(self, server, browser, reset_projects):
-        """Check if the info column modal is displayed correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -108,7 +102,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_sort_column(self, server, browser, reset_projects):
-        """Check if the column is sorted correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -132,7 +125,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_replace_vals(self, server, browser, reset_projects):
-        """Check if the vals are replaced correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -149,7 +141,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_replace_vals_int(self, server, browser, reset_projects):
-        """Check if the vals are replaced correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -166,7 +157,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_missing_vals(self, server, browser, reset_projects):
-        """Check if the missing vals are replaced correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -184,7 +174,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_change_type(self, server, browser, reset_projects):
-        """Check if the column changes of type correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -203,7 +192,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_apply_function(self, server, browser, reset_projects):
-        """Check if the apply function works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -221,7 +209,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_normalize(self, server, browser, reset_projects):
-        """Check if the normalize function works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -244,7 +231,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_remove_under_over(self, server, browser, reset_projects):
-        """Check if the remove under/overflow function works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -268,7 +254,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_cut(self, server, browser, reset_projects):
-        """Check if the cut function works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -292,7 +277,6 @@ class TestTablesTours:
 
     @pytest.mark.slow  
     def test_keep_n_largest(self, server, browser, reset_projects):
-        """Check if the keep n largest function works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -310,7 +294,6 @@ class TestTablesTours:
 
     @pytest.mark.slow  
     def test_keep_n_smallest(self, server, browser, reset_projects):
-        """Check if the keep n smallest function works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -332,7 +315,6 @@ class TestTablesTours:
 
     @pytest.mark.slow  
     def test_diff(self, server, browser, reset_projects):
-        """Check if the diff function works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -343,7 +325,6 @@ class TestTablesTours:
         sidebar.fill([("periods", "1")])
         sidebar.submit()
 
-        # creates a new column ('col2-diff')
         cell_1 = table.get_cell(by_col_number=3, by_row_number=1)
         assert cell_1.text == "NaN", "First element should be NaN"
         cell_2 = table.get_cell(by_col_number=3, by_row_number=2)
@@ -351,7 +332,6 @@ class TestTablesTours:
 
     @pytest.mark.slow 
     def test_math_operations(self, server, browser, reset_projects):
-        """Check if the math operation works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -371,7 +351,6 @@ class TestTablesTours:
 
     @pytest.mark.slow 
     def test_replace_in_cells(self, server, browser, reset_projects):
-        """Check if the replace in cells works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -392,7 +371,6 @@ class TestTablesTours:
 
     @pytest.mark.slow 
     def test_string_formats(self, server, browser, reset_projects):
-        """Check if the string formats work correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -408,7 +386,6 @@ class TestTablesTours:
 
     @pytest.mark.slow 
     def test_delete_column(self, server, browser, reset_projects):
-        """Check if the delete column works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -423,14 +400,8 @@ class TestTablesTours:
         cell = table.get_cell(by_col_number=1, by_row_number=1)
         assert cell.text == "0", "Cell should be 0, first column should be deleted"
 
-
-
-
-    # TABLE ACTIONS TOURS -----------------------------------------------------------------------------------------------
-    # -------------------------------------------------------------------------------------------------------------------
     @pytest.mark.slow
     def test_add_column(self, server, browser, reset_projects):
-        """Check if the add column works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -446,7 +417,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_group_by(self, server, browser, reset_projects):
-        """Check if the group by works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -477,7 +447,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_merge_tables(self, server, browser, reset_projects):
-        """Check if the merge tables works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -505,7 +474,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_concatenate_tables(self, server, browser, reset_projects):
-        """Check if the concatenate tables works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -537,7 +505,6 @@ class TestTablesTours:
     
     @pytest.mark.slow
     def test_add_custom_action(self, server, browser, reset_projects):
-        """Check if the custom action is added correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -553,7 +520,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_keep_rows(self, server, browser, reset_projects):
-        """Check if the keep rows works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -568,7 +534,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_delete_duplicates(self, server, browser, reset_projects):
-        """Check if the delete duplicates works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -598,7 +563,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_delete_rows(self, server, browser, reset_projects):
-        """Check if the delete rows works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)
@@ -613,7 +577,6 @@ class TestTablesTours:
 
     @pytest.mark.slow
     def test_add_rows(self, server, browser, reset_projects):
-        """Check if the add rows works correctly."""
         tour = Tour(browser, server)
 
         tour.click_card(by_position=2)

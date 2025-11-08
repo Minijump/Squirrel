@@ -11,7 +11,6 @@ MOCK_YFINANCE_DATA = pd.DataFrame({'Open': [100.0, 101.0, 102.0], 'High': [105.0
 class TestDataSourcesTours:
     @pytest.mark.slow
     def test_create_yahoo_data_source(self, server, browser, reset_projects):
-        """Test yahoo data source creation"""
         tour = Tour(browser, server)
 
         tour.click_card(by_title=MOCK_PROJECT1_NAME)
@@ -44,7 +43,6 @@ class TestDataSourcesTours:
 
     @pytest.mark.slow
     def test_data_source_edit(self, server, browser, reset_projects):
-        """Test edition of a data source's settings"""
         tour = Tour(browser, server)
 
         tour.click_card(by_title=MOCK_PROJECT1_NAME)
@@ -60,7 +58,6 @@ class TestDataSourcesTours:
 
     @pytest.mark.slow
     def test_delete_data_source(self, server, browser, reset_projects):
-        """Test data source deletion"""
         tour = Tour(browser, server)
 
         tour.click_card(by_title=MOCK_PROJECT1_NAME)

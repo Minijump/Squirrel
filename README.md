@@ -131,7 +131,6 @@ There are 3 main folders:
 ### To Fix
 
 ### To do MVP
-* Add/refactor tours/UT
 * IMP + refactor code (especially JS widgets and compenents)
 * Improve actions
   * add inputs type (column, table, ... to enable easy autocomplete), ... => would required complete change of strct (Use directly pandas fct object, add a apply_on decorator?, call directly the fct object instead of a get_code fct, call fct_object.__doc__, ...)
