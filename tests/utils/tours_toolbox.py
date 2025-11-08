@@ -8,7 +8,6 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.remote.webelement import WebElement
 
-import warnings
 
 MOCK_PROJECT1_NAME = "UT Mock Project 1"
 
@@ -74,16 +73,23 @@ class BaseElement:
     def click_danger_button(self) -> None:
         self.browser.find_element(By.CSS_SELECTOR, ".btn-danger").click()
 
+    def _get_widget_wrapper(self, field_name: str, widget_type: str, widget_class: str):
+        widget_xpath = f"{self.expected_visible}//*[@name='{field_name}'][@widget='{widget_type}']"
+        widget = self.browser.find_element(By.XPATH, widget_xpath)
+        return widget.find_element(By.XPATH, f"./preceding-sibling::div[@class='{widget_class}']")
+
+    def _find_dict_row_by_key(self, wrapper, key: str):
+        rows = wrapper.find_elements(By.XPATH, ".//tbody/tr")
+        for row in rows:
+            key_input = row.find_element(By.XPATH, "./td[1]/input")
+            if key_input.get_attribute("value") == key:
+                return row
+        raise ValueError(f"Key '{key}' not found in dictionary widget")
+
     def add_to_dictionary(self, field_name: str, key: str, value: str) -> None:
-        """ Add a key-value pair to a dictionary widget """
-        dict_widget_xpath = f"{self.expected_visible}//*[@name='{field_name}'][@widget='squirrel-dictionary']"
-        dict_widget = self.browser.find_element(By.XPATH, dict_widget_xpath)
-        wrapper = dict_widget.find_element(By.XPATH, "./preceding-sibling::div[@class='squirrel-dict-widget']")
+        wrapper = self._get_widget_wrapper(field_name, 'squirrel-dictionary', 'squirrel-dict-widget')
         
-        # Click add button
-        add_btn = wrapper.find_element(By.CSS_SELECTOR, ".btn-add-line")
-        add_btn.click()
-        # Fill the new row
+        wrapper.find_element(By.CSS_SELECTOR, ".btn-add-line").click()
         rows = wrapper.find_elements(By.XPATH, ".//tbody/tr")
         new_row = rows[-1]
         key_input = new_row.find_element(By.XPATH, "./td[1]/input")
@@ -95,51 +101,24 @@ class BaseElement:
         value_input.send_keys(value)
 
     def edit_dictionary(self, field_name: str, key: str, new_value: str) -> None:
-        """ Edit an existing key in a dictionary widget """
-        dict_widget_xpath = f"{self.expected_visible}//*[@name='{field_name}'][@widget='squirrel-dictionary']"
-        dict_widget = self.browser.find_element(By.XPATH, dict_widget_xpath)
-        wrapper = dict_widget.find_element(By.XPATH, "./preceding-sibling::div[@class='squirrel-dict-widget']")
-        
-        rows = wrapper.find_elements(By.XPATH, ".//tbody/tr")
-        for row in rows:
-            key_input = row.find_element(By.XPATH, "./td[1]/input")
-            if key_input.get_attribute("value") == key:
-                value_input = row.find_element(By.XPATH, "./td[2]/input")
-                value_input.clear()
-                value_input.send_keys(new_value)
-                break
-        else:
-            raise ValueError(f"Key '{key}' not found in dictionary widget")
+        wrapper = self._get_widget_wrapper(field_name, 'squirrel-dictionary', 'squirrel-dict-widget')
+        row = self._find_dict_row_by_key(wrapper, key)
+        value_input = row.find_element(By.XPATH, "./td[2]/input")
+        value_input.clear()
+        value_input.send_keys(new_value)
 
     def remove_from_dictionary(self, field_name: str, key: str) -> None:
-        """ Remove a key from a dictionary widget """
-        dict_widget_xpath = f"{self.expected_visible}//*[@name='{field_name}'][@widget='squirrel-dictionary']"
-        dict_widget = self.browser.find_element(By.XPATH, dict_widget_xpath)
-        wrapper = dict_widget.find_element(By.XPATH, "./preceding-sibling::div[@class='squirrel-dict-widget']")
-        
-        rows = wrapper.find_elements(By.XPATH, ".//tbody/tr")
-        for row in rows:
-            key_input = row.find_element(By.XPATH, "./td[1]/input")
-            if key_input.get_attribute("value") == key:
-                remove_btn = row.find_element(By.CSS_SELECTOR, ".btn-remove-line")
-                remove_btn.click()
-                break
-        else:
-            raise ValueError(f"Key '{key}' not found in dictionary widget")
+        wrapper = self._get_widget_wrapper(field_name, 'squirrel-dictionary', 'squirrel-dict-widget')
+        row = self._find_dict_row_by_key(wrapper, key)
+        remove_btn = row.find_element(By.CSS_SELECTOR, ".btn-remove-line")
+        remove_btn.click()
         
     def add_to_list(self, field_name: str, value: str) -> None:
-        """ Add a value to a list widget """
-        list_widget_xpath = f"{self.expected_visible}//*[@name='{field_name}'][@widget='squirrel-list']"
-        list_widget = self.browser.find_element(By.XPATH, list_widget_xpath)
-        wrapper = list_widget.find_element(By.XPATH, "./preceding-sibling::div[@class='squirrel-list-widget']")
+        wrapper = self._get_widget_wrapper(field_name, 'squirrel-list', 'squirrel-list-widget')
 
-        # Click add button
-        add_btn = wrapper.find_element(By.CSS_SELECTOR, ".btn-add-line")
-        add_btn.click()
-        # Fill the new row
+        wrapper.find_element(By.CSS_SELECTOR, ".btn-add-line").click()
         rows = wrapper.find_elements(By.XPATH, ".//tbody/tr")
-        new_row = rows[-1]
-        value_input = new_row.find_element(By.XPATH, "./td[1]/input")
+        value_input = rows[-1].find_element(By.XPATH, "./td[1]/input")
         value_input.clear()
         value_input.send_keys(value)
 
@@ -204,7 +183,6 @@ class TransientElement(BaseElement):
 class RightSidebar(TransientElement):
     def __init__(self, browser: WebDriver, expected_visible: str) -> None:
         super().__init__(browser, expected_visible, transient_element_name="Right Sidebar")
-        self.right_sidebar_expected_visible = expected_visible # Used to deal with the sidebar tabs (for action sidebars)
 
 class Modal(TransientElement):
     def click_button(self, by_button_text: str = False, by_id:str = False) -> None:
@@ -217,18 +195,13 @@ class Modal(TransientElement):
         button.click()
         self.assert_visibility(visible=False)
 
-    def click_action_button(self, by_button_text: str) -> None:
+    def click_action_button(self, by_button_text: str) -> RightSidebar:
         self.click_button(by_button_text)
         return RightSidebar(self.browser, expected_visible="//div[starts-with(@id, 'ActionSidebar')]")
 
     def close(self, assert_closed: bool = True) -> None:
-        try:
-            modal = self.browser.find_element(By.XPATH, self.expected_visible)
-            close_button = modal.find_element(By.CSS_SELECTOR, ".close-btn")
-        except:
-            modal = self.browser.find_element(By.XPATH, self.expected_visible)
-            close_button = modal.find_element(By.ID, "cancelButton")
-
+        modal = self.browser.find_element(By.XPATH, self.expected_visible)
+        close_button = (modal.find_elements(By.CSS_SELECTOR, ".close-btn") or modal.find_elements(By.ID, "cancelButton"))[0]
         close_button.click()
         self.assert_visibility(visible=not assert_closed)
 
@@ -296,7 +269,7 @@ class Table(BaseElement):
     def click_action_button(self, by_button_text: str) -> RightSidebar:
         self.click_button(by_button_text)
         return RightSidebar(self.browser, expected_visible="//div[starts-with(@id, 'ActionSidebar')]")
-    
+
     def click_custom_action_button(self) -> Modal:
         button_text = "Add Action"
         self.click_button(button_text)
@@ -351,9 +324,10 @@ class Tour(App, Navbar, Grid, TablesScreen, PipelineScreen):
     def create_project(self, name: str, description: str = False):
         create_project_modal = self.click_create_card(
             expected_visible="//div[contains(@class,'modal-content')]//form[@id='createProjectModalForm']")
-        create_project_modal.fill([("name", name)])
+        values = [("name", name)]
         if description:
-            create_project_modal.fill([("description", description)])
+            values.append(("description", description))
+        create_project_modal.fill(values)
         create_project_modal.submit(assert_closed=True)
 
     def confirmation_modal(self, confirm: bool = True) -> Modal:
