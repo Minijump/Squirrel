@@ -5,13 +5,13 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-class Widget:
+class WidgetContainer:
     def _get_widget_wrapper(self, field_name: str, widget_type: str, widget_class: str):
         widget_xpath = f"{self.expected_visible}//*[@name='{field_name}'][@widget='{widget_type}']"
         widget = self.browser.find_element(By.XPATH, widget_xpath)
         return widget.find_element(By.XPATH, f"./preceding-sibling::div[@class='{widget_class}']")
 
-class DictWidget(Widget):
+class DictWidgetContainer(WidgetContainer):
     def _find_dict_row_by_key(self, wrapper, key: str):
         rows = wrapper.find_elements(By.XPATH, ".//tbody/tr")
         for row in rows:
@@ -48,7 +48,7 @@ class DictWidget(Widget):
         remove_btn.click()
 
 
-class ListWidget(Widget):
+class ListWidgetContainer(WidgetContainer):
     def add_to_list(self, field_name: str, value: str) -> None:
         wrapper = self._get_widget_wrapper(field_name, 'squirrel-list', 'squirrel-list-widget squirrel-table-input-widget')
 
@@ -59,7 +59,7 @@ class ListWidget(Widget):
         value_input.send_keys(value)
 
 
-class BaseElement(DictWidget, ListWidget):
+class BaseElement(DictWidgetContainer, ListWidgetContainer):
     def __init__(self, browser: WebDriver):
         self.browser = browser
 
