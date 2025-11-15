@@ -1,0 +1,48 @@
+.squirrel-table-input-widget {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    width: 100%;
+    max-width: 800px; 
+}
+
+.squirrel-table-input-widget table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.squirrel-table-input-widget td {
+    padding: 2px;
+    box-sizing: border-box;
+}
+
+.squirrel-table-input-widget input {
+    width: 100% !important;
+    margin: 1px !important;
+    box-sizing: border-box;
+}
+
+.squirrel-table-input-widget .btn-add-line {
+    background: transparent;
+    color: var(--primary-text-color);
+    border: solid 1px var(--primary-text-color);
+    padding: 1px 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 6px;
+    white-space: nowrap;
+}
+
+.squirrel-table-input-widget .btn-remove-line {
+    background: transparent;
+    color: rgba(255, 0, 0, 0.614);
+    border: 0px;
+    cursor: pointer;
+    padding: 1px 5px;
+    margin-left: 6px;
+    white-space: nowrap;
+}
+
+.squirrel-table-input-widget .btn-remove-line:hover {
+    text-decoration: underline;
+    color: red;
+}

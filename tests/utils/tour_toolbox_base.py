@@ -21,7 +21,7 @@ class DictWidget(Widget):
         raise ValueError(f"Key '{key}' not found in dictionary widget")
 
     def add_to_dictionary(self, field_name: str, key: str, value: str) -> None:
-        wrapper = self._get_widget_wrapper(field_name, 'squirrel-dictionary', 'squirrel-dict-widget')
+        wrapper = self._get_widget_wrapper(field_name, 'squirrel-dictionary', 'squirrel-dict-widget squirrel-table-input-widget')
         
         wrapper.find_element(By.CSS_SELECTOR, ".btn-add-line").click()
         rows = wrapper.find_elements(By.XPATH, ".//tbody/tr")
@@ -35,14 +35,14 @@ class DictWidget(Widget):
         value_input.send_keys(value)
 
     def edit_dictionary(self, field_name: str, key: str, new_value: str) -> None:
-        wrapper = self._get_widget_wrapper(field_name, 'squirrel-dictionary', 'squirrel-dict-widget')
+        wrapper = self._get_widget_wrapper(field_name, 'squirrel-dictionary', 'squirrel-dict-widget squirrel-table-input-widget')
         row = self._find_dict_row_by_key(wrapper, key)
         value_input = row.find_element(By.XPATH, "./td[2]/input")
         value_input.clear()
         value_input.send_keys(new_value)
 
     def remove_from_dictionary(self, field_name: str, key: str) -> None:
-        wrapper = self._get_widget_wrapper(field_name, 'squirrel-dictionary', 'squirrel-dict-widget')
+        wrapper = self._get_widget_wrapper(field_name, 'squirrel-dictionary', 'squirrel-dict-widget squirrel-table-input-widget')
         row = self._find_dict_row_by_key(wrapper, key)
         remove_btn = row.find_element(By.CSS_SELECTOR, ".btn-remove-line")
         remove_btn.click()
@@ -50,7 +50,7 @@ class DictWidget(Widget):
 
 class ListWidget(Widget):
     def add_to_list(self, field_name: str, value: str) -> None:
-        wrapper = self._get_widget_wrapper(field_name, 'squirrel-list', 'squirrel-list-widget')
+        wrapper = self._get_widget_wrapper(field_name, 'squirrel-list', 'squirrel-list-widget squirrel-table-input-widget')
 
         wrapper.find_element(By.CSS_SELECTOR, ".btn-add-line").click()
         rows = wrapper.find_elements(By.XPATH, ".//tbody/tr")
