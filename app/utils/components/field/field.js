@@ -53,86 +53,83 @@ import { SquirrelList } from '/static/utils/widgets/list_widget/list_widget.js';
  */
 export class Field {
     constructor(inputId, inputInfo, defaultValue = undefined) {
-        this.id = 'field-' + Math.random().toString(36).substring(2, 11);
-        this.inputDivHTML = this.generateInputdiv(inputInfo, inputId, defaultValue);
+        this.inputDivHTML = this._build(inputInfo, inputId, defaultValue);
     }
 
-    generateInputdiv(inputInfo, inputId, defaultValue = undefined) {
-        const inputDivHTML = document.createElement('div');
+    _build(inputInfo, inputId, defaultValue) {
+        const container = document.createElement('div');
+        const input = this._createInput(inputInfo, inputId, defaultValue);
         
-        const input = this.createInput(inputInfo, defaultValue);
+        this._configureVisibility(container, input, inputInfo);
+        this._appendLabelAndInfo(container, inputInfo);
+        
+        container.appendChild(input);
+        this._initializeWidget(input, inputInfo.type);
+        
+        return container;
+    }
+
+    _createInput(inputInfo, inputId, defaultValue) {
+        const input = Input.createInput(inputInfo.type, {
+            placeholder: inputInfo.placeholder,
+            className: inputInfo.className,
+            onchange: inputInfo.onchange,
+            step: inputInfo.step,
+            accept: inputInfo.accept,
+            selectOptions: inputInfo.select_options,
+            dictOptions: inputInfo.dict_options,
+            dictDefault: inputInfo.dict_default,
+            listOptions: inputInfo.list_options,
+            listDefault: inputInfo.list_default
+        });
+        
         input.name = input.id = inputId;
-        if (!inputInfo.onchange_visibility){
-            // For field displayed conditionally, see 'onchangeFormValue'
-            input.required = (inputInfo.required !== undefined) ? inputInfo.required : true;
-        }
-
-        if (inputInfo.onchange_visibility) {
-            inputDivHTML.classList.add('onchange-visibility');
-            const [triggerField, triggerValue] = inputInfo.onchange_visibility;
-            inputDivHTML.dataset.visibilitytrigger = triggerField;
-            inputDivHTML.dataset.visibilityvalue = triggerValue;
-            inputDivHTML.dataset.requiredwhenvisible = (inputInfo.required !== undefined) ? inputInfo.required : true;
-        }
-
-        if (inputInfo.invisible) input.type = 'hidden';
-        else{
-            const label = this.createLabel(inputInfo);
-            label && inputDivHTML.appendChild(label);
-            const infoNote = this.createInfoNote(inputInfo);
-            infoNote && inputDivHTML.appendChild(infoNote);
-        }
-
-        inputDivHTML.appendChild(input);
-        if (inputInfo.type === 'dict') new SquirrelDictionary(input);
-        if (inputInfo.type === 'list') new SquirrelList(input);
-        return inputDivHTML;
-    }
-
-    createInput(input, defaultValue = undefined) {
-        let formInput;
-        
-        const inputOptions = {
-            placeholder: input.placeholder,
-            className: input.className,
-            onchange: input.onchange,
-            step: input.step,
-            accept: input.accept,
-            selectOptions: input.select_options,
-            dictOptions: input.dict_options,
-            dictDefault: input.dict_default,
-            listOptions: input.list_options,
-            listDefault: input.list_default
-        };
-        
-        formInput = Input.createInput(input.type, inputOptions);
         
         if (defaultValue !== undefined) {
-            if (input.type === 'dict' || input.type === 'list') {
-                formInput.value = typeof defaultValue === 'string' ? defaultValue : JSON.stringify(defaultValue);
-            } else {
-                formInput.value = defaultValue;
-            }
+            input.value = (inputInfo.type === 'dict' || inputInfo.type === 'list')
+                ? (typeof defaultValue === 'string' ? defaultValue : JSON.stringify(defaultValue))
+                : defaultValue;
         }
-
-        return formInput;
+        
+        if (inputInfo.invisible) input.type = 'hidden';
+        
+        return input;
     }
 
-    createLabel(input) {
-        if (!input.label) return null;
-
-        const label = document.createElement('label');
-        label.innerHTML = input.label;
-        return label;
+    _configureVisibility(container, input, inputInfo) {
+        const isRequired = inputInfo.required ?? true;
+        
+        if (inputInfo.onchange_visibility) {
+            const [triggerField, triggerValue] = inputInfo.onchange_visibility;
+            container.classList.add('onchange-visibility');
+            container.dataset.visibilitytrigger = triggerField;
+            container.dataset.visibilityvalue = triggerValue;
+            container.dataset.requiredwhenvisible = isRequired;
+        } else {
+            input.required = isRequired;
+        }
     }
 
-    createInfoNote(input) {
-        if (!input.info) return null;
+    _appendLabelAndInfo(container, inputInfo) {
+        if (inputInfo.invisible) return;
+        
+        if (inputInfo.label) {
+            const label = document.createElement('label');
+            label.innerHTML = inputInfo.label;
+            container.appendChild(label);
+        }
+        
+        if (inputInfo.info) {
+            const infoNote = document.createElement('div');
+            infoNote.className = 'info-note';
+            infoNote.innerHTML = `<i class="fas fa-info-circle"></i> ${inputInfo.info}`;
+            container.appendChild(infoNote);
+        }
+    }
 
-        const infoNote = document.createElement('div');
-        infoNote.className = 'info-note';
-        infoNote.innerHTML = `<i class="fas fa-info-circle"></i> ${input.info}`;
-        return infoNote;
+    _initializeWidget(input, type) {
+        if (type === 'dict') new SquirrelDictionary(input);
+        else if (type === 'list') new SquirrelList(input);
     }
 }
 
@@ -143,7 +140,7 @@ function onchangeFormValue(onchangeId, event) {
         const triggerValue = field.dataset.visibilityvalue;
         const requiredWhenVisible = field.dataset.requiredwhenvisible === 'true';
         const inputElement = event.target
-
+        
         const shouldBeVisible = (triggerOnchageId === onchangeId && inputElement.value === triggerValue);
         if (shouldBeVisible) field.style.display = 'block';
         else field.style.display = 'none';
