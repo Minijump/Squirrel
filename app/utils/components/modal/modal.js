@@ -11,6 +11,10 @@ export class Modal extends TransientComponent {
         this.overlayId = this.id || 'modal-overlay';
     }
 
+    getHeaderClass() {
+        return 'modal-header';
+    }
+
     create() {
         this.componentHtml = this.getOrCreateOverlay();
         this.componentHtml.classList.add('modal');
@@ -28,16 +32,6 @@ export class Modal extends TransientComponent {
         this.componentHtml.appendChild(modalContent);
         document.body.appendChild(this.componentHtml); 
         this.bindEvents();
-    }
-
-    createHeader() {
-        const header = document.createElement('div');
-        header.className = 'modal-header';
-        header.innerHTML = `
-            <h3 class="modal-title">${this.title}</h3>
-            <a href="javascript:void(0)" class="close-btn">&times;</a>
-        `;
-        return header;
     }
 
     componentOpen() {

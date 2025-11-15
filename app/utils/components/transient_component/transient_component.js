@@ -13,7 +13,22 @@ export class TransientComponent {
     }
 
     create() {
-        return;
+        throw new Error('create must be implemented by subclass');
+    }
+
+    getHeaderClass() {
+        throw new Error('getHeaderClass must be implemented by subclass');
+    }
+
+    createHeader() {
+        const headerClass = this.getHeaderClass();
+        const header = document.createElement('div');
+        header.className = `${headerClass}`;
+        header.innerHTML = `
+            <h3 class="${headerClass}-title">${this.title}</h3>
+            <a href="javascript:void(0)" class="close-btn">&times;</a>
+        `;
+        return header;
     }
 
     createContent() {
