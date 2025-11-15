@@ -4,26 +4,25 @@ import { Field } from '/static/utils/components/field/field.js';
 export class Form {
     constructor(options = {}) {
         this.id = options.id || 'form-' + Math.random().toString(36).substring(2, 11);
-        this.inputs = options.inputs || {};
         this.submitRoute = options.submitRoute || '';
-        this.data = options.data || {};
-        this.formHTML = null;
-        this.create();
+        this.submitText = options.submitText || 'Confirm';
+        this.formHTML = this._build(options.inputs || {}, options.data || {});
     }
 
-    create() {
-        const form = this.createForm();
-        Object.keys(this.inputs).forEach(key => {
-            const input = new Field(key, this.inputs[key]);
-            form.appendChild(input.inputDivHTML);
+    _build(inputs, data) {
+        const form = this._createFormElement();
+        
+        Object.keys(inputs).forEach(key => {
+            const field = new Field(key, inputs[key], data[key]);
+            form.appendChild(field.inputDivHTML);
         });
-        form.appendChild(this.createSubmitButton());
-        this.completeInputs(form, this.data);
-
-        this.formHTML = form;
+        
+        form.appendChild(this._createSubmitButton());
+        
+        return form;
     }
 
-    createForm() {
+    _createFormElement() {
         const form = document.createElement('form');
         form.id = this.id;
         form.className = 'std-form';
@@ -33,19 +32,11 @@ export class Form {
         return form;
     }
 
-    createSubmitButton() {
-        const submitButton = document.createElement('button');
-        submitButton.type = 'submit';
-        submitButton.className = 'btn-primary';
-        submitButton.textContent = 'Confirm';
-        return submitButton;
-    }
-
-    completeInputs(form, data={}) {
-        Object.keys(data).forEach(key => {
-            const inputElement = form.querySelector(`#${key}`);
-            if (inputElement) inputElement.value = data[key];
-            else console.warn(`Element with id ${key} not found in the form.`);
-        });
+    _createSubmitButton() {
+        const button = document.createElement('button');
+        button.type = 'submit';
+        button.className = 'btn-primary';
+        button.textContent = this.submitText;
+        return button;
     }
 }
