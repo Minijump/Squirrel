@@ -1,102 +1,53 @@
 export class Input {
-    constructor(type, options = {}) {
-        this.type = type;
-        this.options = {
-            placeholder: '',
-            value: '',
-            readonly: false,
-            className: '',
-            step: 'any',
-            accept: '',
-            onchange: '',
-            selectOptions: [],
-            widget: '',
-            ...options
-        };
+    static createInput(type, options = {}) {
+        if (type === 'dict') return Input._createWidget('squirrel-dictionary', options.dictOptions, options.dictDefault || {});
+        if (type === 'list') return Input._createWidget('squirrel-list', options.listOptions, options.listDefault || []);
+        
+        const element = Input._createElement(type, options);
+        Input._applyAttributes(element, type, options);
+        return element;
     }
 
-    create() {
-        let element;
+    static _createElement(type, options) {
+        if (type === 'textarea') return document.createElement('textarea');
         
-        if (this.type === 'textarea') {
-            element = document.createElement('textarea');
-        } else if (this.type === 'select') {
-            element = document.createElement('select');
-            this.options.selectOptions.forEach(option => {
-                const optionElement = document.createElement('option');
-                optionElement.value = option[0];
-                optionElement.text = option[1];
-                element.appendChild(optionElement);
+        if (type === 'select') {
+            const element = document.createElement('select');
+            (options.selectOptions || []).forEach(([value, text]) => {
+                const opt = document.createElement('option');
+                opt.value = value;
+                opt.text = text;
+                element.appendChild(opt);
             });
-        } else {
-            element = document.createElement('input');
-            element.type = this.type;
+            return element;
         }
+        
+        const element = document.createElement('input');
+        element.type = type;
+        return element;
+    }
 
-        if (this.options.placeholder && ['text', 'password', 'textarea', 'number'].includes(this.type)) {
-            element.placeholder = this.options.placeholder;
+    static _applyAttributes(element, type, options) {
+        if (options.placeholder && ['text', 'password', 'textarea', 'number'].includes(type)) {
+            element.placeholder = options.placeholder;
         }
-
-        if (this.options.value !== undefined && this.type !== 'select') {
-            // For select, default value is the first one in options
-            element.value = this.options.value;
-        }
-
-        if (this.options.readonly) {
-            element.readOnly = true;
-        }
-
-        if (this.options.className) {
-            element.className = this.options.className;
-        }
-
-        if (this.type === 'number' && this.options.step) {
-            element.step = this.options.step;
-        }
-
-        if (this.type === 'file' && this.options.accept) {
-            element.accept = this.options.accept;
-        }
-
-        if (this.options.widget) {
-            element.setAttribute('widget', this.options.widget);
-        }
-
-        if (this.options.onchange) {
-            element.setAttribute('onchange', this.options.onchange);
+        if (options.value !== undefined) element.value = options.value;
+        if (options.readonly) element.readOnly = true;
+        if (options.className) element.className = options.className;
+        if (type === 'number' && options.step) element.step = options.step;
+        if (type === 'file' && options.accept) element.accept = options.accept;
+        
+        if (options.onchange) {
+            element.setAttribute('onchange', options.onchange);
             element.classList.add('onchange-trigger');
         }
-
-        return element;
     }
 
-    static createInput(type, options = {}) {
-        if (type === 'dict') {
-            return  new Input(type, options).createDict(options);
-        }
-        if (type === 'list') {
-            return  new Input(type, options).createList(options);
-        }
-        return new Input(type, options).create();
-    }
-
-    createDict(options = {}) {
+    static _createWidget(widgetType, widgetOptions, defaultValue) {
         const element = document.createElement('textarea');
-        element.setAttribute('widget', 'squirrel-dictionary');
-        if (options.dictOptions) {
-            element.setAttribute('options', JSON.stringify(options.dictOptions));
-        }
-        element.value = JSON.stringify(options.dictDefault || {});
-        return element;
-    }
-
-    createList(options = {}) {
-        const element = document.createElement('textarea');
-        element.setAttribute('widget', 'squirrel-list');
-        if (options.listOptions) {
-            element.setAttribute('options', JSON.stringify(options.listOptions));
-        }
-        element.value = JSON.stringify(options.listDefault || []);
+        element.setAttribute('widget', widgetType);
+        if (widgetOptions) element.setAttribute('options', JSON.stringify(widgetOptions));
+        element.value = JSON.stringify(defaultValue);
         return element;
     }
 }
