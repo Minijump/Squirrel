@@ -127,19 +127,20 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
+* Improve actions
+  * add inputs type (column, table, ... to enable easy autocomplete), ... => would required complete change of strct (Use directly pandas fct object, add a apply_on decorator?, call directly the fct object instead of a get_code fct, call fct_object.__doc__, ...)
+  * add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch (ie: somewhere where a can type sum(col1, col2)), ... =>same than above, complete change of strct
 
 ### To Fix
 
 ### To do MVP
-* Improve actions
-  * add inputs type (column, table, ... to enable easy autocomplete), ... => would required complete change of strct (Use directly pandas fct object, add a apply_on decorator?, call directly the fct object instead of a get_code fct, call fct_object.__doc__, ...)
-  * add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch (ie: somewhere where a can type sum(col1, col2)), ... =>same than above, complete change of strct
-  * Autocomplete squirrel action widget
-  * Add actions (expl: Possibility to edit a cell value directly)
+* Autocomplete squirrel action widget
+* Add actions (expl: Possibility to edit a cell value directly)
 
 ### To do UX
 
 ### Feature ideas
+* Imp JS in overall: some modal/sidebar should use default features such as fill data, bind events, ... + imp + generalize error handling + tandardize async/await patterns + ... (and check pages script, maybe create a table class instead of adding everything in script, ...)
 * Basic graphs in columns inspect (chart.js, d3.js,...?)
 * Data sources
   * Give a way to secure credentials? =>Add a way to add credentials in settings/data sources/new credentials tabs/... and select them at data source creation
