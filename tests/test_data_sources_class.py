@@ -1,4 +1,5 @@
 import pytest
+import pandas as pd
 
 from app.data_sources.models.data_source_factory import DataSourceFactory
 from tests import MOCK_PROJECT
@@ -25,3 +26,10 @@ async def test_update_source_settings(temp_project_dir_fixture):
     source = DataSourceFactory.init_source_from_dir(MOCK_PROJECT, "Csv_ordered")
     settings = source.get_settings()
     assert settings['name'] == "Csv ordered - Updated"
+
+def test_create_table(temp_project_dir_fixture):
+    source = DataSourceFactory.init_source_from_dir(MOCK_PROJECT, "Csv_ordered")
+
+    dataframe =  source.create_table()
+
+    assert isinstance(dataframe, pd.DataFrame), "DataSourceFile create table method should return a DataFrame"

@@ -4,7 +4,6 @@ import pytest
 from unittest.mock import AsyncMock, patch
 
 from app.data_sources.models.data_source_factory import DataSourceFactory
-from app.data_sources.models.data_source_api import DataSourceAPI
 from app.data_sources.models.data_source_api_odoo import DataSourceOdoo
 from app.data_sources.models.data_source_api_yahoo_finance import DataSourceYahooFinance
 from tests import MOCK_PROJECT
@@ -49,20 +48,6 @@ def _create_mock_source_dir(project_dir, source_dir, manifest):
     with open(manifest_path, 'w') as f:
         json.dump(manifest, f)
     return source_path
-
-
-def test_create_table():
-    form_data = {
-        "name": 'mock_source',
-        "type": 'api (mock)',
-        "directory": 'mock_directory',
-        "project_dir": "mock_project"
-    }
-    source = DataSourceAPI(form_data)
-
-    python_line =  source.create_table({"table_name": "mock_table"})
-
-    assert " pd.read_pickle(r" in python_line, f"DataSourceAPI create table method should read the pickle file"
 
 # Odoo Tests
 def test_init_source_from_dir_odoo(temp_project_dir_fixture):

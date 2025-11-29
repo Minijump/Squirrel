@@ -4,24 +4,9 @@ import pytest
 from unittest.mock import patch 
 
 from app.data_sources.models.data_source_factory import DataSourceFactory
-from app.data_sources.models.data_source_file import DataSourceFile, DataSourceCSV, DataSourceXLSX, DataSourceJSON, DataSourcePickle
+from app.data_sources.models.data_source_file import DataSourceCSV, DataSourceXLSX, DataSourceJSON, DataSourcePickle
 from tests import MOCK_PROJECT
 from tests.utils.tests_toolbox import MockUploadFile
-
-
-def test_create_table():
-    form_data = {
-        "name": 'mock_source',
-        "type": 'csv',
-        "kwargs": '{"delimiter": ";"}',
-        "directory": 'mock_directory',
-        "project_dir": "mock_project"
-    }
-    source = DataSourceFile(form_data)
-
-    python_line =  source.create_table({"table_name": "mock_table"})
-
-    assert " pd.read_pickle(r" in python_line, f"DataSourceFile create table method should read the pickle file"
 
 # CSV Tests
 def test_init_source_from_dir_csv(temp_project_dir_fixture):
