@@ -88,3 +88,17 @@ class Pipeline:
 
         self._save_actions()
         return tables
+
+    # DEMO NEW STRCT
+    # async def run_pipeline(self):
+    #     tables = {}
+    #     for pipeline_action in self.actions:              
+    #         try:
+    #             await pipeline_action.action.execute(tables)
+    #         except Exception as e:
+    #             pipeline_action.error = str(e)
+    #             self._save_actions()
+    #             raise Exception(f"Error executing action '{pipeline_action.description}': {e}")
+
+    #     self._save_actions()
+    #     return tables

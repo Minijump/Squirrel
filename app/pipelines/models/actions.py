@@ -588,6 +588,26 @@ class ColDiff(ActionColumn):
         new_col_idx = col_idx.replace(", ", "-").replace("'", "").replace("(", "").replace(")", "") + "-diff"
         new_code = f"""tables['{table_name}']['{new_col_idx}'] = tables['{table_name}'][{col_idx}].diff(periods={periods})"""
         return new_code
+# DEMO NEW STRCT
+# @table_action_type
+# class ColDiff(ActionColumn):
+#     def __init__(self, form_data):
+#         super().__init__(form_data)
+#         self.icons = ["fas fa-chart-line", "fas fa-minus"]
+#         self.args.update({
+#             "periods": {"type": "number", "label": "Periods"},
+#         })
+
+#     def get_name(self):
+#         return f"Calculate difference of column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
+
+#     async def execute(self, tables):
+#         import pandas as pd
+#         fct = pd.DataFrame.diff
+#         table_name, col_name, periods, col_idx = await self._get(["table_name", "col_name", "periods", "col_idx"])
+#         new_col_idx = col_idx.replace(", ", "-").replace("'", "").replace("(", "").replace(")", "") + "-diff"
+#         tables[table_name][new_col_idx] = fct(tables[table_name][col_idx], periods=periods)
+#         return tables
 
 @table_action_type
 class MathOperations(ActionColumn):
