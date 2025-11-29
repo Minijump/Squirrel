@@ -128,7 +128,7 @@ There are 3 main folders:
 
 ### To do
 * Improve actions
-  * Fix and IMP new action strct
+  * IMP new action strct (remove eval(col_idx) from the function (add it _get instead), ... )
   * FIX UT for action classes
 
 ### To Fix

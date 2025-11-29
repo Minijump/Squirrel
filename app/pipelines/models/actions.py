@@ -24,12 +24,6 @@ def convert_sq_action_to_python(code, actual_table_name=None, is_sq_action=True)
     code = code.replace('t[', 'tables[')
     return code
 
-def convert_col_idx(col_idx):
-    """Returns the idx of a pandas dataframe column"""
-    if col_idx[0] != '(':
-        col_idx = f"'{col_idx}'"
-    return col_idx
-
 class Action:
     def __init__(self, form_data):
         self.form_data = dict(form_data)
@@ -302,16 +296,6 @@ class ActionColumn(Action):
             "col_idx": {"type": "text", "invisible": True},
             "col_dtype": {"type": "text", "invisible": True},
         })
-
-    async def _get(self, args_list):
-        form_data = self.form_data
-        data = []
-        for arg in args_list:
-            arg_data = form_data.get(arg)
-            if arg == 'col_idx':
-                arg_data = convert_col_idx(arg_data)
-            data.append(arg_data)
-        return tuple(data)
     
 @table_action_type
 class DropColumn(ActionColumn):
