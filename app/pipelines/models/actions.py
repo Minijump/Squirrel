@@ -2,10 +2,14 @@ import ast
 import numpy as np
 import pandas as pd
 
-from .action_factory import table_action_type
 from app.data_sources.models.data_source_factory import DataSourceFactory
 from app.tables.models.table_manager import TableManager
 from app.projects.models.project import Project
+
+TABLE_ACTION_REGISTRY = {}
+def table_action_type(cls):
+    TABLE_ACTION_REGISTRY[cls.__name__] = cls
+    return cls
 
 def convert_sq_action_to_python(code, actual_table_name=None, is_sq_action=True):
     """
