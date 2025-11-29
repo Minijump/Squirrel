@@ -195,7 +195,7 @@ class CreateTable(Action):
         
         if source_creation_type == "data_source":
             source = DataSourceFactory.init_source_from_dir(project_dir, data_source_dir)
-            tables[table_name] = source.get_data()
+            tables[table_name] = source.create_table()
         elif source_creation_type == "other_tables":
             tables[table_name] = tables[table_df].copy()
         else:

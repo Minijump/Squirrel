@@ -1,5 +1,6 @@
 import json
 import os
+import pandas as pd
 
 class DataSource:
     short_name = "short_name"
@@ -68,9 +69,10 @@ class DataSource:
         """To be implemented by subclasses (mandatory)"""
         pass
 
-    def create_table(self, form_data=False):
-        """To be implemented by subclasses (mandatory)"""
-        pass
+    def create_table(self):
+        data_file_path = os.path.join(self.path, 'data.pkl')
+        table = pd.read_pickle(data_file_path)
+        return table
 
     async def sync(self):
         """To be implemented by subclasses (optional)"""

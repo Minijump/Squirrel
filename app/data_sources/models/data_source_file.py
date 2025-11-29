@@ -74,11 +74,6 @@ class DataSourceFile(DataSource):
             updated_source["kwargs"] = {}
         await self._create_data_file(updated_data)
         return updated_source
-    
-    def create_table(self, form_data):
-        data_file_path = os.path.join(self.path, 'data.pkl')
-        table_name = form_data.get("table_name")
-        return f"tables['{table_name}'] = pd.read_pickle(r'{data_file_path}')"
 
 @data_source_type
 class DataSourceCSV(DataSourceFile):
