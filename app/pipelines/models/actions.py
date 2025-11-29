@@ -1,5 +1,6 @@
 import ast
 import numpy as np
+import pandas as pd
 
 from .action_factory import table_action_type
 from app.data_sources.models.data_source_factory import DataSourceFactory
@@ -37,7 +38,7 @@ class Action:
     async def _get(self, args_list):
         return (self.form_data.get(arg) for arg in args_list)
     
-    async def get_code(self):
+    async def execute(self, tables):
         raise NotImplementedError("Subclasses must implement this method")
     
     async def get_args(self, kwargs=False):
@@ -58,11 +59,11 @@ class AddColumn(Action):
     def get_name(self):
         return f"Add column '{self.form_data.get('col_name', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, col_value, value_type = await self._get(["table_name", "col_name", "col_value", "value_type"])
         code = convert_sq_action_to_python(col_value, actual_table_name=table_name, is_sq_action=(value_type == "sq_action"))
-        new_code = f"""tables['{table_name}']['{col_name}'] = {code}"""
-        return new_code
+        exec(f"tables['{table_name}']['{col_name}'] = {code}", {'tables': tables, 'pd': pd, 'np': np})
+        return tables
 
 @table_action_type
 class AddRow(Action):
@@ -79,11 +80,11 @@ class AddRow(Action):
     def get_name(self):
         return f"Add rows in table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, new_rows = await self._get(["table_name", "new_rows"])
-        new_rows = f"pd.DataFrame({new_rows})" if new_rows else "pd.DataFrame()"
-        new_code = f"""tables['{table_name}'] = pd.concat([tables['{table_name}'], {new_rows}], ignore_index=True)"""
-        return new_code
+        new_rows_df = pd.DataFrame(eval(new_rows)) if new_rows else pd.DataFrame()
+        tables[table_name] = pd.concat([tables[table_name], new_rows_df], ignore_index=True)
+        return tables
 
 @table_action_type
 class DeleteRow(Action):
@@ -97,10 +98,10 @@ class DeleteRow(Action):
     def get_name(self):
         return f"Delete rows with domain: '{self.form_data.get('delete_domain', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, delete_domain = await self._get(["table_name", "delete_domain"])
-        new_code = f"""tables['{table_name}'] = tables['{table_name}'].query("not ({delete_domain})")"""
-        return new_code
+        tables[table_name] = tables[table_name].query(f"not ({delete_domain})")
+        return tables
     
 @table_action_type
 class KeepRow(Action):
@@ -114,10 +115,10 @@ class KeepRow(Action):
     def get_name(self):
         return f"Keep rows with domain: '{self.form_data.get('keep_domain', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, keep_domain = await self._get(["table_name", "keep_domain"])
-        new_code = f"""tables['{table_name}'] = tables['{table_name}'].query("({keep_domain})")"""
-        return new_code
+        tables[table_name] = tables[table_name].query(f"({keep_domain})")
+        return tables
 
 @table_action_type
 class DropDuplicates(Action):
@@ -138,12 +139,12 @@ class DropDuplicates(Action):
         keep = self.form_data.get('keep', 'first')
         return f"Drop duplicates in table '{self.form_data.get('table_name', '?')}' (columns: {subset} | keep: {keep})"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, subset, keep = await self._get(["table_name", "subset", "keep"])
         subset = ast.literal_eval(subset)
-        keep_val = f"""'{keep}'""" if keep != 'false' else False
-        new_code = f"""tables['{table_name}'] = tables['{table_name}'].drop_duplicates(subset={subset or None}, keep={keep_val})"""
-        return new_code
+        keep_val = keep if keep != 'false' else False
+        tables[table_name] = tables[table_name].drop_duplicates(subset=subset or None, keep=keep_val)
+        return tables
 
 @table_action_type
 class CreateTable(Action):
@@ -184,19 +185,19 @@ class CreateTable(Action):
         args['table_df']['select_options'] = available_tables
         return args
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, project_dir, data_source_dir, source_creation_type, table_df = await self._get(
             ["table_name", "project_dir", "data_source_dir", "source_creation_type", "table_df"])
         
         if source_creation_type == "data_source":
             source = DataSourceFactory.init_source_from_dir(project_dir, data_source_dir)
-            new_code = source.create_table(self.form_data)
+            tables[table_name] = source.get_data()
         elif source_creation_type == "other_tables":
-            new_code = f"tables['{table_name}'] = tables['{table_df}']"
+            tables[table_name] = tables[table_df].copy()
         else:
             raise ValueError("Invalid source_creation_type")
         
-        return new_code
+        return tables
     
 @table_action_type
 class CustomAction(Action):
@@ -213,11 +214,11 @@ class CustomAction(Action):
     def get_name(self):
         return f"Custom action '{self.form_data.get('custom_action_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         custom_action_code, custom_action_name, custom_action_type, default_table_name = await self._get(["custom_action_code", "custom_action_name", "custom_action_type", "default_table_name"])
         code = convert_sq_action_to_python(custom_action_code, actual_table_name=default_table_name, is_sq_action=(custom_action_type == "sq_action"))
-        new_code = f"""{code}"""
-        return new_code
+        exec(code, {'tables': tables, 'pd': pd, 'np': np})
+        return tables
 
 @table_action_type
 class MergeTables(Action):
@@ -235,10 +236,10 @@ class MergeTables(Action):
     def get_name(self):
         return f"Merge table '{self.form_data.get('table_name', '?')}' with '{self.form_data.get('table2', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, table2, on, how = await self._get(["table_name", "table2", "on", "how"])
-        new_code = f"""tables['{table_name}'] = pd.merge(tables['{table_name}'], tables['{table2}'], on='{on}', how='{how}')"""
-        return new_code
+        tables[table_name] = pd.merge(tables[table_name], tables[table2], on=on, how=how)
+        return tables
 
 @table_action_type
 class ConcatenateTables(Action):
@@ -252,10 +253,10 @@ class ConcatenateTables(Action):
     def get_name(self):
         return f"Concatenate table '{self.form_data.get('table_name', '?')}' with '{self.form_data.get('table', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, table = await self._get(["table_name", "table"])
-        new_code = f"""tables['{table_name}'] = pd.concat([tables['{table_name}'], tables['{table}']], ignore_index=True)"""
-        return new_code
+        tables[table_name] = pd.concat([tables[table_name], tables[table]], ignore_index=True)
+        return tables
 
 @table_action_type
 class GroupBy(Action):
@@ -273,14 +274,19 @@ class GroupBy(Action):
     def get_name(self):
         return f"Group by '{self.form_data.get('groupby', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, groupby, agg = await self._get(["table_name", "groupby", "agg"])
 
-        groupby_str = groupby if groupby.startswith('[') else f"'{groupby}'"
-        agg_str = f".agg({agg})" if agg.startswith('{') else f".agg('{agg}')"
-
-        new_code = f"""tables['{table_name}'] = tables['{table_name}'].groupby({groupby_str}){agg_str if agg else ''}.reset_index()"""
-        return new_code
+        groupby_val = eval(groupby) if groupby.startswith('[') else groupby
+        grouped = tables[table_name].groupby(groupby_val)
+        
+        if agg:
+            agg_val = eval(agg) if agg.startswith('{') else agg
+            tables[table_name] = grouped.agg(agg_val).reset_index()
+        else:
+            tables[table_name] = grouped.reset_index()
+        
+        return tables
 
 # ACTION FOR COLUMNS --------------------------------------------------------------------------------------------------------
 
@@ -312,10 +318,11 @@ class DropColumn(ActionColumn):
     def get_name(self):
         return f"Drop column '{self.form_data.get('col_name', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, col_idx = await self._get(["table_name", "col_name", "col_idx"])
-        new_code = f"""tables['{table_name}'] = tables['{table_name}'].drop(columns=[{col_idx}])"""
-        return new_code
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
+        tables[table_name] = tables[table_name].drop(columns=[col_idx_val])
+        return tables
 
 @table_action_type
 class ReplaceVals(ActionColumn):
@@ -332,16 +339,20 @@ class ReplaceVals(ActionColumn):
     def get_name(self):
         return f"Replace values in column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, replace_vals, col_idx, col_dtype = await self._get(["table_name", "col_name", "replace_vals", "col_idx", "col_dtype"])
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
+        
+        replace_dict = ast.literal_eval(replace_vals)
         if col_dtype.startswith('int') or col_dtype.startswith('float'):
             dtype_type = np.dtype(col_dtype).type
-            replace_vals = {dtype_type(k): dtype_type(v) for k, v in ast.literal_eval(replace_vals).items()}
+            replace_dict = {dtype_type(k): dtype_type(v) for k, v in replace_dict.items()}
         elif col_dtype.startswith('bool'):
             falses = ['False', 'false', '0']
-            replace_vals = {False if k in falses else True: False if v in falses else True for k, v in ast.literal_eval(replace_vals).items()}
-        new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].replace({replace_vals})"""
-        return new_code
+            replace_dict = {False if k in falses else True: False if v in falses else True for k, v in replace_dict.items()}
+        
+        tables[table_name][col_idx_val] = tables[table_name][col_idx_val].replace(replace_dict)
+        return tables
 
 @table_action_type
 class RemoveUnderOver(ActionColumn):
@@ -356,10 +367,13 @@ class RemoveUnderOver(ActionColumn):
     def get_name(self):
         return f"Keep values in [{self.form_data.get('lower_bound', '?')}, {self.form_data.get('upper_bound', '?')}] of column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, lower_bound, upper_bound, col_idx = await self._get(["table_name", "col_name", "lower_bound", "upper_bound", "col_idx"])
-        new_code = f"""tables['{table_name}'] = tables['{table_name}'][(tables['{table_name}'][{col_idx}] >= {lower_bound}) & (tables['{table_name}'][{col_idx}] <= {upper_bound})]"""
-        return new_code
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
+        lower_bound = float(lower_bound)
+        upper_bound = float(upper_bound)
+        tables[table_name] = tables[table_name][(tables[table_name][col_idx_val] >= lower_bound) & (tables[table_name][col_idx_val] <= upper_bound)]
+        return tables
 
 @table_action_type
 class NLargest(ActionColumn):
@@ -377,10 +391,11 @@ class NLargest(ActionColumn):
     def get_name(self):
         return f"Keep {self.form_data.get('n', '?')} largest values of column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, n, keep, col_idx = await self._get(["table_name", "col_name", "n", "keep", "col_idx"])
-        new_code = f"""tables['{table_name}'] = tables['{table_name}'].nlargest({n}, [{col_idx}], keep='{keep}')"""
-        return new_code
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
+        tables[table_name] = tables[table_name].nlargest(int(n), [col_idx_val], keep=keep)
+        return tables
     
 @table_action_type
 class NSmallest(ActionColumn):
@@ -398,10 +413,11 @@ class NSmallest(ActionColumn):
     def get_name(self):
         return f"Keep {self.form_data.get('n', '?')} smallest values of column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, n, keep, col_idx = await self._get(["table_name", "col_name", "n", "keep", "col_idx"])
-        new_code = f"""tables['{table_name}'] = tables['{table_name}'].nsmallest({n}, [{col_idx}], keep='{keep}')"""
-        return new_code
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
+        tables[table_name] = tables[table_name].nsmallest(int(n), [col_idx_val], keep=keep)
+        return tables
 
 @table_action_type
 class RenameColumn(ActionColumn):
@@ -415,14 +431,15 @@ class RenameColumn(ActionColumn):
     def get_name(self):
         return f"Rename column '{self.form_data.get('col_name', '?')}' to '{self.form_data.get('new_col_name', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, new_col_name, col_idx = await self._get(["table_name", "col_name", "new_col_name", "col_idx"])
         if col_idx.startswith('(') and col_idx.endswith(')'):
-            new_code = f"""new_cols = [(val1, val2 if (val1, val2) != {col_idx} else '{new_col_name}') for val1, val2 in tables['{table_name}'].columns.tolist()]
-tables['{table_name}'].columns = pd.MultiIndex.from_tuples(new_cols)"""
+            col_idx_val = eval(col_idx)
+            new_cols = [(val1, val2 if (val1, val2) != col_idx_val else new_col_name) for val1, val2 in tables[table_name].columns.tolist()]
+            tables[table_name].columns = pd.MultiIndex.from_tuples(new_cols)
         else:
-            new_code = f"""tables['{table_name}'].rename(columns={{{col_idx}: '{new_col_name}'}}, inplace=True)"""
-        return new_code
+            tables[table_name].rename(columns={col_idx: new_col_name}, inplace=True)
+        return tables
 
 @table_action_type
 class CutValues(ActionColumn):
@@ -437,12 +454,13 @@ class CutValues(ActionColumn):
     def get_name(self):
         return f"Cut values in column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, cut_values, cut_labels, col_idx = await self._get(["table_name", "col_name", "cut_values", "cut_labels", "col_idx"])
-        cut_values = [float(val) for val in cut_values.split(',')]
-        cut_labels = cut_labels.split(',')
-        new_code = f"""tables['{table_name}'][{col_idx}] = pd.cut(tables['{table_name}'][{col_idx}], bins={cut_values}, labels={cut_labels})"""
-        return new_code
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
+        cut_values_list = [float(val) for val in cut_values.split(',')]
+        cut_labels_list = cut_labels.split(',')
+        tables[table_name][col_idx_val] = pd.cut(tables[table_name][col_idx_val], bins=cut_values_list, labels=cut_labels_list)
+        return tables
 
 @table_action_type
 class SortColumn(ActionColumn):
@@ -461,19 +479,21 @@ class SortColumn(ActionColumn):
     def get_name(self):
         return f"Sort column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, col_idx, sort_order, sort_key = await self._get(["table_name", "col_name", "col_idx", "sort_order", "sort_key"])
-        new_code = f"""tables['{table_name}'] = tables['{table_name}'].sort_values(by=[{col_idx}], """
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
+        
         if sort_order == "custom":
-            new_code += f"""key=lambda x: {sort_key})"""
+            key_func = eval(f"lambda x: {sort_key}")
+            tables[table_name] = tables[table_name].sort_values(by=[col_idx_val], key=key_func)
         elif sort_order == "ascending":
-            new_code += f"""ascending=True)"""
+            tables[table_name] = tables[table_name].sort_values(by=[col_idx_val], ascending=True)
         elif sort_order == "descending":
-            new_code += f"""ascending=False)"""
+            tables[table_name] = tables[table_name].sort_values(by=[col_idx_val], ascending=False)
         else:
             raise ValueError("Invalid sort order")
-    
-        return new_code
+        
+        return tables
 
 @table_action_type
 class ChangeType(ActionColumn):
@@ -490,15 +510,16 @@ class ChangeType(ActionColumn):
     def get_name(self):
         return f"Change type of column '{self.form_data.get('col_name', '?')}' to '{self.form_data.get('new_type', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, new_type, col_idx = await self._get(["table_name", "col_name", "new_type", "col_idx"])
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
 
         if new_type == "datetime":
-            new_code = f"""tables['{table_name}'][{col_idx}] = pd.to_datetime(tables['{table_name}'][{col_idx}])"""
+            tables[table_name][col_idx_val] = pd.to_datetime(tables[table_name][col_idx_val])
         else:
-            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].astype('{new_type}')"""
+            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].astype(new_type)
 
-        return new_code
+        return tables
 
 @table_action_type
 class NormalizeColumn(ActionColumn):
@@ -513,15 +534,19 @@ class NormalizeColumn(ActionColumn):
     def get_name(self):
         return f"Normalize column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, method, col_idx = await self._get(["table_name", "col_name", "method", "col_idx"])
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
+        
         if method == "min_max":
-            new_code = f"""tables['{table_name}'][{col_idx}] = (tables['{table_name}'][{col_idx}] - tables['{table_name}'][{col_idx}].min()) / (tables['{table_name}'][{col_idx}].max() - tables['{table_name}'][{col_idx}].min())"""
+            col_data = tables[table_name][col_idx_val]
+            tables[table_name][col_idx_val] = (col_data - col_data.min()) / (col_data.max() - col_data.min())
         elif method == "z_score":
-            new_code = f"""tables['{table_name}'][{col_idx}] = (tables['{table_name}'][{col_idx}] - tables['{table_name}'][{col_idx}].mean()) / tables['{table_name}'][{col_idx}].std()"""
+            col_data = tables[table_name][col_idx_val]
+            tables[table_name][col_idx_val] = (col_data - col_data.mean()) / col_data.std()
         else:
             raise ValueError("Invalid normalization method")
-        return new_code
+        return tables
 
 @table_action_type
 class HandleMissingValues(ActionColumn):
@@ -540,18 +565,21 @@ class HandleMissingValues(ActionColumn):
     def get_name(self):
         return f"Handle missing values in column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, action, replace_value, col_idx = await self._get(["table_name", "col_name", "action", "replace_value", "col_idx"])
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
+        
         if action == "delete":
-            new_code = f"""tables['{table_name}'] = tables['{table_name}'].dropna(subset=[{col_idx}])"""
+            tables[table_name] = tables[table_name].dropna(subset=[col_idx_val])
         elif action == "replace":
-            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].fillna({replace_value})"""
+            replace_val = eval(replace_value)
+            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].fillna(replace_val)
         elif action == "interpolate":
-            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].interpolate()"""
+            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].interpolate()
         else:
             raise ValueError("Invalid action for handling missing values")
 
-        return new_code
+        return tables
 
 @table_action_type
 class ApplyFunction(ActionColumn):
@@ -566,10 +594,12 @@ class ApplyFunction(ActionColumn):
     def get_name(self):
         return f"Apply custom function to column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, function, col_idx = await self._get(["table_name", "col_name", "function", "col_idx"])
-        new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'].apply(lambda row: {function}, axis=1)"""
-        return new_code
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
+        func = eval(f"lambda row: {function}")
+        tables[table_name][col_idx_val] = tables[table_name].apply(func, axis=1)
+        return tables
 
 @table_action_type
 class ColDiff(ActionColumn):
@@ -583,31 +613,12 @@ class ColDiff(ActionColumn):
     def get_name(self):
         return f"Calculate difference of column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, periods, col_idx = await self._get(["table_name", "col_name", "periods", "col_idx"])
         new_col_idx = col_idx.replace(", ", "-").replace("'", "").replace("(", "").replace(")", "") + "-diff"
-        new_code = f"""tables['{table_name}']['{new_col_idx}'] = tables['{table_name}'][{col_idx}].diff(periods={periods})"""
-        return new_code
-# DEMO NEW STRCT
-# @table_action_type
-# class ColDiff(ActionColumn):
-#     def __init__(self, form_data):
-#         super().__init__(form_data)
-#         self.icons = ["fas fa-chart-line", "fas fa-minus"]
-#         self.args.update({
-#             "periods": {"type": "number", "label": "Periods"},
-#         })
-
-#     def get_name(self):
-#         return f"Calculate difference of column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
-
-#     async def execute(self, tables):
-#         import pandas as pd
-#         fct = pd.DataFrame.diff
-#         table_name, col_name, periods, col_idx = await self._get(["table_name", "col_name", "periods", "col_idx"])
-#         new_col_idx = col_idx.replace(", ", "-").replace("'", "").replace("(", "").replace(")", "") + "-diff"
-#         tables[table_name][new_col_idx] = fct(tables[table_name][col_idx], periods=periods)
-#         return tables
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
+        tables[table_name][new_col_idx] = tables[table_name][col_idx_val].diff(periods=int(periods))
+        return tables
 
 @table_action_type
 class MathOperations(ActionColumn):
@@ -626,20 +637,22 @@ class MathOperations(ActionColumn):
     def get_name(self):
         return f"Apply {self.form_data.get('operation', '?')} operation to column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
   
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, operation, decimals, col_idx = await self._get(["table_name", "col_name", "operation", "decimals", "col_idx"])
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
+        
         if operation == "log":
-            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].apply(lambda x: __import__('math').log(x) if x > 0 else float('nan'))"""
+            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].apply(lambda x: np.log(x) if x > 0 else float('nan'))
         elif operation == "sqrt":
-            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].apply(lambda x: __import__('math').sqrt(x) if x >= 0 else float('nan'))"""
+            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].apply(lambda x: np.sqrt(x) if x >= 0 else float('nan'))
         elif operation == "abs":
-            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].abs()"""
+            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].abs()
         elif operation == "round":
-            decimals = decimals or 0
-            new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].round({decimals})"""
+            decimals_val = int(decimals) if decimals else 0
+            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].round(decimals_val)
         else:
             raise ValueError("Invalid math operation")
-        return new_code
+        return tables
 
 @table_action_type
 class ReplaceInCell(ActionColumn):
@@ -659,16 +672,17 @@ class ReplaceInCell(ActionColumn):
     def get_name(self):
         return f"Replace values in cell in column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, col_idx, action, regex, replacement = await self._get(["table_name", "col_name", "col_idx", "action", "regex", "replacement"])
-        new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].str.replace"""
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
+        
         if action == "whitespace":
-            new_code += f"""(r'\\s+', '{replacement}', regex=True)"""
+            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].str.replace(r'\s+', replacement, regex=True)
         elif action == "regex":
-            new_code += f"""(r'{regex}', '{replacement}', regex=True)"""
+            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].str.replace(regex, replacement, regex=True)
         else:
             raise ValueError("Invalid action for replacing in cell")
-        return new_code
+        return tables
     
 @table_action_type
 class FormatString(ActionColumn):
@@ -684,23 +698,22 @@ class FormatString(ActionColumn):
     def get_name(self):
         return f"Format string in column '{self.form_data.get('col_name', '?')}' of table '{self.form_data.get('table_name', '?')}'"
 
-    async def get_code(self):
+    async def execute(self, tables):
         table_name, col_name, operation, col_idx = await self._get(["table_name", "col_name", "operation", "col_idx"])
-        new_code = f"""tables['{table_name}'][{col_idx}] = tables['{table_name}'][{col_idx}].str."""
-        if operation == "upper":
-            new_code += f"""upper()"""
-        elif operation == "lower":
-            new_code += f"""lower()"""
-        elif operation == "title":
-            new_code += f"""title()"""
-        elif operation == "capitalize":
-            new_code += f"""capitalize()"""
-        elif operation == "strip":
-            new_code += f"""strip()"""
-        elif operation == "lstrip":
-            new_code += f"""lstrip()"""
-        elif operation == "rstrip":
-            new_code += f"""rstrip()"""
-        else:
+        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
+        
+        str_methods = {
+            "upper": lambda s: s.str.upper(),
+            "lower": lambda s: s.str.lower(),
+            "title": lambda s: s.str.title(),
+            "capitalize": lambda s: s.str.capitalize(),
+            "strip": lambda s: s.str.strip(),
+            "lstrip": lambda s: s.str.lstrip(),
+            "rstrip": lambda s: s.str.rstrip()
+        }
+        
+        if operation not in str_methods:
             raise ValueError("Invalid string operation")
-        return new_code
+        
+        tables[table_name][col_idx_val] = str_methods[operation](tables[table_name][col_idx_val])
+        return tables

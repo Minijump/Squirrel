@@ -71,34 +71,16 @@ class Pipeline:
     def add_action(self, action):
         self.actions.append(PipelineAction(self, action))
         self._save_actions()
-    
+
     async def run_pipeline(self):
         tables = {}
         for pipeline_action in self.actions:              
-            code = await pipeline_action.action.get_code() 
-            local_vars = {'tables': tables, 'pd': pd}
             try:
-                exec(code, globals(), local_vars) #! security risk
-                pipeline_action.error = None
+                await pipeline_action.action.execute(tables)
             except Exception as e:
                 pipeline_action.error = str(e)
                 self._save_actions()
                 raise Exception(f"Error executing action '{pipeline_action.description}': {e}")
-            tables.update(local_vars['tables'])
 
         self._save_actions()
         return tables
-
-    # DEMO NEW STRCT
-    # async def run_pipeline(self):
-    #     tables = {}
-    #     for pipeline_action in self.actions:              
-    #         try:
-    #             await pipeline_action.action.execute(tables)
-    #         except Exception as e:
-    #             pipeline_action.error = str(e)
-    #             self._save_actions()
-    #             raise Exception(f"Error executing action '{pipeline_action.description}': {e}")
-
-    #     self._save_actions()
-    #     return tables

@@ -128,7 +128,8 @@ There are 3 main folders:
 
 ### To do
 * Improve actions
-  * Use fct object instead of writing the code; it requires changing all the actions + run_pipeline method (see DEMO NEW STRCT tags)
+  * Fix and IMP new action strct
+  * FIX UT for action classes
 
 ### To Fix
 
