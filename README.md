@@ -128,13 +128,13 @@ There are 3 main folders:
 
 ### To do
 * Improve actions
-  * IMP new action strct (remove eval(col_idx) from the function (add it _get instead), ... )
+    * Investigate to add + imp field type (add types such as 'squirrel action', 'column', 'table', ...)(will be used in widget, post processing, ...)
 
 ### To Fix
 
 ### To do MVP
 * Improve actions
-  * ?add a apply_on decorator, call fct_object.__doc__, ...?
+  * ?add a apply_on decorator ...?
   * ?add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch?
 * Autocomplete squirrel action widget
 * Add actions (expl: Possibility to edit a cell value directly)

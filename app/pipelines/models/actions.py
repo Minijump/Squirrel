@@ -34,7 +34,16 @@ class Action:
         return False
 
     async def _get(self, args_list):
-        return (self.form_data.get(arg) for arg in args_list)
+        result = []
+        for arg in args_list:
+            val = await self._field_post_process(arg, self.form_data.get(arg))
+            result.append(val)
+        return tuple(result)
+    
+    async def _field_post_process(self, field_name, field_value):
+        if self.args.get(field_name, {}).get('type') in ['list', 'dict']:
+            field_value = ast.literal_eval(field_value)
+        return field_value
     
     async def execute(self, tables):
         raise NotImplementedError("Subclasses must implement this method")
@@ -139,7 +148,6 @@ class DropDuplicates(Action):
 
     async def execute(self, tables):
         table_name, subset, keep = await self._get(["table_name", "subset", "keep"])
-        subset = ast.literal_eval(subset)
         keep_val = keep if keep != 'false' else False
         tables[table_name] = tables[table_name].drop_duplicates(subset=subset or None, keep=keep_val)
         return tables
@@ -279,8 +287,7 @@ class GroupBy(Action):
         grouped = tables[table_name].groupby(groupby_val)
         
         if agg:
-            agg_val = eval(agg) if agg.startswith('{') else agg
-            tables[table_name] = grouped.agg(agg_val).reset_index()
+            tables[table_name] = grouped.agg(agg).reset_index()
         else:
             tables[table_name] = grouped.reset_index()
         
@@ -296,6 +303,12 @@ class ActionColumn(Action):
             "col_idx": {"type": "text", "invisible": True},
             "col_dtype": {"type": "text", "invisible": True},
         })
+
+    async def _field_post_process(self, field_name, field_value):
+        val = await super()._field_post_process(field_name, field_value)
+        if field_name == "col_idx":
+            val = eval(val) if val.startswith('(') else val
+        return val
     
 @table_action_type
 class DropColumn(ActionColumn):
@@ -308,8 +321,7 @@ class DropColumn(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, col_idx = await self._get(["table_name", "col_name", "col_idx"])
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
-        tables[table_name] = tables[table_name].drop(columns=[col_idx_val])
+        tables[table_name] = tables[table_name].drop(columns=[col_idx])
         return tables
 
 @table_action_type
@@ -329,17 +341,15 @@ class ReplaceVals(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, replace_vals, col_idx, col_dtype = await self._get(["table_name", "col_name", "replace_vals", "col_idx", "col_dtype"])
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
         
-        replace_dict = ast.literal_eval(replace_vals)
         if col_dtype.startswith('int') or col_dtype.startswith('float'):
             dtype_type = np.dtype(col_dtype).type
-            replace_dict = {dtype_type(k): dtype_type(v) for k, v in replace_dict.items()}
+            replace_vals = {dtype_type(k): dtype_type(v) for k, v in replace_vals.items()}
         elif col_dtype.startswith('bool'):
             falses = ['False', 'false', '0']
-            replace_dict = {False if k in falses else True: False if v in falses else True for k, v in replace_dict.items()}
+            replace_vals = {False if k in falses else True: False if v in falses else True for k, v in replace_vals.items()}
         
-        tables[table_name][col_idx_val] = tables[table_name][col_idx_val].replace(replace_dict)
+        tables[table_name][col_idx] = tables[table_name][col_idx].replace(replace_vals)
         return tables
 
 @table_action_type
@@ -357,10 +367,9 @@ class RemoveUnderOver(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, lower_bound, upper_bound, col_idx = await self._get(["table_name", "col_name", "lower_bound", "upper_bound", "col_idx"])
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
         lower_bound = float(lower_bound)
         upper_bound = float(upper_bound)
-        tables[table_name] = tables[table_name][(tables[table_name][col_idx_val] >= lower_bound) & (tables[table_name][col_idx_val] <= upper_bound)]
+        tables[table_name] = tables[table_name][(tables[table_name][col_idx] >= lower_bound) & (tables[table_name][col_idx] <= upper_bound)]
         return tables
 
 @table_action_type
@@ -381,8 +390,7 @@ class NLargest(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, n, keep, col_idx = await self._get(["table_name", "col_name", "n", "keep", "col_idx"])
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
-        tables[table_name] = tables[table_name].nlargest(int(n), [col_idx_val], keep=keep)
+        tables[table_name] = tables[table_name].nlargest(int(n), [col_idx], keep=keep)
         return tables
     
 @table_action_type
@@ -403,8 +411,7 @@ class NSmallest(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, n, keep, col_idx = await self._get(["table_name", "col_name", "n", "keep", "col_idx"])
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
-        tables[table_name] = tables[table_name].nsmallest(int(n), [col_idx_val], keep=keep)
+        tables[table_name] = tables[table_name].nsmallest(int(n), [col_idx], keep=keep)
         return tables
 
 @table_action_type
@@ -421,9 +428,8 @@ class RenameColumn(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, new_col_name, col_idx = await self._get(["table_name", "col_name", "new_col_name", "col_idx"])
-        if col_idx.startswith('(') and col_idx.endswith(')'):
-            col_idx_val = eval(col_idx)
-            new_cols = [(val1, val2 if (val1, val2) != col_idx_val else new_col_name) for val1, val2 in tables[table_name].columns.tolist()]
+        if isinstance(col_idx, tuple):
+            new_cols = [(val1, val2 if (val1, val2) != col_idx else new_col_name) for val1, val2 in tables[table_name].columns.tolist()]
             tables[table_name].columns = pd.MultiIndex.from_tuples(new_cols)
         else:
             tables[table_name].rename(columns={col_idx: new_col_name}, inplace=True)
@@ -444,10 +450,9 @@ class CutValues(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, cut_values, cut_labels, col_idx = await self._get(["table_name", "col_name", "cut_values", "cut_labels", "col_idx"])
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
         cut_values_list = [float(val) for val in cut_values.split(',')]
         cut_labels_list = cut_labels.split(',')
-        tables[table_name][col_idx_val] = pd.cut(tables[table_name][col_idx_val], bins=cut_values_list, labels=cut_labels_list)
+        tables[table_name][col_idx] = pd.cut(tables[table_name][col_idx], bins=cut_values_list, labels=cut_labels_list)
         return tables
 
 @table_action_type
@@ -469,15 +474,14 @@ class SortColumn(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, col_idx, sort_order, sort_key = await self._get(["table_name", "col_name", "col_idx", "sort_order", "sort_key"])
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
         
         if sort_order == "custom":
             key_func = eval(f"lambda x: {sort_key}")
-            tables[table_name] = tables[table_name].sort_values(by=[col_idx_val], key=key_func)
+            tables[table_name] = tables[table_name].sort_values(by=[col_idx], key=key_func)
         elif sort_order == "ascending":
-            tables[table_name] = tables[table_name].sort_values(by=[col_idx_val], ascending=True)
+            tables[table_name] = tables[table_name].sort_values(by=[col_idx], ascending=True)
         elif sort_order == "descending":
-            tables[table_name] = tables[table_name].sort_values(by=[col_idx_val], ascending=False)
+            tables[table_name] = tables[table_name].sort_values(by=[col_idx], ascending=False)
         else:
             raise ValueError("Invalid sort order")
         
@@ -500,12 +504,11 @@ class ChangeType(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, new_type, col_idx = await self._get(["table_name", "col_name", "new_type", "col_idx"])
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
 
         if new_type == "datetime":
-            tables[table_name][col_idx_val] = pd.to_datetime(tables[table_name][col_idx_val])
+            tables[table_name][col_idx] = pd.to_datetime(tables[table_name][col_idx])
         else:
-            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].astype(new_type)
+            tables[table_name][col_idx] = tables[table_name][col_idx].astype(new_type)
 
         return tables
 
@@ -524,14 +527,13 @@ class NormalizeColumn(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, method, col_idx = await self._get(["table_name", "col_name", "method", "col_idx"])
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
         
         if method == "min_max":
-            col_data = tables[table_name][col_idx_val]
-            tables[table_name][col_idx_val] = (col_data - col_data.min()) / (col_data.max() - col_data.min())
+            col_data = tables[table_name][col_idx]
+            tables[table_name][col_idx] = (col_data - col_data.min()) / (col_data.max() - col_data.min())
         elif method == "z_score":
-            col_data = tables[table_name][col_idx_val]
-            tables[table_name][col_idx_val] = (col_data - col_data.mean()) / col_data.std()
+            col_data = tables[table_name][col_idx]
+            tables[table_name][col_idx] = (col_data - col_data.mean()) / col_data.std()
         else:
             raise ValueError("Invalid normalization method")
         return tables
@@ -555,15 +557,14 @@ class HandleMissingValues(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, action, replace_value, col_idx = await self._get(["table_name", "col_name", "action", "replace_value", "col_idx"])
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
         
         if action == "delete":
-            tables[table_name] = tables[table_name].dropna(subset=[col_idx_val])
+            tables[table_name] = tables[table_name].dropna(subset=[col_idx])
         elif action == "replace":
             replace_val = eval(replace_value)
-            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].fillna(replace_val)
+            tables[table_name][col_idx] = tables[table_name][col_idx].fillna(replace_val)
         elif action == "interpolate":
-            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].interpolate()
+            tables[table_name][col_idx] = tables[table_name][col_idx].interpolate()
         else:
             raise ValueError("Invalid action for handling missing values")
 
@@ -584,9 +585,8 @@ class ApplyFunction(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, function, col_idx = await self._get(["table_name", "col_name", "function", "col_idx"])
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
         func = eval(f"lambda row: {function}")
-        tables[table_name][col_idx_val] = tables[table_name].apply(func, axis=1)
+        tables[table_name][col_idx] = tables[table_name].apply(func, axis=1)
         return tables
 
 @table_action_type
@@ -603,9 +603,11 @@ class ColDiff(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, periods, col_idx = await self._get(["table_name", "col_name", "periods", "col_idx"])
-        new_col_idx = col_idx.replace(", ", "-").replace("'", "").replace("(", "").replace(")", "") + "-diff"
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
-        tables[table_name][new_col_idx] = tables[table_name][col_idx_val].diff(periods=int(periods))
+        if isinstance(col_idx, tuple):
+            new_col_idx = (col_idx[0], f"{col_idx[1]}-diff")
+        else:
+            new_col_idx = f"{col_idx}-diff"
+        tables[table_name][new_col_idx] = tables[table_name][col_idx].diff(periods=int(periods))
         return tables
 
 @table_action_type
@@ -627,17 +629,16 @@ class MathOperations(ActionColumn):
   
     async def execute(self, tables):
         table_name, col_name, operation, decimals, col_idx = await self._get(["table_name", "col_name", "operation", "decimals", "col_idx"])
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
         
         if operation == "log":
-            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].apply(lambda x: np.log(x) if x > 0 else float('nan'))
+            tables[table_name][col_idx] = tables[table_name][col_idx].apply(lambda x: np.log(x) if x > 0 else float('nan'))
         elif operation == "sqrt":
-            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].apply(lambda x: np.sqrt(x) if x >= 0 else float('nan'))
+            tables[table_name][col_idx] = tables[table_name][col_idx].apply(lambda x: np.sqrt(x) if x >= 0 else float('nan'))
         elif operation == "abs":
-            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].abs()
+            tables[table_name][col_idx] = tables[table_name][col_idx].abs()
         elif operation == "round":
             decimals_val = int(decimals) if decimals else 0
-            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].round(decimals_val)
+            tables[table_name][col_idx] = tables[table_name][col_idx].round(decimals_val)
         else:
             raise ValueError("Invalid math operation")
         return tables
@@ -662,12 +663,11 @@ class ReplaceInCell(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, col_idx, action, regex, replacement = await self._get(["table_name", "col_name", "col_idx", "action", "regex", "replacement"])
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
         
         if action == "whitespace":
-            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].str.replace(r'\s+', replacement, regex=True)
+            tables[table_name][col_idx] = tables[table_name][col_idx].str.replace(r'\s+', replacement, regex=True)
         elif action == "regex":
-            tables[table_name][col_idx_val] = tables[table_name][col_idx_val].str.replace(regex, replacement, regex=True)
+            tables[table_name][col_idx] = tables[table_name][col_idx].str.replace(regex, replacement, regex=True)
         else:
             raise ValueError("Invalid action for replacing in cell")
         return tables
@@ -688,7 +688,6 @@ class FormatString(ActionColumn):
 
     async def execute(self, tables):
         table_name, col_name, operation, col_idx = await self._get(["table_name", "col_name", "operation", "col_idx"])
-        col_idx_val = eval(col_idx) if col_idx.startswith('(') else col_idx
         
         str_methods = {
             "upper": lambda s: s.str.upper(),
@@ -703,5 +702,5 @@ class FormatString(ActionColumn):
         if operation not in str_methods:
             raise ValueError("Invalid string operation")
         
-        tables[table_name][col_idx_val] = str_methods[operation](tables[table_name][col_idx_val])
+        tables[table_name][col_idx] = str_methods[operation](tables[table_name][col_idx])
         return tables
