@@ -11,6 +11,21 @@
     position: relative;
 }
 
+/* --- Base button styles --- */
+.table-select-btn, .table-action-btn, .dropdown-toggle, .pager-btn, .export-btn {
+    background-color: var(--light-structure-color);
+    color: var(--secondary-text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.table-select-btn:hover, .table-action-btn:hover, .dropdown-toggle:hover, .pager-btn:hover, .export-btn:hover {
+    background-color: var(--border-color);
+    color: var(--primary-text-color);
+    transform: translateY(-1px);
+}
+
 /* --- Select Table button --- */
 .table-select-btn-div {
     display: flex;
@@ -20,21 +35,10 @@
     flex-shrink: 0;
 }
 .table-select-btn {
-    background-color: var(--light-structure-color);
-    color: var(--secondary-text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    cursor: pointer;
     padding: 10px 16px;
-    transition: all 0.2s ease;
     flex: 1;
     font-size: 14px;
     font-weight: 500;
-}
-.table-select-btn:hover {
-    background: var(--border-color);
-    color: var(--primary-text-color);
-    transform: translateY(-1px);
 }
 .table-select-btn.active {
     background: var(--primary-color);
@@ -56,19 +60,11 @@
 }
 .table-action-btn {
     background-color: var(--structure-color);
-    color: var(--secondary-text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    cursor: pointer;
     padding: 6px 8px;
-    transition: all 0.2s ease;
     flex: 1;
     font-size: 13px;
 }
 .table-action-btn:hover {
-    background-color: var(--border-color);
-    color: var(--primary-text-color);
-    transform: translateY(-1px);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -114,20 +110,9 @@
 
 .dropdown-toggle {
     background-color: var(--structure-color);
-    color: var(--secondary-text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    cursor: pointer;
     padding: 8px 12px;
-    transition: all 0.2s ease;
     width: 100%;
     font-size: 13px;
-}
-.dropdown-toggle:hover {
-    background-color: var(--border-color);
-    color: var(--primary-text-color);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 .dropdown-toggle::after {
     content: " ▼";
@@ -207,13 +192,10 @@
 .df-table tbody tr {
     transition: background-color 0.2s ease;
 }
-.df-table tbody tr:hover {
-    background-color: color-mix(in srgb, var(--first-secondary-color) 10%, var(--light-structure-color));
-}
 .df-table tbody tr:nth-of-type(even) {
     background-color: color-mix(in srgb, var(--structure-color) 30%, var(--light-structure-color));
 }
-.df-table tbody tr:nth-of-type(even):hover {
+.df-table tbody tr:hover {
     background-color: color-mix(in srgb, var(--first-secondary-color) 10%, var(--light-structure-color));
 }
 
@@ -252,17 +234,10 @@
 }
 
 .pager-btn {
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    background-color: var(--light-structure-color);
-    color: var(--primary-text-color);
     padding: 6px 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
     font-weight: 600;
 }
 .pager-btn:hover {
-    background-color: var(--border-color);
     transform: scale(1.05);
 }
 .pager-info {
@@ -275,17 +250,6 @@
 }
 
 .export-btn {
-    color: var(--secondary-text-color);
-    border: 1px solid var(--border-color);
-    background-color: var(--light-structure-color);
-    border-radius: 6px;
     padding: 6px 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
     font-size: 13px;
-}
-.export-btn:hover {
-    background-color: var(--border-color);
-    color: var(--primary-text-color);
-    transform: translateY(-1px);
 }
