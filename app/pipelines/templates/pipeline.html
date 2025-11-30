@@ -46,11 +46,10 @@
                             </div>
                             <div>
                                 {% if action.error %}
-                                    <i class="fas fa-exclamation-triangle" style="color: red;"></i>
+                                    <i class="fas fa-exclamation-triangle"></i>
                                 {% endif %}
                                 <button class="list-edit-btn" name="edit-pipeline-action-btn"
                                         onclick="editPipelineActionOpenModal('{{ action_id }}'); return false;"
-                                        style="width: 30px; margin-right: 5px;"
                                         title="Edit pipeline action info">
                                     <i class="fas fa-info-circle"></i>
                                 </button>
@@ -59,9 +58,8 @@
                                         data-action-name="{{ action.action.__class__.__name__ }}"
                                         data-action-error="{{ action.error or '' }}"
                                         onclick="editActionOpenModal(this.dataset.actionId, this.dataset.actionName, this.dataset.actionError); return false;"
-                                        style="width: 30px;"
                                         title="Edit action parameters">
-                                    &middot;&middot;&middot;
+                                    <i class="fas fa-cog"></i>
                                 </button>
                             </div> 
                         </div>
