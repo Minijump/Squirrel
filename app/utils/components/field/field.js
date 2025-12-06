@@ -9,6 +9,7 @@ import { SquirrelList } from '/static/utils/widgets/list_widget/list_widget.js';
  * @property {string} type - Input type
  *   - 'text': string input
  *   - 'textarea': textarea input
+ *   - 'sq_action': squirrel action (displayed as textarea)
  *   - 'dict': squirrel dict
  *   - 'list': squirrel list
  *   - 'number': number input

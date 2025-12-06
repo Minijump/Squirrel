@@ -19,7 +19,6 @@ async def test_add_column_sq_action(temp_project_dir_fixture):
         "table_name": "test_table",
         "col_name": "new_col",
         "col_value": "c['A'] + c['B']",
-        "value_type": "sq_action"
     })
     tables = {"test_table": pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})}
 
@@ -167,12 +166,11 @@ async def test_create_table_from_other_tables(temp_project_dir_fixture):
 
 
 @pytest.mark.asyncio
-async def test_custom_action_sq_action(temp_project_dir_fixture):
+async def test_custom_action(temp_project_dir_fixture):
     action = CustomAction({
         "custom_action_code": "tables['test_table']['C'] = c['A'] + c['B']",
         "custom_action_name": "test_custom",
-        "custom_action_type": "sq_action",
-        "default_table_name": "test_table"
+        "table_name": "test_table"
     })
     tables = {"test_table": pd.DataFrame({"A": [1, 2], "B": [3, 4]})}
 
@@ -180,22 +178,6 @@ async def test_custom_action_sq_action(temp_project_dir_fixture):
 
     assert "C" in result["test_table"].columns
     assert result["test_table"]["C"].tolist() == [4, 6]
-
-
-@pytest.mark.asyncio
-async def test_custom_action_python(temp_project_dir_fixture):
-    action = CustomAction({
-        "custom_action_code": "tables['test_table']['C'] = tables['test_table']['A'] * 2",
-        "custom_action_name": "test_custom",
-        "custom_action_type": "python",
-        "default_table_name": "test_table"
-    })
-    tables = {"test_table": pd.DataFrame({"A": [1, 2]})}
-
-    result = await action.execute(tables)
-
-    assert "C" in result["test_table"].columns
-    assert result["test_table"]["C"].tolist() == [2, 4]
 
 
 @pytest.mark.asyncio

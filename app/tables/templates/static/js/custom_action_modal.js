@@ -1,6 +1,6 @@
 import { FormModal } from '/static/utils/components/modal/modal.js';
 
-
+// TODO: use dynamic inputs such as in ActionSidebar
 const FORMINPUTS = {
     'action_name': {
         'type': 'text',
@@ -12,20 +12,14 @@ const FORMINPUTS = {
         'required': true,
         'invisible': true,
     },
-    'default_table_name': {
+    'table_name': {
         'type': 'text',
         'required': true,
         'invisible': true,
     },
-    'custom_action_type': {
-        'label': 'Action Type',
-        'type': 'select',
-        'required': true,
-        "select_options": [["sq_action", "Squirrel Action"], ["python", "Python Code"]],
-    },
     'custom_action_code': {
         'label': 'Action Code',
-        'type': 'textarea',
+        'type': 'sq_action',
         'required': true,
         'info': "Your tables are available in a dictionnary called tables, to edit it use tables['table_name']<br>i.e.: tables['table_name']['col_name'] = tables['table_name']['col_name'] * 2",
     },
@@ -46,7 +40,7 @@ export async function openCustomActionModal(tableName='') {
         formData: {
             'action_name': 'CustomAction',
             'project_dir': new URLSearchParams(window.location.search).get('project_dir'),
-            'default_table_name': tableName,
+            'table_name': tableName,
         },
     });
     modal.open();

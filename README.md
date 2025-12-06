@@ -128,7 +128,7 @@ There are 3 main folders:
 
 ### To do
 * Improve actions
-    * Investigate to add + imp field type (add types such as 'squirrel action', 'column', 'table', ...)(will be used in widget, post processing, ...)
+    * Investigate to add + imp field type (add types such as 'column', 'table', ...)(will be used in widget, post processing, ...)
 
 ### To Fix
 
@@ -140,6 +140,9 @@ There are 3 main folders:
 * Add actions (expl: Possibility to edit a cell value directly)
 
 ### To do UX
+* dropdown button for table button; we see the 2 parts of the button when hover + clicking on the outer part does not work
+* Data source file settings; we should see that there is a file/see file name at least. Actual code display an empty field, than at forn submit we detect if a file was added to know if we should chqnge something, this is not very clear.
+* InfoColModal "most common values" is ugly. Change that if not too complex, else wait for graphs implementation.
 
 ### Feature ideas
 * Imp JS in overall: some modal/sidebar should use default features such as fill data, bind events, ... + imp + generalize error handling + tandardize async/await patterns + ... (and check pages script, maybe create a table class instead of adding everything in script, ...)

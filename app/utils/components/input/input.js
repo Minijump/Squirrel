@@ -2,6 +2,7 @@ export class Input {
     static createInput(type, options = {}) {
         if (type === 'dict') return Input._createWidget('squirrel-dictionary', options.dictOptions, options.dictDefault || {});
         if (type === 'list') return Input._createWidget('squirrel-list', options.listOptions, options.listDefault || []);
+        if (type === 'sq_action') return Input._createWidget('squirrel-action', false, false); // No widget existing yet
         
         const element = Input._createElement(type, options);
         Input._applyAttributes(element, type, options);
@@ -47,7 +48,9 @@ export class Input {
         const element = document.createElement('textarea');
         element.setAttribute('widget', widgetType);
         if (widgetOptions) element.setAttribute('options', JSON.stringify(widgetOptions));
-        element.value = JSON.stringify(defaultValue);
+        if (widgetType !== "squirrel-action") {
+            element.value = JSON.stringify(defaultValue);
+        }
         return element;
     }
 }

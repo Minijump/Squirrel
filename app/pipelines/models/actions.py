@@ -11,14 +11,12 @@ def table_action_type(cls):
     TABLE_ACTION_REGISTRY[cls.__name__] = cls
     return cls
 
-def convert_sq_action_to_python(code, actual_table_name=None, is_sq_action=True):
+def convert_sq_action_to_python(code, actual_table_name=None):
     """
     t[t_name] means 'table with name t_name' and is accessed by tables[t_name]
     t[t_name]c[name] means 'column with name name in table t_name' and is accessed by tables[t_name][name]
     c[name] means 'column with name name in actual_table' and is accessed by tables[actual_table_name][name]
     """
-    if not is_sq_action:
-        return code
     code = code.replace(']c[', f'][') # if a table is provided
     code = code.replace('c[', f"tables['{actual_table_name}'][") # if a table is not provided
     code = code.replace('t[', 'tables[')
@@ -43,6 +41,9 @@ class Action:
     async def _field_post_process(self, field_name, field_value):
         if self.args.get(field_name, {}).get('type') in ['list', 'dict']:
             field_value = ast.literal_eval(field_value)
+        elif self.args.get(field_name, {}).get('type') == 'sq_action':
+            table_name = self.form_data.get('table_name')
+            field_value = convert_sq_action_to_python(field_value, actual_table_name=table_name)
         return field_value
     
     async def execute(self, tables):
@@ -58,18 +59,15 @@ class AddColumn(Action):
         self.icons = ["fas fa-plus", "fas fa-columns"]
         self.args = {
             "col_name": {"type": "text", "label": "Col. Name"},
-            "value_type": {"type": "select", "label": "Value Type", 
-                           "select_options": [("sq_action", "Squirrel action"), ("python", "Python")]},
-            "col_value": {"type": "textarea", "label": "Col. Value"},
+            "col_value": {"type": "sq_action", "label": "Col. Value"},
         }
 
     def get_name(self):
         return f"Add column '{self.form_data.get('col_name', '?')}' in table '{self.form_data.get('table_name', '?')}'"
 
     async def execute(self, tables):
-        table_name, col_name, col_value, value_type = await self._get(["table_name", "col_name", "col_value", "value_type"])
-        code = convert_sq_action_to_python(col_value, actual_table_name=table_name, is_sq_action=(value_type == "sq_action"))
-        exec(f"tables['{table_name}']['{col_name}'] = {code}", {'tables': tables, 'pd': pd, 'np': np})
+        table_name, col_name, col_value = await self._get(["table_name", "col_name", "col_value"])
+        exec(f"tables['{table_name}']['{col_name}'] = {col_value}", {'tables': tables, 'pd': pd, 'np': np})
         return tables
 
 @table_action_type
@@ -211,9 +209,7 @@ class CustomAction(Action):
         super().__init__(form_data)
         self.icons = ["fas fa-code", "fas fa-cog"]
         self.args = {
-            "custom_action_type": {"type": "select", "label": "Value Type", 
-            "select_options": [("sq_action", "Squirrel action"), ("python", "Python")]},
-            "custom_action_code": {"type": "textarea", "label": "Python"},
+            "custom_action_code": {"type": "sq_action", "label": "Action Code"},
             "custom_action_name": {"type": "text", "label": "Action Name"},
         }
 
@@ -221,9 +217,8 @@ class CustomAction(Action):
         return f"Custom action '{self.form_data.get('custom_action_name', '?')}'"
 
     async def execute(self, tables):
-        custom_action_code, custom_action_name, custom_action_type, default_table_name = await self._get(["custom_action_code", "custom_action_name", "custom_action_type", "default_table_name"])
-        code = convert_sq_action_to_python(custom_action_code, actual_table_name=default_table_name, is_sq_action=(custom_action_type == "sq_action"))
-        exec(code, {'tables': tables, 'pd': pd, 'np': np})
+        table_name, custom_action_code = await self._get(["table_name", "custom_action_code"])
+        exec(custom_action_code, {'tables': tables, 'pd': pd, 'np': np})
         return tables
 
 @table_action_type
