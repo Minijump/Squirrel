@@ -140,7 +140,6 @@ There are 3 main folders:
 * Add actions (expl: Possibility to edit a cell value directly)
 
 ### To do UX
-* InfoColModal "most common values" is ugly. Change that if not too complex, else wait for graphs implementation.
 
 ### Feature ideas
 * Imp JS in overall: some modal/sidebar should use default features such as fill data, bind events, ... + imp + generalize error handling + tandardize async/await patterns + ... (and check pages script, maybe create a table class instead of adding everything in script, ...)

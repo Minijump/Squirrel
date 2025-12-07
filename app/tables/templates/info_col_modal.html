@@ -37,13 +37,12 @@
         </div>
         <div class="btn-div string-only"></div>
 
-        <div id="top_values_div" class="infos-div" style="display: flex;">
-            <div style="margin-right: 8px;">
-                <h4 style="margin-top: 0; cursor: pointer;" id="top_values_title">
-                    <span id="fold_sign">+</span> Most Common Values:
-                </h4>
+        <div id="top_values_div" class="top-values-card">
+            <div class="top-values-header" id="top_values_title">
+                <h4>Most Common Values</h4>
+                <span class="chevron" id="fold_sign">›</span>
             </div>
-            <div id="top_values_list" style="cursor: pointer;"></div>
+            <div id="top_values_list"></div>
         </div>
 
         <form action="/tables/add_action/" method="post">

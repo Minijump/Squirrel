@@ -119,24 +119,18 @@ export class InfoColModal extends Modal {
                 
                 // Add fold/unfold feature
                 const title = this.componentHtml.querySelector('#top_values_title');
-                const values = this.componentHtml.querySelector('#top_values_list');
                 const sign = this.componentHtml.querySelector('#fold_sign');
                 let isExpanded = true;
                 function fold() {
                     isExpanded = !isExpanded;
-                    sign.textContent = isExpanded ? '-' : '+';
+                    sign.classList.toggle('expanded', isExpanded);
                     const items = topValuesDiv.querySelectorAll('.top-value-item');
                     items.forEach((item, index) => {
-                        item.style.display = (isExpanded || index === 0) ? 'block' : 'none';
+                        item.style.display = (isExpanded) ? 'block' : 'none';
                     });
                 }
                 fold(); // Initially folded
-                title.onclick = () => {
-                    fold();
-                };
-                values.onclick = () => {
-                    fold();
-                }
+                title.onclick = () => fold();
             }
         } catch (error) {
             this.componentHtml.querySelector('#error_infos_computation').innerHTML = `Error computing informations: ${error.message}`;
