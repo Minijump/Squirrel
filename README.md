@@ -128,7 +128,7 @@ There are 3 main folders:
 
 ### To do
 * Improve actions
-    * Add + Imp field type ('column', 'table', ...)
+  * Autocomplete squirrel action widget
 
 ### To Fix
 
@@ -136,7 +136,6 @@ There are 3 main folders:
 * Improve actions
   * ?add a apply_on decorator ...?
   * ?add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch?
-* Autocomplete squirrel action widget
 * Add actions (expl: Possibility to edit a cell value directly)
 
 ### To do UX
@@ -150,6 +149,9 @@ There are 3 main folders:
   * do not run all pipeline everytime (check if pipeline changed (with hash?), run everything only if yes, else only execute required action)
   * Imp pipeline (test before save? summary with blocks on the top? ...?)?
   * Multiples pipelines?
+* Actions
+  * Fields should be object instead of simple dict?
+  * Add column, column_list, table, ... field type
 * Secure app? If a project is shared to somebody else, we must be sure it won't run something bad for the computer? Is it even possible to do that?
 * Great-expectation unit test
 * Dashboard tab (custom/embedded metabase? Not sure it suits need/...)
