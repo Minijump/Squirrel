@@ -1,7 +1,8 @@
 export class Input {
     static createInput(type, options = {}) {
-        if (('dict', 'list', 'sq_action').includes(type)) {
-            return Input._createWidget(type, options);
+        const widgetConfig = Input._widgetConfig(type, options);
+        if (widgetConfig) {
+            return Input._createWidget(widgetConfig.widgetType, widgetConfig.widgetOptions, widgetConfig.defaultValue);
         }
         
         const element = Input._createElement(type, options);
@@ -44,21 +45,28 @@ export class Input {
         }
     }
 
-    static _createWidget(type, options) {
-        if (type === 'dict') {
-            const defaultValue = JSON.stringify(options.dictDefault || {});
-            const dictOptions = JSON.stringify(options || {});
-            return Input._createWidgetTextarea('squirrel-dictionary', dictOptions, defaultValue);
-        }
-        if (type === 'list') {
-            const defaultValue = JSON.stringify(options.listDefault || []);
-            const listOptions = JSON.stringify(options || {});
-            return Input._createWidgetTextarea('squirrel-list', listOptions, defaultValue);
-        }
-        if (type === 'sq_action') return Input._createWidgetTextarea('squirrel-action', false, false);
+    static _widgetConfig(type, options = {}) {
+        const configs = {
+            'dict': {
+                widgetType: 'squirrel-dictionary',
+                widgetOptions: JSON.stringify(options),
+                defaultValue: JSON.stringify(options.dictDefault || {})
+            },
+            'list': {
+                widgetType: 'squirrel-list',
+                widgetOptions: JSON.stringify(options),
+                defaultValue: JSON.stringify(options.listDefault || [])
+            },
+            'sq_action': {
+                widgetType: 'squirrel-action',
+                widgetOptions: false,
+                defaultValue: false
+            }
+        };
+        return configs[type] || null;
     }
 
-    static _createWidgetTextarea(widgetType, widgetOptions, defaultValue) {
+    static _createWidget(widgetType, widgetOptions, defaultValue) {
         const element = document.createElement('textarea');
         element.setAttribute('widget', widgetType);
         if (widgetOptions) element.setAttribute('options', widgetOptions);
