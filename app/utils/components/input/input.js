@@ -1,8 +1,8 @@
 export class Input {
     static createInput(type, options = {}) {
-        if (type === 'dict') return Input._createWidget('squirrel-dictionary', options.dictOptions, options.dictDefault || {});
-        if (type === 'list') return Input._createWidget('squirrel-list', options.listOptions, options.listDefault || []);
-        if (type === 'sq_action') return Input._createWidget('squirrel-action', false, false);
+        if (('dict', 'list', 'sq_action').includes(type)) {
+            return Input._createWidget(type, options);
+        }
         
         const element = Input._createElement(type, options);
         Input._applyAttributes(element, type, options);
@@ -44,13 +44,25 @@ export class Input {
         }
     }
 
-    static _createWidget(widgetType, widgetOptions, defaultValue) {
+    static _createWidget(type, options) {
+        if (type === 'dict') {
+            const defaultValue = JSON.stringify(options.dictDefault || {});
+            const dictOptions = JSON.stringify(options || {});
+            return Input._createWidgetTextarea('squirrel-dictionary', dictOptions, defaultValue);
+        }
+        if (type === 'list') {
+            const defaultValue = JSON.stringify(options.listDefault || []);
+            const listOptions = JSON.stringify(options || {});
+            return Input._createWidgetTextarea('squirrel-list', listOptions, defaultValue);
+        }
+        if (type === 'sq_action') return Input._createWidgetTextarea('squirrel-action', false, false);
+    }
+
+    static _createWidgetTextarea(widgetType, widgetOptions, defaultValue) {
         const element = document.createElement('textarea');
         element.setAttribute('widget', widgetType);
-        if (widgetOptions) element.setAttribute('options', JSON.stringify(widgetOptions));
-        if (widgetType !== "squirrel-action") {
-            element.value = JSON.stringify(defaultValue);
-        }
+        if (widgetOptions) element.setAttribute('options', widgetOptions);
+        if (defaultValue) element.value = defaultValue;
         return element;
     }
 }
