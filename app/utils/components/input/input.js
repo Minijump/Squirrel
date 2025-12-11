@@ -2,7 +2,7 @@ export class Input {
     static createInput(type, options = {}) {
         if (type === 'dict') return Input._createWidget('squirrel-dictionary', options.dictOptions, options.dictDefault || {});
         if (type === 'list') return Input._createWidget('squirrel-list', options.listOptions, options.listDefault || []);
-        if (type === 'sq_action') return Input._createWidget('squirrel-action', false, false); // No widget existing yet
+        if (type === 'sq_action') return Input._createWidget('squirrel-action', false, false);
         
         const element = Input._createElement(type, options);
         Input._applyAttributes(element, type, options);

@@ -128,14 +128,19 @@ There are 3 main folders:
 
 ### To do
 * Improve actions
-  * Autocomplete squirrel action widget
+  * SIMPLIFY Autocomplete widget
+  * FIX Autocomplete widget: not working if starts with 'c[' (not taking current table); in right sidebar we need to scroll to see all tables and this is not obvious
+  * Investigate to add coloring in Autocomplete widget (will need a refactor?)
+  * Misc imp for autocomplete widget
 
 ### To Fix
 
 ### To do MVP
-* Improve actions
+* Actions ++
   * ?add a apply_on decorator ...?
   * ?add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch?
+  * Fields should be object instead of simple dict?
+  * Add column, column_list, table, ... field type
 * Add actions (expl: Possibility to edit a cell value directly)
 
 ### To do UX
@@ -149,9 +154,6 @@ There are 3 main folders:
   * do not run all pipeline everytime (check if pipeline changed (with hash?), run everything only if yes, else only execute required action)
   * Imp pipeline (test before save? summary with blocks on the top? ...?)?
   * Multiples pipelines?
-* Actions
-  * Fields should be object instead of simple dict?
-  * Add column, column_list, table, ... field type
 * Secure app? If a project is shared to somebody else, we must be sure it won't run something bad for the computer? Is it even possible to do that?
 * Great-expectation unit test
 * Dashboard tab (custom/embedded metabase? Not sure it suits need/...)

@@ -1,6 +1,7 @@
 import { Input } from '/static/utils/components/input/input.js';
 import { SquirrelDictionary } from '/static/utils/widgets/dictionary_widget/dictionary_widget.js';
 import { SquirrelList } from '/static/utils/widgets/list_widget/list_widget.js';
+import { SquirrelAction } from '/static/utils/widgets/action_widget/action_widget.js';
 
 
 /**
@@ -131,6 +132,7 @@ export class Field {
     _initializeWidget(input, type) {
         if (type === 'dict') new SquirrelDictionary(input);
         else if (type === 'list') new SquirrelList(input);
+        else if (type === 'sq_action') new SquirrelAction(input);
     }
 }
 
