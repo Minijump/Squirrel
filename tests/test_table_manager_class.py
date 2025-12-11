@@ -45,3 +45,20 @@ async def test_get_col_info(temp_project_dir_fixture):
     assert "null" in col_info
     assert "count" in col_info
     assert "is_numeric" in col_info
+
+@pytest.mark.asyncio
+async def test_get_autocomplete_data(temp_project_dir_fixture):
+    project_dir = MOCK_PROJECT
+    table_manager = await TableManager.init_from_project_dir(project_dir, lazy=False)
+    
+    autocomplete_data = table_manager.get_autocomplete_data()
+    
+    assert isinstance(autocomplete_data, dict)
+    assert "ordered" in autocomplete_data
+    assert "random" in autocomplete_data
+    assert isinstance(autocomplete_data["ordered"], list)
+    assert isinstance(autocomplete_data["random"], list)
+    assert "mock_name" in autocomplete_data["ordered"]
+    assert "mock_price" in autocomplete_data["ordered"]
+    assert "name" in autocomplete_data["random"]
+    assert "price" in autocomplete_data["random"]

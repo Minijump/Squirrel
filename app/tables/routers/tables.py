@@ -52,12 +52,9 @@ async def get_col_infos(request: Request, project_dir: str, table: str, column_n
     return col_infos
 
 @router.get("/tables/autocomplete_data/")
-@squirrel_error
 async def get_autocomplete_data(request: Request, project_dir: str):
     table_manager = await TableManager.init_from_project_dir(project_dir, lazy=True)
-    autocomplete_data = {}
-    for table_name, table in table_manager.tables.items():
-        autocomplete_data[table_name] = list(table.content.columns)
+    autocomplete_data = table_manager.get_autocomplete_data()
     return autocomplete_data
 
 @router.post("/tables/export_table/")

@@ -76,3 +76,9 @@ class TableManager:
         export_path = os.path.join(export_dir, f"{table_name}.{export_type}")
         self.tables.get(table_name).export(export_path, export_type)
         return export_path
+    
+    def get_autocomplete_data(self):
+        autocomplete_data = {}
+        for table_name, table in self.tables.items():
+            autocomplete_data[table_name] = list(table.content.columns)
+        return autocomplete_data
