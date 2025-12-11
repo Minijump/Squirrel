@@ -129,7 +129,7 @@ There are 3 main folders:
 ### To do
 * Improve actions
   * SIMPLIFY Autocomplete widget
-  * FIX Autocomplete widget: not working if starts with 'c[' (not taking current table); in right sidebar we need to scroll to see all tables and this is not obvious
+  * FIX Autocomplete widget: not working if starts with 'c[' (not taking current table)
   * Investigate to add coloring in Autocomplete widget (will need a refactor?)
   * Misc imp for autocomplete widget
 

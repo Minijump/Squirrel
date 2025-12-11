@@ -81,12 +81,17 @@
     background-clip: text;
 }
 
+/* Sidebar body/form */
 .sidebar-body {
     overflow-y: auto;
-    max-height: calc(100vh - 80px);
+    height: 80%;
 }
 
-/* Sidebar form */
+.sidebar-form {
+    overflow-y: auto;
+    height: 100%;
+}
+
 .sidebar-body .std-form {
     padding: 20px 15px;
 }

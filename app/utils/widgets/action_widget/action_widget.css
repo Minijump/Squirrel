@@ -1,20 +1,18 @@
 .squirrel-action-widget {
     position: relative;
-    width: 100%;
 }
 
 .squirrel-action-widget textarea {
     font-family: 'Courier New', monospace;
-    font-size: 14px;
 }
 
 .action-suggestion-box {
     position: absolute;
     z-index: 1000;
-    max-height: 200px;
+    max-height: 250px;
     overflow-y: auto;
-    background: var(--bg-primary, #fff);
-    border: 1px solid var(--border-color, #ccc);
+    background-color: var(--light-structure-color);
+    color: var(--primary-text-color);
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
@@ -23,13 +21,12 @@
     padding: 6px 12px;
     cursor: pointer;
     font-family: 'Courier New', monospace;
-    font-size: 13px;
-    color: var(--text-primary, #333);
+    font-size: 12px;
 }
 
 .suggestion-item:hover,
 .suggestion-item.selected {
-    background: var(--hover-bg, #e8e8e8);
+    background: var(--structure-color);
 }
 
 .suggestion-item.selected {
