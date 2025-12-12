@@ -3,6 +3,7 @@ import { SquirrelWidget } from '/static/utils/widgets/widget/widget.js';
 export class SquirrelAction extends SquirrelWidget {
     constructor(element) {
         super(element, ['TEXTAREA']);
+        this.options = this.parseOptions();
         this.autocompleteData = null;
         this.currentSuggestions = [];
         this.selectedIndex = -1;
@@ -44,9 +45,7 @@ export class SquirrelAction extends SquirrelWidget {
     bindEvents() {
         this.element.addEventListener('input', () => this.checkForAutocomplete());
         this.element.addEventListener('keydown', (e) => this.handleKeydown(e));
-        this.element.addEventListener('blur', () => {
-            setTimeout(() => this.hideSuggestions(), 200);
-        });
+        this.element.addEventListener('blur', () => { setTimeout(() => this.hideSuggestions(), 200);});
     }
 
     checkForAutocomplete() {
@@ -57,56 +56,34 @@ export class SquirrelAction extends SquirrelWidget {
         
         const tMatch = textBeforeCursor.match(/t\[['"]?(\w*)$/);
         if (tMatch) {
-            const prefix = tMatch[1];
-            this.showTableSuggestions(prefix);
+            this.showSuggestions(Object.keys(this.autocompleteData), tMatch[1]);
             return;
         }
 
         const cMatch = textBeforeCursor.match(/c\[['"]?(\w*)$/);
         if (cMatch) {
-            const prefix = cMatch[1];
-            const tableName = this.getCurrentTableName();
-            if (tableName) {
-                this.showColumnSuggestions(tableName, prefix);
-                return;
-            }
-        }
-
-        const afterTableMatch = textBeforeCursor.match(/t\[['"](\w+)['"]\]c\[['"]?(\w*)$/);
-        if (afterTableMatch) {
-            const tableName = afterTableMatch[1];
-            const prefix = afterTableMatch[2];
-            this.showColumnSuggestions(tableName, prefix);
+            const tableName = this.getTableName(textBeforeCursor);
+            const columns = this.autocompleteData[tableName] || [];
+            this.showSuggestions(columns, cMatch[1]);
             return;
         }
 
         this.hideSuggestions();
     }
 
-    getCurrentTableName() {
-        const tableNameInput = document.querySelector('input[name="table_name"]');
-        const tableName = tableNameInput ? tableNameInput.value : null;
-        console.log('Current table name:', tableName);
-        return tableName;
-    }
-
-    showTableSuggestions(prefix) {
-        const tables = Object.keys(this.autocompleteData);
-        this.currentSuggestions = tables.filter(t => t.toLowerCase().startsWith(prefix.toLowerCase()));
-        console.log('Table suggestions for prefix', prefix, ':', this.currentSuggestions);
-        this.renderSuggestions();
-    }
-
-    showColumnSuggestions(tableName, prefix) {
-        console.log('Looking for columns in table:', tableName, 'with prefix:', prefix);
-        const columns = this.autocompleteData[tableName];
-        if (!columns) {
-            console.warn('No columns found for table:', tableName);
-            this.hideSuggestions();
-            return;
+    getTableName(textBeforeCursor) {
+        const afterTableMatch = textBeforeCursor.match(/t\[['"](\w+)['"]\]c\[['"]?(\w*)$/);
+        if (afterTableMatch) {
+            return afterTableMatch[1];
         }
-        this.currentSuggestions = columns.filter(c => String(c).toLowerCase().startsWith(prefix.toLowerCase()));
-        console.log('Column suggestions:', this.currentSuggestions);
+        // NOT working, input is filled by js after the widget is initialized (In Form class?)
+        return document.querySelector('input[name="table_name"]')?.value;
+    }
+
+    showSuggestions(items, prefix) {
+        this.currentSuggestions = items.filter(item => 
+            String(item).toLowerCase().startsWith(prefix.toLowerCase())
+        );
         this.renderSuggestions();
     }
 
@@ -124,11 +101,6 @@ export class SquirrelAction extends SquirrelWidget {
             .join('');
 
         this.suggestionBox.style.display = 'block';
-        
-        const rect = this.element.getBoundingClientRect();
-        const wrapperRect = this.wrapper.getBoundingClientRect();
-        this.suggestionBox.style.left = `${rect.left - wrapperRect.left}px`;
-        this.suggestionBox.style.top = `${rect.bottom - wrapperRect.top + 2}px`;
 
         this.suggestionBox.querySelectorAll('.suggestion-item').forEach(item => {
             item.addEventListener('click', () => {
@@ -187,36 +159,6 @@ export class SquirrelAction extends SquirrelWidget {
 
         this.hideSuggestions();
         this.element.focus();
-    }
-
-    getCursorCoordinates() {
-        const textBeforeCursor = this.element.value.substring(0, this.element.selectionStart);
-        const dummy = document.createElement('div');
-        const computedStyle = window.getComputedStyle(this.element);
-        
-        dummy.style.position = 'absolute';
-        dummy.style.visibility = 'hidden';
-        dummy.style.whiteSpace = 'pre-wrap';
-        dummy.style.font = computedStyle.font;
-        dummy.style.padding = computedStyle.padding;
-        dummy.style.border = computedStyle.border;
-        dummy.style.width = computedStyle.width;
-        dummy.textContent = textBeforeCursor;
-        
-        const span = document.createElement('span');
-        span.textContent = '|';
-        dummy.appendChild(span);
-        document.body.appendChild(dummy);
-        
-        const rect = this.element.getBoundingClientRect();
-        const spanRect = span.getBoundingClientRect();
-        const coordinates = {
-            left: spanRect.left - rect.left,
-            top: spanRect.top - rect.top
-        };
-        
-        document.body.removeChild(dummy);
-        return coordinates;
     }
 }
 

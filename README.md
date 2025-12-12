@@ -128,8 +128,7 @@ There are 3 main folders:
 
 ### To do
 * Improve actions
-  * SIMPLIFY Autocomplete widget
-  * FIX Autocomplete widget: not working if starts with 'c[' (not taking current table)
+  * FIX Autocomplete widget: not working if starts with 'c[' (not taking current table), arrow down does not 'scroll down' 
   * Investigate to add coloring in Autocomplete widget (will need a refactor?)
   * Misc imp for autocomplete widget
 
