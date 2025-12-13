@@ -127,18 +127,18 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
-* Improve actions
-  * Investigate to add coloring in Autocomplete widget (will need a refactor?)
-  * Misc imp for autocomplete widget
 
 ### To Fix
 
 ### To do MVP
 * Actions ++
+  * Think about the following points... Shouldn't we keep closer to python?
+  * ?add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch?
   * ?add a apply_on decorator ...?
+  * ?In widget, if apply_on column and we have a colum, suggest the methods
   * ?add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch?
   * Fields should be object instead of simple dict?
-  * Add column, column_list, table, ... field type
+  * Add column, column_list, table, ... field type?
 * Add actions (expl: Possibility to edit a cell value directly)
 
 ### To do UX
