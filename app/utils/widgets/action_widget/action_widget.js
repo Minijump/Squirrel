@@ -139,6 +139,9 @@ export class SquirrelAction extends SquirrelWidget {
     updateSelectedSuggestion() {
         this.suggestionBox.querySelectorAll('.suggestion-item').forEach((item, index) => {
             item.classList.toggle('selected', index === this.selectedIndex);
+            if (index === this.selectedIndex) {
+                item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
         });
     }
 
