@@ -76,8 +76,7 @@ export class SquirrelAction extends SquirrelWidget {
         if (afterTableMatch) {
             return afterTableMatch[1];
         }
-        // NOT working, input is filled by js after the widget is initialized (In Form class?)
-        return document.querySelector('input[name="table_name"]')?.value;
+        return this.element.closest('form')?.querySelector('input[name="table_name"]')?.value;
     }
 
     showSuggestions(items, prefix) {

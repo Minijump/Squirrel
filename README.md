@@ -128,7 +128,6 @@ There are 3 main folders:
 
 ### To do
 * Improve actions
-  * FIX Autocomplete widget: not working if starts with 'c[' (not taking current table)
   * Investigate to add coloring in Autocomplete widget (will need a refactor?)
   * Misc imp for autocomplete widget
 
