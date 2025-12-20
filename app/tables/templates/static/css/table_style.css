@@ -138,9 +138,9 @@
     color: var(--primary-text-color);
 }
 
- .table-html {
+.table-html {
     overflow-y: auto;
-    max-height: 90%;
+    max-height: 92%;
     border-bottom: 1px solid var(--structure-color);
     background-color: var(--light-structure-color);
 }
