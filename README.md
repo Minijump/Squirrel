@@ -92,7 +92,7 @@ Every time you perform an action on a table, it is stored in the pipeline. The p
 
 ![Pipeline Page](app/utils/templates/static/img/pipeline.png)
 
-## Develoment
+## Development
 ### Customize
 
 The project structure can be somewhat strange to those accustomed to well-structured projects. Here is a brief summary of its organization:
@@ -127,19 +127,11 @@ There are 3 main folders:
 5. **Create a new Pull Request**
 
 ### To do
+* think about the future of the app
 
 ### To Fix
 
 ### To do MVP
-* Actions ++
-  * Think about the following points... Shouldn't we keep closer to python?
-  * ?add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch?
-  * ?add a apply_on decorator ...?
-  * ?In widget, if apply_on column and we have a colum, suggest the methods
-  * ?add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch?
-  * Fields should be object instead of simple dict?
-  * Add column, column_list, table, ... field type?
-* Add actions (expl: Possibility to edit a cell value directly)
 
 ### To do UX
 
@@ -152,6 +144,14 @@ There are 3 main folders:
   * do not run all pipeline everytime (check if pipeline changed (with hash?), run everything only if yes, else only execute required action)
   * Imp pipeline (test before save? summary with blocks on the top? ...?)?
   * Multiples pipelines?
+* Actions ++
+  * ?add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch?
+  * ?add a apply_on decorator ...?
+  * ?In widget, if apply_on column and we have a colum, suggest the methods
+  * ?add a 'name' that will enable to write squirrel action easily (with autocomplete when widgets are done) from scratch?
+  * In Actions, Fields should be object instead of simple dict?
+  * In Actions, Add column, column_list, table, ... field type?
+  * Add actions (expl: Possibility to edit a cell value directly)
 * Secure app? If a project is shared to somebody else, we must be sure it won't run something bad for the computer? Is it even possible to do that?
 * Great-expectation unit test
 * Dashboard tab (custom/embedded metabase? Not sure it suits need/...)
