@@ -1,4 +1,4 @@
-# Squirrel (Mvp)
+# Squirrel (Mvp) [Paused]
       
 Create data analysis pipeline with a no/low-code interface. 
 ## The app
@@ -84,13 +84,13 @@ __The tables:__
 
 The tables page is where the action happens. On this page, you can create new tables, add new columns, ... You can also "inspect" the columns and perform various actions on them.
 
-![Tables Page](app/utils/templates/static/img/tables.png)
+![Tables Page](app/utils/templates/static/img/tables_v2.png)
 
 __The pipeline:__
 
 Every time you perform an action on a table, it is stored in the pipeline. The pipeline page provides an overview of these actions, allowing you to reorder, edit, or delete them.
 
-![Pipeline Page](app/utils/templates/static/img/pipeline.png)
+![Pipeline Page](app/utils/templates/static/img/pipeline_v2.png)
 
 ## Development
 ### Customize
